@@ -11,12 +11,20 @@ package org.ardenus.engine.input.button;
  */
 public class PressableState implements Cloneable {
 
+	public static final long INACTIVE = -1L;
+
 	public boolean pressed;
+	public boolean held;
+
 	public long pressTime_ms;
 	public long releaseTime_ms;
-
-	public boolean held;
 	public long holdPressTime_ms;
+
+	public PressableState() {
+		this.pressTime_ms = INACTIVE;
+		this.releaseTime_ms = INACTIVE;
+		this.holdPressTime_ms = INACTIVE;
+	}
 
 	/**
 	 * A container should only be cloned to make a copy of the previous state
