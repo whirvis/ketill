@@ -27,10 +27,12 @@ public abstract class InputDevice {
 	private final Map<DeviceButton, PressableState> buttons;
 
 	/**
-	 * Constructs a new {@code InputDevice} and registers all button fields
-	 * annotated with {@link ButtonPresent @ButtonPresent}.
+	 * Constructs a new {@code InputDevice} and registers all device button
+	 * fields annotated with {@link ButtonPresent @ButtonPresent}.
 	 * 
 	 * @see #addButton(DeviceButton)
+	 * @throws InputDevice
+	 *             if an input error occurs.
 	 */
 	public InputDevice() {
 		this.buttons = new HashMap<>();
