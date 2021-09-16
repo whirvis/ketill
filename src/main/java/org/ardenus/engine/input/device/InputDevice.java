@@ -159,8 +159,8 @@ public abstract class InputDevice {
 	 * Returns if a button is currently pressed.
 	 * <p>
 	 * Whether or not a button is considered to be pressed is based on the
-	 * definition of {@link PressableState#isPressed()}. This function is more
-	 * or less a shorthand for it.
+	 * definition of {@link PressableState#isPressed()}. This method is more or
+	 * less a shorthand for it.
 	 * 
 	 * @param button
 	 *            the button whose state to check.
@@ -176,7 +176,7 @@ public abstract class InputDevice {
 	 * Returns if a button is currently held down.
 	 * <p>
 	 * Whether or not a button is considered to be held down is based on the
-	 * definition of {@link PressableState#isHeld()}. This function is more or
+	 * definition of {@link PressableState#isHeld()}. This method is more or
 	 * less a shorthand for it.
 	 * 
 	 * @param button
