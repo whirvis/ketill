@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.adapter.DeviceAdapter;
 import org.ardenus.engine.input.button.PressableState;
 
 /**
@@ -21,20 +22,26 @@ import org.ardenus.engine.input.button.PressableState;
  * <b>Note:</b> For an input device to work properly, it must be polled via
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
+ * 
+ * @see DeviceAdapter
  */
 public abstract class InputDevice {
 
+	protected final DeviceAdapter<?> adapter;
 	private final Map<DeviceButton, PressableState> buttons;
 
 	/**
 	 * Constructs a new {@code InputDevice} and registers all device button
 	 * fields annotated with {@link ButtonPresent @ButtonPresent}.
 	 * 
+	 * @param adapter
+	 *            the device adapter.
 	 * @see #addButton(DeviceButton)
 	 * @throws InputDevice
 	 *             if an input error occurs.
 	 */
-	public InputDevice() {
+	public InputDevice(DeviceAdapter<?> adapter) {
+		this.adapter = Objects.requireNonNull(adapter);
 		this.buttons = new HashMap<>();
 		this.loadButtons();
 	}
@@ -198,10 +205,11 @@ public abstract class InputDevice {
 	 * be polled. E.G., mouse coordinates, controller stick axes, etc.
 	 */
 	public void poll() {
+		adapter.poll();
 		for (DeviceButton button : buttons.keySet()) {
 			PressableState state = buttons.get(button);
 			state.cache();
-			/* TODO: update state based on device data */
+			state.setPressed(adapter.isPressed(button));
 			state.update();
 		}
 	}

@@ -12,7 +12,8 @@ package org.ardenus.engine.input.button;
 public class PressableState implements Cloneable {
 
 	/* TODO: add callbacks for state changes */
-	
+	/* TODO: redo this class? it feels a bit whackadoodles */
+
 	public static final long INACTIVE = -1L;
 
 	private boolean pressed;
