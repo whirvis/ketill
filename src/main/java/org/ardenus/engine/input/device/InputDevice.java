@@ -67,6 +67,12 @@ public abstract class InputDevice {
 	 * When a button is registered, it is stored alongside an instance of
 	 * {@link PressableState} to track its current state. If {@code button} is
 	 * already registered, its current state will not be reset.
+	 * <p>
+	 * <b>Note:</b> This method can be called before {@code InputDevice} is
+	 * finished constructing, as it is called by the {@link #loadButtons()}
+	 * method (which is called inside the constructor). As such, extending
+	 * classes should take care to write code around this fact should they
+	 * override this method.
 	 * 
 	 * @param button
 	 *            the button to register.
