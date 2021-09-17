@@ -29,4 +29,14 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<!-- Project dependencies -->
+	<dependencies>
+		<!-- Mathematics -->
+		<dependency>
+			<groupId>org.joml</groupId>
+			<artifactId>joml</artifactId>
+			<version>1.10.0</version>
+		</dependency>
+	</dependencies>
 </project>
