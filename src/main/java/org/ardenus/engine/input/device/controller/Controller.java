@@ -84,7 +84,6 @@ public abstract class Controller extends InputDevice {
 		if (button != null && this.isPressed(button)) {
 			return true;
 		}
-		/* TODO: add support for analog sticks */
 		return false;
 	}
 
