@@ -3,6 +3,7 @@ package org.ardenus.engine.input.device.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.button.PressableState;
 import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;

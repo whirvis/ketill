@@ -1,5 +1,6 @@
 package org.ardenus.engine.input.device.controller;
 
+import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.DeviceButton;
 
 /**

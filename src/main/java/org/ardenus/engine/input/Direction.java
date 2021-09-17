@@ -1,7 +1,7 @@
-package org.ardenus.engine.input.device.controller;
+package org.ardenus.engine.input;
 
 /**
- * Represents a direction being pressed on a controller.
+ * Represents a generic direction.
  * <p>
  * Directions, like buttons, can be pressable. Their state is usually
  * represented by buttons and/or analog sticks. For example, a controller may
