@@ -367,7 +367,7 @@ public abstract class InputDevice {
 		adapter.poll();
 
 		for (DeviceAnalog<?> analog : analogs.keySet()) {
-			/* TODO: update analog values */
+			analogs.put(analog, adapter.getValue(analog));
 		}
 
 		for (DeviceButton button : buttons.keySet()) {
