@@ -29,17 +29,23 @@ import org.ardenus.engine.input.device.InputDevice;
  *
  * @param <I>
  *            the input device type.
+ * @param <A>
+ *            the analog input type.
+ * @param <B>
+ *            the button type.
+ * @see MappedAnalog
  * @see MappedButton
  */
-public abstract class DeviceAdapter<I extends InputDevice> {
+public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalog, B extends MappedButton> {
 
-	private final Map<DeviceAnalog<?>, MappedAnalog> analogs;
-	private final Map<DeviceButton, MappedButton> buttons;
+	private final Map<DeviceAnalog<?>, A> analogs;
+	private final Map<DeviceButton, B> buttons;
 
 	/**
 	 * Constructs a new {@code DeviceAdapter} and registers all mapped button
 	 * fields annotated with {@link ButtonMapping @ButtonMapping}.
 	 * 
+	 * @see #map(MappedAnalog)
 	 * @see #map(MappedButton)
 	 * @throws InputDevice
 	 *             if an input error occurs.
@@ -56,7 +62,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * 
 	 * @return all registered analog mappings.
 	 */
-	public Collection<MappedAnalog> analogMappings() {
+	public Collection<A> analogMappings() {
 		return Collections.unmodifiableCollection(analogs.values());
 	}
 
@@ -81,7 +87,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws NullPointerException
 	 *             if {@code mapping} is {@code null}.
 	 */
-	public DeviceAdapter<I> map(MappedAnalog mapping) {
+	public DeviceAdapter<I, A, B> map(A mapping) {
 		Objects.requireNonNull(mapping, "mapping");
 		analogs.put(mapping.analog, mapping);
 		return this;
@@ -90,9 +96,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	/**
 	 * Registers the specified analog mappings to this adapter.
 	 * <p>
-	 * This method is a shorthand for {@link #map(MappedAnalog)}, with each
-	 * value of {@code mappings} being passed as the argument for
-	 * {@code mapping}.
+	 * This method is a shorthand for {@link #map(A)}, with each value of
+	 * {@code mappings} being passed as the argument for {@code mapping}.
 	 * 
 	 * @param mappings
 	 *            the mappings to register.
@@ -100,9 +105,10 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws NullPointerException
 	 *             if {@code mappings} or one of its elements are {@code null}.
 	 */
-	public DeviceAdapter<I> map(MappedAnalog... mappings) {
+	@SuppressWarnings("unchecked")
+	public DeviceAdapter<I, A, B> map(A... mappings) {
 		Objects.requireNonNull(mappings, "mappings");
-		for (MappedAnalog mapping : mappings) {
+		for (A mapping : mappings) {
 			this.map(mapping);
 		}
 		return this;
@@ -115,7 +121,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the analog whose mapping to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(DeviceAnalog<?> analog) {
+	public DeviceAdapter<I, A, B> unmap(DeviceAnalog<?> analog) {
 		if (analog != null) {
 			analogs.remove(analog);
 		}
@@ -132,7 +138,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the analogs whose mappings to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(DeviceAnalog<?>... analogs) {
+	public DeviceAdapter<I, A, B> unmap(DeviceAnalog<?>... analogs) {
 		if (analogs != null) {
 			for (DeviceAnalog<?> analog : analogs) {
 				this.unmap(analog);
@@ -148,8 +154,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the mapping to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(MappedAnalog mapping) {
-		Iterator<MappedAnalog> buttonsI = analogs.values().iterator();
+	public DeviceAdapter<I, A, B> unmap(MappedAnalog mapping) {
+		Iterator<A> buttonsI = analogs.values().iterator();
 		while (buttonsI.hasNext()) {
 			MappedAnalog value = buttonsI.next();
 			if (mapping == value) {
@@ -170,7 +176,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the mappings to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(MappedAnalog... mappings) {
+	public DeviceAdapter<I, A, B> unmap(MappedAnalog... mappings) {
 		if (mappings != null) {
 			for (MappedAnalog mapping : mappings) {
 				this.unmap(mapping);
@@ -240,8 +246,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			}
 
 			try {
-				Object mappedObj = field.get(statik ? null : this);
-				MappedAnalog mapped = (MappedAnalog) mappedObj;
+				@SuppressWarnings("unchecked") /* it is checked */
+				A mapped = (A) field.get(statik ? null : this);
 				if (this.hasMapping(mapped.analog)) {
 					throw new InputException("analog already mapped");
 				}
@@ -261,7 +267,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * 
 	 * @return all registered button mappings.
 	 */
-	public Collection<MappedButton> buttonMappings() {
+	public Collection<B> buttonMappings() {
 		return Collections.unmodifiableCollection(buttons.values());
 	}
 
@@ -286,7 +292,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws NullPointerException
 	 *             if {@code mapping} is {@code null}.
 	 */
-	public DeviceAdapter<I> map(MappedButton mapping) {
+	public DeviceAdapter<I, A, B> map(B mapping) {
 		Objects.requireNonNull(mapping, "mapping");
 		buttons.put(mapping.button, mapping);
 		return this;
@@ -295,9 +301,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	/**
 	 * Registers the specified button mappings to this adapter.
 	 * <p>
-	 * This method is a shorthand for {@link #map(MappedButton)}, with each
-	 * value of {@code mappings} being passed as the argument for
-	 * {@code mapping}.
+	 * This method is a shorthand for {@link #map(B)}, with each value of
+	 * {@code mappings} being passed as the argument for {@code mapping}.
 	 * 
 	 * @param mappings
 	 *            the mappings to register.
@@ -305,9 +310,10 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws NullPointerException
 	 *             if {@code mappings} or one of its elements are {@code null}.
 	 */
-	public DeviceAdapter<I> map(MappedButton... mappings) {
+	@SuppressWarnings("unchecked")
+	public DeviceAdapter<I, A, B> map(B... mappings) {
 		Objects.requireNonNull(mappings, "mappings");
-		for (MappedButton mapping : mappings) {
+		for (B mapping : mappings) {
 			this.map(mapping);
 		}
 		return this;
@@ -320,7 +326,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the button whose mapping to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(DeviceButton button) {
+	public DeviceAdapter<I, A, B> unmap(DeviceButton button) {
 		if (button != null) {
 			buttons.remove(button);
 		}
@@ -337,7 +343,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the buttons whose mappings to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(DeviceButton... buttons) {
+	public DeviceAdapter<I, A, B> unmap(DeviceButton... buttons) {
 		if (buttons != null) {
 			for (DeviceButton button : buttons) {
 				this.unmap(button);
@@ -353,10 +359,10 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the mapping to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(MappedButton mapping) {
-		Iterator<MappedButton> buttonsI = buttons.values().iterator();
+	public DeviceAdapter<I, A, B> unmap(B mapping) {
+		Iterator<B> buttonsI = buttons.values().iterator();
 		while (buttonsI.hasNext()) {
-			MappedButton value = buttonsI.next();
+			B value = buttonsI.next();
 			if (mapping == value) {
 				buttonsI.remove();
 			}
@@ -375,7 +381,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the mappings to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I> unmap(MappedButton... mappings) {
+	public DeviceAdapter<I, A, B> unmap(MappedButton... mappings) {
 		if (mappings != null) {
 			for (MappedButton mapping : mappings) {
 				this.unmap(mapping);
@@ -445,8 +451,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			}
 
 			try {
-				Object mappedObj = field.get(statik ? null : this);
-				MappedButton mapped = (MappedButton) mappedObj;
+				@SuppressWarnings("unchecked") /* it is checked */
+				B mapped = (B) field.get(statik ? null : this);
 				if (this.hasMapping(mapped.button)) {
 					throw new InputException("button already mapped");
 				}
@@ -476,7 +482,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *            the mapped analog, guaranteed not to be {@code null}.
 	 * @return the current value of {@code mapped}.
 	 */
-	protected abstract Object getValue(MappedAnalog mapped);
+	protected abstract Object getValue(A mapped);
 
 	/**
 	 * Returns the current value of an analog.
@@ -493,7 +499,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return the current value of {@code analog}.
 	 */
 	public <V> V getValue(DeviceAnalog<V> analog) {
-		MappedAnalog mapped = analogs.get(analog);
+		A mapped = analogs.get(analog);
 		if (mapped == null) {
 			Object value = this.getValue(mapped);
 			return analog.cast(value);
@@ -509,7 +515,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return {@code true} if {@code mapped} is pressed, {@code false}
 	 *         otherwise.
 	 */
-	protected abstract boolean isPressed(MappedButton mapped);
+	protected abstract boolean isPressed(B mapped);
 
 	/**
 	 * Returns if a button is currently pressed.
@@ -525,7 +531,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *         {@code false} otherwise.
 	 */
 	public boolean isPressed(DeviceButton button) {
-		MappedButton mapped = buttons.get(button);
+		B mapped = buttons.get(button);
 		return mapped != null ? this.isPressed(mapped) : false;
 	}
 

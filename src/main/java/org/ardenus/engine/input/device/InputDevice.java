@@ -30,7 +30,7 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
  */
 public abstract class InputDevice {
 
-	protected final DeviceAdapter<?> adapter;
+	protected final DeviceAdapter<?, ?, ?> adapter;
 	private final Map<DeviceAnalog<?>, Object> analogs;
 	private final Map<DeviceButton, PressableState> buttons;
 
@@ -46,7 +46,7 @@ public abstract class InputDevice {
 	 * @throws InputDevice
 	 *             if an input error occurs.
 	 */
-	public InputDevice(DeviceAdapter<?> adapter) {
+	public InputDevice(DeviceAdapter<?, ?, ?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
 		this.analogs = new HashMap<>();
 		this.buttons = new HashMap<>();
