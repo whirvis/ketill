@@ -3,9 +3,11 @@ package org.ardenus.engine.input.device;
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.adapter.DeviceAdapter;
@@ -37,6 +39,8 @@ public abstract class InputDevice {
 	 * @param adapter
 	 *            the device adapter.
 	 * @see #addButton(DeviceButton)
+	 * @throws NullPointerException
+	 *             if {@code adapter} is {@code null}.
 	 * @throws InputDevice
 	 *             if an input error occurs.
 	 */
@@ -44,6 +48,15 @@ public abstract class InputDevice {
 		this.adapter = Objects.requireNonNull(adapter);
 		this.buttons = new HashMap<>();
 		this.loadButtons();
+	}
+
+	/**
+	 * Returns the buttons registered to this input device.
+	 * 
+	 * @return the buttons registered to this input device.
+	 */
+	public Set<DeviceButton> getButtons() {
+		return Collections.unmodifiableSet(buttons.keySet());
 	}
 
 	/**
