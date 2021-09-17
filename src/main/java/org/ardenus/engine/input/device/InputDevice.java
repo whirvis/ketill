@@ -356,6 +356,16 @@ public abstract class InputDevice {
 	}
 
 	/**
+	 * Returns if this input device is still connected.
+	 * 
+	 * @return {@code true} if this input device is still connected,
+	 *         {@code false} otherwise.
+	 */
+	public boolean isConnected() {
+		return adapter.isConnected();
+	}
+
+	/**
 	 * Polls this input device.
 	 * <p>
 	 * Polling an input device is necessary for retrieving up to date input
