@@ -27,7 +27,7 @@ import org.ardenus.engine.input.device.DeviceAnalog;
  * 
  * @see AnalogMapping
  */
-public class MappedAnalog {
+public abstract class MappedAnalog {
 
 	public final DeviceAnalog<?> analog;
 
