@@ -42,12 +42,16 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 	private final Map<DeviceButton, B> buttons;
 
 	/**
-	 * Constructs a new {@code DeviceAdapter} and registers all mapped button
-	 * fields annotated with {@link ButtonMapping @ButtonMapping}.
+	 * Constructs a new {@code DeviceAdapter}.
+	 * <p>
+	 * During construction, the device adapter will register all mapped analog
+	 * fields annotated with {@link AnalogMapping @AnalogMapping}. It will also
+	 * register all mapped button fields annotated with
+	 * {@link ButtonMapping @ButtonMapping}.
 	 * 
 	 * @see #map(MappedAnalog)
 	 * @see #map(MappedButton)
-	 * @throws InputDevice
+	 * @throws InputException
 	 *             if an input error occurs.
 	 */
 	public DeviceAdapter() {
