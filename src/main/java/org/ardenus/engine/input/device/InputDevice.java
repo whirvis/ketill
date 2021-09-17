@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -376,8 +377,8 @@ public abstract class InputDevice {
 	public void poll() {
 		adapter.poll();
 
-		for (DeviceAnalog<?> analog : analogs.keySet()) {
-			analogs.put(analog, adapter.getValue(analog));
+		for (Entry<DeviceAnalog<?>, Object> analog : analogs.entrySet()) {
+			adapter.updateValue(analog.getKey(), analog.getValue());
 		}
 
 		for (DeviceButton button : buttons.keySet()) {

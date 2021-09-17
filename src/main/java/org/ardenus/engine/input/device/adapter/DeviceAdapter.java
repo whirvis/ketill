@@ -36,7 +36,7 @@ import org.ardenus.engine.input.device.InputDevice;
  * @see MappedAnalog
  * @see MappedButton
  */
-public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalog, B extends MappedButton> {
+public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalog<?>, B extends MappedButton> {
 
 	private final Map<DeviceAnalog<?>, A> analogs;
 	private final Map<DeviceButton, B> buttons;
@@ -158,10 +158,10 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 	 *            the mapping to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I, A, B> unmap(MappedAnalog mapping) {
+	public DeviceAdapter<I, A, B> unmap(MappedAnalog<?> mapping) {
 		Iterator<A> buttonsI = analogs.values().iterator();
 		while (buttonsI.hasNext()) {
-			MappedAnalog value = buttonsI.next();
+			MappedAnalog<?> value = buttonsI.next();
 			if (mapping == value) {
 				buttonsI.remove();
 			}
@@ -180,9 +180,9 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 	 *            the mappings to unregister.
 	 * @return this device adapter.
 	 */
-	public DeviceAdapter<I, A, B> unmap(MappedAnalog... mappings) {
+	public DeviceAdapter<I, A, B> unmap(MappedAnalog<?>... mappings) {
 		if (mappings != null) {
-			for (MappedAnalog mapping : mappings) {
+			for (MappedAnalog<?> mapping : mappings) {
 				this.unmap(mapping);
 			}
 		}
@@ -480,49 +480,51 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 	public abstract boolean isConnected();
 
 	/**
-	 * Returns the current value of a mapped analog.
+	 * Updates the current value of a mapped analog.
 	 * <p>
 	 * Due to the nature of analog inputs, casting will likely be required in
-	 * order to provide input for different analog input types. If an analog
-	 * input class is unrecognized, a {@code UnsupportedOperationException}
-	 * should be thrown.
+	 * order to update data for different analog input types. If an analog input
+	 * class is unrecognized, a {@code UnsupportedOperationException} should be
+	 * thrown.
 	 * 
 	 * @param mapped
 	 *            the mapped analog, guaranteed not to be {@code null}.
-	 * @return the current value of {@code mapped}.
+	 * @param value
+	 *            the analog value to be updated.
 	 * @throws UnsupportedOperationException
 	 *             if the input type of {@code mapped} is unsupported.
 	 */
-	protected abstract Object getValue(A mapped);
+	protected abstract void updateValue(A mapped, Object value);
 
 	/**
-	 * Returns the current value of an analog.
+	 * Updates the current value of an analog.
 	 * <p>
-	 * This method is a shorthand for abstract {@link #getValue(MappedAnalog)},
-	 * with the argument for {@code mapped} being the value that {@code analog}
-	 * is mapped to. If there is no mapping for {@code analog}, {@code null}
-	 * will be returned instead.
+	 * This method is a shorthand for abstract
+	 * {@link #updateValue(MappedAnalog, Object)}, with the argument for
+	 * {@code mapped} being the value that {@code analog} is mapped to. If there
+	 * is no mapping for {@code analog}, this method will be a no-op.
 	 * 
 	 * @param <V>
 	 *            the value type of {@code analog}.
 	 * @param analog
-	 *            the analog whose value to get.
-	 * @return the current value of {@code analog}.
+	 *            the analog whose value to update.
+	 * @param value
+	 *            the analog value to be updated.
 	 * @throws InputException
 	 *             if the input type of {@code analog} unsupported.
 	 */
-	public <V> V getValue(DeviceAnalog<V> analog) {
+	public void updateValue(DeviceAnalog<?> analog, Object value) {
 		A mapped = analogs.get(analog);
+		if (mapped == null) {
+			return;
+		}
+
 		try {
-			if (mapped != null) {
-				Object value = this.getValue(mapped);
-				return analog.cast(value);
-			}
+			this.updateValue(mapped, value);
 		} catch (UnsupportedOperationException e) {
 			throw new InputException("unsupported analog input type "
 					+ analog.getClass().getName(), e);
 		}
-		return null;
 	}
 
 	/**

@@ -25,11 +25,13 @@ import org.ardenus.engine.input.device.DeviceAnalog;
  * }
  * </pre>
  * 
+ * @param <A>
+ *            the analog input type.
  * @see AnalogMapping
  */
-public abstract class MappedAnalog {
+public abstract class MappedAnalog<A extends DeviceAnalog<?>> {
 
-	public final DeviceAnalog<?> analog;
+	public final A analog;
 
 	/**
 	 * Constructs a new {@code MappedAnalog}.
@@ -39,7 +41,7 @@ public abstract class MappedAnalog {
 	 * @throws NullPointerException
 	 *             if {@code analog} is {@code null}.
 	 */
-	public MappedAnalog(DeviceAnalog<?> analog) {
+	public MappedAnalog(A analog) {
 		this.analog = Objects.requireNonNull(analog, "analog");
 	}
 

@@ -18,7 +18,7 @@ import org.ardenus.engine.input.device.adapter.MappedButton;
  * @see GLFWMappedAnalog
  * @see GLFWMappedButton
  */
-public abstract class GLFWDeviceAdapter<I extends InputDevice, A extends GLFWMappedAnalog, B extends GLFWMappedButton>
+public abstract class GLFWDeviceAdapter<I extends InputDevice, A extends GLFWMappedAnalog<?>, B extends GLFWMappedButton>
 		extends DeviceAdapter<I, A, B> {
 
 	protected final long ptr_glfwWindow;
