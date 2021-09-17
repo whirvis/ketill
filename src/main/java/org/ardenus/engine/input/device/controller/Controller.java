@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ardenus.engine.input.Direction;
-import org.ardenus.engine.input.button.PressableState;
+import org.ardenus.engine.input.PressableState;
 import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;

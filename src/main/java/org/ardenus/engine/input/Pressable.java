@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.button;
+package org.ardenus.engine.input;
 
 /**
  * Represents an object which can be pressed and released.

@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.button;
+package org.ardenus.engine.input;
 
 /**
  * A container for the state of a {@link Pressable} instance.

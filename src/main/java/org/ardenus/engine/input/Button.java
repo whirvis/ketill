@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.button;
+package org.ardenus.engine.input;
 
 /**
  * A pressable object represented as a button.

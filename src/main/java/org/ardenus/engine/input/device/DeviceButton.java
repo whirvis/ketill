@@ -2,7 +2,7 @@ package org.ardenus.engine.input.device;
 
 import java.util.Objects;
 
-import org.ardenus.engine.input.button.Button;
+import org.ardenus.engine.input.Button;
 
 /**
  * Represents a button that is present on an input device.

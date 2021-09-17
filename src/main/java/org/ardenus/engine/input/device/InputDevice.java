@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.ardenus.engine.input.Analog;
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.button.PressableState;
+import org.ardenus.engine.input.PressableState;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 
 /**
