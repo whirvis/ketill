@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.adapter.glfw;
+package org.ardenus.engine.input.device.adapter.glfw.joystick;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -10,6 +10,11 @@ import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.MappedButton;
+import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
+import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogTrigger;
 import org.ardenus.engine.input.device.analog.Trigger1f;
 import org.joml.Vector3f;
 

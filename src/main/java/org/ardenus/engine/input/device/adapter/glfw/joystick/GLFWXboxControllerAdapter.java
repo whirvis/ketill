@@ -1,8 +1,12 @@
-package org.ardenus.engine.input.device.adapter.glfw;
+package org.ardenus.engine.input.device.adapter.glfw.joystick;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.ButtonMapping;
+import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogTrigger;
 import org.ardenus.engine.input.device.analog.Trigger1f;
 import org.ardenus.engine.input.device.controller.XboxController;
 import org.joml.Vector3f;

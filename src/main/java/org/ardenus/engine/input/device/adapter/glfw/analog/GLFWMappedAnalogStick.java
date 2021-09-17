@@ -1,5 +1,6 @@
-package org.ardenus.engine.input.device.adapter.glfw;
+package org.ardenus.engine.input.device.adapter.glfw.analog;
 
+import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
 
 /**
