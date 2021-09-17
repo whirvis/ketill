@@ -26,10 +26,12 @@ public abstract class GLFWDeviceAdapter<I extends InputDevice, A extends GLFWMap
 	/**
 	 * Constructs a new {@code GLFWDeviceAdapter}.
 	 * 
-	 * @see #map(MappedAnalog)
-	 * @see #map(MappedButton)
+	 * @param ptr_glfwWindow
+	 *            the GLFW window pointer.
 	 * @throws InputException
 	 *             if an input error occurs.
+	 * @see #map(MappedAnalog)
+	 * @see #map(MappedButton)
 	 */
 	public GLFWDeviceAdapter(long ptr_glfwWindow) {
 		this.ptr_glfwWindow = ptr_glfwWindow;

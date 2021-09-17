@@ -19,6 +19,10 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- TODO: support more operating systems -->
+		<lwjgl.version>3.2.3</lwjgl.version>
+		<lwjgl.natives>natives-windows</lwjgl.natives>
 	</properties>
 	
 	<!-- Project licensing -->
@@ -29,6 +33,19 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	
+	<!-- Dependency management -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.lwjgl</groupId>
+				<artifactId>lwjgl-bom</artifactId>
+				<version>${lwjgl.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<!-- Project dependencies -->
 	<dependencies>
@@ -37,6 +54,32 @@
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
 			<version>1.10.0</version>
+		</dependency>
+		
+		<!-- LWJGL -->
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+		</dependency>
+		
+		<!-- LWJGL natives -->
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl</artifactId>
+			<classifier>${lwjgl.natives}</classifier>
+		</dependency>
+		
+		<!-- GLFW -->
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-glfw</artifactId>
+		</dependency>
+
+		<!-- GLFW natives -->
+		<dependency>
+			<groupId>org.lwjgl</groupId>
+			<artifactId>lwjgl-glfw</artifactId>
+			<classifier>${lwjgl.natives}</classifier>
 		</dependency>
 	</dependencies>
 </project>
