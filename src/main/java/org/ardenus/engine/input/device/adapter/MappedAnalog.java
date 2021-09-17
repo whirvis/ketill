@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.adapter;
+package org.ardenus.engine.input.device.adapter;
 
 import java.util.Objects;
 

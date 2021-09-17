@@ -11,8 +11,8 @@ import java.util.Set;
 
 import org.ardenus.engine.input.Analog;
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.adapter.DeviceAdapter;
 import org.ardenus.engine.input.button.PressableState;
+import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 
 /**
  * A device which can send and receive input data.
