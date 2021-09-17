@@ -481,10 +481,17 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 
 	/**
 	 * Returns the current value of a mapped analog.
+	 * <p>
+	 * Due to the nature of analog inputs, casting will likely be required in
+	 * order to provide input for different analog input types. If an analog
+	 * input class is unrecognized, a {@code UnsupportedOperationException}
+	 * should be thrown.
 	 * 
 	 * @param mapped
 	 *            the mapped analog, guaranteed not to be {@code null}.
 	 * @return the current value of {@code mapped}.
+	 * @throws UnsupportedOperationException
+	 *             if the input type of {@code mapped} is unsupported.
 	 */
 	protected abstract Object getValue(A mapped);
 
@@ -501,12 +508,19 @@ public abstract class DeviceAdapter<I extends InputDevice, A extends MappedAnalo
 	 * @param analog
 	 *            the analog whose value to get.
 	 * @return the current value of {@code analog}.
+	 * @throws InputException
+	 *             if the input type of {@code analog} unsupported.
 	 */
 	public <V> V getValue(DeviceAnalog<V> analog) {
 		A mapped = analogs.get(analog);
-		if (mapped == null) {
-			Object value = this.getValue(mapped);
-			return analog.cast(value);
+		try {
+			if (mapped != null) {
+				Object value = this.getValue(mapped);
+				return analog.cast(value);
+			}
+		} catch (UnsupportedOperationException e) {
+			throw new InputException("unsupported analog input type "
+					+ analog.getClass().getName(), e);
 		}
 		return null;
 	}
