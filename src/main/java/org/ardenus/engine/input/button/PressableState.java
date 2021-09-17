@@ -113,7 +113,7 @@ public class PressableState implements Cloneable {
 	 *             if a call to {@code cache()} has yet to be made.
 	 */
 	public void update() {
-		if (prev != null) {
+		if (prev == null) {
 			throw new IllegalStateException("must first call cache()");
 		}
 
