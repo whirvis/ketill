@@ -19,7 +19,7 @@ import org.ardenus.engine.input.device.DeviceButton;
  * 
  * 	public GLFWMappedButton(DeviceButton button, int glfwButton) {
  * 		super(button);
- * 		this.glfwBUtton = glfwButton;
+ * 		this.glfwButton = glfwButton;
  * 	}
  * 
  * }
