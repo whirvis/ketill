@@ -3,6 +3,7 @@ package org.ardenus.engine.input.device.adapter.glfw.joystick;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.ButtonMapping;
+import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
@@ -17,7 +18,7 @@ import org.joml.Vector3f;
  * @see GLFWJoystickAdapter
  */
 public class GLFWXboxControllerAdapter extends
-		GLFWJoystickAdapter<XboxController, GLFWMappedAnalog<?>, GLFWMappedButton> {
+		GLFWJoystickAdapter<XboxController> {
 
 	@AnalogMapping
 	private static final GLFWMappedAnalog<?> MA_LS =
@@ -58,7 +59,7 @@ public class GLFWXboxControllerAdapter extends
 	}
 
 	@Override
-	protected void updateValue(GLFWMappedAnalog<?> mapped, Object value) {
+	protected void updateValue(MappedAnalog<?> mapped, Object value) {
 		super.updateValue(mapped, value);
 		if (mapped == MA_LS || mapped == MA_RS) {
 			Vector3f stick = (Vector3f) value;

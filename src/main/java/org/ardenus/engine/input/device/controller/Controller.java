@@ -34,7 +34,7 @@ public abstract class Controller extends InputDevice {
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Controller(DeviceAdapter<?, ?, ?> adapter) {
+	public Controller(DeviceAdapter<?> adapter) {
 		super(adapter);
 
 		this.directions = new HashMap<>();

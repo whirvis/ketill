@@ -26,9 +26,9 @@ public class XboxController extends Controller {
 			BUTTON_LS = new ControllerButton("LS"),
 			BUTTON_RS = new ControllerButton("RS"),
 			BUTTON_UP = new ControllerButton("Up", Direction.UP),
-			BUTTON_RIGHT = new ControllerButton("Right", Direction.RIGHT),
 			BUTTON_DOWN = new ControllerButton("Down", Direction.DOWN),
-			BUTTON_LEFT = new ControllerButton("Left", Direction.LEFT);
+			BUTTON_LEFT = new ControllerButton("Left", Direction.LEFT),
+			BUTTON_RIGHT = new ControllerButton("Right", Direction.RIGHT);
 
 	@AnalogPresent
 	public static final AnalogTrigger TRIGGER_L = new AnalogTrigger("LT"),
@@ -46,7 +46,7 @@ public class XboxController extends Controller {
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public XboxController(DeviceAdapter<XboxController, ?, ?> adapter) {
+	public XboxController(DeviceAdapter<XboxController> adapter) {
 		super(adapter);
 	}
 

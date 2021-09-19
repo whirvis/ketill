@@ -31,8 +31,8 @@ import org.joml.Vector3f;
  * @see GLFWMappedAnalog
  * @see GLFWMappedButton
  */
-public abstract class GLFWJoystickAdapter<I extends InputDevice, A extends GLFWMappedAnalog<?>, B extends GLFWMappedButton>
-		extends GLFWDeviceAdapter<I, A, B> {
+public abstract class GLFWJoystickAdapter<I extends InputDevice>
+		extends GLFWDeviceAdapter<I> {
 
 	protected final int glfwJoystick;
 	protected FloatBuffer axes;
@@ -61,7 +61,7 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice, A extends GLFWM
 	}
 
 	@Override
-	protected void updateValue(A mapped, Object value) {
+	protected void updateValue(MappedAnalog<?> mapped, Object value) {
 		if (mapped instanceof GLFWMappedAnalogStick) {
 			GLFWMappedAnalogStick mappedStick = (GLFWMappedAnalogStick) mapped;
 			DeviceButton zButton = mappedStick.analog.zButton;
@@ -82,8 +82,9 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice, A extends GLFWM
 	}
 
 	@Override
-	protected boolean isPressed(B mapped) {
-		return buttons.get(mapped.glfwButton) > 0;
+	protected boolean isPressed(MappedButton mapped) {
+		GLFWMappedButton glfwMapped = (GLFWMappedButton) mapped;
+		return buttons.get(glfwMapped.glfwButton) > 0;
 	}
 
 	@Override
