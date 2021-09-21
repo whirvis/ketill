@@ -2,14 +2,21 @@ package org.ardenus.engine.input.device.adapter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InaccessibleObjectException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.DeviceAnalog;
 import org.ardenus.engine.input.device.DeviceButton;
@@ -34,8 +41,18 @@ import org.ardenus.engine.input.device.InputDevice;
  */
 public abstract class DeviceAdapter<I extends InputDevice> {
 
+	protected final Logger log;
+
+	private final Map<Class<?>, Method> analogAdapters;
+	private final Map<Class<?>, Class<?>> analogHierarchy;
+	private final Map<Class<?>, Method> buttonAdapters;
+	private final Map<Class<?>, Class<?>> buttonHierarchy;
+
 	private final Map<DeviceAnalog<?>, MappedAnalog<?>> analogs;
 	private final Map<DeviceButton, MappedButton> buttons;
+
+	private final Set<DeviceAnalog<?>> missingAnalogs;
+	private final Set<DeviceButton> missingButtons;
 
 	/**
 	 * Constructs a new {@code DeviceAdapter}.
@@ -51,10 +68,206 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 *             if an input error occurs.
 	 */
 	public DeviceAdapter() {
+		this.log = LogManager.getLogger(this.getClass());
+
+		this.analogAdapters = new HashMap<>();
+		this.analogHierarchy = new HashMap<>();
+		this.buttonAdapters = new HashMap<>();
+		this.buttonHierarchy = new HashMap<>();
+		this.loadButtonAdapters();
+		this.loadAnalogAdapters();
+
 		this.analogs = new HashMap<>();
 		this.buttons = new HashMap<>();
 		this.loadAnalogMappings();
 		this.loadButtonMappings();
+
+		this.missingAnalogs = new HashSet<>();
+		this.missingButtons = new HashSet<>();
+	}
+
+	/**
+	 * Loads all predefined {@link AnalogAdapter @AnalogAdapter} annotated
+	 * methods of this class instance.
+	 * <p>
+	 * Only instance methods will be loaded as adapters for this instance,
+	 * static methods are considered invalid. The method must also be public, so
+	 * that it is guaranteed to be accessible by this class. Any other access
+	 * classification will make the method invalid.
+	 * <p>
+	 * This works by going through each field inside of this class, and checking
+	 * for the presence of the {@link AnalogAdapter @AnalogAdapter} annotation.
+	 * If present, the method will be added as an adapter.
+	 * 
+	 * @throws InputException
+	 *             if a method marked with {@code @AnalogAdapter} does not
+	 *             return type {@code void}; if an analog adapter method is
+	 *             {@code static} or not {@code public}; if an analog adapter
+	 *             method does not have exactly two parameters; if
+	 *             {@code MappedAnalog} is not assignable from the first
+	 *             parameter of an analog adapter method.
+	 */
+	private void loadAnalogAdapters() {
+		for (Method method : this.getClass().getDeclaredMethods()) {
+			AnalogAdapter adapter = method.getAnnotation(AnalogAdapter.class);
+			if (adapter == null) {
+				continue;
+			}
+
+			/*
+			 * Analog adapters update an already existing value, they do not
+			 * return a new one. This is to cut down on object allocations. Do
+			 * not ignore this issue, and throw an exception. It is likely this
+			 * was a silly mistake by the programmer.
+			 */
+			if (method.getReturnType() != void.class) {
+				throw new InputException("expecting void return type");
+			}
+
+			/*
+			 * For simplicity's sake, all analog adapters cannot be static, and
+			 * they must be public. This ensures they behave like instanced
+			 * methods are accessible by this class.
+			 */
+			int mod = method.getModifiers();
+			if (Modifier.isStatic(mod)) {
+				throw new InputException("analog adapter cannot be static");
+			} else if (!Modifier.isPublic(mod)) {
+				throw new InputException("analog adapter must be public");
+			}
+
+			/*
+			 * Analog adapter methods take two parameters. The first parameter
+			 * is the analog they are going to update. The second parameter is
+			 * the current value of the analog, which the method updates.
+			 */
+			Parameter[] params = method.getParameters();
+			if (params.length != 2) {
+				throw new InputException("expected two parameters");
+			}
+
+			/*
+			 * The first parameter must be of type MappedAnalog. Do not ignore
+			 * this issue, and throw an exception. It is likely this was a silly
+			 * mistake by the programmer.
+			 */
+			Parameter analogParam = params[0];
+			if (!MappedAnalog.class.isAssignableFrom(analogParam.getType())) {
+				throw new InputException("expected type assignable from"
+						+ " MappedAnalog for first parameter");
+			}
+
+			Class<?> type = analogParam.getType();
+			if (analogAdapters.containsKey(type)) {
+				throw new InputException("duplicate adapter");
+			}
+			analogAdapters.put(type, method);
+		}
+
+		/*
+		 * At runtime, the appropriate analog adapter method is chosen based on
+		 * the highest order class assignable from the analog adapter type. If
+		 * two or more classes are assignable to the same analog adapter, the
+		 * device will not know which one to choose.
+		 */
+		for (Class<?> clazz : analogAdapters.keySet()) {
+			for (Class<?> lower : analogAdapters.keySet()) {
+				if (clazz != lower && clazz.isAssignableFrom(lower)) {
+					throw new InputException("tangled hierarchy");
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loads all predefined {@link ButtonAdapter @ButtonAdapter} annotated
+	 * methods of this class instance.
+	 * <p>
+	 * Only instance methods will be loaded as adapters for this instance,
+	 * static methods are considered invalid. The method must also be public, so
+	 * that it is guaranteed to be accessible by this class. Any other access
+	 * classification will make the method invalid.
+	 * <p>
+	 * This works by going through each field inside of this class, and checking
+	 * for the presence of the {@link ButtonAdapter @ButtonAdapter} annotation.
+	 * If present, the method will be added as an adapter.
+	 * 
+	 * @throws InputException
+	 *             if a method marked with {@code @ButtonAdapter} does not
+	 *             return type {@code void}; if an button adapter method is
+	 *             {@code static} or not {@code public}; if an button adapter
+	 *             method does not have exactly two parameters; if
+	 *             {@code MappedButton} is not assignable from the first
+	 *             parameter of an button adapter method.
+	 */
+	private void loadButtonAdapters() {
+		for (Method method : this.getClass().getDeclaredMethods()) {
+			ButtonAdapter adapter = method.getAnnotation(ButtonAdapter.class);
+			if (adapter == null) {
+				continue;
+			}
+
+			/*
+			 * Button adapters return whether or not the button is pressed as a
+			 * boolean. Do not ignore this issue, and throw an exception. It is
+			 * likely this was a silly mistake by the programmer.
+			 */
+			if (method.getReturnType() != boolean.class) {
+				throw new InputException("expecting boolean return type");
+			}
+
+			/*
+			 * For simplicity's sake, all analog adapters cannot be static, and
+			 * they must be public. This ensures they behave like instanced
+			 * methods are accessible by this class.
+			 */
+			int mod = method.getModifiers();
+			if (Modifier.isStatic(mod)) {
+				throw new InputException("button adapter cannot be static");
+			} else if (!Modifier.isPublic(mod)) {
+				throw new InputException("button adapter must be public");
+			}
+
+			/*
+			 * Buttons adapter methods take only one parameters. This single
+			 * parameter is the button whose state they are checking.
+			 */
+			Parameter[] params = method.getParameters();
+			if (params.length != 1) {
+				throw new InputException("expected one parameter");
+			}
+
+			/*
+			 * The first parameter must be of type MappedButton. Do not ignore
+			 * this issue, and throw an exception. It is likely this was a silly
+			 * mistake by the programmer.
+			 */
+			Parameter analogParam = params[0];
+			if (!MappedButton.class.isAssignableFrom(analogParam.getType())) {
+				throw new InputException("expected type assignable from"
+						+ " MappedButton for parameter");
+			}
+
+			Class<?> type = analogParam.getType();
+			if (buttonAdapters.containsKey(type)) {
+				throw new InputException("duplicate adapter");
+			}
+			buttonAdapters.put(type, method);
+		}
+
+		/*
+		 * At runtime, the appropriate analog adapter method is chosen based on
+		 * the highest order class assignable from the analog adapter type. If
+		 * two or more classes are assignable to the same analog adapter, the
+		 * device will not know which one to choose.
+		 */
+		for (Class<?> clazz : buttonAdapters.keySet()) {
+			for (Class<?> lower : buttonAdapters.keySet()) {
+				if (clazz != lower && clazz.isAssignableFrom(lower)) {
+					throw new InputException("tangled hierarchy");
+				}
+			}
+		}
 	}
 
 	/**
@@ -90,6 +303,28 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	public DeviceAdapter<I> map(MappedAnalog<?> mapping) {
 		Objects.requireNonNull(mapping, "mapping");
 		analogs.put(mapping.analog, mapping);
+
+		/*
+		 * Search for an appropriate analog adapter method and cache it for
+		 * later calls. This will be used by updateAnalog() later. The first
+		 * analog adapter method whose type is assignable from the mapped analog
+		 * will be chosen. It is guaranteed by loadAnalogAdapters() that there
+		 * will only be one class assignable to the mapped analog.
+		 */
+		Class<?> mappingClazz = mapping.getClass();
+		if (!analogHierarchy.containsKey(mappingClazz)) {
+			for (Class<?> candidate : analogAdapters.keySet()) {
+				if (candidate.isAssignableFrom(mappingClazz)) {
+					analogHierarchy.put(mappingClazz, candidate);
+					break;
+				}
+			}
+
+			if (!analogHierarchy.containsKey(mappingClazz)) {
+				throw new InputException("unsupported analog type");
+			}
+		}
+
 		return this;
 	}
 
@@ -229,10 +464,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			boolean statik = Modifier.isStatic(modifiers);
 
 			/*
-			 * Sometimes we'll encounter one of those spooky "private" variables
-			 * or something like that. If it's not accessible to us, temporarily
-			 * grant ourselves access to retrieve the field's contents. We'll
-			 * revert the accessibility back to its original state later.
+			 * If the method is not accessible, temporarily grant access so the
+			 * contents can be retrieved. Accessibility will be reverted to its
+			 * original state later.
 			 */
 			boolean tempAccess = false;
 			if (!field.canAccess(statik ? null : this)) {
@@ -290,10 +524,35 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return this device adapter.
 	 * @throws NullPointerException
 	 *             if {@code mapping} is {@code null}.
+	 * @throws InputException
+	 *             if no adapter exists for {@code mapping}.
+	 * @see ButtonAdapter
 	 */
 	public DeviceAdapter<I> map(MappedButton mapping) {
 		Objects.requireNonNull(mapping, "mapping");
 		buttons.put(mapping.button, mapping);
+
+		/*
+		 * Search for an appropriate button adapter method and cache it for
+		 * later calls. This will be used by isPressed() later. The first button
+		 * adapter method whose type is assignable from the mapped button will
+		 * be chosen. It is guaranteed by loadButtonAdapters() that there will
+		 * only be one class assignable to the mapped analog.
+		 */
+		Class<?> mappingClazz = mapping.getClass();
+		if (!buttonHierarchy.containsKey(mappingClazz)) {
+			for (Class<?> candidate : buttonAdapters.keySet()) {
+				if (candidate.isAssignableFrom(mappingClazz)) {
+					buttonHierarchy.put(mappingClazz, candidate);
+					break;
+				}
+			}
+
+			if (!buttonHierarchy.containsKey(mappingClazz)) {
+				throw new InputException("unsupported button type");
+			}
+		}
+
 		return this;
 	}
 
@@ -309,6 +568,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return this device adapter.
 	 * @throws NullPointerException
 	 *             if {@code mappings} or one of its elements are {@code null}.
+	 * @throws InputException
+	 *             if no adapter exists for {@code mappings}.
+	 * @see ButtonAdapter
 	 */
 	public DeviceAdapter<I> map(MappedButton... mappings) {
 		Objects.requireNonNull(mappings, "mappings");
@@ -434,10 +696,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			boolean statik = Modifier.isStatic(modifiers);
 
 			/*
-			 * Sometimes we'll encounter one of those spooky "private" variables
-			 * or something like that. If it's not accessible to us, temporarily
-			 * grant ourselves access to retrieve the field's contents. We'll
-			 * revert the accessibility back to its original state later.
+			 * If the field is not accessible, temporarily grant access so the
+			 * contents can be retrieved. Accessibility will be reverted to its
+			 * original state later.
 			 */
 			boolean tempAccess = false;
 			if (!field.canAccess(statik ? null : this)) {
@@ -475,79 +736,97 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	public abstract boolean isConnected();
 
 	/**
-	 * Updates the current value of a mapped analog.
+	 * Queries the device for the current value of an analog.
 	 * <p>
-	 * Due to the nature of analog inputs, casting will likely be required in
-	 * order to update data for different analog input types. If an analog input
-	 * class is unrecognized, a {@code UnsupportedOperationException} should be
+	 * For this method to work properly, {@code analog} must have been given a
+	 * mapping as well as an appropriate adapter at construction. If no mapping
+	 * was specified, this method will be a no-op. If no adapter for the
+	 * analog's mapping type was registered, an {@code InputException} will be
 	 * thrown.
 	 * 
-	 * @param mapped
-	 *            the mapped analog, guaranteed not to be {@code null}.
-	 * @param value
-	 *            the analog value to be updated.
-	 * @throws UnsupportedOperationException
-	 *             if the input type of {@code mapped} is unsupported.
-	 */
-	protected abstract void updateValue(MappedAnalog<?> mapped, Object value);
-
-	/**
-	 * Updates the current value of an analog.
-	 * <p>
-	 * This method is a shorthand for abstract
-	 * {@link #updateValue(MappedAnalog, Object)}, with the argument for
-	 * {@code mapped} being the value that {@code analog} is mapped to. If there
-	 * is no mapping for {@code analog}, this method will be a no-op.
-	 * 
-	 * @param <V>
-	 *            the value type of {@code analog}.
 	 * @param analog
-	 *            the analog whose value to update.
+	 *            the analog to query.
 	 * @param value
-	 *            the analog value to be updated.
+	 *            the value container to update.
+	 * @throws NullPointerException
+	 *             if {@code analog} or {@code value} are {@code null}.
 	 * @throws InputException
-	 *             if the input type of {@code analog} unsupported.
+	 *             if the mapping type for {@code analog} has no adapter; if
+	 *             {@code value} is of an invalid type for the adapter.
+	 * @see AnalogAdapter
+	 * @see #map(MappedAnalog)
 	 */
-	public void updateValue(DeviceAnalog<?> analog, Object value) {
-		MappedAnalog<?> mapped = analogs.get(analog);
-		if (mapped == null) {
+	public void updateAnalog(DeviceAnalog<?> analog, Object value) {
+		Objects.requireNonNull(analog, "analog");
+		Objects.requireNonNull(value, "value");
+		MappedAnalog<?> mapping = analogs.get(analog);
+		if (mapping == null) {
+			if (!missingAnalogs.contains(analog)) {
+				log.error("no mapping for analog \"" + analog.name + "\"");
+				missingAnalogs.add(analog);
+			}
 			return;
 		}
 
+		Class<?> adapterClazz = analogHierarchy.get(mapping.getClass());
+		Method adapter = analogAdapters.get(adapterClazz);
 		try {
-			this.updateValue(mapped, value);
-		} catch (UnsupportedOperationException e) {
-			throw new InputException("unsupported analog input type "
-					+ analog.getClass().getName(), e);
+			adapter.invoke(this, mapping, value);
+		} catch (IllegalArgumentException e) {
+			/*
+			 * If the value parameter type is not assignable from the passed
+			 * value type, that means the IllegalArgumentException was likely
+			 * caused by that. Otherwise, it was caused by something else.
+			 */
+			Parameter valueParam = adapter.getParameters()[1];
+			if (valueParam.getType().isAssignableFrom(value.getClass())) {
+				throw new InputException("invalid value type for adapter", e);
+			} else {
+				throw e;
+			}
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * Returns if a mapped button is currently pressed.
-	 * 
-	 * @param mapped
-	 *            the mapped button, guaranteed not to be {@code null}.
-	 * @return {@code true} if {@code mapped} is pressed, {@code false}
-	 *         otherwise.
-	 */
-	protected abstract boolean isPressed(MappedButton mapped);
-
-	/**
-	 * Returns if a button is currently pressed.
+	 * Queries the device to check if a button is pressed.
 	 * <p>
-	 * This method is a shorthand for abstract {@link #isPressed(MappedButton)},
-	 * with the argument for {@code mapped} being the value that {@code button}
-	 * is mapped to. If there is no mapping for {@code button}, {@code false}
-	 * will be returned instead.
+	 * For this method to work properly, {@code button} must have been given a
+	 * mapping as well as an appropriate adapter at construction. If no mapping
+	 * was specified, {@code false} will always be returned. If no adapter for
+	 * the button's mapping type was registered, an {@code InputException} will
+	 * be thrown.
 	 * 
 	 * @param button
-	 *            the button.
+	 *            the button to check.
 	 * @return {@code true} if {@code button} is currently pressed,
-	 *         {@code false} otherwise.
+	 *         {@code false} otherwise (or {@code button} has no mapping).
+	 * @throws NullPointerException
+	 *             if {@code button} is {@code null}.
+	 * @throws InputException
+	 *             if the mapping type for {@code button} has no adapter.
+	 * @see ButtonAdapter
+	 * @see #map(MappedButton)
 	 */
 	public boolean isPressed(DeviceButton button) {
-		MappedButton mapped = buttons.get(button);
-		return mapped != null ? this.isPressed(mapped) : false;
+		Objects.requireNonNull(button, "button");
+		MappedButton mapping = buttons.get(button);
+		if (mapping == null) {
+			if (!missingButtons.contains(button)) {
+				log.error("no mapping for button \"" + button.name + "\"");
+				missingButtons.add(button);
+			}
+			return false;
+		}
+
+		Class<?> adapterClazz = buttonHierarchy.get(mapping.getClass());
+		Method adapter = buttonAdapters.get(adapterClazz);
+		try {
+			return (boolean) adapter.invoke(this, mapping);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

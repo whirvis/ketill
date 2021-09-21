@@ -41,11 +41,12 @@ public abstract class InputDevice {
 	 * 
 	 * @param adapter
 	 *            the device adapter.
-	 * @see #addButton(DeviceButton)
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
-	 * @throws InputDevice
+	 * @throws InputException
 	 *             if an input error occurs.
+	 * @see #addAnalog(DeviceAnalog)
+	 * @see #addButton(DeviceButton)
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
@@ -72,7 +73,7 @@ public abstract class InputDevice {
 	 * @return {@code true} if {@code analog} is registered, {@code false}
 	 *         otherwise.
 	 */
-	public boolean hasAnalag(DeviceAnalog<?> analog) {
+	public boolean hasAnalog(DeviceAnalog<?> analog) {
 		return analog != null ? analogs.containsKey(analog) : false;
 	}
 
@@ -146,10 +147,9 @@ public abstract class InputDevice {
 			boolean statik = Modifier.isStatic(modifiers);
 
 			/*
-			 * Sometimes we'll encounter one of those spooky "private" variables
-			 * or something like that. If it's not accessible to us, temporarily
-			 * grant ourselves access to retrieve the field's contents. We'll
-			 * revert the accessibility back to its original state later.
+			 * If the field is not accessible, temporarily grant access so the
+			 * contents can be retrieved. Accessibility will be reverted to its
+			 * original state later.
 			 */
 			boolean tempAccess = false;
 			if (!field.canAccess(statik ? null : this)) {
@@ -182,12 +182,18 @@ public abstract class InputDevice {
 	 * @param analog
 	 *            the analog whose value to get.
 	 * @return the current value of {@code analog}.
+	 * @throws NullPointerException
+	 *             if {@code analog} is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if {@code analog} is not registered to this device.
 	 */
 	public <V> V getValue(DeviceAnalog<V> analog) {
-		if (analog == null) {
-			return null;
-		}
+		Objects.requireNonNull(analog, "analog");
 		Object value = analogs.get(analog);
+		if (value == null) {
+			throw new IllegalArgumentException(
+					"no such analog \"" + analog.name + "\"");
+		}
 		return analog.cast(value);
 	}
 
@@ -282,10 +288,9 @@ public abstract class InputDevice {
 			boolean statik = Modifier.isStatic(modifiers);
 
 			/*
-			 * Sometimes we'll encounter one of those spooky "private" variables
-			 * or something like that. If it's not accessible to us, temporarily
-			 * grant ourselves access to retrieve the field's contents. We'll
-			 * revert the accessibility back to its original state later.
+			 * If the field is not accessible, temporarily grant access so the
+			 * contents can be retrieved. Accessibility will be reverted to its
+			 * original state later.
 			 */
 			boolean tempAccess = false;
 			if (!field.canAccess(statik ? null : this)) {
@@ -317,9 +322,19 @@ public abstract class InputDevice {
 	 *            the button whose state to get.
 	 * @return the current state of {@code button}, {@code null} if this input
 	 *         device has no such button registered.
+	 * @throws NullPointerException
+	 *             if {@code button} is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if {@code button} is not registered to this device.
 	 */
 	protected PressableState getState(DeviceButton button) {
-		return button != null ? buttons.get(button) : null;
+		Objects.requireNonNull(button, "button");
+		PressableState state = buttons.get(button);
+		if (state == null) {
+			throw new IllegalArgumentException(
+					"no such button \"" + button.name + "\"");
+		}
+		return state;
 	}
 
 	/**
@@ -333,10 +348,14 @@ public abstract class InputDevice {
 	 *            the button whose state to check.
 	 * @return {@code true} if {@code button} is currently pressed,
 	 *         {@code false} otherwise.
+	 * @throws NullPointerException
+	 *             if {@code button} is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if {@code button} is not registered to this device.
 	 */
 	public boolean isPressed(DeviceButton button) {
 		PressableState state = this.getState(button);
-		return state != null ? state.isPressed() : false;
+		return state.isPressed();
 	}
 
 	/**
@@ -350,10 +369,14 @@ public abstract class InputDevice {
 	 *            the button whose state to check.
 	 * @return {@code true} if {@code button} is currently held down,
 	 *         {@code false} otherwise.
+	 * @throws NullPointerException
+	 *             if {@code button} is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if {@code button} is not registered to this device.
 	 */
 	public boolean isHeld(DeviceButton button) {
 		PressableState state = this.getState(button);
-		return state != null ? state.isHeld() : false;
+		return state.isHeld();
 	}
 
 	/**
@@ -378,7 +401,7 @@ public abstract class InputDevice {
 		adapter.poll();
 
 		for (Entry<DeviceAnalog<?>, Object> analog : analogs.entrySet()) {
-			adapter.updateValue(analog.getKey(), analog.getValue());
+			adapter.updateAnalog(analog.getKey(), analog.getValue());
 		}
 
 		for (DeviceButton button : buttons.keySet()) {

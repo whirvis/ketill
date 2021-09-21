@@ -5,17 +5,12 @@ import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.MappedButton;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
 
 /**
  * An adapter which maps input for a GLFW input device.
  *
  * @param <I>
  *            the input device type.
- * @param <A>
- *            the analog input type.
- * @param <B>
- *            the button type.
  * @see GLFWMappedAnalog
  * @see GLFWMappedButton
  */

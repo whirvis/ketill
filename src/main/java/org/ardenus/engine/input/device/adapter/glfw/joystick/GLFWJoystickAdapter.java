@@ -8,11 +8,12 @@ import java.nio.FloatBuffer;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.adapter.AnalogAdapter;
+import org.ardenus.engine.input.device.adapter.ButtonAdapter;
 import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.MappedButton;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogTrigger;
 import org.ardenus.engine.input.device.analog.Trigger1f;
@@ -60,31 +61,26 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		return glfwJoystickPresent(glfwJoystick);
 	}
 
-	@Override
-	protected void updateValue(MappedAnalog<?> mapped, Object value) {
-		if (mapped instanceof GLFWMappedAnalogStick) {
-			GLFWMappedAnalogStick mappedStick = (GLFWMappedAnalogStick) mapped;
-			DeviceButton zButton = mappedStick.analog.zButton;
-
-			Vector3f stick = (Vector3f) value;
-			stick.x = axes.get(mappedStick.glfwAxisX);
-			stick.y = axes.get(mappedStick.glfwAxisY);
+	@AnalogAdapter
+	public void updateAnalogStick(GLFWMappedAnalogStick mapping,
+			Vector3f stick) {
+		stick.x = axes.get(mapping.glfwAxisX);
+		stick.y = axes.get(mapping.glfwAxisY);
+		DeviceButton zButton = mapping.analog.zButton;
+		if (zButton != null) {
 			stick.z = this.isPressed(zButton) ? -1.0F : 0.0F;
-		} else if (mapped instanceof GLFWMappedAnalogTrigger) {
-			GLFWMappedAnalogTrigger mappedTrigger =
-					(GLFWMappedAnalogTrigger) mapped;
-
-			Trigger1f trigger = (Trigger1f) value;
-			trigger.force = axes.get(mappedTrigger.glfwAxis);
-		} else {
-			throw new UnsupportedOperationException();
 		}
 	}
 
-	@Override
-	protected boolean isPressed(MappedButton mapped) {
-		GLFWMappedButton glfwMapped = (GLFWMappedButton) mapped;
-		return buttons.get(glfwMapped.glfwButton) > 0;
+	@AnalogAdapter
+	public void updateAnalogTrigger(GLFWMappedAnalogTrigger mapping,
+			Trigger1f trigger) {
+		trigger.force = axes.get(mapping.glfwAxis);
+	}
+
+	@ButtonAdapter
+	public boolean isPressed(GLFWMappedButton mapped) {
+		return buttons.get(mapped.glfwButton) > 0;
 	}
 
 	@Override
