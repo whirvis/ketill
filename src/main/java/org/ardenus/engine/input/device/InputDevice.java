@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import org.ardenus.engine.input.Analog;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.PressableState;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
@@ -61,7 +60,7 @@ public abstract class InputDevice {
 	 * 
 	 * @return the analogs registered to this input device.
 	 */
-	public Set<Analog<?>> getAnalogs() {
+	public Set<DeviceAnalog<?>> getAnalogs() {
 		return Collections.unmodifiableSet(analogs.keySet());
 	}
 
