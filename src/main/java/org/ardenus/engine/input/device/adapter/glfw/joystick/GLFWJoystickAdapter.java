@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.AnalogAdapter;
 import org.ardenus.engine.input.device.adapter.ButtonAdapter;
@@ -14,9 +13,11 @@ import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.MappedButton;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogTrigger;
 import org.ardenus.engine.input.device.analog.Trigger1f;
+import org.ardenus.engine.input.device.button.DeviceButton;
 import org.joml.Vector3f;
 
 /**

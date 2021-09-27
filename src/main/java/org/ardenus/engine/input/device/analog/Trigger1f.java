@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.analog;
 
 /**
- * Contains the definition of a trigger comprising of 1 float.
+ * Contains the definition of a trigger comprising of 1 {@code float}.
  */
 public class Trigger1f implements Trigger1fc {
 

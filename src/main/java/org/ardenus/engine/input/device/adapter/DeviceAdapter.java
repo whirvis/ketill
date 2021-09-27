@@ -18,9 +18,9 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.device.DeviceAnalog;
-import org.ardenus.engine.input.device.DeviceButton;
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.analog.DeviceAnalog;
+import org.ardenus.engine.input.device.button.DeviceButton;
 
 /**
  * An adapter which maps input for an {@link InputDevice}.
@@ -762,7 +762,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		MappedAnalog<?> mapping = analogs.get(analog);
 		if (mapping == null) {
 			if (!missingAnalogs.contains(analog)) {
-				log.error("no mapping for analog \"" + analog.name + "\"");
+				log.error("no mapping for analog \"" + analog.name() + "\"");
 				missingAnalogs.add(analog);
 			}
 			return;
@@ -814,7 +814,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		MappedButton mapping = buttons.get(button);
 		if (mapping == null) {
 			if (!missingButtons.contains(button)) {
-				log.error("no mapping for button \"" + button.name + "\"");
+				log.error("no mapping for button \"" + button.name() + "\"");
 				missingButtons.add(button);
 			}
 			return false;

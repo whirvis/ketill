@@ -6,18 +6,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.ardenus.engine.input.Analog;
-
 /**
- * When present, signals to {@link InputDevice} that a field of type
- * {@link AnalogDevice} should be registered automatically on instantiation.
- * Both static and instance fields can be valid for use with this annotation.
+ * When present, signals to {@link InputDevice} that an {@link InputSource}
+ * field should be registered automatically. This will be done during
+ * instantiation. Both static and instance fields may make use of this
+ * annotation.
  * 
- * @see InputDevice#addAnalog(Analog)
+ * @see InputDevice#addSource(InputSource)
  */
 @Documented
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AnalogPresent {
+public @interface SourcePresent {
 	/* I'm a little teapot! */
 }

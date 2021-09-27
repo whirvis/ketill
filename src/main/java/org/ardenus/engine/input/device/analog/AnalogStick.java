@@ -1,7 +1,6 @@
 package org.ardenus.engine.input.device.analog;
 
-import org.ardenus.engine.input.device.DeviceAnalog;
-import org.ardenus.engine.input.device.DeviceButton;
+import org.ardenus.engine.input.device.button.DeviceButton;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 

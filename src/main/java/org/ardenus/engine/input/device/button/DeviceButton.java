@@ -1,17 +1,19 @@
-package org.ardenus.engine.input.device;
+package org.ardenus.engine.input.device.button;
 
 import java.util.Objects;
 
 import org.ardenus.engine.input.Button;
+import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.InputSource;
 
 /**
  * Represents a button that is present on an input device.
  * 
  * @see InputDevice
  */
-public class DeviceButton extends Button {
+public class DeviceButton extends Button implements InputSource<Button1b> {
 
-	public final String name;
+	private final String name;
 
 	/**
 	 * Constructs a new {@code DeviceButton}.
@@ -23,6 +25,16 @@ public class DeviceButton extends Button {
 	 */
 	public DeviceButton(String name) {
 		this.name = Objects.requireNonNull(name, "name");
+	}
+
+	@Override
+	public final String name() {
+		return this.name;
+	}
+
+	@Override
+	public Button1b initial() {
+		return new Button1b();
 	}
 
 }

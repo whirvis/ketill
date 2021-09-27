@@ -70,10 +70,5 @@ public abstract class Analog<V> {
 	 * @return the zeroed out value container.
 	 */
 	public abstract V zero();
-	
-	/* TODO: delete */
-	public V cast(Object value) {
-		return (V) value;
-	}
 
 }
