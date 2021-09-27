@@ -1,9 +1,11 @@
 package org.ardenus.engine.input.device;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -11,8 +13,6 @@ import java.util.Set;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.analog.DeviceAnalog;
-import org.ardenus.engine.input.device.button.DeviceButton;
 
 /**
  * A device which can send and receive input data.
@@ -26,16 +26,19 @@ import org.ardenus.engine.input.device.button.DeviceButton;
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
  * 
+ * @see SupportSources
+ * @see SourcePresent
  * @see DeviceAdapter
  */
 public abstract class InputDevice {
 
 	protected final DeviceAdapter<?> adapter;
+	private final Set<Class<?>> supportedSources;
 	private final Map<InputSource<?>, Object> sources;
 
 	/**
-	 * Constructs a new {@code InputDevice} and registers all device button
-	 * fields annotated with {@link ButtonPresent @ButtonPresent}.
+	 * Constructs a new {@code InputDevice} and registers all input source
+	 * fields annotated with {@link SourcePresent @SourcePresent}.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
@@ -43,13 +46,30 @@ public abstract class InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 * @throws InputException
 	 *             if an input error occurs.
-	 * @see #addAnalog(DeviceAnalog)
-	 * @see #addButton(DeviceButton)
+	 * @see #addSource(InputSource)
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
+		this.supportedSources = new HashSet<>();
 		this.sources = new HashMap<>();
 		this.loadInputSources();
+	}
+
+	/**
+	 * Returns if this input device supports an input source type.
+	 * 
+	 * @param type
+	 *            the input source type class.
+	 * @return {@code true} if this input device supports input sources of
+	 *         {@code type}, {@code false} otherwise.
+	 */
+	public boolean supportsSource(Class<?> type) {
+		for (Class<?> clazz : supportedSources) {
+			if (clazz.isAssignableFrom(type)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -99,12 +119,23 @@ public abstract class InputDevice {
 	 */
 	protected void addSource(InputSource<?> source) {
 		Objects.requireNonNull(source, "source");
+		if (!this.supportsSource(source.getClass())) {
+			throw new InputException("input source not supported");
+		}
 		if (!sources.containsKey(source)) {
 			sources.put(source, source.initial());
 		}
 	}
 
 	private void loadInputSources() {
+		for (Annotation annotation : this.getClass()
+				.getAnnotationsByType(SupportSources.class)) {
+			SupportSources support = (SupportSources) annotation;
+			for (Class<?> clazz : support.value()) {
+				supportedSources.add(clazz);
+			}
+		}
+
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (!field.isAnnotationPresent(SourcePresent.class)) {
 				continue;
