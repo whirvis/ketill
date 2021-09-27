@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -182,8 +183,9 @@ public abstract class InputDevice {
 	 */
 	public void poll() {
 		adapter.poll();
-
-		/* TODO: poll adapter for source data */
+		for (Entry<InputSource<?>, Object> entry : sources.entrySet()) {
+			adapter.update(entry.getKey(), entry.getValue());
+		}
 	}
 
 }

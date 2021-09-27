@@ -6,7 +6,7 @@ import org.ardenus.engine.input.device.analog.AnalogTrigger;
 /**
  * An {@link AnalogTrigger} mapping for use with a {@link GLFWDeviceAdapter}.
  */
-public class GLFWMappedAnalogTrigger extends GLFWMappedAnalog<AnalogTrigger> {
+public class GLFWAnalogTriggerMapping extends GLFWAnalogMapping<AnalogTrigger> {
 
 	public final int glfwAxis;
 
@@ -20,7 +20,7 @@ public class GLFWMappedAnalogTrigger extends GLFWMappedAnalog<AnalogTrigger> {
 	 * @throws NullPointerException
 	 *             if {@code analog} is {@code null}.
 	 */
-	public GLFWMappedAnalogTrigger(AnalogTrigger analog, int glfwAxis) {
+	public GLFWAnalogTriggerMapping(AnalogTrigger analog, int glfwAxis) {
 		super(analog);
 		this.glfwAxis = glfwAxis;
 	}

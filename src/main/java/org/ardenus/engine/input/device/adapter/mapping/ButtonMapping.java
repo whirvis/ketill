@@ -1,7 +1,6 @@
-package org.ardenus.engine.input.device.adapter;
+package org.ardenus.engine.input.device.adapter.mapping;
 
-import java.util.Objects;
-
+import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.button.DeviceButton;
 
 /**
@@ -25,11 +24,12 @@ import org.ardenus.engine.input.device.button.DeviceButton;
  * }
  * </pre>
  * 
- * @see ButtonMapping
+ * @param <B>
+ *            the device button type.
+ * @see InputMapping
+ * @see AnalogMapping
  */
-public abstract class MappedButton {
-
-	public final DeviceButton button;
+public abstract class ButtonMapping extends InputMapping<DeviceButton> {
 
 	/**
 	 * Constructs a new {@code MappedButton}.
@@ -39,8 +39,8 @@ public abstract class MappedButton {
 	 * @throws NullPointerException
 	 *             if {@code button} is {@code null}.
 	 */
-	public MappedButton(DeviceButton button) {
-		this.button = Objects.requireNonNull(button, "button");
+	public ButtonMapping(DeviceButton button) {
+		super(button);
 	}
 
 }

@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.glfw.analog;
 
-import org.ardenus.engine.input.device.adapter.MappedAnalog;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
+import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.analog.DeviceAnalog;
 
 /**
@@ -10,8 +10,8 @@ import org.ardenus.engine.input.device.analog.DeviceAnalog;
  * @param <A>
  *            the analog input type.
  */
-public class GLFWMappedAnalog<A extends DeviceAnalog<?>>
-		extends MappedAnalog<A> {
+public class GLFWAnalogMapping<A extends DeviceAnalog<?>>
+		extends AnalogMapping<A> {
 
 	/**
 	 * Constructs a new {@code GLFWMappedAnalog}.
@@ -21,7 +21,7 @@ public class GLFWMappedAnalog<A extends DeviceAnalog<?>>
 	 * @throws NullPointerException
 	 *             if {@code analog} is {@code null}.
 	 */
-	public GLFWMappedAnalog(A analog) {
+	public GLFWAnalogMapping(A analog) {
 		super(analog);
 	}
 

@@ -1,12 +1,12 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
-import org.ardenus.engine.input.device.adapter.MappedButton;
+import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.button.DeviceButton;
 
 /**
  * A {@link DeviceButton} mapping for use with a {@link GLFWDeviceAdapter}.
  */
-public class GLFWMappedButton extends MappedButton {
+public class GLFWButtonMapping extends ButtonMapping {
 
 	public final int glfwButton;
 
@@ -20,7 +20,7 @@ public class GLFWMappedButton extends MappedButton {
 	 * @throws NullPointerException
 	 *             if {@code button} is {@code null}.
 	 */
-	public GLFWMappedButton(DeviceButton button, int glfwButton) {
+	public GLFWButtonMapping(DeviceButton button, int glfwButton) {
 		super(button);
 		this.glfwButton = glfwButton;
 	}

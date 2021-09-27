@@ -7,17 +7,14 @@ import java.nio.FloatBuffer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.adapter.AnalogAdapter;
-import org.ardenus.engine.input.device.adapter.ButtonAdapter;
-import org.ardenus.engine.input.device.adapter.MappedAnalog;
-import org.ardenus.engine.input.device.adapter.MappedButton;
+import org.ardenus.engine.input.device.adapter.SourceAdapter;
+import org.ardenus.engine.input.device.adapter.glfw.GLFWButtonMapping;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
-import org.ardenus.engine.input.device.adapter.glfw.GLFWMappedButton;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalog;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogStick;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWMappedAnalogTrigger;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMapping;
+import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogTriggerMapping;
+import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
+import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.analog.Trigger1f;
-import org.ardenus.engine.input.device.button.DeviceButton;
 import org.joml.Vector3f;
 
 /**
@@ -25,13 +22,9 @@ import org.joml.Vector3f;
  *
  * @param <I>
  *            the input device type.
- * @param <A>
- *            the analog input type.
- * @param <B>
- *            the button type.
  * @see GLFWDeviceAdapter
  * @see GLFWMappedAnalog
- * @see GLFWMappedButton
+ * @see GLFWButtonMapping
  */
 public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		extends GLFWDeviceAdapter<I> {
@@ -49,12 +42,21 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 	 *            the GLFW joystick ID.
 	 * @throws InputException
 	 *             if an input error occurs.
-	 * @see #map(MappedAnalog)
-	 * @see #map(MappedButton)
+	 * @see #map(AnalogMapping)
+	 * @see #map(ButtonMapping)
 	 */
 	public GLFWJoystickAdapter(long ptr_glfwWindow, int glfwJoystick) {
 		super(ptr_glfwWindow);
 		this.glfwJoystick = glfwJoystick;
+	}
+
+	protected boolean isPressed(GLFWAnalogStickMapping mapping) {
+		GLFWButtonMapping zMapping =
+				(GLFWButtonMapping) this.getMapping(mapping.source.zButton);
+		if (zMapping == null) {
+			return false;
+		}
+		return buttons.get(zMapping.glfwButton) > 0;
 	}
 
 	@Override
@@ -62,25 +64,22 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		return glfwJoystickPresent(glfwJoystick);
 	}
 
-	@AnalogAdapter
-	public void updateAnalogStick(GLFWMappedAnalogStick mapping,
+	@SourceAdapter
+	public void updateAnalogStick(GLFWAnalogStickMapping mapping,
 			Vector3f stick) {
 		stick.x = axes.get(mapping.glfwAxisX);
 		stick.y = axes.get(mapping.glfwAxisY);
-		DeviceButton zButton = mapping.analog.zButton;
-		if (zButton != null) {
-			stick.z = this.isPressed(zButton) ? -1.0F : 0.0F;
-		}
+		stick.z = this.isPressed(mapping) ? -1.0F : 0.0F;
 	}
 
-	@AnalogAdapter
-	public void updateAnalogTrigger(GLFWMappedAnalogTrigger mapping,
+	@SourceAdapter
+	public void updateAnalogTrigger(GLFWAnalogTriggerMapping mapping,
 			Trigger1f trigger) {
 		trigger.force = axes.get(mapping.glfwAxis);
 	}
 
-	@ButtonAdapter
-	public boolean isPressed(GLFWMappedButton mapped) {
+	@SourceAdapter
+	public boolean isPressed(GLFWButtonMapping mapped) {
 		return buttons.get(mapped.glfwButton) > 0;
 	}
 
