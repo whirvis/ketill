@@ -70,17 +70,8 @@ public abstract class Analog<V> {
 	 * @return the zeroed out value container.
 	 */
 	public abstract V zero();
-
-	/**
-	 * Casts an object to the analog input's value type.
-	 * 
-	 * @param value
-	 *            the value object.
-	 * @return {@code value} as given, but casted.
-	 * @throws ClassCastException
-	 *             if {@code value} cannot be cast.
-	 */
-	@SuppressWarnings("unchecked")
+	
+	/* TODO: delete */
 	public V cast(Object value) {
 		return (V) value;
 	}
