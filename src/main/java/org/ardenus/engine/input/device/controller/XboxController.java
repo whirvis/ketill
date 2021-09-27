@@ -13,29 +13,34 @@ import org.ardenus.engine.input.device.analog.AnalogTrigger;
  */
 public class XboxController extends Controller {
 
+	/* @formatter: off */
 	@SourcePresent
-	public static final ControllerButton BUTTON_A = new ControllerButton("A"),
-			BUTTON_B = new ControllerButton("B"),
-			BUTTON_X = new ControllerButton("X"),
-			BUTTON_Y = new ControllerButton("Y"),
-			BUTTON_LB = new ControllerButton("LB"),
-			BUTTON_RB = new ControllerButton("RB"),
-			BUTTON_MENU = new ControllerButton("Menu"),
-			BUTTON_PAUSE = new ControllerButton("Pause"),
-			BUTTON_LS = new ControllerButton("LS"),
-			BUTTON_RS = new ControllerButton("RS"),
-			BUTTON_UP = new ControllerButton("Up", Direction.UP),
-			BUTTON_DOWN = new ControllerButton("Down", Direction.DOWN),
-			BUTTON_LEFT = new ControllerButton("Left", Direction.LEFT),
-			BUTTON_RIGHT = new ControllerButton("Right", Direction.RIGHT);
+	public static final ControllerButton
+			A = new ControllerButton("A"),
+			B = new ControllerButton("B"),
+			X = new ControllerButton("X"),
+			Y = new ControllerButton("Y"),
+			LB = new ControllerButton("LB"),
+			RB = new ControllerButton("RB"),
+			GUIDE = new ControllerButton("Menu"),
+			START = new ControllerButton("Pause"),
+			THUMB_L = new ControllerButton("LS"),
+			THUMB_R = new ControllerButton("RS"),
+			UP = new ControllerButton("Up", Direction.UP),
+			RIGHT = new ControllerButton("Right", Direction.RIGHT),
+			DOWN = new ControllerButton("Down", Direction.DOWN),
+			LEFT = new ControllerButton("Left", Direction.LEFT);
 
 	@SourcePresent
-	public static final AnalogTrigger TRIGGER_L = new AnalogTrigger("LT"),
-			TRIGGER_R = new AnalogTrigger("RT");
+	public static final AnalogTrigger
+			LT = new AnalogTrigger("LT"),
+			RT = new AnalogTrigger("RT");
 
 	@SourcePresent
-	public static final AnalogStick STICK_L = new AnalogStick("LS", BUTTON_LS),
-			STICK_R = new AnalogStick("RS", BUTTON_RS);
+	public static final AnalogStick
+			LS = new AnalogStick("LS", THUMB_L),
+			RS = new AnalogStick("RS", THUMB_R);
+	/* @formatter: on */
 
 	/**
 	 * Constructs a new {@code XboxController}.
