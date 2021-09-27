@@ -1,7 +1,15 @@
 package org.ardenus.engine.input.device.controller;
 
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.SupportSources;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
+import org.ardenus.engine.input.device.analog.AnalogStick;
+import org.ardenus.engine.input.device.analog.AnalogTrigger;
+import org.ardenus.engine.input.device.analog.DeviceAnalog;
+import org.ardenus.engine.input.device.analog.Trigger1fc;
+import org.ardenus.engine.input.device.button.Button1bc;
+import org.ardenus.engine.input.device.button.DeviceButton;
+import org.joml.Vector3fc;
 
 /**
  * A controller which and can send receive input data.
@@ -15,10 +23,9 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the controller once on every application update.
  */
+@SupportSources({ DeviceButton.class, DeviceAnalog.class })
 public abstract class Controller extends InputDevice {
 
-	/* TODO: re-implement directions */
-	
 	/**
 	 * Constructs a new {@code Controller}.
 	 * 
@@ -31,9 +38,40 @@ public abstract class Controller extends InputDevice {
 		super(adapter);
 	}
 
-	@Override
-	public void poll() {
-		super.poll();
+	/**
+	 * Returns if a button is pressed.
+	 * 
+	 * @param button
+	 *            the button to check.
+	 * @return {@code true} if {@code button} is pressed, {@code false}
+	 *         otherwise.
+	 */
+	public boolean isPressed(DeviceButton button) {
+		Button1bc value = this.getValue(button);
+		return value.pressed();
+	}
+
+	/**
+	 * Returns the position of an analog stick.
+	 * 
+	 * @param stick
+	 *            the analog stick.
+	 * @return the position of {@code stick}.
+	 */
+	public Vector3fc getPosition(AnalogStick stick) {
+		return this.getValue(stick);
+	}
+
+	/**
+	 * Returns the force of an analog trigger.
+	 * 
+	 * @param trigger
+	 *            the analog trigger.
+	 * @return the force of {@code trigger}.
+	 */
+	public float getForce(AnalogTrigger trigger) {
+		Trigger1fc value = this.getValue(trigger);
+		return value.force();
 	}
 
 }
