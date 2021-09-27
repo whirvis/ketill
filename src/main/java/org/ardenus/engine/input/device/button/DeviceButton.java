@@ -11,7 +11,7 @@ import org.ardenus.engine.input.device.InputSource;
  * 
  * @see InputDevice
  */
-public class DeviceButton extends Button implements InputSource<Button1b> {
+public class DeviceButton extends Button implements InputSource<Button1bc> {
 
 	private final String name;
 
@@ -33,7 +33,7 @@ public class DeviceButton extends Button implements InputSource<Button1b> {
 	}
 
 	@Override
-	public Button1b initial() {
+	public Button1bc initial() {
 		return new Button1b();
 	}
 

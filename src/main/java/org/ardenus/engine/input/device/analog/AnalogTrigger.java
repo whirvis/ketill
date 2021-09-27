@@ -3,7 +3,7 @@ package org.ardenus.engine.input.device.analog;
 /**
  * Represents an analog trigger on an input device.
  */
-public class AnalogTrigger extends DeviceAnalog<Trigger1f> {
+public class AnalogTrigger extends DeviceAnalog<Trigger1fc> {
 
 	/**
 	 * Constructs a new {@code AnalogTrigger}.
@@ -14,11 +14,11 @@ public class AnalogTrigger extends DeviceAnalog<Trigger1f> {
 	 *             if {@code name} is {@code null}.
 	 */
 	public AnalogTrigger(String name) {
-		super(Trigger1f.class, name);
+		super(Trigger1fc.class, name);
 	}
 
 	@Override
-	public Trigger1f zero() {
+	public Trigger1fc zero() {
 		return new Trigger1f();
 	}
 
