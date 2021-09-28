@@ -1,11 +1,9 @@
 package org.ardenus.engine.input.device.controller;
 
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.SupportSources;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
 import org.ardenus.engine.input.device.analog.AnalogTrigger;
-import org.ardenus.engine.input.device.analog.DeviceAnalog;
 import org.ardenus.engine.input.device.analog.Trigger1fc;
 import org.ardenus.engine.input.device.button.Button1bc;
 import org.ardenus.engine.input.device.button.DeviceButton;
@@ -23,7 +21,6 @@ import org.joml.Vector3fc;
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the controller once on every application update.
  */
-@SupportSources({ DeviceButton.class, DeviceAnalog.class })
 public abstract class Controller extends InputDevice {
 
 	/**

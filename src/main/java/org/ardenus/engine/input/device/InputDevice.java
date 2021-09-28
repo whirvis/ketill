@@ -1,11 +1,9 @@
 package org.ardenus.engine.input.device;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -33,7 +31,6 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 public abstract class InputDevice {
 
 	protected final DeviceAdapter<?> adapter;
-	private final Set<Class<?>> supportedSources;
 	private final Map<InputSource<?>, Object> sources;
 
 	/**
@@ -50,26 +47,8 @@ public abstract class InputDevice {
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
-		this.supportedSources = new HashSet<>();
 		this.sources = new HashMap<>();
 		this.loadInputSources();
-	}
-
-	/**
-	 * Returns if this input device supports an input source type.
-	 * 
-	 * @param type
-	 *            the input source type class.
-	 * @return {@code true} if this input device supports input sources of
-	 *         {@code type}, {@code false} otherwise.
-	 */
-	public boolean supportsSource(Class<?> type) {
-		for (Class<?> clazz : supportedSources) {
-			if (clazz.isAssignableFrom(type)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -119,23 +98,12 @@ public abstract class InputDevice {
 	 */
 	protected void addSource(InputSource<?> source) {
 		Objects.requireNonNull(source, "source");
-		if (!this.supportsSource(source.getClass())) {
-			throw new InputException("input source not supported");
-		}
 		if (!sources.containsKey(source)) {
 			sources.put(source, source.initial());
 		}
 	}
 
 	private void loadInputSources() {
-		for (Annotation annotation : this.getClass()
-				.getAnnotationsByType(SupportSources.class)) {
-			SupportSources support = (SupportSources) annotation;
-			for (Class<?> clazz : support.value()) {
-				supportedSources.add(clazz);
-			}
-		}
-
 		for (Field field : this.getClass().getDeclaredFields()) {
 			if (!field.isAnnotationPresent(SourcePresent.class)) {
 				continue;
