@@ -2,10 +2,10 @@ package org.ardenus.engine.input.device.controller;
 
 import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.FeaturePresent;
-import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
 import org.ardenus.engine.input.device.analog.AnalogTrigger;
+import org.ardenus.engine.input.device.rumble.RumbleMotor;
 
 /**
  * A Microsoft XBOX controller.
@@ -41,6 +41,11 @@ public class XboxController extends Controller {
 	public static final AnalogStick
 			LS = new AnalogStick("LS", THUMB_L),
 			RS = new AnalogStick("RS", THUMB_R);
+	
+	@FeaturePresent
+	public static final RumbleMotor
+			RUMBLE_COARSE = new RumbleMotor("Coarse"),
+			RUMBLE_FINE = new RumbleMotor("Fine");
 	/* @formatter: on */
 
 	/**
