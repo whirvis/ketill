@@ -24,18 +24,17 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
  * 
- * @see SupportSources
- * @see SourcePresent
+ * @see FeaturePresent
  * @see DeviceAdapter
  */
 public abstract class InputDevice {
 
 	protected final DeviceAdapter<?> adapter;
-	private final Map<InputSource<?>, Object> sources;
+	private final Map<DeviceFeature<?>, Object> features;
 
 	/**
-	 * Constructs a new {@code InputDevice} and registers all input source
-	 * fields annotated with {@link SourcePresent @SourcePresent}.
+	 * Constructs a new {@code InputDevice} and registers all device feature
+	 * fields annotated with {@link FeaturePresent @FeaturePresent}.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
@@ -43,82 +42,81 @@ public abstract class InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 * @throws InputException
 	 *             if an input error occurs.
-	 * @see #addSource(InputSource)
+	 * @see #addFeature(DeviceFeature)
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
-		this.sources = new HashMap<>();
-		this.loadInputSources();
+		this.features = new HashMap<>();
+		this.loadFeatures();
 	}
 
 	/**
-	 * Returns if a source is registered to this input device.
+	 * Returns if a feature is registered to this input device.
 	 * 
-	 * @param source
-	 *            the input source to check for.
-	 * @return {@code true} if {@code source} is registered, {@code false}
+	 * @param feature
+	 *            the feature to check for.
+	 * @return {@code true} if {@code feature} is registered, {@code false}
 	 *         otherwise.
 	 */
-	public boolean hasSource(InputSource<?> source) {
-		if (source != null) {
-			return sources.containsKey(source);
+	public boolean hasFeature(DeviceFeature<?> feature) {
+		if (feature != null) {
+			return features.containsKey(feature);
 		}
 		return false;
 	}
 
 	/**
-	 * Returns all sources registered to this input device.
+	 * Returns all features registered to this input device.
 	 * 
-	 * @return all sources registered to this input device.
+	 * @return all features registered to this input device.
 	 */
-	public Set<InputSource<?>> getSources() {
-		return Collections.unmodifiableSet(sources.keySet());
+	public Set<DeviceFeature<?>> getFeatures() {
+		return Collections.unmodifiableSet(features.keySet());
 	}
 
 	/**
-	 * Registers an input source to this input device.
+	 * Registers a device feature to this input device.
 	 * <p>
-	 * When a source is registered, it is stored alongside an instance of its
-	 * initial state. If {@code source} is already registered, its current state
-	 * will not be reset to its initial value.
+	 * When a feature is registered, it is stored alongside an instance of its
+	 * initial state. If {@code feature} is already registered, its current
+	 * state will not be reset to its initial value.
 	 * <p>
 	 * <b>Note:</b> This method can be called before {@code InputDevice} is
-	 * finished constructing, as it is called by the {@link #loadInputSources()}
+	 * finished constructing, as it is called by the {@link #loadFeatures()}
 	 * method (which is called inside the constructor). As such, extending
 	 * classes should take care to write code around this fact should they
 	 * override this method.
 	 * 
-	 * @param source
-	 *            the input source to register.
+	 * @param feature
+	 *            the feature to register.
 	 * @throws NullPointerException
-	 *             if {@code source} is {@code null}.
+	 *             if {@code feature} is {@code null}.
 	 * @throws InputException
-	 *             if {@code source} is not supported.
-	 * @see SupportSources
+	 *             if {@code feature} is not supported.
 	 */
-	protected void addSource(InputSource<?> source) {
-		Objects.requireNonNull(source, "source");
-		if (!sources.containsKey(source)) {
-			sources.put(source, source.initial());
+	protected void addFeature(DeviceFeature<?> feature) {
+		Objects.requireNonNull(feature, "feature");
+		if (!features.containsKey(feature)) {
+			features.put(feature, feature.initial());
 		}
 	}
 
-	private void loadInputSources() {
+	private void loadFeatures() {
 		for (Field field : this.getClass().getDeclaredFields()) {
-			if (!field.isAnnotationPresent(SourcePresent.class)) {
+			if (!field.isAnnotationPresent(FeaturePresent.class)) {
 				continue;
 			}
 
 			/*
-			 * Require that all present sources be public. This is to ensure
+			 * Require that all present features be public. This is to ensure
 			 * that they are accessible to this class. Not to mention, it makes
-			 * no sense as to why an input source field would be hidden. Their
-			 * entire purpose is to make it easier to fetch the value of an
-			 * input source!
+			 * no sense as to why a feature field would be hidden. Their entire
+			 * purpose is to make it easier to fetch the value of a device
+			 * feature!
 			 */
 			int mods = field.getModifiers();
 			if (!Modifier.isPublic(mods)) {
-				throw new InputException("input source with name \""
+				throw new InputException("device feature with name \""
 						+ field.getName() + " in class "
 						+ this.getClass().getName() + "must be public");
 			}
@@ -126,11 +124,11 @@ public abstract class InputDevice {
 			try {
 				boolean statik = Modifier.isStatic(mods);
 				Object obj = field.get(statik ? null : this);
-				InputSource<?> source = (InputSource<?>) obj;
-				if (this.hasSource(source)) {
-					throw new InputException("input source already mapped");
+				DeviceFeature<?> feature = (DeviceFeature<?>) obj;
+				if (this.hasFeature(feature)) {
+					throw new InputException("device feature already mapped");
 				}
-				this.addSource(source);
+				this.addFeature(feature);
 			} catch (IllegalAccessException e) {
 				throw new InputException("failure to access", e);
 			}
@@ -138,26 +136,26 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Returns the current value of an input source.
+	 * Returns the current value of a device feature.
 	 * 
 	 * @param <T>
-	 *            the input source value type.
-	 * @param source
-	 *            the input source whose value to fetch.
-	 * @return the current value of {@code source}.
+	 *            the feature value type.
+	 * @param feature
+	 *            the feature whose state to fetch.
+	 * @return the current value of {@code feature}.
 	 * @throws NullPointerException
-	 *             if {@code source} is {@code null}.
+	 *             if {@code feature} is {@code null}.
 	 * @throws IllegalArgumentException
-	 *             if {@code source} is not registered.
-	 * @see #addSource(InputSource)
+	 *             if {@code feature} is not registered.
+	 * @see #addFeature(DeviceFeature)
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T getValue(InputSource<T> source) {
-		Objects.requireNonNull(source, "source");
-		T value = (T) sources.get(source);
+	public <T> T getState(DeviceFeature<T> feature) {
+		Objects.requireNonNull(feature, "feature");
+		T value = (T) features.get(feature);
 		if (value == null) {
 			throw new IllegalArgumentException(
-					"no such source \"" + source.name() + "\"");
+					"no such feature \"" + feature.name() + "\"");
 		}
 		return value;
 	}
@@ -182,7 +180,7 @@ public abstract class InputDevice {
 	 */
 	public void poll() {
 		adapter.poll();
-		for (Entry<InputSource<?>, Object> entry : sources.entrySet()) {
+		for (Entry<DeviceFeature<?>, Object> entry : features.entrySet()) {
 			adapter.update(entry.getKey(), entry.getValue());
 		}
 	}

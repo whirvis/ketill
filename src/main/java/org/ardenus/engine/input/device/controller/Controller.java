@@ -1,5 +1,6 @@
 package org.ardenus.engine.input.device.controller;
 
+import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
@@ -44,7 +45,7 @@ public abstract class Controller extends InputDevice {
 	 *         otherwise.
 	 */
 	public boolean isPressed(DeviceButton button) {
-		Button1bc value = this.getValue(button);
+		Button1bc value = this.getState(button);
 		return value.pressed();
 	}
 
@@ -56,7 +57,7 @@ public abstract class Controller extends InputDevice {
 	 * @return the position of {@code stick}.
 	 */
 	public Vector3fc getPosition(AnalogStick stick) {
-		return this.getValue(stick);
+		return this.getState(stick);
 	}
 
 	/**
@@ -67,7 +68,7 @@ public abstract class Controller extends InputDevice {
 	 * @return the force of {@code trigger}.
 	 */
 	public float getForce(AnalogTrigger trigger) {
-		Trigger1fc value = this.getValue(trigger);
+		Trigger1fc value = this.getState(trigger);
 		return value.force();
 	}
 

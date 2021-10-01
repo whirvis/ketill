@@ -26,11 +26,11 @@ import org.ardenus.engine.input.device.analog.DeviceAnalog;
  * 
  * @param <A>
  *            the device analog type.
- * @see InputMapping
+ * @see FeatureMapping
  * @see ButtonMapping
  */
 public abstract class AnalogMapping<A extends DeviceAnalog<?>>
-		extends InputMapping<A> {
+		extends FeatureMapping<A> {
 
 	/**
 	 * Constructs a new {@code MappedAnalog}.

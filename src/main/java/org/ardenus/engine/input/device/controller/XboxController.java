@@ -1,7 +1,8 @@
 package org.ardenus.engine.input.device.controller;
 
 import org.ardenus.engine.input.Direction;
-import org.ardenus.engine.input.device.SourcePresent;
+import org.ardenus.engine.input.device.FeaturePresent;
+import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
 import org.ardenus.engine.input.device.analog.AnalogTrigger;
@@ -14,7 +15,7 @@ import org.ardenus.engine.input.device.analog.AnalogTrigger;
 public class XboxController extends Controller {
 
 	/* @formatter: off */
-	@SourcePresent
+	@FeaturePresent
 	public static final ControllerButton
 			A = new ControllerButton("A"),
 			B = new ControllerButton("B"),
@@ -31,12 +32,12 @@ public class XboxController extends Controller {
 			DOWN = new ControllerButton("Down", Direction.DOWN),
 			LEFT = new ControllerButton("Left", Direction.LEFT);
 
-	@SourcePresent
+	@FeaturePresent
 	public static final AnalogTrigger
 			LT = new AnalogTrigger("LT"),
 			RT = new AnalogTrigger("RT");
 
-	@SourcePresent
+	@FeaturePresent
 	public static final AnalogStick
 			LS = new AnalogStick("LS", THUMB_L),
 			RS = new AnalogStick("RS", THUMB_R);

@@ -4,14 +4,14 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.Button;
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.InputSource;
+import org.ardenus.engine.input.device.DeviceFeature;
 
 /**
  * Represents a button that is present on an input device.
  * 
  * @see InputDevice
  */
-public class DeviceButton extends Button implements InputSource<Button1bc> {
+public class DeviceButton extends Button implements DeviceFeature<Button1bc> {
 
 	private final String name;
 

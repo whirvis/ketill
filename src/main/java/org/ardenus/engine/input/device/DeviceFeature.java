@@ -4,30 +4,36 @@ package org.ardenus.engine.input.device;
  * A feature for an {@link InputDevice}.
  *
  * @param <T>
- *            the feature container type.
+ *            the container type.
  * @see InputDevice#addFeature(DeviceFeature)
  */
-public abstract class DeviceFeature<T> {
-
-	public final boolean optional;
+public interface DeviceFeature<T> {
 
 	/**
-	 * Constructs a new {@code DeviceFeature}.
+	 * Returns the name of this feature.
 	 * 
-	 * @param optional
-	 *            {@code true} if this feature is optional, {@code false}
-	 *            otherwise. If a feature is marked as optional, then a device
-	 *            adapter can leave it unimplemented.
+	 * @return the name of this feature.
 	 */
-	public DeviceFeature(boolean optional) {
-		this.optional = optional;
-	}
-	
+	public String name();
+
 	/**
 	 * Creates a container for the initial state of this feature.
 	 * 
 	 * @return the created container.
 	 */
-	public abstract T initial();
+	public T initial();
+
+	/**
+	 * Returns if this feature is optional.
+	 * <p>
+	 * If a feature is not optional, an implementation defined error will be
+	 * generated if it is not present.
+	 * 
+	 * @return {@code true} if this feature is optional, {@code false}
+	 *         otherwise.
+	 */
+	public default boolean optional() {
+		return true;
+	}
 
 }

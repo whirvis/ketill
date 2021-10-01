@@ -10,10 +10,10 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 
 /**
  * When present, signals to a {@link DeviceAdapter} that a field of type
- * {@link InputMapping} should be mapped automatically on instantiation. Both
+ * {@link FeatureMapping} should be mapped automatically on instantiation. Both
  * static and instance fields are valid for use with this annotation.
  * 
- * @see DeviceAdapter#map(InputMapping)
+ * @see DeviceAdapter#map(FeatureMapping)
  */
 @Documented
 @Target(ElementType.FIELD)

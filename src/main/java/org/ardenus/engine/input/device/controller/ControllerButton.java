@@ -26,7 +26,7 @@ public class ControllerButton extends DeviceButton {
 	 *             if {@code name} is {@code null}.
 	 */
 	public ControllerButton(String name, Direction direction) {
-		super(name);
+		super(name != null ? name + " button" : null);
 		this.direction = direction;
 	}
 

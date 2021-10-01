@@ -7,7 +7,7 @@ import java.nio.FloatBuffer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.adapter.SourceAdapter;
+import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWButtonMapping;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMapping;
@@ -52,7 +52,7 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 
 	protected boolean isPressed(GLFWAnalogStickMapping mapping) {
 		GLFWButtonMapping zMapping =
-				(GLFWButtonMapping) this.getMapping(mapping.source.zButton);
+				(GLFWButtonMapping) this.getMapping(mapping.feature.zButton);
 		if (zMapping == null) {
 			return false;
 		}
@@ -64,7 +64,7 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		return glfwJoystickPresent(glfwJoystick);
 	}
 
-	@SourceAdapter
+	@FeatureAdapter
 	public void updateAnalogStick(GLFWAnalogStickMapping mapping,
 			Vector3f stick) {
 		stick.x = axes.get(mapping.glfwAxisX);
@@ -72,13 +72,13 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		stick.z = this.isPressed(mapping) ? -1.0F : 0.0F;
 	}
 
-	@SourceAdapter
+	@FeatureAdapter
 	public void updateAnalogTrigger(GLFWAnalogTriggerMapping mapping,
 			Trigger1f trigger) {
 		trigger.force = axes.get(mapping.glfwAxis);
 	}
 
-	@SourceAdapter
+	@FeatureAdapter
 	public boolean isPressed(GLFWButtonMapping mapped) {
 		return buttons.get(mapped.glfwButton) > 0;
 	}

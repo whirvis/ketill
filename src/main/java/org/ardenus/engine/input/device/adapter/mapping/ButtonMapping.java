@@ -26,10 +26,10 @@ import org.ardenus.engine.input.device.button.DeviceButton;
  * 
  * @param <B>
  *            the device button type.
- * @see InputMapping
+ * @see FeatureMapping
  * @see AnalogMapping
  */
-public abstract class ButtonMapping extends InputMapping<DeviceButton> {
+public abstract class ButtonMapping extends FeatureMapping<DeviceButton> {
 
 	/**
 	 * Constructs a new {@code MappedButton}.

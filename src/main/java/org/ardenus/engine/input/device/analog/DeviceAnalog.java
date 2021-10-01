@@ -2,7 +2,7 @@ package org.ardenus.engine.input.device.analog;
 
 import org.ardenus.engine.input.Analog;
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.InputSource;
+import org.ardenus.engine.input.device.DeviceFeature;
 
 /**
  * Represents an analog input that is present on an input device.
@@ -12,7 +12,7 @@ import org.ardenus.engine.input.device.InputSource;
  * @see InputDevice
  */
 public abstract class DeviceAnalog<T> extends Analog<T>
-		implements InputSource<T> {
+		implements DeviceFeature<T> {
 
 	private final String name;
 

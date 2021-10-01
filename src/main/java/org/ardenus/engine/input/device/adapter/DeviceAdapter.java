@@ -17,11 +17,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.InputSource;
+import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.adapter.mapping.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
-import org.ardenus.engine.input.device.adapter.mapping.InputMapping;
+import org.ardenus.engine.input.device.adapter.mapping.FeatureMapping;
 
 /**
  * An adapter which maps input for an {@link InputDevice}.
@@ -46,24 +46,24 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 
 	private final Map<Class<?>, Method> adapters;
 	private final Map<Class<?>, Class<?>> adapterHierarchy;
-	private final Map<InputSource<?>, InputMapping<?>> mappings;
-	private final Set<InputSource<?>> absentMappings;
+	private final Map<DeviceFeature<?>, FeatureMapping<?>> mappings;
+	private final Set<DeviceFeature<?>> absentMappings;
 
 	public DeviceAdapter() {
 		this.log = LogManager.getLogger(this.getClass());
 
 		this.adapters = new HashMap<>();
 		this.adapterHierarchy = new HashMap<>();
-		this.loadSourceAdapters();
+		this.loadFeatureAdapters();
 
 		this.mappings = new HashMap<>();
 		this.absentMappings = new HashSet<>();
 		this.loadInputMappings();
 	}
 
-	private void loadSourceAdapters() {
+	private void loadFeatureAdapters() {
 		for (Method method : this.getClass().getDeclaredMethods()) {
-			SourceAdapter adapter = method.getAnnotation(SourceAdapter.class);
+			FeatureAdapter adapter = method.getAnnotation(FeatureAdapter.class);
 			if (adapter == null) {
 				continue;
 			}
@@ -101,7 +101,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			}
 
 			Class<?> adapterType = params[0].getType();
-			if (!InputMapping.class.isAssignableFrom(adapterType)) {
+			if (!FeatureMapping.class.isAssignableFrom(adapterType)) {
 				throw new InputException("TODO");
 			}
 
@@ -146,18 +146,18 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Returns if the adapter has a mapping for an input source.
+	 * Returns if the adapter has a mapping for a device feature.
 	 * 
-	 * @param source
-	 *            the input source to check for.
-	 * @return {@code true} if a mapping exists for {@code source},
+	 * @param feature
+	 *            the feature to check for.
+	 * @return {@code true} if a mapping exists for {@code feature},
 	 *         {@code false} otherwise.
 	 */
-	public boolean hasMapping(InputSource<?> source) {
-		if (source == null) {
+	public boolean hasMapping(DeviceFeature<?> feature) {
+		if (feature == null) {
 			return false;
 		}
-		return mappings.containsKey(source);
+		return mappings.containsKey(feature);
 	}
 
 	/**
@@ -168,26 +168,26 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return {@code true} if {@code mapping} is registered to this adapter,
 	 *         {@code false} otherwise.
 	 */
-	public boolean hasMapping(InputMapping<?> mapping) {
+	public boolean hasMapping(FeatureMapping<?> mapping) {
 		if (mapping == null) {
 			return false;
 		}
-		return this.hasMapping(mapping.source);
+		return this.hasMapping(mapping.feature);
 	}
 
 	/**
-	 * Returns the input mapping for an input source.
+	 * Returns the input mapping for a device feature.
 	 * 
-	 * @param source
-	 *            the input source.
-	 * @return the mapping for {@code source}, {@code null} if none is
+	 * @param feature
+	 *            the feature whose mapping to retrieve.
+	 * @return the mapping for {@code feature}, {@code null} if none is
 	 *         registered.
 	 */
-	protected InputMapping<?> getMapping(InputSource<?> source) {
-		if (source == null) {
+	protected FeatureMapping<?> getMapping(DeviceFeature<?> feature) {
+		if (feature == null) {
 			return null;
 		}
-		return mappings.get(source);
+		return mappings.get(feature);
 	}
 
 	/**
@@ -201,10 +201,10 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws InputException
 	 *             if no adapter exists for {@code mapping}.
 	 */
-	protected DeviceAdapter<I> map(InputMapping<?> mapping) {
+	protected DeviceAdapter<I> map(FeatureMapping<?> mapping) {
 		Objects.requireNonNull(mapping, "mapping");
 		this.requireAdapter(mapping.getClass());
-		mappings.put(mapping.source, mapping);
+		mappings.put(mapping.feature, mapping);
 		return this;
 	}
 
@@ -222,9 +222,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws InputException
 	 *             if no adapter exists for {@code mappings}.
 	 */
-	protected DeviceAdapter<I> map(InputMapping<?>... mappings) {
+	protected DeviceAdapter<I> map(FeatureMapping<?>... mappings) {
 		Objects.requireNonNull(mappings, "mappings");
-		for (InputMapping<?> mapping : mappings) {
+		for (FeatureMapping<?> mapping : mappings) {
 			this.map(mapping);
 		}
 		return this;
@@ -233,16 +233,16 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	/**
 	 * Unregisters an input mapping from this adapter.
 	 * 
-	 * @param source
-	 *            the source whose mapping to unregister.
-	 * @return {@code true} if the mapping for {@code source} was unregistered
+	 * @param feature
+	 *            the feature whose mapping to unregister.
+	 * @return {@code true} if the mapping for {@code feature} was unregistered
 	 *         from this adapter, {@code false} otherwise.
 	 */
-	protected boolean unmap(InputSource<?> source) {
-		if (source == null) {
+	protected boolean unmap(DeviceFeature<?> feature) {
+		if (feature == null) {
 			return false;
 		}
-		InputMapping<?> unmapped = mappings.remove(source);
+		FeatureMapping<?> unmapped = mappings.remove(feature);
 		return unmapped != null;
 	}
 
@@ -254,13 +254,13 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @return {@code true} if {@code mapping} was unregistered from this
 	 *         adapter, {@code false} otherwise.
 	 */
-	protected boolean unmap(InputMapping<?> mapping) {
+	protected boolean unmap(FeatureMapping<?> mapping) {
 		if (mapping == null) {
 			return false;
 		}
-		Iterator<InputMapping<?>> buttonsI = mappings.values().iterator();
+		Iterator<FeatureMapping<?>> buttonsI = mappings.values().iterator();
 		while (buttonsI.hasNext()) {
-			InputMapping<?> value = buttonsI.next();
+			FeatureMapping<?> value = buttonsI.next();
 			if (mapping == value) {
 				buttonsI.remove();
 				return true;
@@ -308,8 +308,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 
 			try {
 				Object obj = field.get(statik ? null : this);
-				InputMapping<?> mapped = (InputMapping<?>) obj;
-				if (this.hasMapping(mapped.source)) {
+				FeatureMapping<?> mapped = (FeatureMapping<?>) obj;
+				if (this.hasMapping(mapped.feature)) {
 					throw new InputException("already mapped");
 				}
 				this.map(mapped);
@@ -332,41 +332,41 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	public abstract boolean isConnected();
 
 	/**
-	 * Queries the device for the current value of an input source.
+	 * Queries the device for the current value of a device feature.
 	 * <p>
-	 * For this method to work properly, {@code source} must have been given a
+	 * For this method to work properly, {@code feature} must have been given a
 	 * mapping as well as an appropriate adapter at construction. If no mapping
 	 * was specified, this method will be a no-op. If no adapter for the mapping
 	 * type was registered, an {@code InputException} will be thrown.
 	 * 
-	 * @param source
-	 *            the input source to query.
+	 * @param feature
+	 *            the feature to query.
 	 * @param value
-	 *            the value container to update.
+	 *            the container to update.
 	 * @throws NullPointerException
-	 *             if {@code source} or {@code value} are {@code null}.
+	 *             if {@code feature} or {@code value} are {@code null}.
 	 * @throws InputException
-	 *             if the mapping type for {@code source} has no adapter; if
+	 *             if the mapping type for {@code feature} has no adapter; if
 	 *             {@code value} is of an invalid type for the adapter.
-	 * @see SourceAdapter
-	 * @see #map(InputMapping)
+	 * @see FeatureAdapter
+	 * @see #map(FeatureMapping)
 	 */
-	public void update(InputSource<?> source, Object value) {
-		Objects.requireNonNull(source, "source");
+	public void update(DeviceFeature<?> feature, Object value) {
+		Objects.requireNonNull(feature, "feature");
 		Objects.requireNonNull(value, "value");
 
-		InputMapping<?> mapping = mappings.get(source);
+		FeatureMapping<?> mapping = mappings.get(feature);
 		if (mapping == null) {
-			if (!absentMappings.contains(source)) {
-				log.error("no mapping for source \"" + source.name() + "\"");
-				absentMappings.add(source);
+			if (!absentMappings.contains(feature)) {
+				log.error("no mapping for feature \"" + feature.name() + "\"");
+				absentMappings.add(feature);
 			}
 			return;
 		}
 
 		Class<?> adapterClazz = adapterHierarchy.get(mapping.getClass());
 		if (adapterClazz == null) {
-			throw new InputException("no adapter for source");
+			throw new InputException("no adapter for feature");
 		}
 
 		Method adapter = adapters.get(adapterClazz);
