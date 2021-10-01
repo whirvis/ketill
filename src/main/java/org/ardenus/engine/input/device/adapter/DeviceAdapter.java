@@ -1,7 +1,6 @@
 package org.ardenus.engine.input.device.adapter;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InaccessibleObjectException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -16,8 +15,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.DeviceFeature;
+import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.mapping.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
@@ -297,11 +296,11 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			 * original state later.
 			 */
 			boolean tempAccess = false;
-			if (!field.canAccess(statik ? null : this)) {
+			if (!field.isAccessible()) {
 				try {
 					field.setAccessible(true);
 					tempAccess = true;
-				} catch (InaccessibleObjectException | SecurityException e) {
+				} catch (SecurityException e) {
 					throw new InputException("failure to set accessible", e);
 				}
 			}
