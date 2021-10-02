@@ -1,6 +1,7 @@
 package org.ardenus.engine.input.device.adapter.glfw.joystick;
 
 import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWButtonMapping;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogMapping;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMapping;
@@ -59,6 +60,7 @@ public class GLFWXboxControllerAdapter
 	}
 
 	@Override
+	@FeatureAdapter
 	public void updateAnalogStick(GLFWAnalogStickMapping mapping,
 			Vector3f stick) {
 		super.updateAnalogStick(mapping, stick);
@@ -68,6 +70,7 @@ public class GLFWXboxControllerAdapter
 	}
 
 	@Override
+	@FeatureAdapter
 	public void updateAnalogTrigger(GLFWAnalogTriggerMapping mapping,
 			Trigger1f trigger) {
 		super.updateAnalogTrigger(mapping, trigger);

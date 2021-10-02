@@ -61,7 +61,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	private void loadFeatureAdapters() {
-		for (Method method : this.getClass().getDeclaredMethods()) {
+		for (Method method : this.getClass().getMethods()) {
 			FeatureAdapter adapter = method.getAnnotation(FeatureAdapter.class);
 			if (adapter == null) {
 				continue;

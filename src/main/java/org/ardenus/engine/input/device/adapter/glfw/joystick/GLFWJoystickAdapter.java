@@ -15,6 +15,7 @@ import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogTriggerMapp
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.analog.Trigger1f;
+import org.ardenus.engine.input.device.button.Button1b;
 import org.joml.Vector3f;
 
 /**
@@ -79,8 +80,8 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 	}
 
 	@FeatureAdapter
-	public boolean isPressed(GLFWButtonMapping mapped) {
-		return buttons.get(mapped.glfwButton) > 0;
+	public void isPressed(GLFWButtonMapping mapped, Button1b state) {
+		state.pressed = buttons.get(mapped.glfwButton) > 0;
 	}
 
 	@Override
