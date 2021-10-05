@@ -357,7 +357,12 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		FeatureMapping<?> mapping = mappings.get(feature);
 		if (mapping == null) {
 			if (!absentMappings.contains(feature)) {
-				log.error("no mapping for feature \"" + feature.name() + "\"");
+				String msg = "no mapping for feature \"" + feature.name() + "\"";
+				if(feature.optional()) {
+					log.warn(msg);	
+				} else {
+					throw new InputException(msg);
+				}
 				absentMappings.add(feature);
 			}
 			return;
