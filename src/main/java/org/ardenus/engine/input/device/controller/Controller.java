@@ -45,6 +45,9 @@ public abstract class Controller extends InputDevice {
 	 *         otherwise.
 	 */
 	public boolean isPressed(DeviceButton button) {
+		if (!this.hasFeature(button)) {
+			return false;
+		}
 		Button1bc value = this.getState(button);
 		return value.pressed();
 	}
@@ -57,6 +60,9 @@ public abstract class Controller extends InputDevice {
 	 * @return the position of {@code stick}.
 	 */
 	public Vector3fc getPosition(AnalogStick stick) {
+		if (!this.hasFeature(stick)) {
+			return null;
+		}
 		return this.getState(stick);
 	}
 
