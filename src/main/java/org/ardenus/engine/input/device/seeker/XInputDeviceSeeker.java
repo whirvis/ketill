@@ -4,6 +4,7 @@ import org.ardenus.engine.input.device.adapter.xinput.XInputXboxControllerAdapte
 import org.ardenus.engine.input.device.controller.XboxController;
 
 import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
 
@@ -13,6 +14,7 @@ import com.github.strikerx3.jxinput.natives.XInputConstants;
 public class XInputDeviceSeeker extends DeviceSeeker {
 
 	private final XboxController[] controllers;
+	private boolean xinput14;
 
 	/**
 	 * Constructs a new {@code XInputDeviceSeeker}.
@@ -20,6 +22,16 @@ public class XInputDeviceSeeker extends DeviceSeeker {
 	public XInputDeviceSeeker() {
 		super(XboxController.class);
 		this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];
+		this.xinput14 = XInputDevice14.isAvailable();
+	}
+
+	private XInputDevice getDevice(int playerNum)
+			throws XInputNotLoadedException {
+		if (xinput14) {
+			return XInputDevice14.getDeviceFor(playerNum);
+		} else {
+			return XInputDevice.getDeviceFor(playerNum);
+		}
 	}
 
 	@Override
@@ -34,7 +46,7 @@ public class XInputDeviceSeeker extends DeviceSeeker {
 				continue;
 			}
 
-			XInputDevice device = XInputDevice.getDeviceFor(i);
+			XInputDevice device = this.getDevice(i);
 			if (device.isConnected()) {
 				XInputXboxControllerAdapter adapter =
 						new XInputXboxControllerAdapter(device);
