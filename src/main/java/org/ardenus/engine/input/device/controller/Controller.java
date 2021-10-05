@@ -74,16 +74,39 @@ public abstract class Controller extends InputDevice {
 	 * @return the force of {@code trigger}.
 	 */
 	public float getForce(AnalogTrigger trigger) {
+		if (!this.hasFeature(trigger)) {
+			return 0.0F;
+		}
 		Trigger1fc value = this.getState(trigger);
 		return value.force();
 	}
 
+	/**
+	 * Returns the current position of the left analog stick.
+	 * 
+	 * @return the current position of the left analog stick.
+	 */
 	public abstract Vector3fc getLeftAnalog();
 
+	/**
+	 * Returns the current position of the right analog stick.
+	 * 
+	 * @return the current position of the right analog stick.
+	 */
 	public abstract Vector3fc getRightAnalog();
 
+	/**
+	 * Returns the current force of the left analog trigger.
+	 * 
+	 * @return the current force of the left analog trigger.
+	 */
 	public abstract float getLeftTrigger();
 
+	/**
+	 * Returns the current force of the right analog trigger.
+	 * 
+	 * @return the current force of the right analog trigger.
+	 */
 	public abstract float getRightTrigger();
 
 }
