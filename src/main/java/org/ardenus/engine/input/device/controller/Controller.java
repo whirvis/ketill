@@ -72,4 +72,12 @@ public abstract class Controller extends InputDevice {
 		return value.force();
 	}
 
+	public abstract Vector3fc getLeftAnalog();
+
+	public abstract Vector3fc getRightAnalog();
+
+	public abstract float getLeftTrigger();
+
+	public abstract float getRightTrigger();
+
 }

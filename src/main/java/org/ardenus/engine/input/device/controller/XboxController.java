@@ -6,6 +6,7 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.analog.AnalogStick;
 import org.ardenus.engine.input.device.analog.AnalogTrigger;
 import org.ardenus.engine.input.device.rumble.RumbleMotor;
+import org.joml.Vector3fc;
 
 /**
  * A Microsoft XBOX controller.
@@ -58,6 +59,26 @@ public class XboxController extends Controller {
 	 */
 	public XboxController(DeviceAdapter<XboxController> adapter) {
 		super(adapter);
+	}
+	
+	@Override
+	public Vector3fc getLeftAnalog() {
+		return this.getPosition(LS);
+	}
+	
+	@Override
+	public Vector3fc getRightAnalog() {
+		return this.getPosition(RS);
+	}
+	
+	@Override
+	public float getLeftTrigger() {
+		return this.getForce(LT);
+	}
+	
+	@Override
+	public float getRightTrigger() {
+		return this.getForce(RT);
 	}
 
 }
