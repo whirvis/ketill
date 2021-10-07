@@ -6,7 +6,7 @@ package org.ardenus.engine.input;
  * Objects which can be pressed and released come in multiple forms. Examples
  * include, but are not limited to: a keyboard key, a controller button, or a
  * GUI element. The internal state of these "pressable" objects is usually
- * stored via an instance of {@link PressableState}. However, this is not a
+ * stored via an instance of a state container. However, this is not a
  * requirement by any means.
  * <p>
  * While this is also not a requirement, instances of {@code Pressable} are
@@ -14,6 +14,12 @@ package org.ardenus.engine.input;
  * 
  * <pre>
  * public class GameController {
+ *
+ *	private static class PressableState {
+ *
+ *		public boolean pressed;
+ *
+ *	}
  *
  *	public static final Pressable BUTTON_A = new ControllerButton("A");
  *

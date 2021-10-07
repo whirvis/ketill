@@ -8,7 +8,7 @@ import java.util.Objects;
  * Analog input objects come in multiple forms. Examples include, but are not
  * limited to: analog sticks, triggers, or gyroscopes. The internal value of
  * these analog inputs is usually stored via an instance of one of their
- * containers (which can be created via {@link #zero()}). However, this it no a
+ * containers (which can be created via {@link #zero()}). However, this it not a
  * requirement by any means.
  * <p>
  * While this is also not a requirement, instances of {@code Analog} are usually
@@ -35,7 +35,7 @@ import java.util.Objects;
  *		 * As can be seen in this example, LEFT_STICK will be reused
  *		 * for different instances of GameController. Each controller
  *		 * contains a map of each analog, with the stored value being
- *		 * the state of each analog via their container class. This
+ *		 * the position of each analog via their container class. This
  *		 * works out well for groups of analogs known in advance.
  *		 *&sol;
  *		Object value = analogs.get(analog);
