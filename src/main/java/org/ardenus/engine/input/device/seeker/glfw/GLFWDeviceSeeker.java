@@ -109,7 +109,7 @@ public abstract class GLFWDeviceSeeker extends DeviceSeeker {
 			InputDevice joystick = joysticks[i];
 			if (joystick != null) {
 				if (!joystick.isConnected()) {
-					this.disconnect(joystick);
+					this.unregister(joystick);
 					this.joysticks[i] = null;
 				}
 				continue;
@@ -123,7 +123,7 @@ public abstract class GLFWDeviceSeeker extends DeviceSeeker {
 			String name = glfwGetJoystickName(i);
 			if (name != null && names.contains(name)) {
 				this.joysticks[i] = this.createDevice(ptr_glfwWindow, i);
-				this.connect(joysticks[i]);
+				this.register(joysticks[i]);
 			}
 		}
 	}

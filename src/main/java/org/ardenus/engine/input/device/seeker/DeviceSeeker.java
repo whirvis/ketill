@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
@@ -18,55 +19,94 @@ import org.ardenus.engine.input.device.InputDevice;
 public abstract class DeviceSeeker {
 
 	public final Class<? extends InputDevice> type;
+	protected final Set<SeekerListener> listeners;
 	private final Set<InputDevice> devices;
 
 	/**
 	 * Constructs a new {@code DeviceSeeker}.
 	 * 
 	 * @param type
-	 *            the class of the input device that this seeker will connect.
+	 *            the device type to seek out.
 	 */
 	public DeviceSeeker(Class<? extends InputDevice> type) {
 		this.type = type;
+		this.listeners = new HashSet<>();
 		this.devices = new HashSet<>();
 	}
 
 	/**
-	 * Returns all devices connected via this seeker.
+	 * Adds a listener to this device seeker.
 	 * 
-	 * @return all devices connected via this seeker.
+	 * @param listener
+	 *            the listener to add.
+	 * @throws NullPointerException
+	 *             if {@code listener} is {@code null}.
 	 */
-	public Set<InputDevice> connected() {
+	public void addListener(SeekerListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * Removes a listener from this input device.
+	 * 
+	 * @param listener
+	 *            the listener to remove.
+	 */
+	public void removeListener(SeekerListener listener) {
+		if (listener != null) {
+			listeners.remove(listener);
+		}
+	}
+
+	protected void callEvent(Consumer<SeekerListener> event) {
+		for (SeekerListener listener : listeners) {
+			event.accept(listener);
+		}
+	}
+
+	/**
+	 * Returns all devices registered to this seeker.
+	 * 
+	 * @return all devices registered this seeker.
+	 */
+	public Set<InputDevice> registered() {
 		return Collections.unmodifiableSet(devices);
 	}
 
 	/**
-	 * Connects an input device to this seeker.
+	 * Registers an input device to this seeker.
 	 * 
 	 * @param device
-	 *            the device to connect.
+	 *            the device to register.
 	 * @throws NullPointerException
 	 *             if {@code device} is {@code null}.
 	 * @throws ClassCastException
 	 *             if the class of {@code device} is not equal to {@code type}
 	 *             which was specified during construction.
 	 */
-	protected void connect(InputDevice device) {
+	protected void register(InputDevice device) {
 		Objects.requireNonNull(device, "device");
 		if (type != device.getClass()) {
 			throw new ClassCastException("device class must equal type");
 		}
-		devices.add(device);
+
+		if (!devices.contains(device)) {
+			devices.add(device);
+			this.callEvent(l -> l.onRegister(this, device));
+		}
 	}
 
 	/**
-	 * Disconnects an input device from this seeker.
+	 * Unregisters an input device from this seeker.
 	 * 
 	 * @param device
-	 *            the device to disconnect.
+	 *            the device to unregister.
 	 */
-	protected void disconnect(InputDevice device) {
-		devices.remove(device);
+	protected void unregister(InputDevice device) {
+		if (device != null && devices.contains(device)) {
+			devices.remove(device);
+			this.callEvent(l -> l.onUnregister(this, device));
+		}
 	}
 
 	/**
@@ -78,7 +118,7 @@ public abstract class DeviceSeeker {
 	protected abstract void seek() throws Exception;
 
 	/**
-	 * Seeks for input devices and polls all connected input devices.
+	 * Seeks for input devices and polls all registered input devices.
 	 * 
 	 * @throws InputException
 	 *             if an error occurs while seeking.

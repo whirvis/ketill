@@ -40,7 +40,7 @@ public class XInputDeviceSeeker extends DeviceSeeker {
 			XboxController controller = controllers[i];
 			if (controller != null) {
 				if (!controller.isConnected()) {
-					this.disconnect(controller);
+					this.unregister(controller);
 					this.controllers[i] = null;
 				}
 				continue;
@@ -51,7 +51,7 @@ public class XInputDeviceSeeker extends DeviceSeeker {
 				XInputXboxControllerAdapter adapter =
 						new XInputXboxControllerAdapter(device);
 				this.controllers[i] = new XboxController(adapter);
-				this.connect(controllers[i]);
+				this.register(controllers[i]);
 			}
 		}
 	}
