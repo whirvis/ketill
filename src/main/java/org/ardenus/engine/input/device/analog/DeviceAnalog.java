@@ -1,8 +1,8 @@
 package org.ardenus.engine.input.device.analog;
 
 import org.ardenus.engine.input.Analog;
-import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.DeviceFeature;
+import org.ardenus.engine.input.device.InputDevice;
 
 /**
  * Represents an analog input that is present on an input device.
