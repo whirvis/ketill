@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.seeker.glfw;
+package org.ardenus.engine.input.device.seeker;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
-import org.ardenus.engine.input.device.seeker.DeviceSeeker;
 
 /**
  * A device seeker for devices using GLFW.

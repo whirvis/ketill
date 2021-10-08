@@ -10,11 +10,15 @@ import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 
 /**
- * A sentry for input devices.
+ * A scanner for input devices.
  * <p>
- * The job of a device seeker is to scan for input devices that are connected to
- * the system. When an input device is detected, the appropriate
- * {@code InputDevice} instance and adapter will be created.
+ * The purpose of a device seeker is to scan for input devices currently
+ * connected to the system. When an input device is detected, the appropriate
+ * {@code InputDevice} instance and adapter will be created. This device will
+ * then be registered to the device seeker. Once an input device is registered
+ * to a seeker, it will be polled in the {@link #poll()} method.
+ * <p>
+ * TODO
  */
 public abstract class DeviceSeeker {
 
@@ -27,9 +31,11 @@ public abstract class DeviceSeeker {
 	 * 
 	 * @param type
 	 *            the device type to seek out.
+	 * @throws NullPointerException
+	 *             if {@code type} is {@code null}.
 	 */
 	public DeviceSeeker(Class<? extends InputDevice> type) {
-		this.type = type;
+		this.type = Objects.requireNonNull(type, "type");
 		this.listeners = new HashSet<>();
 		this.devices = new HashSet<>();
 	}
@@ -43,6 +49,7 @@ public abstract class DeviceSeeker {
 	 *             if {@code listener} is {@code null}.
 	 */
 	public void addListener(SeekerListener listener) {
+		Objects.requireNonNull(listener, "listener");
 		listeners.add(listener);
 	}
 
@@ -66,8 +73,12 @@ public abstract class DeviceSeeker {
 
 	/**
 	 * Returns all devices registered to this seeker.
+	 * <p>
+	 * <b>Note:</b> Just because a device is registered to the seeker does
+	 * <i>not</i> indicate that it is currently connected. It only means that
+	 * the seeker has detected its presence and as such has registered it. TODO
 	 * 
-	 * @return all devices registered this seeker.
+	 * @return all devices registered to this seeker.
 	 */
 	public Set<InputDevice> registered() {
 		return Collections.unmodifiableSet(devices);
@@ -75,6 +86,8 @@ public abstract class DeviceSeeker {
 
 	/**
 	 * Registers an input device to this seeker.
+	 * <p>
+	 * TODO
 	 * 
 	 * @param device
 	 *            the device to register.
