@@ -1,8 +1,7 @@
-package org.ardenus.engine.input.device.adapter.mapping;
+package org.ardenus.engine.input.device.adapter;
 
 import java.util.Objects;
 
-import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 /**

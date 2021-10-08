@@ -4,10 +4,9 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
+import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
-import org.ardenus.engine.input.device.adapter.xinput.analog.XInputAnalogMapping;
 
 import com.github.strikerx3.jxinput.XInputDevice;
 

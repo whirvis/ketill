@@ -2,9 +2,9 @@ package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
+import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 
 /**
  * An adapter which maps input for a GLFW input device.

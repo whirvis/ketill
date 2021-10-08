@@ -3,7 +3,7 @@ package org.ardenus.engine.input.device.adapter.xinput;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
+import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 
 import com.github.strikerx3.jxinput.XInputButtons;

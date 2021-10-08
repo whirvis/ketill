@@ -1,13 +1,11 @@
 package org.ardenus.engine.input.device.adapter.xinput;
 
 import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.device.adapter.AdapterMapping;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
+import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.adapter.mapping.AdapterMapping;
-import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
-import org.ardenus.engine.input.device.adapter.mapping.RumbleMapping;
-import org.ardenus.engine.input.device.adapter.xinput.analog.XInputAnalogStickMapping;
-import org.ardenus.engine.input.device.adapter.xinput.analog.XInputAnalogTriggerMapping;
+import org.ardenus.engine.input.device.adapter.RumbleMapping;
 import org.ardenus.engine.input.device.controller.XboxController;
 import org.ardenus.engine.input.device.feature.Button1b;
 import org.ardenus.engine.input.device.feature.Trigger1f;

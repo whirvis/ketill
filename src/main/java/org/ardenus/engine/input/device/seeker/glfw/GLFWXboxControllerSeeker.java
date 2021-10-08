@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.seeker.glfw;
 
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.adapter.glfw.joystick.GLFWXboxControllerAdapter;
+import org.ardenus.engine.input.device.adapter.glfw.GLFWXboxControllerAdapter;
 import org.ardenus.engine.input.device.controller.XboxController;
 
 /**

@@ -1,7 +1,6 @@
-package org.ardenus.engine.input.device.adapter.xinput.analog;
+package org.ardenus.engine.input.device.adapter.xinput;
 
-import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.xinput.XInputDeviceAdapter;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.feature.DeviceAnalog;
 
 /**

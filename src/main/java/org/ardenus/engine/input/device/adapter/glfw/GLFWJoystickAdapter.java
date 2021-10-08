@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.adapter.glfw.joystick;
+package org.ardenus.engine.input.device.adapter.glfw;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -7,13 +7,9 @@ import java.nio.FloatBuffer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
+import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.adapter.glfw.GLFWButtonMapping;
-import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMapping;
-import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogTriggerMapping;
-import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.feature.Button1b;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
