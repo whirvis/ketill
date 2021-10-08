@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.mapping;
 
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.rumble.RumbleMotor;
+import org.ardenus.engine.input.device.feature.RumbleMotor;
 
 /**
  * A {@link RumbleMotor} mapping for use with a {@link DeviceAdapter}.

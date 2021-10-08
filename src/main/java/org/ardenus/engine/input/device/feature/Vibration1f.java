@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.rumble;
+package org.ardenus.engine.input.device.feature;
 
 /**
  * Contains the definition of a vibration comprising of 1 {@code float}.

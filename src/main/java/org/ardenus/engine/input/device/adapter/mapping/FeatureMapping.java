@@ -2,8 +2,8 @@ package org.ardenus.engine.input.device.adapter.mapping;
 
 import java.util.Objects;
 
-import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
+import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 /**
  * A device feature mapping for use with a {@link DeviceAdapter}.

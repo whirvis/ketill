@@ -7,8 +7,8 @@ import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogMapping;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMapping;
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogTriggerMapping;
 import org.ardenus.engine.input.device.adapter.mapping.AdapterMapping;
-import org.ardenus.engine.input.device.analog.Trigger1f;
 import org.ardenus.engine.input.device.controller.XboxController;
+import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
 /**

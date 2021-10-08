@@ -8,10 +8,10 @@ import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.mapping.RumbleMapping;
 import org.ardenus.engine.input.device.adapter.xinput.analog.XInputAnalogStickMapping;
 import org.ardenus.engine.input.device.adapter.xinput.analog.XInputAnalogTriggerMapping;
-import org.ardenus.engine.input.device.analog.Trigger1f;
-import org.ardenus.engine.input.device.button.Button1b;
 import org.ardenus.engine.input.device.controller.XboxController;
-import org.ardenus.engine.input.device.rumble.Vibration1f;
+import org.ardenus.engine.input.device.feature.Button1b;
+import org.ardenus.engine.input.device.feature.Trigger1f;
+import org.ardenus.engine.input.device.feature.Vibration1f;
 import org.joml.Vector3f;
 
 import com.github.strikerx3.jxinput.XInputAxes;

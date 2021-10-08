@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.controller;
 
 import org.ardenus.engine.input.Direction;
-import org.ardenus.engine.input.device.button.DeviceButton;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 
 /**
  * Represents a button that is present on a controller.

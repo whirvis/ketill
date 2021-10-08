@@ -14,8 +14,8 @@ import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogStickMappin
 import org.ardenus.engine.input.device.adapter.glfw.analog.GLFWAnalogTriggerMapping;
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
-import org.ardenus.engine.input.device.analog.Trigger1f;
-import org.ardenus.engine.input.device.button.Button1b;
+import org.ardenus.engine.input.device.feature.Button1b;
+import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
 /**

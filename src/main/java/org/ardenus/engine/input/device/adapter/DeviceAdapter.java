@@ -15,12 +15,12 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
-import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.mapping.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.mapping.FeatureMapping;
+import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 /**
  * An adapter which maps input for an {@link InputDevice}.

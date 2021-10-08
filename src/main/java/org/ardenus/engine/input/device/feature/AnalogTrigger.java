@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.analog;
+package org.ardenus.engine.input.device.feature;
 
 /**
  * Represents an analog trigger on an input device.

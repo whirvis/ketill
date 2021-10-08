@@ -1,4 +1,6 @@
-package org.ardenus.engine.input.device;
+package org.ardenus.engine.input.device.feature;
+
+import org.ardenus.engine.input.device.InputDevice;
 
 /**
  * A feature for an {@link InputDevice}.

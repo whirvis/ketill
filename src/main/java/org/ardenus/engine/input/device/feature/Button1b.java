@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.button;
+package org.ardenus.engine.input.device.feature;
 
 /**
  * Contains the definition of a button comprising of 1 {@code boolean}.

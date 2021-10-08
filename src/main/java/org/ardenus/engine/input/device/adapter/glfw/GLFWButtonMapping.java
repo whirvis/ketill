@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.adapter.mapping.ButtonMapping;
-import org.ardenus.engine.input.device.button.DeviceButton;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 
 /**
  * A {@link DeviceButton} mapping for use with a {@link GLFWDeviceAdapter}.

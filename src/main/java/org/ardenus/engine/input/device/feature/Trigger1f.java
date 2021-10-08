@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.analog;
+package org.ardenus.engine.input.device.feature;
 
 /**
  * Contains the definition of a trigger comprising of 1 {@code float}.

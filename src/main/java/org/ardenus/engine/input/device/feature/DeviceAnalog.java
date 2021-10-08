@@ -1,7 +1,6 @@
-package org.ardenus.engine.input.device.analog;
+package org.ardenus.engine.input.device.feature;
 
 import org.ardenus.engine.input.Analog;
-import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.InputDevice;
 
 /**

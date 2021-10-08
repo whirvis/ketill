@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.mapping;
 
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.analog.DeviceAnalog;
+import org.ardenus.engine.input.device.feature.DeviceAnalog;
 
 /**
  * A {@link DeviceAnalog} mapping for use with a {@link DeviceAdapter}.

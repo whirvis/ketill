@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.mapping;
 
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.button.DeviceButton;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 
 /**
  * A {@link DeviceButton} mapping for use with a {@link DeviceAdapter}.

@@ -1,9 +1,8 @@
-package org.ardenus.engine.input.device.button;
+package org.ardenus.engine.input.device.feature;
 
 import java.util.Objects;
 
 import org.ardenus.engine.input.Button;
-import org.ardenus.engine.input.device.DeviceFeature;
 import org.ardenus.engine.input.device.InputDevice;
 
 /**

@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.adapter.xinput.analog;
 
 import org.ardenus.engine.input.device.adapter.xinput.XInputDeviceAdapter;
-import org.ardenus.engine.input.device.analog.AnalogTrigger;
+import org.ardenus.engine.input.device.feature.AnalogTrigger;
 
 import com.github.strikerx3.jxinput.enums.XInputAxis;
 

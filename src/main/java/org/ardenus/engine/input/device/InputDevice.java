@@ -13,6 +13,8 @@ import java.util.function.Consumer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
+import org.ardenus.engine.input.device.feature.DeviceFeature;
+import org.ardenus.engine.input.device.feature.FeaturePresent;
 
 /**
  * A device which can send and receive input data.

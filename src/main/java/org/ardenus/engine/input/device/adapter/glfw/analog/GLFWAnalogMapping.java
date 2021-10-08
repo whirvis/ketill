@@ -2,7 +2,7 @@ package org.ardenus.engine.input.device.adapter.glfw.analog;
 
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 import org.ardenus.engine.input.device.adapter.mapping.AnalogMapping;
-import org.ardenus.engine.input.device.analog.DeviceAnalog;
+import org.ardenus.engine.input.device.feature.DeviceAnalog;
 
 /**
  * A {@link DeviceAnalog} mapping for use with a {@link GLFWDeviceAdapter}.

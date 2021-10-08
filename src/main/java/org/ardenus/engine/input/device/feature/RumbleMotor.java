@@ -1,8 +1,6 @@
-package org.ardenus.engine.input.device.rumble;
+package org.ardenus.engine.input.device.feature;
 
 import java.util.Objects;
-
-import org.ardenus.engine.input.device.DeviceFeature;
 
 /**
  * Represents a rumble motor on an input device.

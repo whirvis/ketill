@@ -1,4 +1,4 @@
-package org.ardenus.engine.input.device.analog;
+package org.ardenus.engine.input.device.feature;
 
 /**
  * An interface to a read-only view of a 1-dimensional trigger.
