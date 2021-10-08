@@ -9,8 +9,11 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ardenus.engine.input.Input;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
+import org.ardenus.engine.input.device.event.DeviceConnectEvent;
+import org.ardenus.engine.input.device.event.DeviceDisconnectEvent;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 
@@ -186,9 +189,9 @@ public abstract class InputDevice {
 
 		boolean connected = this.isConnected();
 		if (!wasConnected && connected) {
-			/* TODO: send event */
+			Input.sendEvent(new DeviceConnectEvent(this));
 		} else if (wasConnected && !connected) {
-			/* TODO: send event */
+			Input.sendEvent(new DeviceDisconnectEvent(this));
 		}
 		this.wasConnected = connected;
 
