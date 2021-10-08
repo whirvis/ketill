@@ -4,12 +4,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
@@ -34,7 +32,6 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 public abstract class InputDevice {
 
 	protected final DeviceAdapter<?> adapter;
-	protected final Set<DeviceListener> listeners;
 	private final Map<DeviceFeature<?>, Object> features;
 	private boolean wasConnected;
 
@@ -52,40 +49,8 @@ public abstract class InputDevice {
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
-		this.listeners = new HashSet<>();
 		this.features = new HashMap<>();
 		this.loadFeatures();
-	}
-
-	/**
-	 * Adds a listener to this input device.
-	 * 
-	 * @param listener
-	 *            the listener to add.
-	 * @throws NullPointerException
-	 *             if {@code listener} is {@code null}.
-	 */
-	public void addListener(DeviceListener listener) {
-		Objects.requireNonNull(listener, "listener");
-		listeners.add(listener);
-	}
-
-	/**
-	 * Removes a listener from this input device.
-	 * 
-	 * @param listener
-	 *            the listener to remove.
-	 */
-	public void removeListener(DeviceListener listener) {
-		if (listener != null) {
-			listeners.remove(listener);
-		}
-	}
-
-	protected void callEvent(Consumer<DeviceListener> event) {
-		for (DeviceListener listener : listeners) {
-			event.accept(listener);
-		}
 	}
 
 	/**
@@ -221,9 +186,9 @@ public abstract class InputDevice {
 
 		boolean connected = this.isConnected();
 		if (!wasConnected && connected) {
-			this.callEvent(l -> l.onConnect(this));
+			/* TODO: send event */
 		} else if (wasConnected && !connected) {
-			this.callEvent(l -> l.onDisconnect(this));
+			/* TODO: send event */
 		}
 		this.wasConnected = connected;
 
