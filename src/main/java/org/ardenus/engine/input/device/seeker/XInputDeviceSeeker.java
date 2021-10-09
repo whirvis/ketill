@@ -1,7 +1,7 @@
 package org.ardenus.engine.input.device.seeker;
 
+import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.xinput.XInputXboxControllerAdapter;
-import org.ardenus.engine.input.device.controller.XboxController;
 
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.XInputDevice14;

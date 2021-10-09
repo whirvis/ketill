@@ -1,9 +1,9 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.controller.XboxController;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 

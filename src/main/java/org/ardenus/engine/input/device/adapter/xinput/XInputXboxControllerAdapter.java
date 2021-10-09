@@ -1,12 +1,12 @@
 package org.ardenus.engine.input.device.adapter.xinput;
 
 import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.adapter.RumbleMapping;
-import org.ardenus.engine.input.device.controller.XboxController;
 import org.ardenus.engine.input.device.feature.Button1b;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.ardenus.engine.input.device.feature.Vibration1f;
