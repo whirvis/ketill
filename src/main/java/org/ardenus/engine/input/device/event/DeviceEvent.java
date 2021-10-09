@@ -8,7 +8,7 @@ import org.ardenus.engine.input.device.InputDevice;
 /**
  * An event relating to an {@link InputDevice}.
  */
-public class DeviceEvent extends InputEvent {
+public abstract class DeviceEvent extends InputEvent {
 
 	private final InputDevice device;
 
