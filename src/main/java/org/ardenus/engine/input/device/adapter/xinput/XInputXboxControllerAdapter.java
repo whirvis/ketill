@@ -114,8 +114,8 @@ public class XInputXboxControllerAdapter
 	}
 
 	@FeatureAdapter
-	public void doRumble(XInputRumbleMapping mapping, Vibration1f motors) {
-		int force = (int) (RUMBLE_MAX * motors.force);
+	public void doRumble(XInputRumbleMapping mapping, Vibration1f motor) {
+		int force = (int) (RUMBLE_MAX * motor.force);
 
 		/*
 		 * The X-input API will throw an exception if it receives a motor force
