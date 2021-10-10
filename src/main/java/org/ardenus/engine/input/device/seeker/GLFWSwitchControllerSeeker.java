@@ -7,7 +7,7 @@ import org.ardenus.engine.input.device.adapter.glfw.GLFWSwitchControllerAdapter;
 /**
  * A device seeker for {@code SwitchController} devices using GLFW.
  */
-public class GLFWSwitchControllerSeeker extends GLFWDeviceSeeker {
+public class GLFWSwitchControllerSeeker extends GLFWJoystickSeeker {
 
 	/**
 	 * Constructs a new {@code GLFWSwitchControllerSeeker}.

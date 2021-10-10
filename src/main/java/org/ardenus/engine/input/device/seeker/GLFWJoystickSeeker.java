@@ -10,9 +10,9 @@ import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 
 /**
- * A device seeker for devices using GLFW.
+ * A device seeker for joysticks using GLFW.
  */
-public abstract class GLFWDeviceSeeker extends DeviceSeeker {
+public abstract class GLFWJoystickSeeker extends DeviceSeeker {
 
 	private final long ptr_glfwWindow;
 	private final InputDevice[] joysticks;
@@ -31,7 +31,7 @@ public abstract class GLFWDeviceSeeker extends DeviceSeeker {
 	 * @throws NullPointerException
 	 *             if {@code type} or {@code names} is {@code null}.
 	 */
-	public GLFWDeviceSeeker(Class<? extends InputDevice> type,
+	public GLFWJoystickSeeker(Class<? extends InputDevice> type,
 			long ptr_glfwWindow, String... names) {
 		super(type);
 		this.ptr_glfwWindow = ptr_glfwWindow;
@@ -54,7 +54,7 @@ public abstract class GLFWDeviceSeeker extends DeviceSeeker {
 	 * @throws NullPointerException
 	 *             if {@code name} is {@code null}.
 	 */
-	protected GLFWDeviceSeeker addName(String name) {
+	protected GLFWJoystickSeeker addName(String name) {
 		Objects.requireNonNull(name, "name");
 		names.add(name);
 		return this;
@@ -76,7 +76,7 @@ public abstract class GLFWDeviceSeeker extends DeviceSeeker {
 	 * @throws NullPointerException
 	 *             if {@code names} is {@code null}.
 	 */
-	protected GLFWDeviceSeeker addNames(String... names) {
+	protected GLFWJoystickSeeker addNames(String... names) {
 		Objects.requireNonNull(names, "names");
 		for (String name : names) {
 			this.addName(name);

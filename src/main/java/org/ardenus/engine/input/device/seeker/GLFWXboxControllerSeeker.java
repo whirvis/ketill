@@ -7,7 +7,7 @@ import org.ardenus.engine.input.device.adapter.glfw.GLFWXboxControllerAdapter;
 /**
  * A device seeker for {@code XboxController} devices using GLFW.
  */
-public class GLFWXboxControllerSeeker extends GLFWDeviceSeeker {
+public class GLFWXboxControllerSeeker extends GLFWJoystickSeeker {
 
 	/**
 	 * Constructs a new {@code GLFWXboxControllerSeeker}.

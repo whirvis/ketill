@@ -7,7 +7,7 @@ import org.ardenus.engine.input.device.adapter.glfw.GLFWPlayStationControllerAda
 /**
  * A device seeker for {@code PlayStationController} devices using GLFW.
  */
-public class GLFWPlayStationControllerSeeker extends GLFWDeviceSeeker {
+public class GLFWPlayStationControllerSeeker extends GLFWJoystickSeeker {
 
 	/**
 	 * Constructs a new {@code GLFWPlayStationControllerSeeker}.
