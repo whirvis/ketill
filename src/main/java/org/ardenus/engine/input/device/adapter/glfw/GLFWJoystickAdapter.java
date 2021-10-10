@@ -53,7 +53,7 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 		if (zMapping == null) {
 			return false;
 		}
-		return buttons.get(zMapping.glfwButton) > 0;
+		return buttons.get(zMapping.glfwButton) != 0;
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 
 	@FeatureAdapter
 	public void isPressed(GLFWButtonMapping mapped, Button1b state) {
-		state.pressed = buttons.get(mapped.glfwButton) > 0;
+		state.pressed = buttons.get(mapped.glfwButton) != 0;
 	}
 
 	@Override
