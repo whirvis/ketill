@@ -12,17 +12,16 @@ import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 /**
  * A device seeker for joysticks using GLFW.
  */
-public abstract class GLFWJoystickSeeker extends DeviceSeeker {
+public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 
-	private final long ptr_glfwWindow;
 	private final InputDevice[] joysticks;
 	private final Set<String> names;
 
 	/**
-	 * Constructs a new {@code GLFWDeviceSeeker}.
+	 * Constructs a new {@code GLFWJoystickSeeker}.
 	 * 
 	 * @param type
-	 *            the controller type.
+	 *            the joystick type.
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @param names
@@ -33,10 +32,8 @@ public abstract class GLFWJoystickSeeker extends DeviceSeeker {
 	 */
 	public GLFWJoystickSeeker(Class<? extends InputDevice> type,
 			long ptr_glfwWindow, String... names) {
-		super(type);
-		this.ptr_glfwWindow = ptr_glfwWindow;
+		super(type, ptr_glfwWindow);
 		this.joysticks = new InputDevice[GLFW_JOYSTICK_LAST];
-
 		this.names = new HashSet<>();
 		this.addNames(names);
 	}
