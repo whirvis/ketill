@@ -31,6 +31,7 @@ public class PlayStationController extends Controller {
 			THUMB_R = new ControllerButton("RS"),
 			PS = new ControllerButton("PlayStation"),
 			TPAD = new ControllerButton("Trackpad"),
+			MUTE = new ControllerButton("Mute"), /* present on PS5 */
 			UP = new ControllerButton("Up", Direction.UP),
 			RIGHT = new ControllerButton("Right", Direction.RIGHT),
 			DOWN = new ControllerButton("Down", Direction.DOWN),

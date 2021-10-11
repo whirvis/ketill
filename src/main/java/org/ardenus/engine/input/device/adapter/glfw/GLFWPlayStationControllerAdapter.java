@@ -38,11 +38,7 @@ public class GLFWPlayStationControllerAdapter
 			THUMB_L = new GLFWButtonMapping(PlayStationController.THUMB_L, 10),
 			THUMB_R = new GLFWButtonMapping(PlayStationController.THUMB_R, 11),
 			PS = new GLFWButtonMapping(PlayStationController.PS, 12),
-			TPAD = new GLFWButtonMapping(PlayStationController.TPAD, 13),
-			UP = new GLFWButtonMapping(PlayStationController.UP, 14),
-			RIGHT = new GLFWButtonMapping(PlayStationController.RIGHT, 15),
-			DOWN = new GLFWButtonMapping(PlayStationController.DOWN, 16),
-			LEFT = new GLFWButtonMapping(PlayStationController.LEFT, 17);
+			TPAD = new GLFWButtonMapping(PlayStationController.TPAD, 13);
 	/* @formatter: on */
 
 	/**
@@ -52,12 +48,35 @@ public class GLFWPlayStationControllerAdapter
 	 *            the GLFW window pointer.
 	 * @param glfwJoystick
 	 *            the GLFW joystick ID.
+	 * @param ps5
+	 *            {@code true} if the controller is a PS5 controller,
+	 *            {@code false} otherwise.
 	 * @throws InputException
 	 *             if an input error occurs.
 	 */
 	public GLFWPlayStationControllerAdapter(long ptr_glfwWindow,
-			int glfwJoystick) {
+			int glfwJoystick, boolean ps5) {
 		super(ptr_glfwWindow, glfwJoystick);
+		if (ps5) {
+			this.mapPS5();
+		} else {
+			this.mapPS4();
+		}
+	}
+
+	private void mapPS4() {
+		this.map(new GLFWButtonMapping(PlayStationController.UP, 14));
+		this.map(new GLFWButtonMapping(PlayStationController.DOWN, 15));
+		this.map(new GLFWButtonMapping(PlayStationController.LEFT, 16));
+		this.map(new GLFWButtonMapping(PlayStationController.RIGHT, 17));
+	}
+
+	private void mapPS5() {
+		this.map(new GLFWButtonMapping(PlayStationController.MUTE, 14));
+		this.map(new GLFWButtonMapping(PlayStationController.UP, 15));
+		this.map(new GLFWButtonMapping(PlayStationController.RIGHT, 16));
+		this.map(new GLFWButtonMapping(PlayStationController.DOWN, 17));
+		this.map(new GLFWButtonMapping(PlayStationController.LEFT, 18));
 	}
 
 	@Override
