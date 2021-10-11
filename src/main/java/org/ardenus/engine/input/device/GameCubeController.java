@@ -59,12 +59,12 @@ public class GameCubeController extends Controller {
 	}
 
 	@Override
-	public Vector3fc getLeftAnalog() {
+	public Vector3fc getLeftStick() {
 		return this.getPosition(LS);
 	}
 
 	@Override
-	public Vector3fc getRightAnalog() {
+	public Vector3fc getRightStick() {
 		return this.getPosition(RS);
 	}
 

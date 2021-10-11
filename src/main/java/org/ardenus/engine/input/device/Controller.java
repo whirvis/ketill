@@ -1,6 +1,5 @@
 package org.ardenus.engine.input.device;
 
-import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
@@ -85,14 +84,14 @@ public abstract class Controller extends InputDevice {
 	 * 
 	 * @return the current position of the left analog stick.
 	 */
-	public abstract Vector3fc getLeftAnalog();
+	public abstract Vector3fc getLeftStick();
 
 	/**
 	 * Returns the current position of the right analog stick.
 	 * 
 	 * @return the current position of the right analog stick.
 	 */
-	public abstract Vector3fc getRightAnalog();
+	public abstract Vector3fc getRightStick();
 
 	/**
 	 * Returns the current force of the left analog trigger.
