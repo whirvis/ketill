@@ -6,7 +6,10 @@ import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.Button1bc;
 import org.ardenus.engine.input.device.feature.DeviceButton;
+import org.ardenus.engine.input.device.feature.DeviceFeature;
+import org.ardenus.engine.input.device.feature.RumbleMotor;
 import org.ardenus.engine.input.device.feature.Trigger1fc;
+import org.ardenus.engine.input.device.feature.Vibration1f;
 import org.joml.Vector3fc;
 
 /**
@@ -140,5 +143,35 @@ public abstract class Controller extends InputDevice {
 	 * @return the current force of the right analog trigger.
 	 */
 	public abstract float getRightTrigger();
+
+	/**
+	 * Sets the vibration force of a rumble motor.
+	 * 
+	 * @param motor
+	 *            the motor to rumble.
+	 * @param force
+	 *            the vibration force to set the motor to.
+	 */
+	public void setVibration(RumbleMotor motor, float force) {
+		if (!this.hasFeature(motor)) {
+			return;
+		}
+		Vibration1f vibration = this.getState(motor);
+		vibration.force = force;
+	}
+
+	/**
+	 * Sets the vibration force of all rumble motors.
+	 * 
+	 * @param force
+	 *            the vibration force to set the motors to.
+	 */
+	public void setVibration(float force) {
+		for (DeviceFeature<?> feature : this.getFeatures()) {
+			if (feature instanceof RumbleMotor) {
+				this.setVibration((RumbleMotor) feature, force);
+			}
+		}
+	}
 
 }
