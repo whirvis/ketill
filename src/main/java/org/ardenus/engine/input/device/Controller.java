@@ -1,5 +1,6 @@
 package org.ardenus.engine.input.device;
 
+import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
@@ -21,6 +22,8 @@ import org.joml.Vector3fc;
  * poll the controller once on every application update.
  */
 public abstract class Controller extends InputDevice {
+
+	private static final float STICK_PRESS = 2.0F / 3.0F;
 
 	/**
 	 * Constructs a new {@code Controller}.
@@ -62,6 +65,37 @@ public abstract class Controller extends InputDevice {
 			return null;
 		}
 		return this.getState(stick);
+	}
+
+	/**
+	 * Returns if an analog stick is pressed towards a direction.
+	 * 
+	 * @param stick
+	 *            the analog stick.
+	 * @param direction
+	 *            the direction to check for.
+	 * @return {@code true} if {@code stick} is pressed towards
+	 *         {@code direction}.
+	 */
+	public boolean isPressed(AnalogStick stick, Direction direction) {
+		Vector3fc pos = this.getPosition(stick);
+		if (pos == null) {
+			return false;
+		}
+
+		switch (direction) {
+		case UP:
+			return pos.y() >= STICK_PRESS;
+		case DOWN:
+			return pos.y() <= -STICK_PRESS;
+		case LEFT:
+			return pos.x() <= -STICK_PRESS;
+		case RIGHT:
+			return pos.x() >= STICK_PRESS;
+		}
+
+		throw new UnsupportedOperationException(
+				"unknown direction, this should not occurr");
 	}
 
 	/**
