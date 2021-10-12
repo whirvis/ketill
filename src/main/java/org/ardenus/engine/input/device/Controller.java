@@ -1,7 +1,13 @@
 package org.ardenus.engine.input.device;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ardenus.engine.input.Direction;
+import org.ardenus.engine.input.Input;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
+import org.ardenus.engine.input.device.event.FeaturePressEvent;
+import org.ardenus.engine.input.device.event.FeatureReleaseEvent;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.Button1bc;
@@ -27,6 +33,18 @@ import org.joml.Vector3fc;
 public abstract class Controller extends InputDevice {
 
 	private static final float STICK_PRESS = 2.0F / 3.0F;
+	
+	private static class PressableState {
+
+		public boolean pressed;
+		public long pressTime;
+		public boolean held;
+		public long lastHeldPress;
+
+	}
+
+	private final Map<DeviceButton, PressableState> buttonStates;
+	private final Map<AnalogStick, Map<Direction, PressableState>> stickStates;
 
 	/**
 	 * Constructs a new {@code Controller}.
@@ -38,6 +56,8 @@ public abstract class Controller extends InputDevice {
 	 */
 	public Controller(DeviceAdapter<?> adapter) {
 		super(adapter);
+		this.buttonStates = new HashMap<>();
+		this.stickStates = new HashMap<>();
 	}
 
 	/**
@@ -170,6 +190,81 @@ public abstract class Controller extends InputDevice {
 		for (DeviceFeature<?> feature : this.getFeatures()) {
 			if (feature instanceof RumbleMotor) {
 				this.setVibration((RumbleMotor) feature, force);
+			}
+		}
+	}
+
+	private void pollState(long currentTime, PressableState state,
+			DeviceFeature<?> feature, Direction direction, boolean pressed) {
+		boolean wasPressed = state.pressed;
+
+		if (!wasPressed && pressed) {
+			Input.sendEvent(
+					new FeaturePressEvent(this, feature, direction, false));
+			state.pressTime = currentTime;
+		} else if (wasPressed && !pressed) {
+			Input.sendEvent(new FeatureReleaseEvent(this, feature, direction,
+					state.held));
+			state.held = false;
+		}
+
+		state.pressed = pressed;
+		if (state.pressed) {
+			if (!state.held && currentTime - state.pressTime >= 1000L) {
+				/* TODO: initial hold event */
+				state.held = true;
+			}
+
+			if (state.held && currentTime - state.lastHeldPress >= 100L) {
+				Input.sendEvent(new FeaturePressEvent(this, feature,
+						direction, true));
+				state.lastHeldPress = currentTime;
+			}
+		}
+	}
+
+	private void pollButton(long currentTime, DeviceButton button,
+			Direction direction) {
+		PressableState state = buttonStates.get(button);
+		if (state == null) {
+			state = new PressableState();
+			buttonStates.put(button, state);
+		}
+
+		boolean pressed = this.isPressed(button);
+		this.pollState(currentTime, state, button, direction, pressed);
+	}
+
+	private void pollStick(long currentTime, AnalogStick stick) {
+		Map<Direction, PressableState> states = stickStates.get(stick);
+		if (states == null) {
+			states = new HashMap<>();
+			for (Direction direction : Direction.values()) {
+				states.put(direction, new PressableState());
+			}
+			stickStates.put(stick, states);
+		}
+
+		for(Direction d : states.keySet()) {
+			this.pollState(currentTime, states.get(d), stick, d, this.isPressed(stick, d));
+		}
+	}
+
+	@Override
+	public void poll() {
+		long currentTime = System.currentTimeMillis();
+		super.poll();
+
+		for (DeviceFeature<?> feature : this.getFeatures()) {
+			if (feature instanceof DeviceButton) {
+				DeviceButton button = (DeviceButton) feature;
+				Direction d = null;
+				if (button instanceof ControllerButton) {
+					d = ((ControllerButton) button).direction;
+				}
+				this.pollButton(currentTime, button, d);
+			} else if(feature instanceof AnalogStick) {
+				this.pollStick(currentTime, (AnalogStick) feature);
 			}
 		}
 	}

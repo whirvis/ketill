@@ -4,19 +4,20 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.Controller;
+import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 /**
  * Signals that a {@link Controller} has released a {@link DeviceFeature}.
  */
-public abstract class FeatureReleaseEvent extends ControllerEvent {
+public class FeatureReleaseEvent extends DeviceEvent {
 
 	private final DeviceFeature<?> feature;
 	private final Direction direction;
 	private final boolean held;
 
 	/**
-	 * Constructs a new {@code FeatureReleaseEvent}.
+	 * Constructs a new {@code ControllerReleaseEvent}.
 	 * 
 	 * @param controller
 	 *            the controller that released {@code feature}.
@@ -32,7 +33,7 @@ public abstract class FeatureReleaseEvent extends ControllerEvent {
 	 * @throws NullPointerException
 	 *             if {@code controller} or {@code feature} are {@code null}.
 	 */
-	public FeatureReleaseEvent(Controller controller, DeviceFeature<?> feature,
+	public FeatureReleaseEvent(InputDevice controller, DeviceFeature<?> feature,
 			Direction direction, boolean held) {
 		super(controller);
 		this.feature = Objects.requireNonNull(feature, "feature");

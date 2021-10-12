@@ -4,19 +4,20 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.Controller;
+import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 /**
  * Signals that a {@link Controller} has pressed a {@link DeviceFeature}.
  */
-public abstract class FeaturePressEvent extends ControllerEvent {
+public class FeaturePressEvent extends DeviceEvent {
 
 	private final DeviceFeature<?> feature;
 	private final Direction direction;
 	private final boolean held;
 
 	/**
-	 * Constructs a new {@code FeaturePressEvent}.
+	 * Constructs a new {@code ControllerPressEvent}.
 	 * 
 	 * @param controller
 	 *            the controller that pressed {@code feature}.
@@ -32,7 +33,7 @@ public abstract class FeaturePressEvent extends ControllerEvent {
 	 * @throws NullPointerException
 	 *             if {@code controller} or {@code feature} are {@code null}.
 	 */
-	public FeaturePressEvent(Controller controller, DeviceFeature<?> feature,
+	public FeaturePressEvent(InputDevice controller, DeviceFeature<?> feature,
 			Direction direction, boolean held) {
 		super(controller);
 		this.feature = Objects.requireNonNull(feature, "feature");

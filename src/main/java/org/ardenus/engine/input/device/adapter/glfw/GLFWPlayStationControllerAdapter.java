@@ -66,9 +66,9 @@ public class GLFWPlayStationControllerAdapter
 
 	private void mapPS4() {
 		this.map(new GLFWButtonMapping(PlayStationController.UP, 14));
-		this.map(new GLFWButtonMapping(PlayStationController.DOWN, 15));
-		this.map(new GLFWButtonMapping(PlayStationController.LEFT, 16));
-		this.map(new GLFWButtonMapping(PlayStationController.RIGHT, 17));
+		this.map(new GLFWButtonMapping(PlayStationController.RIGHT, 15));
+		this.map(new GLFWButtonMapping(PlayStationController.DOWN, 16));
+		this.map(new GLFWButtonMapping(PlayStationController.LEFT, 17));
 	}
 
 	private void mapPS5() {
