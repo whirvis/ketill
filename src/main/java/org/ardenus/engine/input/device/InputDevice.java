@@ -4,18 +4,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import org.ardenus.engine.input.Input;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.event.DeviceConnectEvent;
-import org.ardenus.engine.input.device.event.DeviceDisconnectEvent;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
+import org.ardenus.engine.input.device.feature.monitor.ConnectionMonitor;
+import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
 
 /**
  * A device which can send and receive input data.
@@ -35,8 +35,8 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 public abstract class InputDevice {
 
 	protected final DeviceAdapter<?> adapter;
+	private final Set<FeatureMonitor> monitors;
 	private final Map<DeviceFeature<?>, Object> features;
-	private boolean wasConnected;
 
 	/**
 	 * Constructs a new {@code InputDevice} and registers all device feature
@@ -52,8 +52,36 @@ public abstract class InputDevice {
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
 		this.adapter = Objects.requireNonNull(adapter);
+		this.monitors = new HashSet<>();
 		this.features = new HashMap<>();
 		this.loadFeatures();
+		
+		this.addMonitor(new ConnectionMonitor(this));
+	}
+
+	/**
+	 * Adds a feature monitor to this input device.
+	 * 
+	 * @param monitor
+	 *            the monitor to add.
+	 * @throws NullPointerException
+	 *             if {@code monitor} is {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if {@code monitor} is not assigned to this input device.
+	 */
+	protected void addMonitor(FeatureMonitor monitor) {
+		Objects.requireNonNull(monitor, "monitor");
+		if (!monitor.isAssignedTo(this)) {
+			throw new IllegalArgumentException(
+					"monitor not assigned to this device");
+		}
+
+		if (!monitors.contains(monitor)) {
+			monitors.add(monitor);
+			for (DeviceFeature<?> feature : features.keySet()) {
+				monitor.monitor(feature);
+			}
+		}
 	}
 
 	/**
@@ -104,6 +132,9 @@ public abstract class InputDevice {
 		Objects.requireNonNull(feature, "feature");
 		if (!features.containsKey(feature)) {
 			features.put(feature, feature.initial());
+			for (FeatureMonitor monitor : monitors) {
+				monitor.monitor(feature);
+			}
 		}
 	}
 
@@ -186,17 +217,13 @@ public abstract class InputDevice {
 	 */
 	public void poll() {
 		adapter.poll();
-
-		boolean connected = this.isConnected();
-		if (!wasConnected && connected) {
-			Input.sendEvent(new DeviceConnectEvent(this));
-		} else if (wasConnected && !connected) {
-			Input.sendEvent(new DeviceDisconnectEvent(this));
-		}
-		this.wasConnected = connected;
-
 		for (Entry<DeviceFeature<?>, Object> entry : features.entrySet()) {
 			adapter.update(entry.getKey(), entry.getValue());
+		}
+
+		/* monitors should be updated after each feature */
+		for (FeatureMonitor monitor : monitors) {
+			monitor.update();
 		}
 	}
 
