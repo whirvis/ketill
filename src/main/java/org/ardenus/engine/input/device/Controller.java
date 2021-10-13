@@ -258,11 +258,7 @@ public abstract class Controller extends InputDevice {
 		for (DeviceFeature<?> feature : this.getFeatures()) {
 			if (feature instanceof DeviceButton) {
 				DeviceButton button = (DeviceButton) feature;
-				Direction d = null;
-				if (button instanceof ControllerButton) {
-					d = ((ControllerButton) button).direction;
-				}
-				this.pollButton(currentTime, button, d);
+				this.pollButton(currentTime, button, button.direction);
 			} else if(feature instanceof AnalogStick) {
 				this.pollStick(currentTime, (AnalogStick) feature);
 			}

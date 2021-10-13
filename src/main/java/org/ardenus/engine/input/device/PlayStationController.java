@@ -4,6 +4,7 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.joml.Vector3fc;
 
@@ -16,26 +17,26 @@ public class PlayStationController extends Controller {
 
 	/* @formatter: off */
 	@FeaturePresent
-	public static final ControllerButton
-			SQUARE = new ControllerButton("Square"),
-			CROSS = new ControllerButton("Cross"),
-			CIRCLE = new ControllerButton("Circle"),
-			TRIANGLE = new ControllerButton("Triangle"),
-			L1 = new ControllerButton("L1"),
-			R1 = new ControllerButton("R1"),
-			L2 = new ControllerButton("L2"),
-			R2 = new ControllerButton("R2"),
-			SHARE = new ControllerButton("Share"),
-			OPTIONS = new ControllerButton("Options"),
-			THUMB_L = new ControllerButton("LS"),
-			THUMB_R = new ControllerButton("RS"),
-			PS = new ControllerButton("PlayStation"),
-			TPAD = new ControllerButton("Trackpad"),
-			MUTE = new ControllerButton("Mute"), /* present on PS5 */
-			UP = new ControllerButton("Up", Direction.UP),
-			RIGHT = new ControllerButton("Right", Direction.RIGHT),
-			DOWN = new ControllerButton("Down", Direction.DOWN),
-			LEFT = new ControllerButton("Left", Direction.LEFT);
+	public static final DeviceButton
+			SQUARE = new DeviceButton("Square"),
+			CROSS = new DeviceButton("Cross"),
+			CIRCLE = new DeviceButton("Circle"),
+			TRIANGLE = new DeviceButton("Triangle"),
+			L1 = new DeviceButton("L1"),
+			R1 = new DeviceButton("R1"),
+			L2 = new DeviceButton("L2"),
+			R2 = new DeviceButton("R2"),
+			SHARE = new DeviceButton("Share"),
+			OPTIONS = new DeviceButton("Options"),
+			THUMB_L = new DeviceButton("LS"),
+			THUMB_R = new DeviceButton("RS"),
+			PS = new DeviceButton("PlayStation"),
+			TPAD = new DeviceButton("Trackpad"),
+			MUTE = new DeviceButton("Mute"), /* present on PS5 */
+			UP = new DeviceButton("Up", Direction.UP),
+			RIGHT = new DeviceButton("Right", Direction.RIGHT),
+			DOWN = new DeviceButton("Down", Direction.DOWN),
+			LEFT = new DeviceButton("Left", Direction.LEFT);
 	
 	@FeaturePresent
 	public static final AnalogStick

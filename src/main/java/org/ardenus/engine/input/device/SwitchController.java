@@ -3,6 +3,7 @@ package org.ardenus.engine.input.device;
 import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.joml.Vector3fc;
 
@@ -15,27 +16,27 @@ public class SwitchController extends Controller {
 
 	/* @formatter: off */
 	@FeaturePresent
-	public static final ControllerButton
-			B = new ControllerButton("B"),
-			A = new ControllerButton("A"),
-			Y = new ControllerButton("Y"),
-			X = new ControllerButton("X"),
-			L = new ControllerButton("L"),
-			R = new ControllerButton("R"),
-			ZL = new ControllerButton("ZL"),
-			ZR = new ControllerButton("ZR"),
-			MINUS = new ControllerButton("-"),
-			PLUS = new ControllerButton("+"),
-			THUMB_L = new ControllerButton("LS"),
-			THUMB_R = new ControllerButton("RS"),
-			HOME = new ControllerButton("Home"),
-			SCREENSHOT = new ControllerButton("Screenshot"),
-			BUMPER = new ControllerButton("Bumper"),
-			Z_BUMPER = new ControllerButton("Z Bumper"),
-			UP = new ControllerButton("Up", Direction.UP),
-			RIGHT = new ControllerButton("Right", Direction.RIGHT),
-			DOWN = new ControllerButton("Down", Direction.DOWN),
-			LEFT = new ControllerButton("Left", Direction.LEFT);
+	public static final DeviceButton
+			B = new DeviceButton("B"),
+			A = new DeviceButton("A"),
+			Y = new DeviceButton("Y"),
+			X = new DeviceButton("X"),
+			L = new DeviceButton("L"),
+			R = new DeviceButton("R"),
+			ZL = new DeviceButton("ZL"),
+			ZR = new DeviceButton("ZR"),
+			MINUS = new DeviceButton("-"),
+			PLUS = new DeviceButton("+"),
+			THUMB_L = new DeviceButton("LS"),
+			THUMB_R = new DeviceButton("RS"),
+			HOME = new DeviceButton("Home"),
+			SCREENSHOT = new DeviceButton("Screenshot"),
+			BUMPER = new DeviceButton("Bumper"),
+			Z_BUMPER = new DeviceButton("Z Bumper"),
+			UP = new DeviceButton("Up", Direction.UP),
+			RIGHT = new DeviceButton("Right", Direction.RIGHT),
+			DOWN = new DeviceButton("Down", Direction.DOWN),
+			LEFT = new DeviceButton("Left", Direction.LEFT);
 
 	@FeaturePresent
 	public static final AnalogStick

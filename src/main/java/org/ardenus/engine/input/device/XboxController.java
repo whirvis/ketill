@@ -4,6 +4,7 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
 import org.joml.Vector3fc;
@@ -17,21 +18,21 @@ public class XboxController extends Controller {
 
 	/* @formatter: off */
 	@FeaturePresent
-	public static final ControllerButton
-			A = new ControllerButton("A"),
-			B = new ControllerButton("B"),
-			X = new ControllerButton("X"),
-			Y = new ControllerButton("Y"),
-			LB = new ControllerButton("LB"),
-			RB = new ControllerButton("RB"),
-			GUIDE = new ControllerButton("Menu"),
-			START = new ControllerButton("Pause"),
-			THUMB_L = new ControllerButton("LS"),
-			THUMB_R = new ControllerButton("RS"),
-			UP = new ControllerButton("Up", Direction.UP),
-			RIGHT = new ControllerButton("Right", Direction.RIGHT),
-			DOWN = new ControllerButton("Down", Direction.DOWN),
-			LEFT = new ControllerButton("Left", Direction.LEFT);
+	public static final DeviceButton
+			A = new DeviceButton("A"),
+			B = new DeviceButton("B"),
+			X = new DeviceButton("X"),
+			Y = new DeviceButton("Y"),
+			LB = new DeviceButton("LB"),
+			RB = new DeviceButton("RB"),
+			GUIDE = new DeviceButton("Menu"),
+			START = new DeviceButton("Pause"),
+			THUMB_L = new DeviceButton("LS"),
+			THUMB_R = new DeviceButton("RS"),
+			UP = new DeviceButton("Up", Direction.UP),
+			RIGHT = new DeviceButton("Right", Direction.RIGHT),
+			DOWN = new DeviceButton("Down", Direction.DOWN),
+			LEFT = new DeviceButton("Left", Direction.LEFT);
 
 	@FeaturePresent
 	public static final AnalogTrigger

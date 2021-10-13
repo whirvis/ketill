@@ -4,6 +4,7 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
 import org.joml.Vector3fc;
@@ -17,19 +18,19 @@ public class GameCubeController extends Controller {
 
 	/* @formatter: off */
 	@FeaturePresent
-	public static final ControllerButton
-			A = new ControllerButton("A"),
-			B = new ControllerButton("B"),
-			X = new ControllerButton("X"),
-			Y = new ControllerButton("Y"),
-			LEFT = new ControllerButton("Left", Direction.LEFT),
-			RIGHT = new ControllerButton("Right", Direction.RIGHT),
-			DOWN = new ControllerButton("Down", Direction.DOWN),
-			UP = new ControllerButton("Up", Direction.UP),
-			START = new ControllerButton("Start"),
-			Z = new ControllerButton("Z"),
-			R = new ControllerButton("R"),
-			L = new ControllerButton("L");
+	public static final DeviceButton
+			A = new DeviceButton("A"),
+			B = new DeviceButton("B"),
+			X = new DeviceButton("X"),
+			Y = new DeviceButton("Y"),
+			LEFT = new DeviceButton("Left", Direction.LEFT),
+			RIGHT = new DeviceButton("Right", Direction.RIGHT),
+			DOWN = new DeviceButton("Down", Direction.DOWN),
+			UP = new DeviceButton("Up", Direction.UP),
+			START = new DeviceButton("Start"),
+			Z = new DeviceButton("Z"),
+			R = new DeviceButton("R"),
+			L = new DeviceButton("L");
 
 	@FeaturePresent
 	public static final AnalogStick
