@@ -1,16 +1,10 @@
 package org.ardenus.engine.input.device;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.ardenus.engine.input.Input;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
-import org.ardenus.engine.input.device.event.FeaturePressEvent;
-import org.ardenus.engine.input.device.event.FeatureReleaseEvent;
 import org.ardenus.engine.input.device.feature.Button1bc;
-import org.ardenus.engine.input.device.feature.DeviceFeature;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.KeyboardKey;
+import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 
 /**
  * A generic keyboard.
@@ -147,17 +141,6 @@ public class Keyboard extends InputDevice {
 			MENU = new KeyboardKey("Menu");
 	/* @formatter: on */
 
-	private static class PressableState {
-
-		public boolean pressed;
-		public long pressTime;
-		public boolean held;
-		public long lastHeldPress;
-
-	}
-
-	private final Map<KeyboardKey, PressableState> keyStates;
-
 	/**
 	 * Constructs a new {@code Keyboard}.
 	 * 
@@ -168,57 +151,12 @@ public class Keyboard extends InputDevice {
 	 */
 	public Keyboard(DeviceAdapter<Keyboard> adapter) {
 		super(adapter);
-		this.keyStates = new HashMap<>();
+		this.addMonitor(new DeviceButtonMonitor(this));
 	}
 
 	public boolean isPressed(KeyboardKey key) {
 		Button1bc state = this.getState(key);
 		return state.pressed();
 	}
-
-	private void pollKey(long time, KeyboardKey key) {
-		PressableState state = keyStates.get(key);
-		if (state == null) {
-			state = new PressableState();
-			keyStates.put(key, state);
-		}
-
-		boolean pressed = this.isPressed(key);
-
-		boolean wasPressed = state.pressed;
-
-		if (!wasPressed && pressed) {
-			Input.sendEvent(new FeaturePressEvent(this, key, null, false));
-			state.pressTime = time;
-		} else if (wasPressed && !pressed) {
-			Input.sendEvent(
-					new FeatureReleaseEvent(this, key, null, state.held));
-			state.held = false;
-		}
-
-		state.pressed = pressed;
-		if (state.pressed) {
-			if (!state.held && time - state.pressTime >= 1000L) {
-				/* TODO: initial hold event */
-				state.held = true;
-			}
-
-			if (state.held && time - state.lastHeldPress >= 100L) {
-				Input.sendEvent(new FeaturePressEvent(this, key, null, true));
-				state.lastHeldPress = time;
-			}
-		}
-	}
-
-	@Override
-	public void poll() {
-		long time = System.currentTimeMillis();
-		super.poll();
-		for (DeviceFeature<?> feature : this.getFeatures()) {
-			if (feature instanceof KeyboardKey) {
-				this.pollKey(time, (KeyboardKey) feature);
-			}
-		}
-	}
-
+	
 }
