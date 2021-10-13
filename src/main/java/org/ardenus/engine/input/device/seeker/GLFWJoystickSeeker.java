@@ -14,6 +14,10 @@ import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
  */
 public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 
+	/**
+	 * TODO: Use SDL GUIDs instead of names!
+	 */
+	
 	private final InputDevice[] joysticks;
 	private final Set<String> names;
 
