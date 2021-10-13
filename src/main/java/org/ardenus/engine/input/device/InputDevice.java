@@ -192,7 +192,7 @@ public abstract class InputDevice {
 		T value = (T) features.get(feature);
 		if (value == null) {
 			throw new IllegalArgumentException(
-					"no such feature \"" + feature.name() + "\"");
+					"no such feature \"" + feature.id() + "\"");
 		}
 		return value;
 	}

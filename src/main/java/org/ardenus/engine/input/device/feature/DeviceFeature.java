@@ -17,11 +17,11 @@ import org.ardenus.engine.input.device.InputDevice;
 public interface DeviceFeature<T> {
 
 	/**
-	 * Returns the name of this feature.
+	 * Returns the ID of this feature.
 	 * 
-	 * @return the name of this feature.
+	 * @return the ID of this feature.
 	 */
-	public String name();
+	public String id();
 
 	/**
 	 * Creates a container for the initial state of this feature.

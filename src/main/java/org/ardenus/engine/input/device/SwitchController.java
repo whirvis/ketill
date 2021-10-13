@@ -17,31 +17,31 @@ public class SwitchController extends Controller {
 	/* @formatter: off */
 	@FeaturePresent
 	public static final DeviceButton
-			B = new DeviceButton("B"),
-			A = new DeviceButton("A"),
-			Y = new DeviceButton("Y"),
-			X = new DeviceButton("X"),
-			L = new DeviceButton("L"),
-			R = new DeviceButton("R"),
-			ZL = new DeviceButton("ZL"),
-			ZR = new DeviceButton("ZR"),
-			MINUS = new DeviceButton("-"),
-			PLUS = new DeviceButton("+"),
-			THUMB_L = new DeviceButton("LS"),
-			THUMB_R = new DeviceButton("RS"),
-			HOME = new DeviceButton("Home"),
-			SCREENSHOT = new DeviceButton("Screenshot"),
-			BUMPER = new DeviceButton("Bumper"),
-			Z_BUMPER = new DeviceButton("Z Bumper"),
-			UP = new DeviceButton("Up", Direction.UP),
-			RIGHT = new DeviceButton("Right", Direction.RIGHT),
-			DOWN = new DeviceButton("Down", Direction.DOWN),
-			LEFT = new DeviceButton("Left", Direction.LEFT);
+			B = new DeviceButton("b"),
+			A = new DeviceButton("a"),
+			Y = new DeviceButton("y"),
+			X = new DeviceButton("x"),
+			L = new DeviceButton("l"),
+			R = new DeviceButton("r"),
+			ZL = new DeviceButton("zl"),
+			ZR = new DeviceButton("zr"),
+			MINUS = new DeviceButton("minus"),
+			PLUS = new DeviceButton("plus"),
+			THUMB_L = new DeviceButton("ls"),
+			THUMB_R = new DeviceButton("rs"),
+			HOME = new DeviceButton("home"),
+			SCREENSHOT = new DeviceButton("screenshot"),
+			BUMPER = new DeviceButton("bumper"),
+			Z_BUMPER = new DeviceButton("z_bumper"),
+			UP = new DeviceButton("up", Direction.UP),
+			RIGHT = new DeviceButton("right", Direction.RIGHT),
+			DOWN = new DeviceButton("down", Direction.DOWN),
+			LEFT = new DeviceButton("left", Direction.LEFT);
 
 	@FeaturePresent
 	public static final AnalogStick
-			LS = new AnalogStick("LS", THUMB_L),
-			RS = new AnalogStick("RS", THUMB_R);
+			LS = new AnalogStick("ls", THUMB_L),
+			RS = new AnalogStick("rs", THUMB_R);
 	/* @formatter: on */
 
 	/**

@@ -19,35 +19,35 @@ public class XboxController extends Controller {
 	/* @formatter: off */
 	@FeaturePresent
 	public static final DeviceButton
-			A = new DeviceButton("A"),
-			B = new DeviceButton("B"),
-			X = new DeviceButton("X"),
-			Y = new DeviceButton("Y"),
-			LB = new DeviceButton("LB"),
-			RB = new DeviceButton("RB"),
-			GUIDE = new DeviceButton("Menu"),
-			START = new DeviceButton("Pause"),
-			THUMB_L = new DeviceButton("LS"),
-			THUMB_R = new DeviceButton("RS"),
-			UP = new DeviceButton("Up", Direction.UP),
-			RIGHT = new DeviceButton("Right", Direction.RIGHT),
-			DOWN = new DeviceButton("Down", Direction.DOWN),
-			LEFT = new DeviceButton("Left", Direction.LEFT);
+			A = new DeviceButton("a"),
+			B = new DeviceButton("b"),
+			X = new DeviceButton("x"),
+			Y = new DeviceButton("y"),
+			LB = new DeviceButton("lb"),
+			RB = new DeviceButton("rb"),
+			GUIDE = new DeviceButton("menu"),
+			START = new DeviceButton("pause"),
+			THUMB_L = new DeviceButton("ls"),
+			THUMB_R = new DeviceButton("rs"),
+			UP = new DeviceButton("up", Direction.UP),
+			RIGHT = new DeviceButton("right", Direction.RIGHT),
+			DOWN = new DeviceButton("down", Direction.DOWN),
+			LEFT = new DeviceButton("left", Direction.LEFT);
 
 	@FeaturePresent
 	public static final AnalogTrigger
-			LT = new AnalogTrigger("LT"),
-			RT = new AnalogTrigger("RT");
+			LT = new AnalogTrigger("lt"),
+			RT = new AnalogTrigger("rt");
 
 	@FeaturePresent
 	public static final AnalogStick
-			LS = new AnalogStick("LS", THUMB_L),
-			RS = new AnalogStick("RS", THUMB_R);
+			LS = new AnalogStick("ls", THUMB_L),
+			RS = new AnalogStick("rs", THUMB_R);
 	
 	@FeaturePresent
 	public static final RumbleMotor
-			RUMBLE_COARSE = new RumbleMotor("Coarse"),
-			RUMBLE_FINE = new RumbleMotor("Fine");
+			RUMBLE_COARSE = new RumbleMotor("coarse_rumble"),
+			RUMBLE_FINE = new RumbleMotor("fine_rumble");
 	/* @formatter: on */
 
 	/**
@@ -61,22 +61,22 @@ public class XboxController extends Controller {
 	public XboxController(DeviceAdapter<XboxController> adapter) {
 		super(adapter);
 	}
-	
+
 	@Override
 	public Vector3fc getLeftStick() {
 		return this.getPosition(LS);
 	}
-	
+
 	@Override
 	public Vector3fc getRightStick() {
 		return this.getPosition(RS);
 	}
-	
+
 	@Override
 	public float getLeftTrigger() {
 		return this.getForce(LT);
 	}
-	
+
 	@Override
 	public float getRightTrigger() {
 		return this.getForce(RT);

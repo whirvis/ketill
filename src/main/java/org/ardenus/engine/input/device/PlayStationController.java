@@ -18,35 +18,35 @@ public class PlayStationController extends Controller {
 	/* @formatter: off */
 	@FeaturePresent
 	public static final DeviceButton
-			SQUARE = new DeviceButton("Square"),
-			CROSS = new DeviceButton("Cross"),
-			CIRCLE = new DeviceButton("Circle"),
-			TRIANGLE = new DeviceButton("Triangle"),
-			L1 = new DeviceButton("L1"),
-			R1 = new DeviceButton("R1"),
-			L2 = new DeviceButton("L2"),
-			R2 = new DeviceButton("R2"),
-			SHARE = new DeviceButton("Share"),
-			OPTIONS = new DeviceButton("Options"),
-			THUMB_L = new DeviceButton("LS"),
-			THUMB_R = new DeviceButton("RS"),
-			PS = new DeviceButton("PlayStation"),
-			TPAD = new DeviceButton("Trackpad"),
-			MUTE = new DeviceButton("Mute"), /* present on PS5 */
-			UP = new DeviceButton("Up", Direction.UP),
-			RIGHT = new DeviceButton("Right", Direction.RIGHT),
-			DOWN = new DeviceButton("Down", Direction.DOWN),
-			LEFT = new DeviceButton("Left", Direction.LEFT);
+			SQUARE = new DeviceButton("square"),
+			CROSS = new DeviceButton("cross"),
+			CIRCLE = new DeviceButton("circle"),
+			TRIANGLE = new DeviceButton("triangle"),
+			L1 = new DeviceButton("l1"),
+			R1 = new DeviceButton("r1"),
+			L2 = new DeviceButton("l2"),
+			R2 = new DeviceButton("r2"),
+			SHARE = new DeviceButton("share"),
+			OPTIONS = new DeviceButton("options"),
+			THUMB_L = new DeviceButton("ls"),
+			THUMB_R = new DeviceButton("rs"),
+			PS = new DeviceButton("playstation"),
+			TPAD = new DeviceButton("trackpad"),
+			MUTE = new DeviceButton("mute"), /* present on PS5 */
+			UP = new DeviceButton("up", Direction.UP),
+			RIGHT = new DeviceButton("right", Direction.RIGHT),
+			DOWN = new DeviceButton("down", Direction.DOWN),
+			LEFT = new DeviceButton("left", Direction.LEFT);
 	
 	@FeaturePresent
 	public static final AnalogStick
-			LS = new AnalogStick("LS", THUMB_L),
-			RS = new AnalogStick("RS", THUMB_R);
+			LS = new AnalogStick("ls", THUMB_L),
+			RS = new AnalogStick("rs", THUMB_R);
 	
 	@FeaturePresent
 	public static final AnalogTrigger
-			LT = new AnalogTrigger("LT"),
-			RT = new AnalogTrigger("RT");
+			LT = new AnalogTrigger("lt"),
+			RT = new AnalogTrigger("rt");
 	/* @formatter: on */
 
 	/**

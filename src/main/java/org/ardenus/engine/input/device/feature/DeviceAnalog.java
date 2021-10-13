@@ -1,5 +1,7 @@
 package org.ardenus.engine.input.device.feature;
 
+import java.util.Objects;
+
 import org.ardenus.engine.input.Analog;
 import org.ardenus.engine.input.device.InputDevice;
 
@@ -13,26 +15,26 @@ import org.ardenus.engine.input.device.InputDevice;
 public abstract class DeviceAnalog<T> extends Analog<T>
 		implements DeviceFeature<T> {
 
-	private final String name;
+	private final String id;
 
 	/**
 	 * Constructs a new {@code DeviceAnalog}.
 	 * 
 	 * @param type
 	 *            the value type class.
-	 * @param name
-	 *            the analog input name.
+	 * @param id
+	 *            the analog input ID.
 	 * @throws NullPointerException
-	 *             if {@code type} is {@code null}.
+	 *             if {@code type} or {@code id} are {@code null}.
 	 */
-	public DeviceAnalog(Class<T> type, String name) {
+	public DeviceAnalog(Class<T> type, String id) {
 		super(type);
-		this.name = name;
+		this.id = Objects.requireNonNull(id, "id");
 	}
 
 	@Override
-	public final String name() {
-		return this.name;
+	public final String id() {
+		return this.id;
 	}
 
 	@Override

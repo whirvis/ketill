@@ -46,31 +46,31 @@ public class AnalogStick extends DeviceAnalog<Vector3fc> {
 	/**
 	 * Constructs a new {@code AnalogStick}.
 	 * 
-	 * @param name
-	 *            the analog stick name.
+	 * @param id
+	 *            the analog stick ID.
 	 * @param zButton
 	 *            the button that, when pressed, should have the Z-axis of this
 	 *            analog stick decreased from {@code 0.0F} to {@code -1.0F}. A
 	 *            value of {@code null} is permitted, and indicates that no
 	 *            button corresponds to the Z-axis of this analog stick.
 	 * @throws NullPointerException
-	 *             if {@code name} is {@code null}.
+	 *             if {@code id} is {@code null}.
 	 */
-	public AnalogStick(String name, DeviceButton zButton) {
-		super(Vector3fc.class, name);
+	public AnalogStick(String id, DeviceButton zButton) {
+		super(Vector3fc.class, id);
 		this.zButton = zButton;
 	}
 
 	/**
 	 * Constructs a new {@code AnalogStick}.
 	 * 
-	 * @param name
-	 *            the analog stick name.
+	 * @param id
+	 *            the analog stick ID.
 	 * @throws NullPointerException
-	 *             if {@code name} is {@code null}.
+	 *             if {@code id} is {@code null}.
 	 */
-	public AnalogStick(String name) {
-		this(name, null);
+	public AnalogStick(String id) {
+		this(id, null);
 	}
 
 	@Override

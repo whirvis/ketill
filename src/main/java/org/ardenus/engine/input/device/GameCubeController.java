@@ -19,32 +19,32 @@ public class GameCubeController extends Controller {
 	/* @formatter: off */
 	@FeaturePresent
 	public static final DeviceButton
-			A = new DeviceButton("A"),
-			B = new DeviceButton("B"),
-			X = new DeviceButton("X"),
-			Y = new DeviceButton("Y"),
-			LEFT = new DeviceButton("Left", Direction.LEFT),
-			RIGHT = new DeviceButton("Right", Direction.RIGHT),
-			DOWN = new DeviceButton("Down", Direction.DOWN),
-			UP = new DeviceButton("Up", Direction.UP),
-			START = new DeviceButton("Start"),
-			Z = new DeviceButton("Z"),
-			R = new DeviceButton("R"),
-			L = new DeviceButton("L");
+			A = new DeviceButton("a"),
+			B = new DeviceButton("b"),
+			X = new DeviceButton("x"),
+			Y = new DeviceButton("y"),
+			LEFT = new DeviceButton("left", Direction.LEFT),
+			RIGHT = new DeviceButton("right", Direction.RIGHT),
+			DOWN = new DeviceButton("down", Direction.DOWN),
+			UP = new DeviceButton("up", Direction.UP),
+			START = new DeviceButton("start"),
+			Z = new DeviceButton("z"),
+			R = new DeviceButton("r"),
+			L = new DeviceButton("l");
 
 	@FeaturePresent
 	public static final AnalogStick
-			LS = new AnalogStick("LS"),
-			RS = new AnalogStick("RS");
+			LS = new AnalogStick("ls"),
+			RS = new AnalogStick("rs");
 	
 	@FeaturePresent
 	public static final AnalogTrigger
-			LT = new AnalogTrigger("LT"),
-			RT = new AnalogTrigger("RT");
+			LT = new AnalogTrigger("lt"),
+			RT = new AnalogTrigger("rt");
 	
 	@FeaturePresent
 	public static final RumbleMotor
-			RUMBLE = new RumbleMotor("Rumble");
+			RUMBLE = new RumbleMotor("rumble");
 	/* @formatter: on */
 
 	/**

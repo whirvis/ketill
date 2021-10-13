@@ -8,13 +8,13 @@ public class AnalogTrigger extends DeviceAnalog<Trigger1fc> {
 	/**
 	 * Constructs a new {@code AnalogTrigger}.
 	 * 
-	 * @param name
-	 *            the analog trigger name.
+	 * @param id
+	 *            the analog trigger ID.
 	 * @throws NullPointerException
-	 *             if {@code name} is {@code null}.
+	 *             if {@code id} is {@code null}.
 	 */
-	public AnalogTrigger(String name) {
-		super(Trigger1fc.class, name);
+	public AnalogTrigger(String id) {
+		super(Trigger1fc.class, id);
 	}
 
 	@Override

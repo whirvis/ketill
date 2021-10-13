@@ -7,24 +7,23 @@ import java.util.Objects;
  */
 public class RumbleMotor implements DeviceFeature<Vibration1f> {
 
-	private final String name;
+	private final String id;
 
 	/**
 	 * Constructs a new {@code RumbleMotor}.
 	 * 
-	 * @param name
-	 *            the rumble motor name.
+	 * @param id
+	 *            the rumble motor ID.
 	 * @throws NullPointerException
-	 *             if {@code name} is {@code null}.
+	 *             if {@code id} is {@code null}.
 	 */
-	public RumbleMotor(String name) {
-		Objects.requireNonNull(name, "name");
-		this.name = name + " Rumble";
+	public RumbleMotor(String id) {
+		this.id = Objects.requireNonNull(id, "id");
 	}
 
 	@Override
-	public String name() {
-		return this.name;
+	public String id() {
+		return this.id;
 	}
 
 	@Override
