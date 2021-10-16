@@ -6,17 +6,11 @@ import org.ardenus.engine.input.device.event.DeviceConnectEvent;
 import org.ardenus.engine.input.device.event.DeviceDisconnectEvent;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
-/**
- * A feature monitor which tracks the connection state of an
- * {@link InputDevice}.
- */
 public class ConnectionMonitor extends FeatureMonitor {
 
 	private boolean wasConnected;
 
 	/**
-	 * Constructs a new {@code ConnectionMonitor}.
-	 * 
 	 * @param device
 	 *            the device whose connection to monitor.
 	 * @throws NullPointerException

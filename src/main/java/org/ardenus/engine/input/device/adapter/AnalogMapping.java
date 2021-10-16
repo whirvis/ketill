@@ -32,8 +32,6 @@ public abstract class AnalogMapping<A extends DeviceAnalog<?>>
 		extends FeatureMapping<A> {
 
 	/**
-	 * Constructs a new {@code MappedAnalog}.
-	 * 
 	 * @param analog
 	 *            the analog being mapped to.
 	 * @throws NullPointerException

@@ -6,9 +6,6 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
-/**
- * Signals that an {@link InputDevice} has released a {@link DeviceFeature}.
- */
 public class FeatureReleaseEvent extends DeviceEvent {
 
 	private final DeviceFeature<?> button;
@@ -16,8 +13,6 @@ public class FeatureReleaseEvent extends DeviceEvent {
 	private final boolean held;
 
 	/**
-	 * Constructs a new {@code FeatureReleaseEvent}.
-	 * 
 	 * @param device
 	 *            the device that released {@code feature}.
 	 * @param feature
@@ -41,8 +36,6 @@ public class FeatureReleaseEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the feature that was released.
-	 * 
 	 * @return the feature that was released.
 	 */
 	public DeviceFeature<?> getFeature() {
@@ -50,8 +43,6 @@ public class FeatureReleaseEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the direction being released from.
-	 * 
 	 * @return the direction being release from, if any.
 	 */
 	public Direction getDirection() {
@@ -59,8 +50,6 @@ public class FeatureReleaseEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns if the feature was being held down.
-	 * 
 	 * @return {@code true} if the feature was being held down, {@code false}
 	 *         otherwise.
 	 */

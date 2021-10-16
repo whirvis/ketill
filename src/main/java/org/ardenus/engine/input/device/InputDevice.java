@@ -21,16 +21,19 @@ import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
  * A device which can send and receive input data.
  * <p>
  * Examples of input devices include, but are not limited to: keyboards, mouses,
- * XBOX controllers, PlayStation controllers, etc. By default, an input device
- * only has support for buttons. However, depending on the implementation,
- * features like mouse coordinates, gyroscopes, etc. may be present.
+ * XBOX controllers, PlayStation controllers, etc. By design, an input device
+ * does not support any device feature by default. While an input device will
+ * usually accept any device feature it is given, it is up to the implementation
+ * to provide shorthands for easy access and communication with them.
  * <p>
  * <b>Note:</b> For an input device to work properly, it must be polled via
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
  * 
- * @see FeaturePresent
  * @see DeviceAdapter
+ * @see DeviceFeature
+ * @see FeaturePresent
+ * @see FeatureMonitor
  */
 public abstract class InputDevice {
 
@@ -55,7 +58,7 @@ public abstract class InputDevice {
 		this.monitors = new HashSet<>();
 		this.features = new HashMap<>();
 		this.loadFeatures();
-		
+
 		this.addMonitor(new ConnectionMonitor(this));
 	}
 
@@ -84,14 +87,6 @@ public abstract class InputDevice {
 		}
 	}
 
-	/**
-	 * Returns if a feature is registered to this input device.
-	 * 
-	 * @param feature
-	 *            the feature to check for.
-	 * @return {@code true} if {@code feature} is registered, {@code false}
-	 *         otherwise.
-	 */
 	public boolean hasFeature(DeviceFeature<?> feature) {
 		if (feature != null) {
 			return features.containsKey(feature);
@@ -99,11 +94,6 @@ public abstract class InputDevice {
 		return false;
 	}
 
-	/**
-	 * Returns all features registered to this input device.
-	 * 
-	 * @return all features registered to this input device.
-	 */
 	public Set<DeviceFeature<?>> getFeatures() {
 		return Collections.unmodifiableSet(features.keySet());
 	}
@@ -173,8 +163,6 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Returns the current value of a device feature.
-	 * 
 	 * @param <T>
 	 *            the feature value type.
 	 * @param feature
@@ -198,8 +186,6 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Returns if this input device is still connected.
-	 * 
 	 * @return {@code true} if this input device is still connected,
 	 *         {@code false} otherwise.
 	 */
@@ -208,12 +194,11 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Polls this input device.
-	 * <p>
-	 * Polling an input device is necessary for retrieving up to date input
-	 * information. By default, only the states of registered analogs and
-	 * buttons will be updated. However, more information may be polled
-	 * depending on the implementation.
+	 * Polling an input device is usually necessary for retrieving up to date
+	 * input information (some implementations technically do not require it.)
+	 * Nevertheless, it is recommended to poll all input devices once on each
+	 * program update. The information that is updated on each poll is dependent
+	 * on the input device and its implementation.
 	 */
 	public void poll() {
 		adapter.poll();

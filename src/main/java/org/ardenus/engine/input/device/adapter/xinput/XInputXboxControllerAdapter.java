@@ -1,6 +1,5 @@
 package org.ardenus.engine.input.device.adapter.xinput;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
@@ -18,11 +17,6 @@ import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
 
-/**
- * An X-input device adapter for an {@link XboxController}.
- *
- * @see XInputDeviceAdapter
- */
 public class XInputXboxControllerAdapter
 		extends XInputDeviceAdapter<XboxController> {
 
@@ -71,16 +65,6 @@ public class XInputXboxControllerAdapter
 	private int rumbleCoarse;
 	private int rumbleFine;
 
-	/**
-	 * Constructs a new {@code XInputXboxControllerAdapter}.
-	 * 
-	 * @param xinput
-	 *            the X-input device.
-	 * @throws NullPointerException
-	 *             if {@code xinput} is {@code null}.
-	 * @throws InputException
-	 *             if an input error occurs.
-	 */
 	public XInputXboxControllerAdapter(XInputDevice xinput) {
 		super(xinput);
 	}

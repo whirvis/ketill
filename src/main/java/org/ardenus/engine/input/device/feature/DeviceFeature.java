@@ -17,22 +17,16 @@ import org.ardenus.engine.input.device.InputDevice;
 public interface DeviceFeature<T> {
 
 	/**
-	 * Returns the ID of this feature.
-	 * 
 	 * @return the ID of this feature.
 	 */
 	public String id();
 
 	/**
-	 * Creates a container for the initial state of this feature.
-	 * 
-	 * @return the created container.
+	 * @return a container for the initial state of this feature.
 	 */
 	public T initial();
 
 	/**
-	 * Returns if this feature is optional.
-	 * <p>
 	 * If a feature is not optional, an implementation defined error will be
 	 * generated if it is not present.
 	 * 

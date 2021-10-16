@@ -51,8 +51,6 @@ package org.ardenus.engine.input;
 public interface Pressable {
 
 	/**
-	 * Returns if this object can currently be pressed.
-	 * <p>
 	 * Unless overridden, this method will always return {@code true} by
 	 * default.<br>
 	 * It is up to the implementation of this class to determine whether or not

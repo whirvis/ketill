@@ -9,16 +9,15 @@ import org.ardenus.engine.input.device.feature.DeviceFeature;
  * A monitor for the features of an input device.
  * <p>
  * The purpose of a feature monitor is to monitor the state of an input device
- * and its feature. However, what it does in response to a change is dependant
- * on the implementation.
+ * and its features. What a monitor does in response to a change in state is
+ * dependent on the implementation. A common use for monitors is to send events
+ * which signal the change of a feature's state.
  */
 public abstract class FeatureMonitor {
 
 	protected final InputDevice device;
 
 	/**
-	 * Constructs a new {@code FeatureMonitor}.
-	 * 
 	 * @param device
 	 *            the device whose features to monitor.
 	 * @throws NullPointerException
@@ -29,8 +28,6 @@ public abstract class FeatureMonitor {
 	}
 
 	/**
-	 * Returns if this monitor is assigned to the specified device.
-	 * 
 	 * @param device
 	 *            the device to check.
 	 * @return {@code true} if this monitor is assigned to {@code device},
@@ -45,7 +42,7 @@ public abstract class FeatureMonitor {
 	 * <p>
 	 * Whether or not the monitor actually tracks the state of the feature is
 	 * dependant on the implementation. Feature monitors have every right to
-	 * ignore a feature that they are told to monitor. This function is only to
+	 * ignore a feature that they are told to monitor. This method is only to
 	 * indicate when they are registered to the input device, preventing the
 	 * need to cycle through every device feature on every update.
 	 * 
@@ -66,9 +63,6 @@ public abstract class FeatureMonitor {
 	 */
 	public abstract void forget(DeviceFeature<?> feature);
 
-	/**
-	 * Updates the feature monitor.
-	 */
 	public abstract void update();
 
 }

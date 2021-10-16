@@ -141,8 +141,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Returns if the adapter has a mapping for a device feature.
-	 * 
 	 * @param feature
 	 *            the feature to check for.
 	 * @return {@code true} if a mapping exists for {@code feature},
@@ -156,8 +154,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Returns if an input mapping is registered to this adapter.
-	 * 
 	 * @param mapping
 	 *            the input mapping to check for.
 	 * @return {@code true} if {@code mapping} is registered to this adapter,
@@ -171,8 +167,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Returns the input mapping for a device feature.
-	 * 
 	 * @param feature
 	 *            the feature whose mapping to retrieve.
 	 * @return the mapping for {@code feature}, {@code null} if none is
@@ -186,8 +180,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Registers an input mapping to this adapter.
-	 * 
 	 * @param mapping
 	 *            the mapping to register.
 	 * @return this device adapter.
@@ -204,10 +196,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Registers the specified analog mappings to this adapter.
-	 * <p>
-	 * This method is a shorthand for {@link #map(A)}, with each value of
-	 * {@code mappings} being passed as the argument for {@code mapping}.
+	 * This method is a shorthand for {@link #map(FeatureMapping)}, with each
+	 * value of {@code mappings} being passed as the argument for
+	 * {@code mapping}.
 	 * 
 	 * @param mappings
 	 *            the mappings to register.
@@ -226,8 +217,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Unregisters an input mapping from this adapter.
-	 * 
 	 * @param feature
 	 *            the feature whose mapping to unregister.
 	 * @return {@code true} if the mapping for {@code feature} was unregistered
@@ -242,8 +231,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Unregisters an analog mapping from this adapter.
-	 * 
 	 * @param mapping
 	 *            the mapping to unregister.
 	 * @return {@code true} if {@code mapping} was unregistered from this
@@ -319,16 +306,12 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Returns if this device adapter is still connected.
-	 * 
 	 * @return {@code true} if this device adapter is still connected,
 	 *         {@code false} otherwise.
 	 */
 	public abstract boolean isConnected();
 
 	/**
-	 * Queries the device for the current value of a device feature.
-	 * <p>
 	 * For this method to work properly, {@code feature} must have been given a
 	 * mapping as well as an appropriate adapter at construction. If no mapping
 	 * was specified, this method will be a no-op. If no adapter for the mapping
@@ -354,8 +337,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		if (mapping == null) {
 			if (!absentMappings.contains(feature)) {
 				String msg = "no mapping for feature \"" + feature.id() + "\"";
-				if(feature.optional()) {
-					log.warn(msg);	
+				if (feature.optional()) {
+					log.warn(msg);
 				} else {
 					throw new InputException(msg);
 				}
@@ -390,8 +373,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	/**
-	 * Polls the adapter to update input device data.
-	 * <p>
 	 * Polling a device adapter is not always necessary for retrieving up to
 	 * date input information. However, this is only down to how the adapter
 	 * retrieves information from its source. As such, it is highly recommended

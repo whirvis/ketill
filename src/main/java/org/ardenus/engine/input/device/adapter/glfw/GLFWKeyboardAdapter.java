@@ -8,9 +8,6 @@ import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.adapter.KeyMapping;
 import org.ardenus.engine.input.device.feature.Button1b;
 
-/**
- * A GLFW keyboard adapter for a {@link Keyboard}.
- */
 public class GLFWKeyboardAdapter extends GLFWDeviceAdapter<Keyboard> {
 
 	/* @formatter: off */
@@ -141,12 +138,6 @@ public class GLFWKeyboardAdapter extends GLFWDeviceAdapter<Keyboard> {
 			MENU = new GLFWKeyMapping(Keyboard.MENU, GLFW_KEY_MENU);
 	/* @formatter: on */
 
-	/**
-	 * Constructs a new {@code GLFWKeyboardAdapter}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 */
 	public GLFWKeyboardAdapter(long ptr_glfwWindow) {
 		super(ptr_glfwWindow);
 	}

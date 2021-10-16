@@ -23,6 +23,12 @@ public class AnalogPressableState extends PressableState {
 		this.stick = Objects.requireNonNull(stick, "stick");
 		this.direction = Objects.requireNonNull(direction, "direction");
 	}
+	
+	@Override
+	public boolean isPressed() {
+		Vector3fc pos = device.getState(stick);
+		return AnalogStick.isPressed(pos, direction);
+	}
 
 	@Override
 	public void onPress(boolean held) {
@@ -37,13 +43,6 @@ public class AnalogPressableState extends PressableState {
 	@Override
 	public void onRelease(boolean held) {
 		Input.sendEvent(new StickReleaseEvent(device, stick, direction, held));
-	}
-
-	@Override
-	public void update(long currentTime) {
-		Vector3fc pos = device.getState(stick);
-		boolean pressed = AnalogStick.isPressed(pos, direction);
-		this.update(currentTime, pressed);
 	}
 
 }

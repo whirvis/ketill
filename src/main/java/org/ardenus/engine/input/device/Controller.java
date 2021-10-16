@@ -19,8 +19,8 @@ import org.joml.Vector3fc;
  * <p>
  * Examples of controllers include, but are not limited to: XBOX controllers,
  * PlayStation controllers, Nintendo GameCube controllers, etc. By default, a
- * controller has support for buttons and analog sticks. However, depending on
- * the implementation, features like rumble, gyroscopes, etc. may be present.
+ * controller has support for buttons and analog sticks. Depending on the
+ * implementation, features like rumble, gyroscopes, etc. may also be present.
  * <p>
  * <b>Note:</b> For an controller to work properly, it must be polled via
  * {@link #poll()} before querying any input information. It is recommended to
@@ -29,7 +29,10 @@ import org.joml.Vector3fc;
 public abstract class Controller extends InputDevice {
 
 	/**
-	 * Constructs a new {@code Controller}.
+	 * By default, a {@code Controller} expects device features of type
+	 * {@link DeviceButton} and {@link DeviceAnalog}. As a result, instances of
+	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} will be added
+	 * on instantiation.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
@@ -43,8 +46,6 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Returns if a button is pressed.
-	 * 
 	 * @param button
 	 *            the button to check.
 	 * @return {@code true} if {@code button} is pressed, {@code false}
@@ -59,8 +60,6 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Returns the position of an analog stick.
-	 * 
 	 * @param stick
 	 *            the analog stick.
 	 * @return the position of {@code stick}.
@@ -73,8 +72,6 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Returns if an analog stick is pressed towards a direction.
-	 * 
 	 * @param stick
 	 *            the analog stick.
 	 * @param direction
@@ -88,8 +85,6 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Returns the force of an analog trigger.
-	 * 
 	 * @param trigger
 	 *            the analog trigger.
 	 * @return the force of {@code trigger}.
@@ -103,40 +98,34 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Returns the current position of the left analog stick.
-	 * 
 	 * @return the current position of the left analog stick.
 	 */
 	public abstract Vector3fc getLeftStick();
 
 	/**
-	 * Returns the current position of the right analog stick.
-	 * 
 	 * @return the current position of the right analog stick.
 	 */
 	public abstract Vector3fc getRightStick();
 
 	/**
-	 * Returns the current force of the left analog trigger.
-	 * 
 	 * @return the current force of the left analog trigger.
 	 */
 	public abstract float getLeftTrigger();
 
 	/**
-	 * Returns the current force of the right analog trigger.
-	 * 
 	 * @return the current force of the right analog trigger.
 	 */
 	public abstract float getRightTrigger();
 
 	/**
-	 * Sets the vibration force of a rumble motor.
-	 * 
 	 * @param motor
-	 *            the motor to rumble.
+	 *            the motor which to rumble. If not present, this method will be
+	 *            a no-op.
 	 * @param force
-	 *            the vibration force to set the motor to.
+	 *            the vibration force to set the motor to. This value should be
+	 *            on a scale of {@code 0.0F} to {@code 1.0F}, with {@code 0.0F}
+	 *            being no rumble and {@code 1.0F} being max rumble
+	 *            respectively.
 	 */
 	public void setVibration(RumbleMotor motor, float force) {
 		if (!this.hasFeature(motor)) {
@@ -147,10 +136,14 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * Sets the vibration force of all rumble motors.
+	 * A shorthand for {@link #setVibration(RumbleMotor, float)} which sets the
+	 * vibration for each rumble motor present on this controller.
 	 * 
 	 * @param force
-	 *            the vibration force to set the motors to.
+	 *            the vibration force to set each motor to. This value should be
+	 *            on a scale of {@code 0.0F} to {@code 1.0F}, with {@code 0.0F}
+	 *            being no rumble and {@code 1.0F} being max rumble
+	 *            respectively.
 	 */
 	public void setVibration(float force) {
 		for (DeviceFeature<?> feature : this.getFeatures()) {

@@ -3,14 +3,9 @@ package org.ardenus.engine.input.device.event;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 
-/**
- * Signals that an {@link InputDevice} has pressed a {@link DeviceButton}.
- */
 public class ButtonPressEvent extends FeaturePressEvent {
 
 	/**
-	 * Constructs a new {@code ButtonPressEvent}.
-	 * 
 	 * @param device
 	 *            the device that pressed {@code button}.
 	 * @param button
@@ -27,8 +22,6 @@ public class ButtonPressEvent extends FeaturePressEvent {
 	}
 
 	/**
-	 * Returns the button that was pressed.
-	 * 
 	 * @return the button that was pressed.
 	 */
 	public DeviceButton getButton() {

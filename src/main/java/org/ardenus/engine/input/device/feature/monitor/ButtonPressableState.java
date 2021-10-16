@@ -19,6 +19,12 @@ public class ButtonPressableState extends PressableState {
 		this.device = Objects.requireNonNull(device, "device");
 		this.button = Objects.requireNonNull(button, "button");
 	}
+	
+	@Override
+	public boolean isPressed() {
+		Button1bc state = device.getState(button);
+		return state.pressed();
+	}
 
 	@Override
 	public void onPress(boolean held) {
@@ -33,12 +39,6 @@ public class ButtonPressableState extends PressableState {
 	@Override
 	public void onRelease(boolean held) {
 		Input.sendEvent(new ButtonReleaseEvent(device, button, held));
-	}
-
-	@Override
-	public void update(long currentTime) {
-		Button1bc state = device.getState(button);
-		this.update(currentTime, state.pressed());
 	}
 
 }

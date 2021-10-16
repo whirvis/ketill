@@ -14,11 +14,13 @@ import org.ardenus.engine.input.device.InputDevice;
  * <p>
  * The purpose of a device seeker is to scan for input devices currently
  * connected to the system. When an input device is detected, the appropriate
- * {@code InputDevice} instance and adapter will be created. This device will
- * then be registered to the device seeker. Once an input device is registered
- * to a seeker, it will be polled in the {@link #poll()} method.
+ * {@code InputDevice} instance and adapter will be created. Afterwards, the
+ * device will be registered to the device seeker. Once an input device is
+ * registered to a seeker, it will be polled in the {@link #poll()} method.
  * <p>
- * TODO
+ * <b>Note:</b> For a device seeker to work properly, it must be polled via
+ * {@link #poll()} before querying any input information. It is recommended to
+ * poll the device seeker once on every application update.
  */
 public abstract class DeviceSeeker {
 
@@ -27,8 +29,6 @@ public abstract class DeviceSeeker {
 	private final Set<InputDevice> devices;
 
 	/**
-	 * Constructs a new {@code DeviceSeeker}.
-	 * 
 	 * @param type
 	 *            the device type to seek out.
 	 * @throws NullPointerException
@@ -40,25 +40,11 @@ public abstract class DeviceSeeker {
 		this.devices = new HashSet<>();
 	}
 
-	/**
-	 * Adds a listener to this device seeker.
-	 * 
-	 * @param listener
-	 *            the listener to add.
-	 * @throws NullPointerException
-	 *             if {@code listener} is {@code null}.
-	 */
 	public void addListener(SeekerListener listener) {
 		Objects.requireNonNull(listener, "listener");
 		listeners.add(listener);
 	}
 
-	/**
-	 * Removes a listener from this input device.
-	 * 
-	 * @param listener
-	 *            the listener to remove.
-	 */
 	public void removeListener(SeekerListener listener) {
 		if (listener != null) {
 			listeners.remove(listener);
@@ -72,8 +58,6 @@ public abstract class DeviceSeeker {
 	}
 
 	/**
-	 * Returns all devices registered to this seeker.
-	 * <p>
 	 * <b>Note:</b> Just because a device is registered to the seeker does
 	 * <i>not</i> indicate that it is currently connected. It only means that
 	 * the seeker has detected its presence and as such has registered it. TODO
@@ -122,12 +106,6 @@ public abstract class DeviceSeeker {
 		}
 	}
 
-	/**
-	 * Seeks for input devices.
-	 * 
-	 * @throws Exception
-	 *             if an error occurs.
-	 */
 	protected abstract void seek() throws Exception;
 
 	/**

@@ -8,11 +8,6 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.joml.Vector3fc;
 
-/**
- * A Sony PlayStation 4 controller.
- * 
- * @see Controller
- */
 public class PlayStationController extends Controller {
 
 	/* @formatter: off */
@@ -50,10 +45,8 @@ public class PlayStationController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * Constructs a new {@code PlayStationController}.
-	 * 
 	 * @param adapter
-	 *            the device adapter.
+	 *            the PlayStation controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */

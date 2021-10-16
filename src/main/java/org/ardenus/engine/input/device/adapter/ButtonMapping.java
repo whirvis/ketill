@@ -31,8 +31,6 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 public abstract class ButtonMapping extends FeatureMapping<DeviceButton> {
 
 	/**
-	 * Constructs a new {@code MappedButton}.
-	 * 
 	 * @param button
 	 *            the button being mapped to.
 	 * @throws NullPointerException

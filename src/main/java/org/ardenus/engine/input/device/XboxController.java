@@ -9,11 +9,6 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
 import org.joml.Vector3fc;
 
-/**
- * A Microsoft XBOX controller.
- * 
- * @see Controller
- */
 public class XboxController extends Controller {
 
 	/* @formatter: off */
@@ -51,10 +46,8 @@ public class XboxController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * Constructs a new {@code XboxController}.
-	 * 
 	 * @param adapter
-	 *            the device adapter.
+	 *            the XBOX controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */

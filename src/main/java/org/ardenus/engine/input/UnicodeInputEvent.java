@@ -1,29 +1,41 @@
 package org.ardenus.engine.input;
 
-/**
- * Signals that a Unicode character has been typed.
- */
 public class UnicodeInputEvent extends InputEvent {
 
-	private final char c;
+	private final Object source;
+	private final char input;
 
 	/**
-	 * Constructs a new {@code UnicodeInputEvent}.
-	 * 
-	 * @param c
-	 *            the character type.
+	 * @param source
+	 *            the source of input, may be {@code null}.
+	 * @param input
+	 *            the typed character.
 	 */
-	public UnicodeInputEvent(char c) {
-		this.c = c;
+	public UnicodeInputEvent(Object source, char input) {
+		this.source = source;
+		this.input = input;
 	}
 
 	/**
-	 * Returns the typed character.
-	 * 
+	 * @param input
+	 *            the typed character.
+	 */
+	public UnicodeInputEvent(char input) {
+		this(null, input);
+	}
+
+	/**
+	 * @return the source of input, may be {@code null}.
+	 */
+	public Object getSource() {
+		return this.source;
+	}
+
+	/**
 	 * @return the typed character.
 	 */
-	public char getChar() {
-		return this.c;
+	public char getInput() {
+		return this.input;
 	}
 
 }

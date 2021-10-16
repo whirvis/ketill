@@ -6,14 +6,9 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 
-/**
- * Signals that an {@link InputDevice} has held down an {@link AnalogStick}.
- */
 public class StickHoldEvent extends FeatureHoldEvent {
 
 	/**
-	 * Constructs a new {@code StickHoldEvent}.
-	 * 
 	 * @param device
 	 *            the device holding {@code stick}.
 	 * @param stick
@@ -31,8 +26,6 @@ public class StickHoldEvent extends FeatureHoldEvent {
 	}
 
 	/**
-	 * Returns the stick being held down.
-	 * 
 	 * @return the stick being held down.
 	 */
 	public AnalogStick getStick() {

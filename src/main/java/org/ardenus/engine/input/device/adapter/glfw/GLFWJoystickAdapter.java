@@ -5,7 +5,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.ButtonMapping;
@@ -31,14 +30,10 @@ public abstract class GLFWJoystickAdapter<I extends InputDevice>
 	protected ByteBuffer buttons;
 
 	/**
-	 * Constructs a new {@code GLFWJoystickAdapter}.
-	 * 
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @param glfwJoystick
 	 *            the GLFW joystick ID.
-	 * @throws InputException
-	 *             if an input error occurs.
 	 * @see #map(AnalogMapping)
 	 * @see #map(ButtonMapping)
 	 */

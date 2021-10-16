@@ -7,11 +7,6 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.joml.Vector3fc;
 
-/**
- * A Nintendo Switch controller.
- * 
- * @see Controller
- */
 public class SwitchController extends Controller {
 
 	/* @formatter: off */
@@ -45,10 +40,8 @@ public class SwitchController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * Constructs a new {@code SwitchController}.
-	 * 
 	 * @param adapter
-	 *            the device adapter.
+	 *            the Switch controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */

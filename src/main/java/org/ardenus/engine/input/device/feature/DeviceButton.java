@@ -4,21 +4,13 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.Button;
 import org.ardenus.engine.input.Direction;
-import org.ardenus.engine.input.device.InputDevice;
 
-/**
- * Represents a button that is present on an input device.
- * 
- * @see InputDevice
- */
 public class DeviceButton extends Button implements DeviceFeature<Button1bc> {
 
 	private final String id;
 	public final Direction direction;
 
 	/**
-	 * Constructs a new {@code DeviceButton}.
-	 * 
 	 * @param id
 	 *            the button ID.
 	 * @param direction
@@ -34,8 +26,6 @@ public class DeviceButton extends Button implements DeviceFeature<Button1bc> {
 	}
 
 	/**
-	 * Constructs a new {@code DeviceButton}.
-	 * 
 	 * @param id
 	 *            the button ID.
 	 * @throws NullPointerException

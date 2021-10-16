@@ -1,15 +1,10 @@
 package org.ardenus.engine.input.device.feature;
 
-/**
- * Contains the definition of a vibration comprising of 1 {@code float}.
- */
 public class Vibration1f {
 
 	public float force;
 
 	/**
-	 * Constructs a new {@code Vibration1f}.
-	 * 
 	 * @param force
 	 *            the initial vibration force.
 	 */

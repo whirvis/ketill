@@ -53,8 +53,6 @@ public abstract class Analog<V> {
 	public final Class<?> type;
 
 	/**
-	 * Constructs a new {@code Analog}.
-	 * 
 	 * @param type
 	 *            the value type class.
 	 * @throws NullPointerException
@@ -65,9 +63,7 @@ public abstract class Analog<V> {
 	}
 
 	/**
-	 * Returns a zeroed out value for this analog.
-	 * 
-	 * @return the zeroed out value container.
+	 * @return a zeroed out value container.
 	 */
 	public abstract V zero();
 

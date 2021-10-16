@@ -8,24 +8,19 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 
 import com.github.strikerx3.jxinput.XInputButtons;
 
-/**
- * A {@link DeviceButton} mapping for use with an {@link XInputDeviceAdapter}.
- * 
- * @param <B>
- *            the device button type.
- */
 public class XInputButtonMapping extends ButtonMapping {
 
 	public final String fieldName;
 	private final Field field;
 
 	/**
-	 * Constructs a new {@code XInputMappedButton}.
-	 * 
 	 * @param button
 	 *            the button being mapped to.
+	 * @param fieldName
+	 *            the name of the field that this button maps to in the
+	 *            {@code XInputButtons} class.
 	 * @throws NullPointerException
-	 *             if {@code fieldName} is {@code null}.
+	 *             if {@code button} or {@code fieldName} are {@code null}.
 	 * @throws IllegalArgumentException
 	 *             if no field in {@code XInputButtons} with name
 	 *             {@code fieldName} exists or is accessible to this class.
@@ -43,8 +38,6 @@ public class XInputButtonMapping extends ButtonMapping {
 	}
 
 	/**
-	 * Returns if this button is currently pressed.
-	 * 
 	 * @param buttons
 	 *            the X-input buttons state.
 	 * @return {@code true} if this button is currently pressed according to

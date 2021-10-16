@@ -6,14 +6,9 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 
-/**
- * Signals that an {@link InputDevice} has pressed an {@link AnalogStick}.
- */
 public class StickPressEvent extends FeaturePressEvent {
 
 	/**
-	 * Constructs a new {@code StickPressEvent}.
-	 * 
 	 * @param device
 	 *            the device that pressed {@code stick}.
 	 * @param stick
@@ -34,8 +29,6 @@ public class StickPressEvent extends FeaturePressEvent {
 	}
 
 	/**
-	 * Returns the stick that was pressed.
-	 * 
 	 * @return the stick that was pressed.
 	 */
 	public AnalogStick getStick() {

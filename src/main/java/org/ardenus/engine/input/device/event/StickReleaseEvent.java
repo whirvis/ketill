@@ -6,14 +6,9 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 
-/**
- * Signals that an {@link InputDevice} has released an {@link AnalogStick}.
- */
 public class StickReleaseEvent extends FeatureReleaseEvent {
 
 	/**
-	 * Constructs a new {@code StickReleaseEvent}.
-	 * 
 	 * @param device
 	 *            the device that released {@code stick}.
 	 * @param feature
@@ -34,8 +29,6 @@ public class StickReleaseEvent extends FeatureReleaseEvent {
 	}
 
 	/**
-	 * Returns the stick that was released.
-	 * 
 	 * @return the stick that was released.
 	 */
 	public AnalogStick getStick() {

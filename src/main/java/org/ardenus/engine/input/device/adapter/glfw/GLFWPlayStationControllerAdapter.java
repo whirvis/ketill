@@ -1,17 +1,11 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.PlayStationController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
-/**
- * A GLFW joystick adapter for a {@link PlayStationController}.
- * 
- * @see GLFWJoystickAdapter
- */
 public class GLFWPlayStationControllerAdapter
 		extends GLFWJoystickAdapter<PlayStationController> {
 
@@ -41,19 +35,6 @@ public class GLFWPlayStationControllerAdapter
 			TPAD = new GLFWButtonMapping(PlayStationController.TPAD, 13);
 	/* @formatter: on */
 
-	/**
-	 * Constructs a new {@code GLFWPlayStationControllerAdapter}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 * @param glfwJoystick
-	 *            the GLFW joystick ID.
-	 * @param ps5
-	 *            {@code true} if the controller is a PS5 controller,
-	 *            {@code false} otherwise.
-	 * @throws InputException
-	 *             if an input error occurs.
-	 */
 	public GLFWPlayStationControllerAdapter(long ptr_glfwWindow,
 			int glfwJoystick, boolean ps5) {
 		super(ptr_glfwWindow, glfwJoystick);

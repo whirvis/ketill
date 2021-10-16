@@ -6,9 +6,6 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
-/**
- * Signals that an {@link InputDevice} has pressed a {@link DeviceFeature}.
- */
 public class FeaturePressEvent extends DeviceEvent {
 
 	private final DeviceFeature<?> feature;
@@ -16,8 +13,6 @@ public class FeaturePressEvent extends DeviceEvent {
 	private final boolean held;
 
 	/**
-	 * Constructs a new {@code FeaturePressEvent}.
-	 * 
 	 * @param device
 	 *            the device that pressed {@code feature}.
 	 * @param feature
@@ -41,8 +36,6 @@ public class FeaturePressEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the feature that was pressed.
-	 * 
 	 * @return the feature that was pressed.
 	 */
 	public DeviceFeature<?> getFeature() {
@@ -50,8 +43,6 @@ public class FeaturePressEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the direction being pressed toward.
-	 * 
 	 * @return the direction being pressed toward, if any.
 	 */
 	public Direction getDirection() {
@@ -59,8 +50,6 @@ public class FeaturePressEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns if the feature is being held down.
-	 * 
 	 * @return {@code true} if the feature is being held down, {@code false}
 	 *         otherwise.
 	 */

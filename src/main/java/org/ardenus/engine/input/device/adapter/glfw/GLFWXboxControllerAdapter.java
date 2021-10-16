@@ -1,17 +1,11 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
-/**
- * A GLFW joystick adapter for an {@link XboxController}.
- * 
- * @see GLFWJoystickAdapter
- */
 public class GLFWXboxControllerAdapter
 		extends GLFWJoystickAdapter<XboxController> {
 
@@ -41,16 +35,6 @@ public class GLFWXboxControllerAdapter
 			LEFT = new GLFWButtonMapping(XboxController.LEFT, 13);
 	/* @formatter: on */
 
-	/**
-	 * Constructs a new {@code GLFWXboxControllerAdapter}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 * @param glfwJoystick
-	 *            the GLFW joystick ID.
-	 * @throws InputException
-	 *             if an input error occurs.
-	 */
 	public GLFWXboxControllerAdapter(long ptr_glfwWindow, int glfwJoystick) {
 		super(ptr_glfwWindow, glfwJoystick);
 	}

@@ -22,7 +22,7 @@ import javax.usb.event.UsbPipeListener;
  * An implementation of the official USB adapter for the Wii U and Nintendo
  * Switch. The purpose of this class is to communicate with the USB adapter and
  * provide the input data necessary for a {@link USBGameCubeControllerAdapter}
- * to function.
+ * to method.
  * 
  * @see #isAdapter(UsbDevice)
  * @see #getAdapters()
@@ -54,8 +54,6 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	/* @formatter: on */
 
 	/**
-	 * Returns whether or not a USB device is a USB GameCube adapter.
-	 * 
 	 * @param device
 	 *            the USB device to check.
 	 * @return {@code true} if {@code device} is a USB GameCube adapter,
@@ -82,8 +80,6 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	private final byte[] rumble;
 
 	/**
-	 * Constructs a new {@code USBGameCubeDevice} device.
-	 * 
 	 * @param device
 	 *            the USB GameCube adapter device.
 	 * @throws NullPointerException
@@ -112,8 +108,6 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	}
 
 	/**
-	 * Returns the adapters of each GameCube controller.
-	 * 
 	 * @return the adapters of each GameCube controller.
 	 */
 	public List<USBGameCubeControllerAdapter> getAdapters() {
@@ -121,8 +115,6 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	}
 
 	/**
-	 * Returns the current input data for an adapter slot.
-	 * 
 	 * @param slot
 	 *            the adapter slot.
 	 * @return the current input data for {@code slot}.
@@ -205,8 +197,6 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	}
 
 	/**
-	 * Polls this USB adapter.
-	 * <p>
 	 * Polling the adapter is necessary for retrieving up to date input
 	 * information. If this is not done, it is possible a mix of both up to date
 	 * and out of date input data will be returned. As such, it is recommended
@@ -217,7 +207,7 @@ public class USBGameCubeDevice implements UsbPipeListener {
 	 */
 	public void poll() throws UsbException {
 		/*
-		 * If any errors occurred outside of the polling function, go ahead and
+		 * If any errors occurred outside of the polling method, go ahead and
 		 * throw them here. They are not inconsequential, and should be seen by
 		 * the developer.
 		 */

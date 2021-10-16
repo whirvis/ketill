@@ -3,23 +3,13 @@ package org.ardenus.engine.input.device.feature;
 import java.util.Objects;
 
 import org.ardenus.engine.input.Analog;
-import org.ardenus.engine.input.device.InputDevice;
 
-/**
- * Represents an analog input that is present on an input device.
- *
- * @param <T>
- *            the value type.
- * @see InputDevice
- */
 public abstract class DeviceAnalog<T> extends Analog<T>
 		implements DeviceFeature<T> {
 
 	private final String id;
 
 	/**
-	 * Constructs a new {@code DeviceAnalog}.
-	 * 
 	 * @param type
 	 *            the value type class.
 	 * @param id

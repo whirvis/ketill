@@ -9,11 +9,6 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
 import org.joml.Vector3fc;
 
-/**
- * A Nintendo GameCube controller.
- *
- * @see Controller
- */
 public class GameCubeController extends Controller {
 
 	/* @formatter: off */
@@ -48,10 +43,8 @@ public class GameCubeController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * Constructs a new {@code GamecubeController}.
-	 * 
 	 * @param adapter
-	 *            the device adapter.
+	 *            the GameCube controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */

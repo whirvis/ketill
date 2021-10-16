@@ -5,16 +5,11 @@ import java.util.Objects;
 import org.ardenus.engine.input.InputEvent;
 import org.ardenus.engine.input.device.InputDevice;
 
-/**
- * An event relating to an {@link InputDevice}.
- */
 public abstract class DeviceEvent extends InputEvent {
 
 	private final InputDevice device;
 
 	/**
-	 * Constructs a new {@code DeviceEvent}.
-	 * 
 	 * @param device
 	 *            the device that triggered the event.
 	 * @throws NullPointerException
@@ -25,10 +20,7 @@ public abstract class DeviceEvent extends InputEvent {
 	}
 
 	/**
-	 * Returns the device that triggered the event.
-	 * 
-	 * @return the device that triggered the event, guaranteed not to be
-	 *         {@code null}.
+	 * @return the device that triggered the event.
 	 */
 	public InputDevice getDevice() {
 		return this.device;

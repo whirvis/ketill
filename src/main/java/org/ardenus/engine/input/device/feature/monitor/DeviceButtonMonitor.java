@@ -12,8 +12,6 @@ public class DeviceButtonMonitor extends FeatureMonitor {
 	private final Map<DeviceButton, PressableState> states;
 
 	/**
-	 * Constructs a new {@code DeviceButtonMonitor}.
-	 * 
 	 * @param device
 	 *            the device whose button to monitor.
 	 * @throws NullPointerException

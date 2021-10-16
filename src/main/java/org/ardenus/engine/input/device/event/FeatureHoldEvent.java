@@ -6,17 +6,12 @@ import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 
-/**
- * Signals that an {@link InputDevice} has held down a {@link DeviceFeature}.
- */
 public class FeatureHoldEvent extends DeviceEvent {
 
 	private final DeviceFeature<?> feature;
 	private final Direction direction;
 
 	/**
-	 * Constructs a new {@code FeatureHoldEvent}.
-	 * 
 	 * @param device
 	 *            the device holding {@code feature}.
 	 * @param feature
@@ -36,8 +31,6 @@ public class FeatureHoldEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the feature being held down.
-	 * 
 	 * @return the feature being held down.
 	 */
 	public DeviceFeature<?> getFeature() {
@@ -45,8 +38,6 @@ public class FeatureHoldEvent extends DeviceEvent {
 	}
 
 	/**
-	 * Returns the direction being pressed toward.
-	 * 
 	 * @return the direction being pressed toward, if any.
 	 */
 	public Direction getDirection() {

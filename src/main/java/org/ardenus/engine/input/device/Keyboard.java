@@ -6,11 +6,6 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.KeyboardKey;
 import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 
-/**
- * A generic keyboard.
- * 
- * @see InputDevice
- */
 public class Keyboard extends InputDevice {
 
 	/* @formatter: off */
@@ -67,7 +62,7 @@ public class Keyboard extends InputDevice {
 			WORLD_1 = new KeyboardKey("world_1"),
 			WORLD_2 = new KeyboardKey("world_2");
 
-	@FeaturePresent /* function keys */
+	@FeaturePresent /* method keys */
 	public static final KeyboardKey
 			ESCAPE = new KeyboardKey("escape"),
 			ENTER = new KeyboardKey("enter"),
@@ -142,7 +137,9 @@ public class Keyboard extends InputDevice {
 	/* @formatter: on */
 
 	/**
-	 * Constructs a new {@code Keyboard}.
+	 * By default, a {@code Keyboard} expects device features of type
+	 * {@link KeyboardKey}. As a result, an instance of
+	 * {@link DeviceButtonMonitor} will be added on instantiation.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
@@ -155,10 +152,8 @@ public class Keyboard extends InputDevice {
 	}
 
 	/**
-	 * Returns if a keyboard key is pressed.
-	 * 
 	 * @param key
-	 *            the key to check.
+	 *            the keyboard key.
 	 * @return {@code true} if {@code key} is pressed, {@code false} otherwise.
 	 */
 	public boolean isPressed(KeyboardKey key) {

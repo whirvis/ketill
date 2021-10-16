@@ -2,7 +2,6 @@ package org.ardenus.engine.input.device.adapter.xinput;
 
 import java.util.Objects;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.ButtonMapping;
@@ -24,12 +23,10 @@ public abstract class XInputDeviceAdapter<I extends InputDevice>
 	protected final XInputDevice xinput;
 
 	/**
-	 * Constructs a new {@code XInputDeviceAdapter}.
-	 * 
 	 * @param xinput
 	 *            the X-input device.
-	 * @throws InputException
-	 *             if an input error occurs.
+	 * @throws NullPointerException
+	 *             if {@code xinput} is {@code null}.
 	 * @see #map(AnalogMapping)
 	 * @see #map(ButtonMapping)
 	 */

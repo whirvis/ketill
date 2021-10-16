@@ -1,15 +1,10 @@
 package org.ardenus.engine.input.device.feature;
 
-/**
- * Contains the definition of a trigger comprising of 1 {@code float}.
- */
 public class Trigger1f implements Trigger1fc {
 
 	public float force;
 
 	/**
-	 * Constructs a new {@code Trigger1f}.
-	 * 
 	 * @param force
 	 *            the initial trigger force.
 	 */

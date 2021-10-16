@@ -1,19 +1,13 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
-import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.SwitchController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.joml.Vector3f;
 
-/**
- * A GLFW joystick adapter for a {@link SwitchController}.
- * 
- * @see GLFWJoystickAdapter
- */
 public class GLFWSwitchControllerAdapter
 		extends GLFWJoystickAdapter<SwitchController> {
-	
+
 	private static float normalize(float pos, float min, float max) {
 		/*
 		 * It's not uncommon for an axis to go one or two points outside of
@@ -60,16 +54,6 @@ public class GLFWSwitchControllerAdapter
 			LEFT = new GLFWButtonMapping(SwitchController.LEFT, 19);
 	/* @formatter: on */
 
-	/**
-	 * Constructs a new {@code GLFWSwitchControllerAdapter}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 * @param glfwJoystick
-	 *            the GLFW joystick ID.
-	 * @throws InputException
-	 *             if an input error occurs.
-	 */
 	public GLFWSwitchControllerAdapter(long ptr_glfwWindow, int glfwJoystick) {
 		super(ptr_glfwWindow, glfwJoystick);
 	}

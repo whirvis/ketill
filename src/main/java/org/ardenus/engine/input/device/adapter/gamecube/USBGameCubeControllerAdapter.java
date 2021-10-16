@@ -65,8 +65,6 @@ public class USBGameCubeControllerAdapter
 	private boolean rumbling;
 
 	/**
-	 * Constructs a new {@code USBGameCubeControllerAdapter}.
-	 * 
 	 * @param data
 	 *            the current data from the USB adapter, update the bytes within
 	 *            this array to update the data this adapter has access to.
@@ -149,8 +147,6 @@ public class USBGameCubeControllerAdapter
 	}
 
 	/**
-	 * Returns if the controller should currently be rumbling.
-	 * 
 	 * @return {@code true} if the controller should currently be rumbling,
 	 *         {@code false} otherwise.
 	 */

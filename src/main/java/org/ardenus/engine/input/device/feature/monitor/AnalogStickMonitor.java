@@ -14,8 +14,6 @@ public class AnalogStickMonitor extends FeatureMonitor {
 	private final Set<AnalogPressableState> states;
 
 	/**
-	 * Constructs a new {@code AnalogStickMonitor}.
-	 * 
 	 * @param device
 	 *            the device whose stick to monitor.
 	 * @throws NullPointerException

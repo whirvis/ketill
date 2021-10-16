@@ -4,16 +4,11 @@ import org.ardenus.engine.input.Direction;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-/**
- * Represents an analog stick on an input device.
- */
 public class AnalogStick extends DeviceAnalog<Vector3fc> {
 
 	private static final float STICK_PRESS = 2.0F / 3.0F;
 
 	/**
-	 * Returns if a vector points towards a direction.
-	 * 
 	 * @param pos
 	 *            the analog stick position.
 	 * @param direction
@@ -44,8 +39,6 @@ public class AnalogStick extends DeviceAnalog<Vector3fc> {
 	public final DeviceButton zButton;
 
 	/**
-	 * Constructs a new {@code AnalogStick}.
-	 * 
 	 * @param id
 	 *            the analog stick ID.
 	 * @param zButton
@@ -62,8 +55,6 @@ public class AnalogStick extends DeviceAnalog<Vector3fc> {
 	}
 
 	/**
-	 * Constructs a new {@code AnalogStick}.
-	 * 
 	 * @param id
 	 *            the analog stick ID.
 	 * @throws NullPointerException
