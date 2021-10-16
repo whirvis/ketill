@@ -8,8 +8,6 @@ import org.ardenus.engine.input.device.InputDevice;
 public interface SeekerListener {
 
 	/**
-	 * Called when a device is registered.
-	 * 
 	 * @param seeker
 	 *            the seeker that registered the device.
 	 * @param device
@@ -19,8 +17,6 @@ public interface SeekerListener {
 	}
 
 	/**
-	 * Called when a device is unregistered.
-	 * 
 	 * @param seeker
 	 *            the seeker that unregistered the device.
 	 * @param device

@@ -4,17 +4,8 @@ import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWXboxControllerAdapter;
 
-/**
- * A device seeker for {@code XboxController} devices using GLFW.
- */
 public class GLFWXboxControllerSeeker extends GLFWJoystickSeeker {
 
-	/**
-	 * Constructs a new {@code GLFWXboxControllerSeeker}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 */
 	public GLFWXboxControllerSeeker(long ptr_glfwWindow) {
 		super(XboxController.class, ptr_glfwWindow,
 				"Afterglow Gamepad for Xbox 360", "Microsoft X-Box 360 pad",

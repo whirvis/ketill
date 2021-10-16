@@ -8,17 +8,11 @@ import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
 
-/**
- * A device seeker for {@code XboxController} devices using X-input.
- */
 public class XInputDeviceSeeker extends DeviceSeeker {
 
 	private final XboxController[] controllers;
 	private boolean xinput14;
 
-	/**
-	 * Constructs a new {@code XInputDeviceSeeker}.
-	 */
 	public XInputDeviceSeeker() {
 		super(XboxController.class);
 		this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];

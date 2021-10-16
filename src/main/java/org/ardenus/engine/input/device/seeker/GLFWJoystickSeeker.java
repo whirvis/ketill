@@ -9,30 +9,25 @@ import java.util.Set;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWDeviceAdapter;
 
-/**
- * A device seeker for joysticks using GLFW.
- */
 public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 
 	/**
 	 * TODO: Use SDL GUIDs instead of names!
 	 */
-	
+
 	private final InputDevice[] joysticks;
 	private final Set<String> names;
 
 	/**
-	 * Constructs a new {@code GLFWJoystickSeeker}.
-	 * 
 	 * @param type
 	 *            the joystick type.
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @param names
 	 *            an initial list of qualifying joystick names.
-	 * @see #addNames(String)
 	 * @throws NullPointerException
 	 *             if {@code type} or {@code names} is {@code null}.
+	 * @see #addNames(String)
 	 */
 	public GLFWJoystickSeeker(Class<? extends InputDevice> type,
 			long ptr_glfwWindow, String... names) {
@@ -43,8 +38,6 @@ public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 	}
 
 	/**
-	 * Adds a qualifying joystick name.
-	 * <p>
 	 * When a joystick is detected by this seeker, the seeker will check its
 	 * name to see if it should be connected. This is to prevent different types
 	 * of joysticks from being unintentionally connected by this seeker.
@@ -62,8 +55,6 @@ public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 	}
 
 	/**
-	 * Adds the specified qualifying joystick names.
-	 * <p>
 	 * When a joystick is detected by this seeker, the seeker will check its
 	 * name to see if it should be connected. This is to prevent different types
 	 * of joysticks from being unintentionally connected by this seeker.
@@ -86,8 +77,6 @@ public abstract class GLFWJoystickSeeker extends GLFWDeviceSeeker {
 	}
 
 	/**
-	 * Creates a device to be connected.
-	 * <p>
 	 * This method is called when a qualifying joystick has been detected. The
 	 * purpose of this method is to return an input device representing that
 	 * joystick. The {@code ptr_glfwWindow} and {@code glfwJoystick} parameters

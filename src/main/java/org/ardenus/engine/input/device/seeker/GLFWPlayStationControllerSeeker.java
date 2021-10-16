@@ -9,9 +9,6 @@ import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.PlayStationController;
 import org.ardenus.engine.input.device.adapter.glfw.GLFWPlayStationControllerAdapter;
 
-/**
- * A device seeker for {@code PlayStationController} devices using GLFW.
- */
 public class GLFWPlayStationControllerSeeker extends GLFWJoystickSeeker {
 
 	/*
@@ -34,12 +31,6 @@ public class GLFWPlayStationControllerSeeker extends GLFWJoystickSeeker {
 		PS5_GUIDS.add("050000004c050000e60c0000ff870000");
 	}
 
-	/**
-	 * Constructs a new {@code GLFWPlayStationControllerSeeker}.
-	 * 
-	 * @param ptr_glfwWindow
-	 *            the GLFW window pointer.
-	 */
 	public GLFWPlayStationControllerSeeker(long ptr_glfwWindow) {
 		super(PlayStationController.class, ptr_glfwWindow,
 				"Wireless Controller", "USB Joystick",

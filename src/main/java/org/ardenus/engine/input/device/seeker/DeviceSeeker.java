@@ -60,7 +60,7 @@ public abstract class DeviceSeeker {
 	/**
 	 * <b>Note:</b> Just because a device is registered to the seeker does
 	 * <i>not</i> indicate that it is currently connected. It only means that
-	 * the seeker has detected its presence and as such has registered it. TODO
+	 * the seeker has detected its presence and as such has registered it.
 	 * 
 	 * @return all devices registered to this seeker.
 	 */
@@ -69,10 +69,6 @@ public abstract class DeviceSeeker {
 	}
 
 	/**
-	 * Registers an input device to this seeker.
-	 * <p>
-	 * TODO
-	 * 
 	 * @param device
 	 *            the device to register.
 	 * @throws NullPointerException
@@ -94,8 +90,6 @@ public abstract class DeviceSeeker {
 	}
 
 	/**
-	 * Unregisters an input device from this seeker.
-	 * 
 	 * @param device
 	 *            the device to unregister.
 	 */
@@ -109,7 +103,12 @@ public abstract class DeviceSeeker {
 	protected abstract void seek() throws Exception;
 
 	/**
-	 * Seeks for input devices and polls all registered input devices.
+	 * Polling a device seeker is usually necessary for it to work properly. It
+	 * is recommended to poll the device seeker once on every application
+	 * update. When a device seeker is polled, it will make a call to its
+	 * internal {@link #seek()} method, of which what it does is dependent on
+	 * the implementation. Afterwards, it will poll each input device that it
+	 * has registered.
 	 * 
 	 * @throws InputException
 	 *             if an error occurs while seeking.

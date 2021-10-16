@@ -17,10 +17,6 @@ import org.ardenus.engine.input.device.GameCubeController;
 import org.ardenus.engine.input.device.adapter.gamecube.USBGameCubeControllerAdapter;
 import org.ardenus.engine.input.device.adapter.gamecube.USBGameCubeDevice;
 
-/**
- * A device seeker for {@code GameCubeController} devices using the official USB
- * adapter for the Wii U and Nintendo Switch.
- */
 public class USBGameCubeSeeker extends DeviceSeeker {
 
 	private static List<UsbDevice> findDevices(UsbHub hub) {
@@ -48,8 +44,6 @@ public class USBGameCubeSeeker extends DeviceSeeker {
 	private long lastSearch;
 
 	/**
-	 * Constructs a new {@code USBGameCubeSeeker}.
-	 * 
 	 * @param allowMultiple
 	 *            {@code true} if multiple USB GameCube adapters should be
 	 *            recognized, {@code false} if only the first one found should
