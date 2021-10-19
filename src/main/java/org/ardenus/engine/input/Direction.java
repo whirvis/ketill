@@ -20,8 +20,8 @@ public enum Direction {
 	public static final Direction
 			NORTH = UP,
 			SOUTH = DOWN,
-			EAST = LEFT,
-			WEST = RIGHT;
+			EAST = RIGHT,
+			WEST = LEFT;
 	/* @formatter: on */
 
 }
