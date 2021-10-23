@@ -5,8 +5,10 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
-import org.joml.Vector3fc;
 
+/**
+ * A Nintendo Switch Pro controller.
+ */
 public class SwitchController extends Controller {
 
 	/* @formatter: off */
@@ -46,26 +48,28 @@ public class SwitchController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public SwitchController(DeviceAdapter<SwitchController> adapter) {
-		super(adapter);
+		super(adapter, LS, RS, null, null);
 	}
 
+	/**
+	 * Since the Nintendo Switch Pro controller has no actual analog triggers,
+	 * this method only emulates their functionality. If the {@code ZL} button
+	 * is currently pressed, this method will return {@code 1.0F}. Otherwise,
+	 * {@code 0.0F} will be returned.
+	 */
 	@Override
-	public Vector3fc getLeftStick() {
-		return this.getPosition(LS);
-	}
-
-	@Override
-	public Vector3fc getRightStick() {
-		return this.getPosition(RS);
-	}
-
-	@Override
-	public float getLeftTrigger() {
+	public float getLtForce() {
 		return this.isPressed(ZL) ? 1.0F : 0.0F;
 	}
 
+	/**
+	 * Since the Nintendo Switch Pro controller has no actual analog triggers,
+	 * this method only emulates their functionality. If the {@code ZR} button
+	 * is currently pressed, this method will return {@code 1.0F}. Otherwise,
+	 * {@code 0.0F} will be returned.
+	 */
 	@Override
-	public float getRightTrigger() {
+	public float getRtForce() {
 		return this.isPressed(ZR) ? 1.0F : 0.0F;
 	}
 

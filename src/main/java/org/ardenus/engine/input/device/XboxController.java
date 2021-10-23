@@ -7,8 +7,10 @@ import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
-import org.joml.Vector3fc;
 
+/**
+ * A Microsoft XBOX controller.
+ */
 public class XboxController extends Controller {
 
 	/* @formatter: off */
@@ -30,14 +32,14 @@ public class XboxController extends Controller {
 			LEFT = new DeviceButton("left", Direction.LEFT);
 
 	@FeaturePresent
-	public static final AnalogTrigger
-			LT = new AnalogTrigger("lt"),
-			RT = new AnalogTrigger("rt");
-
-	@FeaturePresent
 	public static final AnalogStick
 			LS = new AnalogStick("ls", THUMB_L),
 			RS = new AnalogStick("rs", THUMB_R);
+	
+	@FeaturePresent
+	public static final AnalogTrigger
+			LT = new AnalogTrigger("lt"),
+			RT = new AnalogTrigger("rt");
 	
 	@FeaturePresent
 	public static final RumbleMotor
@@ -52,27 +54,7 @@ public class XboxController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public XboxController(DeviceAdapter<XboxController> adapter) {
-		super(adapter);
-	}
-
-	@Override
-	public Vector3fc getLeftStick() {
-		return this.getPosition(LS);
-	}
-
-	@Override
-	public Vector3fc getRightStick() {
-		return this.getPosition(RS);
-	}
-
-	@Override
-	public float getLeftTrigger() {
-		return this.getForce(LT);
-	}
-
-	@Override
-	public float getRightTrigger() {
-		return this.getForce(RT);
+		super(adapter, LS, RS, LT, RT);
 	}
 
 }

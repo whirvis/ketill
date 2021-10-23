@@ -1,10 +1,10 @@
 package org.ardenus.engine.input.device;
 
-import org.ardenus.engine.input.Direction;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.Button1bc;
+import org.ardenus.engine.input.device.feature.DeviceAnalog;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
 import org.ardenus.engine.input.device.feature.RumbleMotor;
@@ -29,6 +29,18 @@ import org.joml.Vector3fc;
 public abstract class Controller extends InputDevice {
 
 	/**
+	 * The left and right analog sticks of the controller.<br>
+	 * These may not be present, and as such may be {@code null}.
+	 */
+	public final AnalogStick ls, rs;
+
+	/**
+	 * The left and right analog triggers of the controller.<br>
+	 * These may not be present, and as such may be {@code null}.
+	 */
+	public final AnalogTrigger lt, rt;
+
+	/**
 	 * By default, a {@code Controller} expects device features of type
 	 * {@link DeviceButton} and {@link DeviceAnalog}. As a result, instances of
 	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} will be added
@@ -36,11 +48,26 @@ public abstract class Controller extends InputDevice {
 	 * 
 	 * @param adapter
 	 *            the device adapter.
+	 * @param ls
+	 *            the left analog stick, may be {@code null}.
+	 * @param rs
+	 *            the right analog stick, may be {@code null}.
+	 * @param lt
+	 *            the left analog trigger, may be {@code null}.
+	 * @param rt
+	 *            the right analog trigger, may be {@code null}.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Controller(DeviceAdapter<?> adapter) {
+	public Controller(DeviceAdapter<?> adapter, AnalogStick ls, AnalogStick rs,
+			AnalogTrigger lt, AnalogTrigger rt) {
 		super(adapter);
+
+		this.ls = ls;
+		this.rs = rs;
+		this.lt = lt;
+		this.rt = rt;
+
 		this.addMonitor(new DeviceButtonMonitor(this));
 		this.addMonitor(new AnalogStickMonitor(this));
 	}
@@ -54,7 +81,7 @@ public abstract class Controller extends InputDevice {
 	public boolean isPressed(DeviceButton button) {
 		if (!this.hasFeature(button)) {
 			return false;
-		}
+		}		
 		Button1bc value = this.getState(button);
 		return value.pressed();
 	}
@@ -72,16 +99,19 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * @param stick
-	 *            the analog stick.
-	 * @param direction
-	 *            the direction to check for.
-	 * @return {@code true} if {@code stick} is pressed towards
-	 *         {@code direction}, {@code false} otherwise.
+	 * @return the current position of the left stick.
+	 * @see #getPosition(AnalogStick)
 	 */
-	public boolean isPressed(AnalogStick stick, Direction direction) {
-		Vector3fc pos = this.getPosition(stick);
-		return AnalogStick.isPressed(pos, direction);
+	public Vector3fc getLsPosition() {
+		return this.getPosition(ls);
+	}
+
+	/**
+	 * @return the current position of the right stick.
+	 * @see #getPosition(AnalogStick)
+	 */
+	public Vector3fc getRsPosition() {
+		return this.getPosition(rs);
 	}
 
 	/**
@@ -98,24 +128,20 @@ public abstract class Controller extends InputDevice {
 	}
 
 	/**
-	 * @return the current position of the left analog stick.
+	 * @return the current force of the left trigger.
+	 * @see #getForce(AnalogTrigger)
 	 */
-	public abstract Vector3fc getLeftStick();
+	public float getLtForce() {
+		return this.getForce(lt);
+	}
 
 	/**
-	 * @return the current position of the right analog stick.
+	 * @return the current force of the right trigger.
+	 * @see #getForce(AnalogTrigger)
 	 */
-	public abstract Vector3fc getRightStick();
-
-	/**
-	 * @return the current force of the left analog trigger.
-	 */
-	public abstract float getLeftTrigger();
-
-	/**
-	 * @return the current force of the right analog trigger.
-	 */
-	public abstract float getRightTrigger();
+	public float getRtForce() {
+		return this.getForce(rt);
+	}
 
 	/**
 	 * @param motor

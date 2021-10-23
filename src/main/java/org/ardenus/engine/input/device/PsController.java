@@ -6,8 +6,10 @@ import org.ardenus.engine.input.device.feature.AnalogStick;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
-import org.joml.Vector3fc;
 
+/**
+ * A Sony PlayStation 4 controller.
+ */
 public class PsController extends Controller {
 
 	/* @formatter: off */
@@ -51,27 +53,7 @@ public class PsController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public PsController(DeviceAdapter<PsController> adapter) {
-		super(adapter);
-	}
-
-	@Override
-	public Vector3fc getLeftStick() {
-		return this.getPosition(LS);
-	}
-
-	@Override
-	public Vector3fc getRightStick() {
-		return this.getPosition(RS);
-	}
-
-	@Override
-	public float getLeftTrigger() {
-		return this.getForce(LT);
-	}
-
-	@Override
-	public float getRightTrigger() {
-		return this.getForce(RT);
+		super(adapter, LS, RS, LT, RT);
 	}
 
 }
