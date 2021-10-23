@@ -26,7 +26,7 @@ public class DeviceButtonMonitor extends FeatureMonitor {
 	public void monitor(DeviceFeature<?> feature) {
 		if (feature instanceof DeviceButton) {
 			DeviceButton button = (DeviceButton) feature;
-			states.put(button, new ButtonPressableState(device, button));
+			states.put(button, new DeviceButtonState(device, button));
 		}
 	}
 

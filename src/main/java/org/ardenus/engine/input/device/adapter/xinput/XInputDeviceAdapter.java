@@ -14,8 +14,8 @@ import com.github.strikerx3.jxinput.XInputDevice;
  *
  * @param <I>
  *            the input device type.
- * @see XInputAnalogMapping
- * @see XInputButtonMapping
+ * @see XAnalogMapping
+ * @see XButtonMapping
  */
 public abstract class XInputDeviceAdapter<I extends InputDevice>
 		extends DeviceAdapter<I> {

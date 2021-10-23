@@ -11,7 +11,7 @@ import org.ardenus.engine.input.device.feature.DeviceFeature;
 
 public class AnalogStickMonitor extends FeatureMonitor {
 
-	private final Set<AnalogPressableState> states;
+	private final Set<AnalogStickState> states;
 
 	/**
 	 * @param device
@@ -29,16 +29,16 @@ public class AnalogStickMonitor extends FeatureMonitor {
 		if (feature instanceof AnalogStick) {
 			AnalogStick stick = (AnalogStick) feature;
 			for (Direction direction : Direction.values()) {
-				states.add(new AnalogPressableState(device, stick, direction));
+				states.add(new AnalogStickState(device, stick, direction));
 			}
 		}
 	}
 
 	@Override
 	public void forget(DeviceFeature<?> feature) {
-		Iterator<AnalogPressableState> statesI = states.iterator();
+		Iterator<AnalogStickState> statesI = states.iterator();
 		while (statesI.hasNext()) {
-			AnalogPressableState state = statesI.next();
+			AnalogStickState state = statesI.next();
 			if (state.stick == feature) {
 				statesI.remove();
 			}
