@@ -4,8 +4,6 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import org.ardenus.engine.input.device.Mouse;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Button1b;
 import org.joml.Vector2f;
@@ -14,7 +12,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
 	/* @formatter: off */
 	@AdapterMapping
-	public static final ButtonMapping
+	public static final GlfwButtonMapping
 			BUTTON_1 = new GlfwButtonMapping(Mouse.BUTTON_1,
 					GLFW_MOUSE_BUTTON_1),
 			BUTTON_2 = new GlfwButtonMapping(Mouse.BUTTON_2,
@@ -31,9 +29,9 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 					GLFW_MOUSE_BUTTON_7),
 			BUTTON_8 = new GlfwButtonMapping(Mouse.BUTTON_8,
 					GLFW_MOUSE_BUTTON_8);
-	
+
 	@AdapterMapping
-	public static final AnalogMapping<?>
+	public static final GlfwCursorMapping
 			CURSOR = new GlfwCursorMapping(Mouse.CURSOR);
 	/* @formatter: on */
 	
@@ -58,7 +56,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 	}
 	
 	@FeatureAdapter
-	public void getCursor(GlfwCursorMapping mapping, Vector2f pos) {
+	public void updatePos(GlfwCursorMapping mapping, Vector2f pos) {
 		pos.x = (float) this.xPos[0];
 		pos.y = (float) this.yPos[0];
 	}

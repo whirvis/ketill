@@ -2,22 +2,13 @@ package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.PsController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
-public class GlfwPsAdapter
-		extends GlfwJoystickAdapter<PsController> {
+public class GlfwPsAdapter extends GlfwJoystickAdapter<PsController> {
 
 	/* @formatter: off */
-	@AdapterMapping
-	public static final AnalogMapping<?>
-			LS = new GlfwStickMapping(PsController.LS, 0, 1),
-			RS = new GlfwStickMapping(PsController.RS, 2, 5),
-			LT = new GlfwTriggerMapping(PsController.LT, 3),
-			RT = new GlfwTriggerMapping(PsController.RT, 4);
-	
 	@AdapterMapping
 	public static final GlfwButtonMapping
 			SQUARE = new GlfwButtonMapping(PsController.SQUARE, 0),
@@ -34,10 +25,19 @@ public class GlfwPsAdapter
 			THUMB_R = new GlfwButtonMapping(PsController.THUMB_R, 11),
 			PS = new GlfwButtonMapping(PsController.PS, 12),
 			TPAD = new GlfwButtonMapping(PsController.TPAD, 13);
+	
+	@AdapterMapping
+	public static final GlfwStickMapping
+			LS = new GlfwStickMapping(PsController.LS, 0, 1),
+			RS = new GlfwStickMapping(PsController.RS, 2, 5);
+	
+	@AdapterMapping
+	public static final GlfwTriggerMapping
+			LT = new GlfwTriggerMapping(PsController.LT, 3),
+			RT = new GlfwTriggerMapping(PsController.RT, 4);
 	/* @formatter: on */
 
-	public GlfwPsAdapter(long ptr_glfwWindow,
-			int glfwJoystick, boolean ps5) {
+	public GlfwPsAdapter(long ptr_glfwWindow, int glfwJoystick, boolean ps5) {
 		super(ptr_glfwWindow, glfwJoystick);
 		if (ps5) {
 			this.mapPS5();
@@ -63,9 +63,8 @@ public class GlfwPsAdapter
 
 	@Override
 	@FeatureAdapter
-	public void updateAnalogStick(GlfwStickMapping mapping,
-			Vector3f stick) {
-		super.updateAnalogStick(mapping, stick);
+	public void updateStick(GlfwStickMapping mapping, Vector3f stick) {
+		super.updateStick(mapping, stick);
 		if (mapping == LS || mapping == RS) {
 			stick.y *= -1.0F;
 		}
@@ -73,9 +72,8 @@ public class GlfwPsAdapter
 
 	@Override
 	@FeatureAdapter
-	public void updateAnalogTrigger(GlfwTriggerMapping mapping,
-			Trigger1f trigger) {
-		super.updateAnalogTrigger(mapping, trigger);
+	public void updateTrigger(GlfwTriggerMapping mapping, Trigger1f trigger) {
+		super.updateTrigger(mapping, trigger);
 		if (mapping == LT || mapping == RT) {
 			trigger.force += 1.0F;
 			trigger.force /= 2.0F;

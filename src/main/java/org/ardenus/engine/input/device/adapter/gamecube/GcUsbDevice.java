@@ -30,7 +30,7 @@ import javax.usb.event.UsbPipeListener;
 public class GcUsbDevice implements UsbPipeListener {
 
 	/* @formatter: off */
-	private static final short
+	public static final short
 			VENDOR_ID = 0x057E,
 			PRODUCT_ID = 0x0337;
 

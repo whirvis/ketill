@@ -1,8 +1,6 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 
 /**
@@ -10,8 +8,8 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
  *
  * @param <I>
  *            the input device type.
- * @see GLFWMappedAnalog
- * @see GLFWMappedButton
+ * @see GlfwButtonMapping
+ * @see GlfwAnalogMapping
  */
 public abstract class GlfwDeviceAdapter<I extends InputDevice>
 		extends DeviceAdapter<I> {
@@ -21,8 +19,6 @@ public abstract class GlfwDeviceAdapter<I extends InputDevice>
 	/**
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
-	 * @see #map(AnalogMapping)
-	 * @see #map(ButtonMapping)
 	 */
 	public GlfwDeviceAdapter(long ptr_glfwWindow) {
 		this.ptr_glfwWindow = ptr_glfwWindow;

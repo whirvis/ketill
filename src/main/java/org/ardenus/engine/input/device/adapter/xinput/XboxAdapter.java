@@ -1,12 +1,13 @@
 package org.ardenus.engine.input.device.adapter.xinput;
 
+import java.util.Objects;
+
 import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.ButtonMapping;
+import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.adapter.RumbleMapping;
 import org.ardenus.engine.input.device.feature.Button1b;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.ardenus.engine.input.device.feature.Vibration1f;
 import org.joml.Vector3f;
@@ -17,15 +18,14 @@ import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
 
-public class XboxAdapter
-		extends XInputDeviceAdapter<XboxController> {
-
-	private static final int RUMBLE_MIN = 0;
-	private static final int RUMBLE_MAX = 65535;
+/**
+ * An adapter which maps input for an XBOX controller via X-input.
+ */
+public class XboxAdapter extends DeviceAdapter<XboxController> {
 
 	/* @formatter: off */
 	@AdapterMapping
-	public static final ButtonMapping
+	public static final XButtonMapping
 			A = new XButtonMapping(XboxController.A, "a"),
 			B = new XButtonMapping(XboxController.B, "b"),
 			X = new XButtonMapping(XboxController.X, "x"),
@@ -42,11 +42,7 @@ public class XboxAdapter
 			LEFT = new XButtonMapping(XboxController.LEFT, "left");
 
 	@AdapterMapping
-	public static final AnalogMapping<?>
-			LT = new XTriggerMapping(XboxController.LT,
-					XInputAxis.LEFT_TRIGGER),
-			RT = new XTriggerMapping(XboxController.RT,
-					XInputAxis.RIGHT_TRIGGER),
+	public static final XStickMapping
 			LS = new XStickMapping(XboxController.LS,
 					XInputAxis.LEFT_THUMBSTICK_X,
 					XInputAxis.LEFT_THUMBSTICK_Y),
@@ -55,46 +51,63 @@ public class XboxAdapter
 					XInputAxis.RIGHT_THUMBSTICK_Y);
 
 	@AdapterMapping
-	public static final RumbleMapping
-		RUMBLE_COARSE = new XRumbleMapping(XboxController.RUMBLE_COARSE),
-		RUMBLE_FINE = new XRumbleMapping(XboxController.RUMBLE_FINE);
+	public static final XTriggerMapping
+			LT = new XTriggerMapping(XboxController.LT,
+					XInputAxis.LEFT_TRIGGER),
+			RT = new XTriggerMapping(XboxController.RT,
+					XInputAxis.RIGHT_TRIGGER);
+
+	@AdapterMapping
+	public static final XRumbleMapping
+			RUMBLE_COARSE = new XRumbleMapping(XboxController.RUMBLE_COARSE),
+			RUMBLE_FINE = new XRumbleMapping(XboxController.RUMBLE_FINE);
 	/* @formatter: on */
 
+	private static final int RUMBLE_MIN = 0;
+	private static final int RUMBLE_MAX = 65535;
+
+	private final XInputDevice xinput;
 	private XInputButtons buttons;
 	private XInputAxes axes;
 	private int rumbleCoarse;
 	private int rumbleFine;
 
+	/**
+	 * @param xinput
+	 *            the X-input device.
+	 * @throws NullPointerException
+	 *             if {@code xinput} is {@code null}.
+	 */
 	public XboxAdapter(XInputDevice xinput) {
-		super(xinput);
+		this.xinput = Objects.requireNonNull(xinput, "xinput");
+	}
+
+	@Override
+	public boolean isConnected() {
+		return xinput.isConnected();
 	}
 
 	protected boolean isPressed(XStickMapping mapping) {
-		XButtonMapping zMapping =
-				(XButtonMapping) this.getMapping(mapping.feature.zButton);
-		if (zMapping == null) {
-			return false;
-		}
-		return zMapping.isPressed(buttons);
+		DeviceButton zButton = mapping.feature.zButton;
+		XButtonMapping zMapping = (XButtonMapping) this.getMapping(zButton);
+		return zMapping != null ? zMapping.isPressed(buttons) : false;
 	}
 
 	@FeatureAdapter
-	public void updateAnalogStick(XStickMapping mapping,
-			Vector3f stick) {
+	public void isPressed(XButtonMapping mapping, Button1b button) {
+		button.pressed = mapping.isPressed(buttons);
+	}
+
+	@FeatureAdapter
+	public void updateStick(XStickMapping mapping, Vector3f stick) {
 		stick.x = axes.get(mapping.xAxis);
 		stick.y = axes.get(mapping.yAxis);
 		stick.z = this.isPressed(mapping) ? -1.0F : 0.0F;
 	}
 
 	@FeatureAdapter
-	public void updateAnalogTrigger(XTriggerMapping mapping,
-			Trigger1f trigger) {
+	public void updateTrigger(XTriggerMapping mapping, Trigger1f trigger) {
 		trigger.force = axes.get(mapping.triggerAxis);
-	}
-
-	@FeatureAdapter
-	public void isPressed(XButtonMapping mapping, Button1b button) {
-		button.pressed = mapping.isPressed(buttons);
 	}
 
 	@FeatureAdapter
@@ -128,7 +141,7 @@ public class XboxAdapter
 
 	@Override
 	public void poll() {
-		super.poll();
+		xinput.poll();
 
 		XInputComponents comps = xinput.getComponents();
 		this.axes = comps.getAxes();

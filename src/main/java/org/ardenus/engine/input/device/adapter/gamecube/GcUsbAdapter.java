@@ -4,11 +4,8 @@ import java.util.Objects;
 
 import org.ardenus.engine.input.device.GcController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.adapter.RumbleMapping;
 import org.ardenus.engine.input.device.feature.Button1b;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.ardenus.engine.input.device.feature.Vibration1f;
@@ -19,12 +16,11 @@ import org.joml.Vector3f;
  * 
  * @see GcUsbDevice
  */
-public class GcUsbAdapter
-		extends DeviceAdapter<GcController> {
+public class GcUsbAdapter extends DeviceAdapter<GcController> {
 
 	/* @formatter: off */
 	@AdapterMapping
-	public static final ButtonMapping
+	public static final GcButtonMapping
 			A = new GcButtonMapping(GcController.A, 0),
 			B = new GcButtonMapping(GcController.B, 1),
 			X = new GcButtonMapping(GcController.X, 2),
@@ -39,18 +35,21 @@ public class GcUsbAdapter
 			L = new GcButtonMapping(GcController.L, 11);
 	
 	@AdapterMapping
-	public static final AnalogMapping<?>
+	public static final GcStickMapping
 			LS = new GcStickMapping(GcController.LS, 0, 1,
 					34, 230, 30, 232),
 			RS = new GcStickMapping(GcController.RS, 2, 3,
-					48, 226, 30, 218),
+					48, 226, 30, 218);
+			
+	@AdapterMapping
+	public static final GcTriggerMapping
 			LT = new GcTriggerMapping(GcController.LT, 4,
 					42, 186),
 			RT = new GcTriggerMapping(GcController.RT, 5,
 					42, 186);
 	
 	@AdapterMapping
-	public static final RumbleMapping
+	public static final GcRumbleMapping
 			RUMBLE = new GcRumbleMapping(GcController.RUMBLE);
 	/* @formatter: on */
 
@@ -74,8 +73,8 @@ public class GcUsbAdapter
 	 *             if {@code data} is {@code null}.
 	 * @throws IllegalArgumentException
 	 *             if {@code data.length} is less than
-	 *             {@value GcUsbDevice#PAYLOAD_LENGTH}; if {@code slot} is
-	 *             out of range for this adapter.
+	 *             {@value GcUsbDevice#PAYLOAD_LENGTH}; if {@code slot} is out
+	 *             of range for this adapter.
 	 */
 	protected GcUsbAdapter(GcUsbDevice device, int slot) {
 		this.device = Objects.requireNonNull(device, "device");
@@ -116,20 +115,18 @@ public class GcUsbAdapter
 	}
 
 	@FeatureAdapter
-	public void isPressed(GcButtonMapping mapping, Button1b state) {
-		state.pressed = this.buttons[mapping.gcButton];
+	public void isPressed(GcButtonMapping mapping, Button1b button) {
+		button.pressed = this.buttons[mapping.gcButton];
 	}
 
 	@FeatureAdapter
-	public void updateAnalogStick(GcStickMapping mapping,
-			Vector3f stick) {
+	public void updateStick(GcStickMapping mapping, Vector3f stick) {
 		stick.x = this.getPos(mapping.gcAxisX, mapping.xMin, mapping.xMax);
 		stick.y = this.getPos(mapping.gcAxisY, mapping.yMin, mapping.yMax);
 	}
 
 	@FeatureAdapter
-	public void updateAnalogTrigger(GcTriggerMapping mapping,
-			Trigger1f trigger) {
+	public void updateTrigger(GcTriggerMapping mapping, Trigger1f trigger) {
 		float pos = this.getPos(mapping.gcAxis, mapping.min, mapping.max);
 		trigger.force = (pos + 1.0F) / 2.0F;
 	}

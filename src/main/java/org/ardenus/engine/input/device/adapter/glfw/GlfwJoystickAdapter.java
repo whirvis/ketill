@@ -6,10 +6,9 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.adapter.AnalogMapping;
-import org.ardenus.engine.input.device.adapter.ButtonMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Button1b;
+import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
 
@@ -18,8 +17,7 @@ import org.joml.Vector3f;
  *
  * @param <I>
  *            the input device type.
- * @see GlfwDeviceAdapter
- * @see GLFWMappedAnalog
+ * @see GlfwAnalogMapping
  * @see GlfwButtonMapping
  */
 public abstract class GlfwJoystickAdapter<I extends InputDevice>
@@ -34,21 +32,21 @@ public abstract class GlfwJoystickAdapter<I extends InputDevice>
 	 *            the GLFW window pointer.
 	 * @param glfwJoystick
 	 *            the GLFW joystick ID.
-	 * @see #map(AnalogMapping)
-	 * @see #map(ButtonMapping)
 	 */
 	public GlfwJoystickAdapter(long ptr_glfwWindow, int glfwJoystick) {
 		super(ptr_glfwWindow);
 		this.glfwJoystick = glfwJoystick;
 	}
 
+	protected boolean isPressed(GlfwButtonMapping mapping) {
+		return buttons.get(mapping.glfwButton) != 0;
+	}
+
 	protected boolean isPressed(GlfwStickMapping mapping) {
+		DeviceButton zButton = mapping.feature.zButton;
 		GlfwButtonMapping zMapping =
-				(GlfwButtonMapping) this.getMapping(mapping.feature.zButton);
-		if (zMapping == null) {
-			return false;
-		}
-		return buttons.get(zMapping.glfwButton) != 0;
+				(GlfwButtonMapping) this.getMapping(zButton);
+		return this.isPressed(zMapping);
 	}
 
 	@Override
@@ -57,22 +55,20 @@ public abstract class GlfwJoystickAdapter<I extends InputDevice>
 	}
 
 	@FeatureAdapter
-	public void updateAnalogStick(GlfwStickMapping mapping,
-			Vector3f stick) {
+	public void isPressed(GlfwButtonMapping mapping, Button1b button) {
+		button.pressed = this.isPressed(mapping);
+	}
+
+	@FeatureAdapter
+	public void updateStick(GlfwStickMapping mapping, Vector3f stick) {
 		stick.x = axes.get(mapping.glfwAxisX);
 		stick.y = axes.get(mapping.glfwAxisY);
 		stick.z = this.isPressed(mapping) ? -1.0F : 0.0F;
 	}
 
 	@FeatureAdapter
-	public void updateAnalogTrigger(GlfwTriggerMapping mapping,
-			Trigger1f trigger) {
+	public void updateTrigger(GlfwTriggerMapping mapping, Trigger1f trigger) {
 		trigger.force = axes.get(mapping.glfwAxis);
-	}
-
-	@FeatureAdapter
-	public void isPressed(GlfwButtonMapping mapped, Button1b state) {
-		state.pressed = buttons.get(mapped.glfwButton) != 0;
 	}
 
 	@Override

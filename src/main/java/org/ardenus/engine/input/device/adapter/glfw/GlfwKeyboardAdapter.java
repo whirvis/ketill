@@ -5,14 +5,13 @@ import static org.lwjgl.glfw.GLFW.*;
 import org.ardenus.engine.input.device.Keyboard;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
-import org.ardenus.engine.input.device.adapter.KeyMapping;
 import org.ardenus.engine.input.device.feature.Button1b;
 
 public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
 
 	/* @formatter: off */
 	@AdapterMapping
-	public static final KeyMapping
+	public static final GlfwKeyMapping
 			SPACE = new GlfwKeyMapping(Keyboard.SPACE, GLFW_KEY_SPACE),
 			APOSTROPHE = new GlfwKeyMapping(Keyboard.APOSTROPHE, GLFW_KEY_APOSTROPHE),
 			COMMA = new GlfwKeyMapping(Keyboard.COMMA, GLFW_KEY_COMMA),
@@ -65,7 +64,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
 			WORLD_2 = new GlfwKeyMapping(Keyboard.WORLD_2, GLFW_KEY_WORLD_2);
 
 	@AdapterMapping
-	public static final KeyMapping
+	public static final GlfwKeyMapping
 			ESCAPE = new GlfwKeyMapping(Keyboard.ESCAPE, GLFW_KEY_ESCAPE),
 			ENTER = new GlfwKeyMapping(Keyboard.ENTER, GLFW_KEY_ENTER),
 			TAB = new GlfwKeyMapping(Keyboard.TAB, GLFW_KEY_TAB),
