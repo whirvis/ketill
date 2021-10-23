@@ -2,6 +2,7 @@ package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.SwitchController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.joml.Vector3f;
 
@@ -26,7 +27,7 @@ public class GlfwSwitchAdapter
 
 	/* @formatter: off */
 	@AdapterMapping
-	private static final GlfwAnalogMapping<?>
+	private static final AnalogMapping<?>
 			LS = new GlfwStickMapping(SwitchController.LS, 0, 1),
 			RS = new GlfwStickMapping(SwitchController.RS, 2, 3);
 	

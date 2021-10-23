@@ -1,8 +1,9 @@
 package org.ardenus.engine.input.device.adapter.glfw;
 
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.feature.AnalogStick;
 
-public class GlfwStickMapping extends GlfwAnalogMapping<AnalogStick> {
+public class GlfwStickMapping extends AnalogMapping<AnalogStick> {
 
 	public final int glfwAxisX;
 	public final int glfwAxisY;

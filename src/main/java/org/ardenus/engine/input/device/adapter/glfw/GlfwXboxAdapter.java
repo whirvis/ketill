@@ -2,6 +2,7 @@ package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.XboxController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
@@ -11,7 +12,7 @@ public class GlfwXboxAdapter
 
 	/* @formatter: off */
 	@AdapterMapping
-	private static final GlfwAnalogMapping<?>
+	private static final AnalogMapping<?>
 			LS = new GlfwStickMapping(XboxController.LS, 0, 1),
 			RS = new GlfwStickMapping(XboxController.RS, 2, 3),
 			LT = new GlfwTriggerMapping(XboxController.LT, 4),

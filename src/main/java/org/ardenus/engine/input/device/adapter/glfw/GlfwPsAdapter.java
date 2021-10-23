@@ -2,6 +2,7 @@ package org.ardenus.engine.input.device.adapter.glfw;
 
 import org.ardenus.engine.input.device.PsController;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
+import org.ardenus.engine.input.device.adapter.AnalogMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Trigger1f;
 import org.joml.Vector3f;
@@ -11,7 +12,7 @@ public class GlfwPsAdapter
 
 	/* @formatter: off */
 	@AdapterMapping
-	public static final GlfwAnalogMapping<?>
+	public static final AnalogMapping<?>
 			LS = new GlfwStickMapping(PsController.LS, 0, 1),
 			RS = new GlfwStickMapping(PsController.RS, 2, 5),
 			LT = new GlfwTriggerMapping(PsController.LT, 3),
