@@ -45,7 +45,7 @@ public class Mouse extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Mouse(DeviceAdapter<Mouse> adapter) {
-		super(adapter);
+		super("mouse", adapter);
 	}
 
 	/**

@@ -48,7 +48,7 @@ public class SwitchController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public SwitchController(DeviceAdapter<SwitchController> adapter) {
-		super(adapter, LS, RS, null, null);
+		super("switch_pro", adapter, LS, RS, null, null);
 	}
 
 	/**

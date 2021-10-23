@@ -147,7 +147,7 @@ public class Keyboard extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Keyboard(DeviceAdapter<Keyboard> adapter) {
-		super(adapter);
+		super("keyboard", adapter);
 		this.addMonitor(new DeviceButtonMonitor(this));
 	}
 

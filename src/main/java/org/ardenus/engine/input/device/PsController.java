@@ -53,7 +53,7 @@ public class PsController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public PsController(DeviceAdapter<PsController> adapter) {
-		super(adapter, LS, RS, LT, RT);
+		super("ps4", adapter, LS, RS, LT, RT);
 	}
 
 }

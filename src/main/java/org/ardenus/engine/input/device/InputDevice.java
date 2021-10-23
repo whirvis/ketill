@@ -37,6 +37,7 @@ import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
  */
 public abstract class InputDevice {
 
+	public final String id;
 	protected final DeviceAdapter<?> adapter;
 	private final Set<FeatureMonitor> monitors;
 	private final Map<DeviceFeature<?>, Object> features;
@@ -45,15 +46,19 @@ public abstract class InputDevice {
 	 * Constructs a new {@code InputDevice} and registers all device feature
 	 * fields annotated with {@link FeaturePresent @FeaturePresent}.
 	 * 
+	 * @param id
+	 *            the device ID.
 	 * @param adapter
 	 *            the device adapter.
 	 * @throws NullPointerException
-	 *             if {@code adapter} is {@code null}.
+	 *             if {@code input} or {@code adapter} are {@code null}.
 	 * @throws InputException
 	 *             if an input error occurs.
 	 * @see #addFeature(DeviceFeature)
 	 */
-	public InputDevice(DeviceAdapter<?> adapter) {
+	public InputDevice(String id, DeviceAdapter<?> adapter) {
+		this.id = Objects.requireNonNull(id, "id");
+
 		this.adapter = Objects.requireNonNull(adapter);
 		this.monitors = new HashSet<>();
 		this.features = new HashMap<>();

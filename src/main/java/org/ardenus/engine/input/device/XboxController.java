@@ -54,7 +54,7 @@ public class XboxController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public XboxController(DeviceAdapter<XboxController> adapter) {
-		super(adapter, LS, RS, LT, RT);
+		super("xbox", adapter, LS, RS, LT, RT);
 	}
 
 }

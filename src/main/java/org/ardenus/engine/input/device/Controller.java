@@ -46,6 +46,8 @@ public abstract class Controller extends InputDevice {
 	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} will be added
 	 * on instantiation.
 	 * 
+	 * @param id
+	 *            the controller ID.
 	 * @param adapter
 	 *            the device adapter.
 	 * @param ls
@@ -57,11 +59,11 @@ public abstract class Controller extends InputDevice {
 	 * @param rt
 	 *            the right analog trigger, may be {@code null}.
 	 * @throws NullPointerException
-	 *             if {@code adapter} is {@code null}.
+	 *             if {@code id} or {@code adapter} are {@code null}.
 	 */
-	public Controller(DeviceAdapter<?> adapter, AnalogStick ls, AnalogStick rs,
-			AnalogTrigger lt, AnalogTrigger rt) {
-		super(adapter);
+	public Controller(String id, DeviceAdapter<?> adapter, AnalogStick ls,
+			AnalogStick rs, AnalogTrigger lt, AnalogTrigger rt) {
+		super(id, adapter);
 
 		this.ls = ls;
 		this.rs = rs;
@@ -81,7 +83,7 @@ public abstract class Controller extends InputDevice {
 	public boolean isPressed(DeviceButton button) {
 		if (!this.hasFeature(button)) {
 			return false;
-		}		
+		}
 		Button1bc value = this.getState(button);
 		return value.pressed();
 	}

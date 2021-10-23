@@ -51,7 +51,7 @@ public class GcController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public GcController(DeviceAdapter<GcController> adapter) {
-		super(adapter, LS, RS, LT, RT);
+		super("gc", adapter, LS, RS, LT, RT);
 	}
 
 }
