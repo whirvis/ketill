@@ -7,8 +7,7 @@ import org.ardenus.engine.input.device.adapter.glfw.GlfwSwitchProAdapter;
 public class GlfwSwitchProSeeker extends GlfwJoystickSeeker {
 
 	public GlfwSwitchProSeeker(long ptr_glfwWindow) {
-		super(SwitchProController.class, ptr_glfwWindow, "Wireless Gamepad",
-				"Pro Controller");
+		super(SwitchProController.class, ptr_glfwWindow);
 	}
 
 	@Override

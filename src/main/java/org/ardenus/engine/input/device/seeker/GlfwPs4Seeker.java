@@ -7,8 +7,7 @@ import org.ardenus.engine.input.device.adapter.glfw.GlfwPs4Adapter;
 public class GlfwPs4Seeker extends GlfwJoystickSeeker {
 
 	public GlfwPs4Seeker(long ptr_glfwWindow) {
-		super(Ps4Controller.class, ptr_glfwWindow, "Wireless Controller",
-				"USB Joystick", "SPEEDLINK STRIKE Gamepad");
+		super(Ps4Controller.class, ptr_glfwWindow);
 	}
 
 	@Override

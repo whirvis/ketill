@@ -2,6 +2,8 @@ package org.ardenus.engine.input.device.seeker;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,69 +13,171 @@ import org.ardenus.engine.input.device.adapter.glfw.GlfwDeviceAdapter;
 
 public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 
-	/**
-	 * TODO: Use SDL GUIDs instead of names!
-	 */
-
 	private final InputDevice[] joysticks;
-	private final Set<String> names;
+	private final Set<String> guids;
 
 	/**
 	 * @param type
 	 *            the joystick type.
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
-	 * @param names
-	 *            an initial list of qualifying joystick names.
 	 * @throws NullPointerException
-	 *             if {@code type} or {@code names} is {@code null}.
-	 * @see #addNames(String)
+	 *             if {@code type} is {@code null}.
 	 */
 	public GlfwJoystickSeeker(Class<? extends InputDevice> type,
-			long ptr_glfwWindow, String... names) {
+			long ptr_glfwWindow) {
 		super(type, ptr_glfwWindow);
-		this.joysticks = new InputDevice[GLFW_JOYSTICK_LAST];
-		this.names = new HashSet<>();
-		this.addNames(names);
+		this.joysticks = new InputDevice[GLFW_JOYSTICK_LAST + 1];
+		this.guids = new HashSet<>();
 	}
 
 	/**
-	 * When a joystick is detected by this seeker, the seeker will check its
-	 * name to see if it should be connected. This is to prevent different types
-	 * of joysticks from being unintentionally connected by this seeker.
+	 * @param guid
+	 *            the joystick GUID, case sensitive.
+	 * @return {@code true} if this device seeker is seeking out joysticks with
+	 *         {@code guid}, {@code false} otherwise.
+	 * @see #seekGuid(String)
+	 */
+	public boolean isSeeking(String guid) {
+		if (guid != null) {
+			return guids.contains(guid);
+		}
+		return false;
+	}
+
+	/**
+	 * When detected, the GUID of a joystick will be checked to see if the
+	 * seeker should register it. This is to prevent undesired joysticks from
+	 * being erroneously registered.
 	 * 
-	 * @param name
-	 *            the joystick name, case sensitive.
+	 * @param guid
+	 *            the joystick GUID, case sensitive.
 	 * @return this device seeker.
 	 * @throws NullPointerException
-	 *             if {@code name} is {@code null}.
+	 *             if {@code guid} is {@code null}.
 	 */
-	protected GlfwJoystickSeeker addName(String name) {
-		Objects.requireNonNull(name, "name");
-		names.add(name);
+	public GlfwJoystickSeeker seekGuid(String guid) {
+		Objects.requireNonNull(guid, "guid");
+		guids.add(guid);
 		return this;
 	}
 
 	/**
-	 * When a joystick is detected by this seeker, the seeker will check its
-	 * name to see if it should be connected. This is to prevent different types
-	 * of joysticks from being unintentionally connected by this seeker.
+	 * When detected, the GUID of a joystick will be checked to see if the
+	 * seeker should register it. This is to prevent undesired joysticks from
+	 * being erroneously registered.
 	 * <p>
-	 * This method is a shorthand for {@link #addName(String)}, with each
-	 * element of {@code names} being passed as the argument for {@code name}.
+	 * This method is a shorthand for {@link #seekGuid(String)}, with each
+	 * element of {@code guids} being passed as the argument for {@code guid}.
 	 * 
-	 * @param names
-	 *            the joystick names, case sensitive.
+	 * @param guids
+	 *            the joystick GUIDs, case sensitive.
 	 * @return this device seeker.
 	 * @throws NullPointerException
-	 *             if {@code names} is {@code null}.
+	 *             if {@code guids} is {@code null}.
 	 */
-	protected GlfwJoystickSeeker addNames(String... names) {
-		Objects.requireNonNull(names, "names");
-		for (String name : names) {
-			this.addName(name);
+	public GlfwJoystickSeeker seekGuids(Collection<String> guids) {
+		Objects.requireNonNull(guids, "guids");
+		for (String guid : guids) {
+			this.seekGuid(guid);
 		}
 		return this;
+	}
+
+	/**
+	 * When detected, the GUID of a joystick will be checked to see if the
+	 * seeker should register it. This is to prevent undesired joysticks from
+	 * being erroneously registered.
+	 * <p>
+	 * This method is a shorthand for {@link #seekGuids(Collection)}, with the
+	 * argument for {@code guids} being converted from an array to a list via
+	 * {@link Arrays#asList(Object...)}.
+	 * 
+	 * @param guids
+	 *            the joystick GUIDs, case sensitive.
+	 * @return this device seeker.
+	 * @throws NullPointerException
+	 *             if {@code guids} is {@code null}.
+	 */
+	public GlfwJoystickSeeker seekGuids(String... guids) {
+		return this.seekGuids(Arrays.asList(guids));
+	}
+
+	/**
+	 * All currently registered joysticks with a matching GUID will be
+	 * automatically unregistered. This is to prevent the connection of
+	 * undesired joysticks from lingering.
+	 * 
+	 * @param toDrop
+	 *            the GUIDs to drop, case sensitive.
+	 * @return this device seeker.
+	 */
+	public GlfwJoystickSeeker dropGuids(Collection<String> toDrop) {
+		/*
+		 * The version using a collection (rather than a single string) is
+		 * provided as original implementation, as it allows for an O(n)
+		 * implementation rather than an O(n^2). Maybe this is a micro
+		 * optimization, but I don't really care.
+		 */
+		if (toDrop == null) {
+			return this;
+		}
+
+		/*
+		 * If a joystick's GUID matches one of the GUIDs being dropped, it must
+		 * be unregistered. It would not make logical sense for a joystick that
+		 * would no longer be registered by this seeker to linger.
+		 */
+		for (int i = 0; i < joysticks.length; i++) {
+			String guid = glfwGetJoystickGUID(i);
+			if (guid != null && toDrop.contains(guid)) {
+				this.unregister(joysticks[i]);
+				this.joysticks[i] = null;
+			}
+		}
+
+		guids.removeAll(toDrop);
+		return this;
+	}
+
+	/**
+	 * All currently registered joysticks with a matching GUID will be
+	 * automatically unregistered. This is to prevent the connection of
+	 * undesired joysticks from lingering.
+	 * <p>
+	 * This method is a shorthand for {@link #dropGuids(Collection)}, with the
+	 * argument for {@code toDrop} being converted from an array to a list via
+	 * {@link Arrays#asList(Object...)}.
+	 * 
+	 * @param toDrop
+	 *            the GUIDs to drop, case sensitive. If the argument for this
+	 *            parameter is an empty array, all GUIDs currently being sought
+	 *            for will be dropped.
+	 * @return this device seeker.
+	 */
+	public GlfwJoystickSeeker dropGuids(String... toDrop) {
+		if (toDrop == null) {
+			return this;
+		} else if (toDrop.length == 0) {
+			return this.dropGuids(guids);
+		}
+		return this.dropGuids(Arrays.asList(toDrop));
+	}
+
+	/**
+	 * All currently registered joysticks with a matching GUID will be
+	 * automatically unregistered. This is to prevent the connection of
+	 * undesired joysticks from lingering.
+	 * <p>
+	 * This method is a shorthand for {@link #dropGuids(String...)}, with
+	 * {@code toDrop} being passed as the only value.
+	 * 
+	 * @param toDrop
+	 *            the GUID to drop, case sensitive.
+	 * @return this device seeker.
+	 */
+	public GlfwJoystickSeeker dropGuid(String toDrop) {
+		return this.dropGuids(toDrop);
 	}
 
 	/**
@@ -105,12 +209,10 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 			}
 
 			/*
-			 * If the joystick is not present, glfwGetJoystickName() will return
-			 * null. Making use of this fact gets rid of a redundant call to
-			 * glfwJoystickPresent().
+			 * If the joystick is not present, glfwGetJoystickGUID() returns
+			 * null. This makes a call to glfwJoystickPresent() redundant.
 			 */
-			String name = glfwGetJoystickName(i);
-			if (name != null && names.contains(name)) {
+			if (this.isSeeking(glfwGetJoystickGUID(i))) {
 				this.joysticks[i] = this.createDevice(ptr_glfwWindow, i);
 				this.register(joysticks[i]);
 			}
