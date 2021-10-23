@@ -46,6 +46,7 @@ public class Mouse extends InputDevice {
 	 */
 	public Mouse(DeviceAdapter<Mouse> adapter) {
 		super("mouse", adapter);
+		this.addMonitor(new DeviceButtonMonitor(this));
 	}
 
 	/**
