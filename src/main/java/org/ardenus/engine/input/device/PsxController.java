@@ -8,9 +8,9 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 
 /**
- * A Sony PlayStation 4 controller.
+ * A Sony PlayStation controller.
  */
-public class PsController extends Controller {
+public abstract class PsxController extends Controller {
 
 	/* @formatter: off */
 	@FeaturePresent
@@ -23,13 +23,8 @@ public class PsController extends Controller {
 			R1 = new DeviceButton("r1"),
 			L2 = new DeviceButton("l2"),
 			R2 = new DeviceButton("r2"),
-			SHARE = new DeviceButton("share"),
-			OPTIONS = new DeviceButton("options"),
 			THUMB_L = new DeviceButton("ls"),
 			THUMB_R = new DeviceButton("rs"),
-			PS = new DeviceButton("playstation"),
-			TPAD = new DeviceButton("trackpad"),
-			MUTE = new DeviceButton("mute"), /* present on PS5 */
 			UP = new DeviceButton("up", Direction.UP),
 			RIGHT = new DeviceButton("right", Direction.RIGHT),
 			DOWN = new DeviceButton("down", Direction.DOWN),
@@ -39,21 +34,23 @@ public class PsController extends Controller {
 	public static final AnalogStick
 			LS = new AnalogStick("ls", THUMB_L),
 			RS = new AnalogStick("rs", THUMB_R);
-	
-	@FeaturePresent
-	public static final AnalogTrigger
-			LT = new AnalogTrigger("lt"),
-			RT = new AnalogTrigger("rt");
 	/* @formatter: on */
 
 	/**
+	 * @param id
+	 *            the controller ID.
 	 * @param adapter
 	 *            the PlayStation controller adapter.
+	 * @param lt
+	 *            the left analog trigger, may be {@code null}.
+	 * @param rt
+	 *            the right analog trigger, may be {@code null}.
 	 * @throws NullPointerException
-	 *             if {@code adapter} is {@code null}.
+	 *             if {@code id} or {@code adapter} are {@code null}.
 	 */
-	public PsController(DeviceAdapter<PsController> adapter) {
-		super("ps4", adapter, LS, RS, LT, RT);
+	public PsxController(String id, DeviceAdapter<?> adapter, AnalogTrigger lt,
+			AnalogTrigger rt) {
+		super(id, adapter, LS, RS, lt, rt);
 	}
 
 }

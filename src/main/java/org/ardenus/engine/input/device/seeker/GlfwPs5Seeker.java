@@ -1,17 +1,17 @@
 package org.ardenus.engine.input.device.seeker;
 
-import static org.lwjgl.glfw.GLFW.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.ardenus.engine.input.device.InputDevice;
-import org.ardenus.engine.input.device.PsController;
-import org.ardenus.engine.input.device.adapter.glfw.GlfwPsAdapter;
+import org.ardenus.engine.input.device.Ps5Controller;
+import org.ardenus.engine.input.device.adapter.glfw.GlfwPs5Adapter;
 
-public class GlfwPsSeeker extends GlfwJoystickSeeker {
+public class GlfwPs5Seeker extends GlfwJoystickSeeker {
 
 	/*
+	 * TODO: Use these GUIDs in the proper context of a PS5 adapter.
+	 * 
 	 * TODO: Quick hack to check if the controller is a PS5 controller,
 	 * according to the SDL bindings. This is not good. This is terrible!
 	 * Horrible! I hate this! A better solution to this should be used in the
@@ -31,19 +31,17 @@ public class GlfwPsSeeker extends GlfwJoystickSeeker {
 		PS5_GUIDS.add("050000004c050000e60c0000ff870000");
 	}
 
-	public GlfwPsSeeker(long ptr_glfwWindow) {
-		super(PsController.class, ptr_glfwWindow,
-				"Wireless Controller", "USB Joystick",
-				"SPEEDLINK STRIKE Gamepad");
+	public GlfwPs5Seeker(long ptr_glfwWindow) {
+		super(Ps5Controller.class, ptr_glfwWindow);
+		
+		/* TODO: remove this once ready */
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	protected InputDevice createDevice(long ptr_glfwWindow, int glfwJoystick) {
-		String guid = glfwGetJoystickGUID(glfwJoystick);
-		GlfwPsAdapter adapter =
-				new GlfwPsAdapter(ptr_glfwWindow,
-						glfwJoystick, PS5_GUIDS.contains(guid));
-		return new PsController(adapter);
+		return new Ps5Controller(
+				new GlfwPs5Adapter(ptr_glfwWindow, glfwJoystick));
 	}
 
 }
