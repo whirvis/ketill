@@ -146,17 +146,21 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	protected abstract void onAttach(UsbDevice device);
 
 	private void attach(UsbDevice device) {
-		device.addUsbDeviceListener(this);
-		this.onAttach(device);
-		devices.add(device);
+		if (!devices.contains(device)) {
+			device.addUsbDeviceListener(this);
+			this.onAttach(device);
+			devices.add(device);
+		}
 	}
 
 	protected abstract void onDetach(UsbDevice device);
 
 	private void detach(UsbDevice device) {
-		device.removeUsbDeviceListener(this);
-		this.onDetach(device);
-		devices.remove(device);
+		if (devices.contains(device)) {
+			device.removeUsbDeviceListener(this);
+			this.onDetach(device);
+			devices.remove(device);
+		}
 	}
 
 	@Override
