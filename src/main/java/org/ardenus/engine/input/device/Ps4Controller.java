@@ -148,11 +148,11 @@ public class Ps4Controller extends PsxController {
 	 */
 	public void setLightbar(int rgba, boolean useAlpha) {
 		Vector4f color = this.getState(LIGHTBAR);
-		color.x = ((byte) (rgba >> 24)) / 255.0F;
-		color.y = ((byte) (rgba >> 16)) / 255.0F;
-		color.z = ((byte) (rgba >> 8)) / 255.0F;
+		color.x = ((byte) (rgba >> 0)) / 255.0F;
+		color.y = ((byte) (rgba >> 8)) / 255.0F;
+		color.z = ((byte) (rgba >> 16)) / 255.0F;
 		if (useAlpha) {
-			color.w = ((byte) (rgba >> 0)) / 255.0F;
+			color.w = ((byte) (rgba >> 24)) / 255.0F;
 		} else {
 			color.w = 1.0F;
 		}
