@@ -33,7 +33,7 @@ public class UsbGcSeeker extends UsbDeviceSeeker {
 	}
 
 	/**
-	 * Constructs a new {@code USBGameCubeSeeker} with support for multiple USB
+	 * Constructs a new {@code UsbGcSeeker} with support for multiple USB
 	 * GameCube adapters enabled.
 	 */
 	public UsbGcSeeker() {
