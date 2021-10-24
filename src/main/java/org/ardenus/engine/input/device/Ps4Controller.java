@@ -2,6 +2,7 @@ package org.ardenus.engine.input.device;
 
 import java.awt.Color;
 
+import org.ardenus.engine.input.InputEvent;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.AnalogTrigger;
 import org.ardenus.engine.input.device.feature.DeviceButton;
@@ -15,6 +16,40 @@ import org.joml.Vector4fc;
  * A Sony PlayStation 4 controller.
  */
 public class Ps4Controller extends PsxController {
+	
+	/**
+	 * Signals that it has become ambiguous which PS4 controllers are which.
+	 * <p>
+	 * It is possible that a PlayStation 4 controller will report itself as two
+	 * devices to one machine. This situation usually occurs when a controller
+	 * that has been paired via Bluetooth is also connected via USB. There is no
+	 * way to determine which PS4 controllers connected via USB and Bluetooth
+	 * are the same device in the real world. As such, this event is used as a
+	 * way to inform the program that it may be receiving dual input from the
+	 * same device. How this situation is handled is up to the program.
+	 */
+	public static class AmbigousEvent extends InputEvent {
+
+		private boolean resolved;
+
+		/**
+		 * @param resolved
+		 *            {@code true} if the ambiguity has been resolved,
+		 *            {@code false} otherwise.
+		 */
+		public AmbigousEvent(boolean resolved) {
+			this.resolved = resolved;
+		}
+
+		/**
+		 * @return {@code true} if the ambiguity has been resolved,
+		 *         {@code false} otherwise.
+		 */
+		public boolean isResolved() {
+			return this.resolved;
+		}
+
+	}
 
 	/* @formatter: off */
 	@FeaturePresent

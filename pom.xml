@@ -138,6 +138,20 @@
 			<version>1.3.0</version>
 		</dependency>
 		
+		<!-- HID -->
+		<dependency>
+			<groupId>org.hid4java</groupId>
+			<artifactId>hid4java</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+		
+		<!-- JNA (required for HID) -->
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>5.9.0</version>
+		</dependency>
+		
 		<!-- Testing framework -->
 		<dependency>
 			<groupId>junit</groupId>
