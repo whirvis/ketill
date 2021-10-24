@@ -214,16 +214,16 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 
 	/**
 	 * This method is called for each USB device that is currently registered to
-	 * this seeker. If a {@code UsbException} is thrown, the seeker will mark
-	 * the USB device to be "troubled", and automatically disconnect it.
-	 * Afterwards, it will not be reconnected.
+	 * this seeker. If an exception is thrown, the seeker will mark the USB
+	 * device to be "troubled", and automatically disconnect it. Afterwards, it
+	 * will not be reconnected.
 	 * 
 	 * @param device
 	 *            the USB device being polled.
-	 * @throws UsbException
-	 *             if a USB error occurs.
+	 * @throws Exception
+	 *             if an error occurs.
 	 */
-	protected abstract void poll(UsbDevice device) throws UsbException;
+	protected abstract void poll(UsbDevice device) throws Exception;
 
 	@Override
 	public void poll() {
@@ -234,7 +234,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 			UsbDevice device = devicesI.next();
 			try {
 				this.poll(device);
-			} catch (UsbException e) {
+			} catch (Exception e) {
 				troubled.add(device);
 				devicesI.remove();
 				this.detach(device);
