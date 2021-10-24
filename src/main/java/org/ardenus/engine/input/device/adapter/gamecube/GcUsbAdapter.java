@@ -78,15 +78,7 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 	 */
 	protected GcUsbAdapter(GcUsbDevice device, int slot) {
 		this.device = Objects.requireNonNull(device, "device");
-
-		/*
-		 * Using the slot number, it can be determined where the data begins for
-		 * this specific controller. The first byte is a header byte, so that
-		 * will be skipped over. Afterwards, each controller uses nine bytes to
-		 * report their input data. So, the data offset is as follows.
-		 */
 		this.slot = slot;
-
 		this.buttons = new boolean[BUTTON_COUNT];
 		this.analogs = new int[ANALOG_COUNT];
 	}
