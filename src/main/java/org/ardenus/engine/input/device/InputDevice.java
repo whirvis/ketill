@@ -134,7 +134,11 @@ public abstract class InputDevice {
 	}
 
 	private void loadFeatures() {
-		for (Field field : this.getClass().getDeclaredFields()) {
+		/*
+		 * TODO: Check if any declared fields exist that are private and have
+		 * this annotation. When one is found, thrown an exception.
+		 */
+		for (Field field : this.getClass().getFields()) {
 			if (!field.isAnnotationPresent(FeaturePresent.class)) {
 				continue;
 			}

@@ -252,7 +252,11 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	private void loadInputMappings() {
-		for (Field field : this.getClass().getDeclaredFields()) {
+		/*
+		 * TODO: Check if any declared fields exist that are private and have
+		 * this annotation. When one is found, thrown an exception.
+		 */
+		for (Field field : this.getClass().getFields()) {
 			AdapterMapping mapping = field.getAnnotation(AdapterMapping.class);
 			if (mapping == null) {
 				continue;
