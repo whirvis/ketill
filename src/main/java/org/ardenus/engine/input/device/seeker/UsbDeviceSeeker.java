@@ -24,18 +24,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 
 	private static final long SEARCH_RATE = 1000L;
 
-	private static class DeviceDesc {
-
-		public final int vendorId;
-		public final int productId;
-
-		public DeviceDesc(int vendorId, int productId) {
-			this.vendorId = vendorId;
-			this.productId = productId;
-		}
-
-	}
-
 	private static List<UsbDevice> findDevices(UsbHub hub) {
 		List<UsbDevice> devices = new ArrayList<>();
 		for (Object obj : hub.getAttachedUsbDevices()) {

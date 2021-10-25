@@ -15,18 +15,6 @@ import org.hid4java.event.HidServicesEvent;
 public abstract class HidDeviceSeeker extends DeviceSeeker
 		implements HidServicesListener {
 
-	private static class DeviceDesc {
-
-		public final int vendorId;
-		public final int productId;
-
-		public DeviceDesc(int vendorId, int productId) {
-			this.vendorId = vendorId;
-			this.productId = productId;
-		}
-
-	}
-
 	private final Set<DeviceDesc> descs;
 	private final Set<HidDevice> devices;
 	private final Set<HidDevice> troubled;
