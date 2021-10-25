@@ -9,6 +9,7 @@ import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 import org.ardenus.engine.util.FieldAlias;
 import org.joml.Vector2fc;
 
+@DeviceId("mouse")
 public class Mouse extends InputDevice {
 
 	/* @formatter: off */
@@ -45,7 +46,7 @@ public class Mouse extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Mouse(DeviceAdapter<Mouse> adapter) {
-		super("mouse", adapter);
+		super(adapter);
 		this.addMonitor(new DeviceButtonMonitor(this));
 	}
 

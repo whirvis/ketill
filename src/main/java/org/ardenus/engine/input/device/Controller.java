@@ -47,7 +47,8 @@ public abstract class Controller extends InputDevice {
 	 * on instantiation.
 	 * 
 	 * @param id
-	 *            the controller ID.
+	 *            the controller ID, should be {@code null} if the
+	 *            {@link DeviceId} annotation is present for this class.
 	 * @param adapter
 	 *            the device adapter.
 	 * @param ls
@@ -58,8 +59,12 @@ public abstract class Controller extends InputDevice {
 	 *            the left analog trigger, may be {@code null}.
 	 * @param rt
 	 *            the right analog trigger, may be {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if the {@link DeviceId} annotation is present and {@code id}
+	 *             is not {@code null}.
 	 * @throws NullPointerException
-	 *             if {@code id} or {@code adapter} are {@code null}.
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
 	 */
 	public Controller(String id, DeviceAdapter<?> adapter, AnalogStick ls,
 			AnalogStick rs, AnalogTrigger lt, AnalogTrigger rt) {
@@ -72,6 +77,32 @@ public abstract class Controller extends InputDevice {
 
 		this.addMonitor(new DeviceButtonMonitor(this));
 		this.addMonitor(new AnalogStickMonitor(this));
+	}
+
+	/**
+	 * By default, a {@code Controller} expects device features of type
+	 * {@link DeviceButton} and {@link DeviceAnalog}. As a result, instances of
+	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} will be added
+	 * on instantiation. The ID for this device is also determined by the
+	 * {@link DeviceId} annotation, which must be present for this class.
+	 * 
+	 * @param adapter
+	 *            the device adapter.
+	 * @param ls
+	 *            the left analog stick, may be {@code null}.
+	 * @param rs
+	 *            the right analog stick, may be {@code null}.
+	 * @param lt
+	 *            the left analog trigger, may be {@code null}.
+	 * @param rt
+	 *            the right analog trigger, may be {@code null}.
+	 * @throws NullPointerException
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
+	 */
+	public Controller(DeviceAdapter<?> adapter, AnalogStick ls, AnalogStick rs,
+			AnalogTrigger lt, AnalogTrigger rt) {
+		this(null, adapter, ls, rs, lt, rt);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import org.ardenus.engine.input.device.feature.RumbleMotor;
 /**
  * A Microsoft XBOX controller.
  */
+@DeviceId("xbox")
 public class XboxController extends Controller {
 
 	/* @formatter: off */
@@ -54,7 +55,7 @@ public class XboxController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public XboxController(DeviceAdapter<XboxController> adapter) {
-		super("xbox", adapter, LS, RS, LT, RT);
+		super(adapter, LS, RS, LT, RT);
 	}
 
 }

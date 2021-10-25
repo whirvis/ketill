@@ -6,6 +6,7 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.KeyboardKey;
 import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 
+@DeviceId("keyboard")
 public class Keyboard extends InputDevice {
 
 	/* @formatter: off */
@@ -147,7 +148,7 @@ public class Keyboard extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Keyboard(DeviceAdapter<Keyboard> adapter) {
-		super("keyboard", adapter);
+		super(adapter);
 		this.addMonitor(new DeviceButtonMonitor(this));
 	}
 

@@ -38,7 +38,27 @@ public abstract class PsxController extends Controller {
 
 	/**
 	 * @param id
-	 *            the controller ID.
+	 *            the controller ID, should be {@code null} if the
+	 *            {@link DeviceId} annotation is present for this class.
+	 * @param adapter
+	 *            the PlayStation controller adapter.
+	 * @param lt
+	 *            the left analog trigger, may be {@code null}.
+	 * @param rt
+	 *            the right analog trigger, may be {@code null}.
+	 * @throws IllegalArgumentException
+	 *             if the {@link DeviceId} annotation is present and {@code id}
+	 *             is not {@code null}.
+	 * @throws NullPointerException
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
+	 */
+	public PsxController(String id, DeviceAdapter<?> adapter, AnalogTrigger lt,
+			AnalogTrigger rt) {
+		super(id, adapter, LS, RS, lt, rt);
+	}
+
+	/**
 	 * @param adapter
 	 *            the PlayStation controller adapter.
 	 * @param lt
@@ -46,11 +66,12 @@ public abstract class PsxController extends Controller {
 	 * @param rt
 	 *            the right analog trigger, may be {@code null}.
 	 * @throws NullPointerException
-	 *             if {@code id} or {@code adapter} are {@code null}.
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
 	 */
-	public PsxController(String id, DeviceAdapter<?> adapter, AnalogTrigger lt,
+	public PsxController(DeviceAdapter<?> adapter, AnalogTrigger lt,
 			AnalogTrigger rt) {
-		super(id, adapter, LS, RS, lt, rt);
+		this(null, adapter, lt, rt);
 	}
 
 }

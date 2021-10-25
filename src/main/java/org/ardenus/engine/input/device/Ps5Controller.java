@@ -8,6 +8,7 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 /**
  * A Sony PlayStation 5 controller.
  */
+@DeviceId("ps5")
 public class Ps5Controller extends PsxController {
 
 	/* @formatter: off */
@@ -32,7 +33,7 @@ public class Ps5Controller extends PsxController {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Ps5Controller(DeviceAdapter<Ps5Controller> adapter) {
-		super("ps5", adapter, LT, RT);
+		super(adapter, LT, RT);
 	}
 	
 }

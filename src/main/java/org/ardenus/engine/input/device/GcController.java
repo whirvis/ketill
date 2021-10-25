@@ -11,6 +11,7 @@ import org.ardenus.engine.input.device.feature.RumbleMotor;
 /**
  * A Nintendo GameCube controller.
  */
+@DeviceId("gc")
 public class GcController extends Controller {
 
 	/* @formatter: off */
@@ -51,7 +52,7 @@ public class GcController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public GcController(DeviceAdapter<GcController> adapter) {
-		super("gc", adapter, LS, RS, LT, RT);
+		super(adapter, LS, RS, LT, RT);
 	}
 
 }

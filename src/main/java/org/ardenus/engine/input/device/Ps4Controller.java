@@ -15,6 +15,7 @@ import org.joml.Vector4fc;
 /**
  * A Sony PlayStation 4 controller.
  */
+@DeviceId("ps4")
 public class Ps4Controller extends PsxController {
 	
 	/**
@@ -81,7 +82,7 @@ public class Ps4Controller extends PsxController {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Ps4Controller(DeviceAdapter<Ps4Controller> adapter) {
-		super("ps4", adapter, LT, RT);
+		super(adapter, LT, RT);
 	}
 
 	/**

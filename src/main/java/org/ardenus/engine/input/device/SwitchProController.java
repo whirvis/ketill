@@ -9,6 +9,7 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 /**
  * A Nintendo Switch Pro controller.
  */
+@DeviceId("switch_pro")
 public class SwitchProController extends Controller {
 
 	/* @formatter: off */
@@ -48,7 +49,7 @@ public class SwitchProController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public SwitchProController(DeviceAdapter<SwitchProController> adapter) {
-		super("switch_pro", adapter, LS, RS, null, null);
+		super(adapter, LS, RS, null, null);
 	}
 
 	/**

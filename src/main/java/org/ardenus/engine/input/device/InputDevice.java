@@ -30,12 +30,29 @@ import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
  * 
+ * @see DeviceId
  * @see DeviceAdapter
  * @see DeviceFeature
  * @see FeaturePresent
  * @see FeatureMonitor
  */
 public abstract class InputDevice {
+
+	/**
+	 * @param clazz
+	 *            the input device class.
+	 * @return the ID, {@code null} if {@code clazz} has no {@link DeviceId}
+	 *         annotation present.
+	 */
+	public static String getId(Class<? extends InputDevice> clazz) {
+		if (clazz != null) {
+			DeviceId id = clazz.getAnnotation(DeviceId.class);
+			if (id != null) {
+				return id.value();
+			}
+		}
+		return null;
+	}
 
 	public final String id;
 	protected final DeviceAdapter<?> adapter;
@@ -47,17 +64,38 @@ public abstract class InputDevice {
 	 * fields annotated with {@link FeaturePresent @FeaturePresent}.
 	 * 
 	 * @param id
-	 *            the device ID.
+	 *            the device ID, should be {@code null} if the {@link DeviceId}
+	 *            annotation is present for this class.
 	 * @param adapter
 	 *            the device adapter.
+	 * @throws IllegalArgumentException
+	 *             if the {@link DeviceId} annotation is present and {@code id}
+	 *             is not {@code null}.
 	 * @throws NullPointerException
-	 *             if {@code input} or {@code adapter} are {@code null}.
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
 	 * @throws InputException
 	 *             if an input error occurs.
 	 * @see #addFeature(DeviceFeature)
 	 */
 	public InputDevice(String id, DeviceAdapter<?> adapter) {
-		this.id = Objects.requireNonNull(id, "id");
+		/*
+		 * It would not make logical sense for the device to have both a static
+		 * ID and an instance ID specified at construction. Even if they match,
+		 * it is likely that this was done by mistake. As such, throw an error
+		 * to force the user to pick one or the other.
+		 */
+		String statikId = getId(this.getClass());
+		if (statikId != null && id != null) {
+			throw new IllegalArgumentException(
+					"cannot have a static ID and instance ID");
+		} else if (statikId != null) {
+			this.id = statikId;
+		} else if (id != null) {
+			this.id = id;
+		} else {
+			throw new NullPointerException("missing ID");
+		}
 
 		this.adapter = Objects.requireNonNull(adapter);
 		this.monitors = new HashSet<>();
@@ -65,6 +103,25 @@ public abstract class InputDevice {
 		this.loadFeatures();
 
 		this.addMonitor(new ConnectionMonitor(this));
+	}
+
+	/**
+	 * Constructs a new {@code InputDevice} and registers all device feature
+	 * fields annotated with {@link FeaturePresent @FeaturePresent}. The ID for
+	 * this device is also determined by the {@link DeviceId} annotation, which
+	 * must be present for this class.
+	 * 
+	 * @param adapter
+	 *            the device adapter.
+	 * @throws NullPointerException
+	 *             if no ID was specified for this device; if {@code adapter} is
+	 *             {@code null}.
+	 * @throws InputException
+	 *             if an input error occurs.
+	 * @see #addFeature(DeviceFeature)
+	 */
+	public InputDevice(DeviceAdapter<?> adapter) {
+		this(null, adapter);
 	}
 
 	/**
