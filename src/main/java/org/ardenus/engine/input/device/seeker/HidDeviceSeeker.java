@@ -26,6 +26,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 *            the input device type.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
+	 * @see #seekDevice(int, int)
 	 */
 	public HidDeviceSeeker(Class<? extends InputDevice> type) {
 		super(type);
@@ -40,15 +41,6 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		services.addHidServicesListener(this);
 	}
 
-	/**
-	 * @param vendorId
-	 *            the vendor ID.
-	 * @param productId
-	 *            the product ID.
-	 * @return {@code true} if this device seeker is seeking out devices with
-	 *         {@code vendorId} and {@code productId}, {@code false} otherwise.
-	 * @see #seekDevice(int, int)
-	 */
 	public boolean isSeeking(int vendorId, int productId) {
 		for (DeviceDesc desc : descs) {
 			if (desc.vendorId == vendorId && desc.productId == productId) {
@@ -69,14 +61,13 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 
 	/**
 	 * When detected, the vendor and product ID of an HID device will be checked
-	 * to see if the seeker should attach it. This is to prevent undesired HID
-	 * devices from being erroneously attached.
+	 * to see if the seeker should connect it. This is to prevent undesired HID
+	 * devices from being erroneously connected.
 	 * 
 	 * @param vendorId
 	 *            the vendor ID.
 	 * @param productId
 	 *            the product ID.
-	 * @return this device seeker.
 	 */
 	protected void seekDevice(int vendorId, int productId) {
 		if (!this.isSeeking(vendorId, productId)) {
@@ -86,14 +77,13 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 
 	/**
 	 * All currently attached HID devices with a matching vendor and product ID
-	 * will be automatically detached. This is to prevent the connection of
+	 * will be automatically disconnected. This is to prevent the connection of
 	 * undesired HID devices from lingering.
 	 * 
 	 * @param vendorId
 	 *            the vendor ID.
-	 * @param product
+	 * @param productId
 	 *            ID the product ID.
-	 * @return this device seeker.
 	 */
 	protected void dropDevice(int vendorId, int productId) {
 		if (!this.isSeeking(vendorId, productId)) {

@@ -26,11 +26,6 @@ public class ConnectionMonitor extends FeatureMonitor {
 	}
 
 	@Override
-	public void forget(DeviceFeature<?> feature) {
-		/* nothing to forget */
-	}
-
-	@Override
 	public void update() {
 		boolean connected = device.isConnected();
 		if (!wasConnected && connected) {

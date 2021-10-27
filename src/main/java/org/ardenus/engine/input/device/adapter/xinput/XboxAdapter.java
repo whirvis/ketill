@@ -66,25 +66,25 @@ public class XboxAdapter extends DeviceAdapter<XboxController> {
 	private static final int RUMBLE_MIN = 0;
 	private static final int RUMBLE_MAX = 65535;
 
-	private final XInputDevice xinput;
+	private final XInputDevice xDevice;
 	private XInputButtons buttons;
 	private XInputAxes axes;
 	private int rumbleCoarse;
 	private int rumbleFine;
 
 	/**
-	 * @param xinput
+	 * @param xDevice
 	 *            the X-input device.
 	 * @throws NullPointerException
 	 *             if {@code xinput} is {@code null}.
 	 */
-	public XboxAdapter(XInputDevice xinput) {
-		this.xinput = Objects.requireNonNull(xinput, "xinput");
+	public XboxAdapter(XInputDevice xDevice) {
+		this.xDevice = Objects.requireNonNull(xDevice, "xDevice");
 	}
 
 	@Override
 	public boolean isConnected() {
-		return xinput.isConnected();
+		return xDevice.isConnected();
 	}
 
 	protected boolean isPressed(XStickMapping mapping) {
@@ -132,18 +132,18 @@ public class XboxAdapter extends DeviceAdapter<XboxController> {
 		 */
 		if (mapping == RUMBLE_COARSE && rumbleCoarse != force) {
 			this.rumbleCoarse = force;
-			xinput.setVibration(rumbleCoarse, rumbleFine);
+			xDevice.setVibration(rumbleCoarse, rumbleFine);
 		} else if (mapping == RUMBLE_FINE && rumbleFine != force) {
 			this.rumbleFine = force;
-			xinput.setVibration(rumbleCoarse, rumbleFine);
+			xDevice.setVibration(rumbleCoarse, rumbleFine);
 		}
 	}
 
 	@Override
 	public void poll() {
-		xinput.poll();
+		xDevice.poll();
 
-		XInputComponents comps = xinput.getComponents();
+		XInputComponents comps = xDevice.getComponents();
 		this.axes = comps.getAxes();
 		this.buttons = comps.getButtons();
 	}

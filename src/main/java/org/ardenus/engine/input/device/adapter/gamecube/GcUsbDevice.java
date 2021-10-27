@@ -19,10 +19,9 @@ import javax.usb.event.UsbPipeErrorEvent;
 import javax.usb.event.UsbPipeListener;
 
 /**
- * An implementation of the official USB adapter for the Wii U and Nintendo
- * Switch. The purpose of this class is to communicate with the USB adapter and
- * provide the input data necessary for a {@link GcUsbAdapter}
- * to method.
+ * An implementation of the official Nintendo GameCube USB adapter for the Wii U
+ * and Nintendo Switch. Its purpose is to communicate with the adapter and
+ * provide the input data necessary for a {@link GcUsbAdapter} to function.
  * 
  * @see #isAdapter(UsbDevice)
  * @see #getAdapters()
@@ -56,7 +55,7 @@ public class GcUsbDevice implements UsbPipeListener {
 	/**
 	 * @param device
 	 *            the USB device to check.
-	 * @return {@code true} if {@code device} is a USB GameCube adapter,
+	 * @return {@code true} if {@code device} is a GameCube USB adapter,
 	 *         {@code false} otherwise.
 	 */
 	public static boolean isAdapter(UsbDevice device) {
@@ -81,11 +80,11 @@ public class GcUsbDevice implements UsbPipeListener {
 
 	/**
 	 * @param device
-	 *            the USB GameCube adapter device.
+	 *            the GameCube USB adapter device.
 	 * @throws NullPointerException
 	 *             if {@code device} is {@code null}.
 	 * @throws IllegalArgumentException
-	 *             if {@code device} is a USB GameCube adapter according to
+	 *             if {@code device} is not a GameCube USB adapter according to
 	 *             {@link #isAdapter(UsbDevice)}.
 	 */
 	public GcUsbDevice(UsbDevice device) {
@@ -107,19 +106,11 @@ public class GcUsbDevice implements UsbPipeListener {
 		this.rumble[0] = RUMBLE_ID;
 	}
 
-	/**
-	 * @return the adapters of each GameCube controller.
-	 */
 	public List<GcUsbAdapter> getAdapters() {
 		return this.adapterList;
 	}
 
-	/**
-	 * @param slot
-	 *            the adapter slot.
-	 * @return the current input data for {@code slot}.
-	 */
-	protected byte[] getSlot(int slot) {
+	protected byte[] getSlotData(int slot) {
 		return this.slots[slot];
 	}
 
@@ -199,8 +190,8 @@ public class GcUsbDevice implements UsbPipeListener {
 	/**
 	 * Polling the adapter is necessary for retrieving up to date input
 	 * information. If this is not done, it is possible a mix of both up to date
-	 * and out of date input data will be returned. As such, it is recommended
-	 * to call this method once every update.
+	 * and out of date input data will be returned. It is recommended to call
+	 * this method once every update.
 	 * 
 	 * @throws UsbException
 	 *             if a USB error occurs.

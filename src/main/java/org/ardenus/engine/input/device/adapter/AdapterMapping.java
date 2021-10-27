@@ -7,9 +7,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, signals to a {@link DeviceAdapter} that a field of type
- * {@link FeatureMapping} should be mapped automatically on instantiation. Both
- * static and instance fields are valid for use with this annotation.
+ * When present, signals to {@link DeviceAdapter} that a field should be
+ * registered as a feature mapping during instantiation. These fields must be
+ * {@code public} and, their type assignable from {@link FeatureMapping}. They
+ * may be either instance or static.
  * 
  * @see DeviceAdapter#map(FeatureMapping)
  */

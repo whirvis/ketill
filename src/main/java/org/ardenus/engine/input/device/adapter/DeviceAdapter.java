@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.feature.DeviceFeature;
+import org.ardenus.engine.util.Reflection;
 
 /**
  * An adapter which maps input for an {@link InputDevice}.
@@ -28,12 +29,14 @@ import org.ardenus.engine.input.device.feature.DeviceFeature;
  * <p>
  * <b>Note:</b> For a device adapter to work properly, it must be polled via
  * {@link #poll()} before querying any input information. It is recommended to
- * poll the adapter once on every application update.
+ * poll the adapter once on every application update. Instances of
+ * {@code InputDevice} automatically poll their respective adapters when they
+ * are polled.
  *
  * @param <I>
  *            the input device type.
- * @see AnalogMapping
- * @see ButtonMapping
+ * @see FeatureMapping
+ * @see FeatureAdapter
  */
 public abstract class DeviceAdapter<I extends InputDevice> {
 
@@ -44,6 +47,11 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	private final Map<DeviceFeature<?>, FeatureMapping<?>> mappings;
 	private final Set<DeviceFeature<?>> absentMappings;
 
+	/**
+	 * All feature mapping fields annotated with {@link FeatureMapping} will be
+	 * registered by this constructor. All feature adapter methods must be
+	 * marked with {@link FeatureAdapter}.
+	 */
 	public DeviceAdapter() {
 		this.log = LogManager.getLogger(this.getClass());
 
@@ -57,38 +65,43 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	private void loadFeatureAdapters() {
-		for (Method method : this.getClass().getMethods()) {
+		Class<?> clazz = this.getClass();
+		for (Method method : Reflection.getAllMethods(clazz)) {
 			FeatureAdapter adapter = method.getAnnotation(FeatureAdapter.class);
 			if (adapter == null) {
 				continue;
 			}
 
+			String methodDesc = "@" + FeatureAdapter.class.getSimpleName()
+					+ " method \"" + method.getName() + "\" in class "
+					+ clazz.getName();
+
 			/*
-			 * For simplicity's sake, all analog adapters cannot be static, and
-			 * they must be public. This ensures they behave like instanced
-			 * methods are accessible by this class.
+			 * For the sake of simplicity, all feature adapters must be public
+			 * and cannot be static. This ensures they behave like instanced
+			 * methods and are accessible by this class.
 			 */
 			int mod = method.getModifiers();
-			if (Modifier.isStatic(mod)) {
-				throw new InputException("button adapter cannot be static");
-			} else if (!Modifier.isPublic(mod)) {
-				throw new InputException("button adapter must be public");
+			if (!Modifier.isPublic(mod)) {
+				throw new InputException(methodDesc + " must be public");
+			} else if (Modifier.isStatic(mod)) {
+				throw new InputException(methodDesc + " cannot be static");
 			}
 
 			/*
-			 * Analog adapters update an already existing value, they do not
-			 * return a new one. This is to cut down on object allocations. Do
-			 * not ignore this issue, and throw an exception. It is likely this
-			 * was a silly mistake by the programmer.
+			 * Feature adapters update an already existing value, they do not
+			 * return a new one. This is to cut down on object allocations. If
+			 * an adapter method does not return void, throw an exception. This
+			 * was likely a mistake by the programmer.
 			 */
 			if (method.getReturnType() != void.class) {
-				throw new InputException("expecting void return type");
+				throw new InputException(methodDesc + " must return void");
 			}
 
 			/*
-			 * Analog adapter methods take two parameters. The first parameter
-			 * is the analog they are going to update. The second parameter is
-			 * the current value of the analog, which the method updates.
+			 * Adapter methods take two parameters. The first parameter is the
+			 * feature mapping they are going to update. The second parameter is
+			 * the current value of the feature, which the method updates.
 			 */
 			Parameter[] params = method.getParameters();
 			if (params.length != 2) {
@@ -97,55 +110,57 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 
 			Class<?> adapterType = params[0].getType();
 			if (!FeatureMapping.class.isAssignableFrom(adapterType)) {
-				throw new InputException("TODO");
+				throw new InputException("first parameter of " + methodDesc
+						+ " must be assignable from "
+						+ FeatureMapping.class.getSimpleName());
 			}
 
 			adapters.put(adapterType, method);
 		}
 
 		/*
-		 * At runtime, the appropriate analog adapter method is chosen based on
-		 * the highest order class assignable from the analog adapter type. If
-		 * two or more classes are assignable to the same analog adapter, the
-		 * device will not know which one to choose.
+		 * At runtime, the appropriate feature adapter method is chosen based on
+		 * the highest order class assignable from the feature mapping type. If
+		 * two or more classes are assignable to the same feature adapter, which
+		 * adapter method to use will become ambiguous.
 		 */
-		for (Class<?> clazz : adapters.keySet()) {
+		for (Class<?> higher : adapters.keySet()) {
 			for (Class<?> lower : adapters.keySet()) {
-				if (clazz != lower && clazz.isAssignableFrom(lower)) {
-					throw new InputException("tangled hierarchy");
+				if (higher != lower && higher.isAssignableFrom(lower)) {
+					throw new InputException("ambigous hierarchy for "
+							+ "feature adapters, cannot choose between "
+							+ adapters.get(higher).getName() + " and "
+							+ adapters.get(lower).getName() + " for "
+							+ "mapping of type" + higher.getName());
 				}
 			}
 		}
 	}
 
 	private void requireAdapter(Class<?> mappingClazz) {
-		/*
-		 * Search for an appropriate analog adapter method and cache it for
-		 * later calls. This will be used by updateAnalog() later. The first
-		 * analog adapter method whose type is assignable from the mapped analog
-		 * will be chosen. It is guaranteed by loadAnalogAdapters() that there
-		 * will only be one class assignable to the mapped analog.
-		 */
-		if (!adapterHierarchy.containsKey(mappingClazz)) {
-			for (Class<?> candidate : adapters.keySet()) {
-				if (candidate.isAssignableFrom(mappingClazz)) {
-					adapterHierarchy.put(mappingClazz, candidate);
-					break;
-				}
-			}
+		if (adapterHierarchy.containsKey(mappingClazz)) {
+			return;
+		}
 
-			if (!adapterHierarchy.containsKey(mappingClazz)) {
-				throw new InputException("unsupported analog type");
+		/*
+		 * Search for an appropriate adapter method and cache it for later
+		 * calls. The first adapter method whose type is assignable from the
+		 * feature mapping will be chosen. The loadFeatureAdapters() method
+		 * guarantees there will only be one class assignable to the mapping.
+		 */
+		for (Class<?> candidate : adapters.keySet()) {
+			if (candidate.isAssignableFrom(mappingClazz)) {
+				adapterHierarchy.put(mappingClazz, candidate);
+				break;
 			}
+		}
+
+		if (!adapterHierarchy.containsKey(mappingClazz)) {
+			throw new InputException(
+					"no adapter for " + mappingClazz.getName());
 		}
 	}
 
-	/**
-	 * @param feature
-	 *            the feature to check for.
-	 * @return {@code true} if a mapping exists for {@code feature},
-	 *         {@code false} otherwise.
-	 */
 	public boolean hasMapping(DeviceFeature<?> feature) {
 		if (feature == null) {
 			return false;
@@ -153,12 +168,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		return mappings.containsKey(feature);
 	}
 
-	/**
-	 * @param mapping
-	 *            the input mapping to check for.
-	 * @return {@code true} if {@code mapping} is registered to this adapter,
-	 *         {@code false} otherwise.
-	 */
 	public boolean hasMapping(FeatureMapping<?> mapping) {
 		if (mapping == null) {
 			return false;
@@ -166,12 +175,6 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		return this.hasMapping(mapping.feature);
 	}
 
-	/**
-	 * @param feature
-	 *            the feature whose mapping to retrieve.
-	 * @return the mapping for {@code feature}, {@code null} if none is
-	 *         registered.
-	 */
 	protected FeatureMapping<?> getMapping(DeviceFeature<?> feature) {
 		if (feature == null) {
 			return null;
@@ -190,6 +193,14 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 */
 	protected DeviceAdapter<I> map(FeatureMapping<?> mapping) {
 		Objects.requireNonNull(mapping, "mapping");
+
+		/* this was likely this done on mistake */
+		DeviceFeature<?> feature = mapping.feature;
+		if (this.hasMapping(feature)) {
+			throw new InputException(
+					"feature \"" + feature.id() + "\" already mapped");
+		}
+
 		this.requireAdapter(mapping.getClass());
 		mappings.put(mapping.feature, mapping);
 		return this;
@@ -252,74 +263,49 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	}
 
 	private void loadInputMappings() {
-		/*
-		 * TODO: Check if any declared fields exist that are private and have
-		 * this annotation. When one is found, thrown an exception.
-		 */
-		for (Field field : this.getClass().getFields()) {
-			AdapterMapping mapping = field.getAnnotation(AdapterMapping.class);
-			if (mapping == null) {
+		Class<?> clazz = this.getClass();
+		for (Field field : Reflection.getAllFields(clazz)) {
+			if (!field.isAnnotationPresent(AdapterMapping.class)) {
 				continue;
 			}
 
-			/*
-			 * All button mappings must be of a type extending MappedButton. Any
-			 * other type will not contain the data necessary to map the input
-			 * data. Do not ignore this issue, and throw an exception. It is
-			 * likely this was a silly mistake by the programmer.
-			 */
+			String fieldDesc = "@" + AdapterMapping.class.getSimpleName()
+					+ " field \"" + field.getName() + "\" in class "
+					+ clazz.getName();
+
+			Class<?> type = field.getType();
+			if (!FeatureMapping.class.isAssignableFrom(type)) {
+				throw new InputException(fieldDesc + " must be assignable from "
+						+ FeatureMapping.class.getSimpleName());
+			}
 
 			/*
-			 * We must know if the field is static before trying to get its
-			 * value. If it is static, we must pass null for the instance.
-			 * Otherwise, we must pass this current adapter instance.
+			 * Require that all adapter mappings be public to ensure that they
+			 * are accessible to this class. Allowing @AdapterMapping fields to
+			 * be hidden provides more hassle than it does utility.
 			 */
-			int modifiers = field.getModifiers();
-			boolean statik = Modifier.isStatic(modifiers);
-
-			/*
-			 * If the field is not accessible, temporarily grant access so the
-			 * contents can be retrieved. Accessibility will be reverted to its
-			 * original state later.
-			 */
-			boolean tempAccess = false;
-			if (!field.isAccessible()) {
-				try {
-					field.setAccessible(true);
-					tempAccess = true;
-				} catch (SecurityException e) {
-					throw new InputException("failure to set accessible", e);
-				}
+			int mods = field.getModifiers();
+			if (!Modifier.isPublic(mods)) {
+				throw new InputException(fieldDesc + " must be public");
 			}
 
 			try {
+				boolean statik = Modifier.isStatic(mods);
 				Object obj = field.get(statik ? null : this);
-				FeatureMapping<?> mapped = (FeatureMapping<?>) obj;
-				if (this.hasMapping(mapped.feature)) {
-					throw new InputException("already mapped");
-				}
-				this.map(mapped);
+				this.map((FeatureMapping<?>) obj);
 			} catch (IllegalAccessException e) {
-				throw new InputException("failure to access", e);
-			} finally {
-				if (tempAccess) {
-					field.setAccessible(false);
-				}
+				throw new RuntimeException(e);
 			}
 		}
 	}
 
-	/**
-	 * @return {@code true} if this device adapter is still connected,
-	 *         {@code false} otherwise.
-	 */
 	public abstract boolean isConnected();
 
 	/**
 	 * For this method to work properly, {@code feature} must have been given a
-	 * mapping as well as an appropriate adapter at construction. If no mapping
-	 * was specified, this method will be a no-op. If no adapter for the mapping
-	 * type was registered, an {@code InputException} will be thrown.
+	 * mapping and this class must have an appropriate feature adapter. If no
+	 * mapping was specified, this method will be a no-op. If no adapter for the
+	 * mapping type was registered, an {@code InputException} will be thrown.
 	 * 
 	 * @param feature
 	 *            the feature to query.
@@ -330,8 +316,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 	 * @throws InputException
 	 *             if the mapping type for {@code feature} has no adapter; if
 	 *             {@code value} is of an invalid type for the adapter.
-	 * @see FeatureAdapter
 	 * @see #map(FeatureMapping)
+	 * @see FeatureAdapter
 	 */
 	public void update(DeviceFeature<?> feature, Object value) {
 		Objects.requireNonNull(feature, "feature");
@@ -340,12 +326,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		FeatureMapping<?> mapping = mappings.get(feature);
 		if (mapping == null) {
 			if (!absentMappings.contains(feature)) {
-				String msg = "no mapping for feature \"" + feature.id() + "\"";
-				if (feature.optional()) {
-					log.warn(msg);
-				} else {
-					throw new InputException(msg);
-				}
+				log.warn("no mapping for feature \"" + feature.id() + "\"");
 				absentMappings.add(feature);
 			}
 			return;
@@ -353,7 +334,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 
 		Class<?> adapterClazz = adapterHierarchy.get(mapping.getClass());
 		if (adapterClazz == null) {
-			throw new InputException("no adapter for feature");
+			throw new InputException(
+					"no adapter for feature \"" + feature.id() + "\"");
 		}
 
 		Method adapter = adapters.get(adapterClazz);
@@ -367,7 +349,9 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 			 */
 			Parameter valueParam = adapter.getParameters()[1];
 			if (valueParam.getType().isAssignableFrom(value.getClass())) {
-				throw new InputException("invalid value type for adapter", e);
+				throw new InputException("illegal value type for adapter, "
+						+ "expecting " + valueParam.getType().getName()
+						+ " (got " + value.getClass().getName() + ")", e);
 			} else {
 				throw e;
 			}

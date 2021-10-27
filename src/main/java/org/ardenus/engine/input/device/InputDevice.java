@@ -16,6 +16,8 @@ import org.ardenus.engine.input.device.feature.DeviceFeature;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.monitor.ConnectionMonitor;
 import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
+import org.ardenus.engine.input.device.seeker.DeviceSeeker;
+import org.ardenus.engine.util.Reflection;
 
 /**
  * A device which can send and receive input data.
@@ -31,6 +33,7 @@ import org.ardenus.engine.input.device.feature.monitor.FeatureMonitor;
  * poll the device once on every application update.
  * 
  * @see DeviceId
+ * @see DeviceSeeker
  * @see DeviceAdapter
  * @see DeviceFeature
  * @see FeaturePresent
@@ -60,8 +63,9 @@ public abstract class InputDevice {
 	private final Map<DeviceFeature<?>, Object> features;
 
 	/**
-	 * Constructs a new {@code InputDevice} and registers all device feature
-	 * fields annotated with {@link FeaturePresent @FeaturePresent}.
+	 * All device feature fields annotated with {@link FeaturePresent} will be
+	 * registered by this constructor. Since all input devices are expected to
+	 * connect and disconnect, a {@link ConnectionMonitor} will also be added.
 	 * 
 	 * @param id
 	 *            the device ID, should be {@code null} if the {@link DeviceId}
@@ -74,8 +78,6 @@ public abstract class InputDevice {
 	 * @throws NullPointerException
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
-	 * @throws InputException
-	 *             if an input error occurs.
 	 * @see #addFeature(DeviceFeature)
 	 */
 	public InputDevice(String id, DeviceAdapter<?> adapter) {
@@ -106,18 +108,18 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Constructs a new {@code InputDevice} and registers all device feature
-	 * fields annotated with {@link FeaturePresent @FeaturePresent}. The ID for
-	 * this device is also determined by the {@link DeviceId} annotation, which
-	 * must be present for this class.
+	 * When using this constructor, the device ID is determined by the
+	 * {@link DeviceId} annotation, which must be present for this class.
+	 * <p>
+	 * All device feature fields annotated with {@link FeaturePresent} will be
+	 * registered by this constructor. Since all input devices are expected to
+	 * connect and disconnect, a {@link ConnectionMonitor} will also be added.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
 	 * @throws NullPointerException
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
-	 * @throws InputException
-	 *             if an input error occurs.
 	 * @see #addFeature(DeviceFeature)
 	 */
 	public InputDevice(DeviceAdapter<?> adapter) {
@@ -125,8 +127,6 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Adds a feature monitor to this input device.
-	 * 
 	 * @param monitor
 	 *            the monitor to add.
 	 * @throws NullPointerException
@@ -141,6 +141,13 @@ public abstract class InputDevice {
 					"monitor not assigned to this device");
 		}
 
+		/*
+		 * It must be checked that the monitor has not already been added. This
+		 * is because when a feature monitor is added, it is told to monitor all
+		 * features added to this input device added in its absence. If this
+		 * code is ran again, it will be told to monitor the same features
+		 * previously being monitored. Such a mishap is likely to cause bugs.
+		 */
 		if (!monitors.contains(monitor)) {
 			monitors.add(monitor);
 			for (DeviceFeature<?> feature : features.keySet()) {
@@ -161,8 +168,6 @@ public abstract class InputDevice {
 	}
 
 	/**
-	 * Registers a device feature to this input device.
-	 * <p>
 	 * When a feature is registered, it is stored alongside an instance of its
 	 * initial state. If {@code feature} is already registered, its current
 	 * state will not be reset to its initial value.
@@ -178,10 +183,14 @@ public abstract class InputDevice {
 	 * @throws NullPointerException
 	 *             if {@code feature} is {@code null}.
 	 * @throws InputException
-	 *             if {@code feature} is not supported.
+	 *             if {@code feature} is already registered.
 	 */
 	protected void addFeature(DeviceFeature<?> feature) {
 		Objects.requireNonNull(feature, "feature");
+		if (this.hasFeature(feature)) {
+			throw new InputException("feature already registered");
+		}
+
 		if (!features.containsKey(feature)) {
 			features.put(feature, feature.initial());
 			for (FeatureMonitor monitor : monitors) {
@@ -191,39 +200,38 @@ public abstract class InputDevice {
 	}
 
 	private void loadFeatures() {
-		/*
-		 * TODO: Check if any declared fields exist that are private and have
-		 * this annotation. When one is found, thrown an exception.
-		 */
-		for (Field field : this.getClass().getFields()) {
+		Class<?> clazz = this.getClass();
+		for (Field field : Reflection.getAllFields(clazz)) {
 			if (!field.isAnnotationPresent(FeaturePresent.class)) {
 				continue;
 			}
 
+			String fieldDesc = "@" + FeaturePresent.class.getSimpleName()
+					+ " field \"" + field.getName() + "\" in class "
+					+ clazz.getName();
+
+			Class<?> type = field.getType();
+			if (!DeviceFeature.class.isAssignableFrom(type)) {
+				throw new InputException(fieldDesc + " must be assignable from "
+						+ DeviceFeature.class.getName());
+			}
+
 			/*
-			 * Require that all present features be public. This is to ensure
-			 * that they are accessible to this class. Not to mention, it makes
-			 * no sense as to why a feature field would be hidden. Their entire
-			 * purpose is to make it easier to fetch the value of a device
-			 * feature!
+			 * Require that all present features be public to ensure that they
+			 * are accessible to this class. It would make no sense for feature
+			 * field annotated with @FeaturePresent to be hidden.
 			 */
 			int mods = field.getModifiers();
 			if (!Modifier.isPublic(mods)) {
-				throw new InputException("device feature with name \""
-						+ field.getName() + " in class "
-						+ this.getClass().getName() + "must be public");
+				throw new InputException(fieldDesc + " must be public");
 			}
 
 			try {
 				boolean statik = Modifier.isStatic(mods);
 				Object obj = field.get(statik ? null : this);
-				DeviceFeature<?> feature = (DeviceFeature<?>) obj;
-				if (this.hasFeature(feature)) {
-					throw new InputException("device feature already mapped");
-				}
-				this.addFeature(feature);
+				this.addFeature((DeviceFeature<?>) obj);
 			} catch (IllegalAccessException e) {
-				throw new InputException("failure to access", e);
+				throw new RuntimeException(e);
 			}
 		}
 	}
@@ -251,10 +259,6 @@ public abstract class InputDevice {
 		return value;
 	}
 
-	/**
-	 * @return {@code true} if this input device is still connected,
-	 *         {@code false} otherwise.
-	 */
 	public boolean isConnected() {
 		return adapter.isConnected();
 	}

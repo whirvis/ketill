@@ -16,9 +16,9 @@ public class ButtonReleaseEvent extends FeatureReleaseEvent {
 	 * @throws NullPointerException
 	 *             if {@code device} or {@code button} are {@code null}.
 	 */
-	public ButtonReleaseEvent(InputDevice controller, DeviceButton button,
+	public ButtonReleaseEvent(InputDevice device, DeviceButton button,
 			boolean held) {
-		super(controller, button, button.direction, held);
+		super(device, button, button.direction, held);
 	}
 
 	/**

@@ -5,7 +5,7 @@ public class Button1b implements Button1bc {
 	public boolean pressed;
 
 	/**
-	 * @param force
+	 * @param pressed
 	 *            the initial button state.
 	 */
 	public Button1b(boolean pressed) {

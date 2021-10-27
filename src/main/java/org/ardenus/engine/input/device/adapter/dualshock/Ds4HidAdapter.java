@@ -16,9 +16,6 @@ import org.joml.Vector4fc;
 
 /**
  * An adapter which maps input for a DualShock 4 HID input device.
- * 
- * @see Ds4ButtonMapping
- * @see Ds4AnalogMapping
  */
 public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 
@@ -109,7 +106,7 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 	 * @param crcHeader
 	 *            the header to update the CRC signature with before writing the
 	 *            output report ID. This is not always necessary, however a
-	 *            {@code null} value is not permitted.
+	 *            {@code null} value is not permitted (use an empty array.)
 	 * @throws NullPointerException
 	 *             if {@code hid} or {@code crcHeader} are {@code null}.
 	 * @throws InputException
@@ -169,7 +166,7 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 	 * what its current state should be (lightbar color, rumble force, etc.) The
 	 * array returned by this method will used for every output report (rather
 	 * than generated every time a report is sent.) This is done to save memory.
-	 * As such, the return array should contain the default controller state.
+	 * As such, the returned array should contain the default controller state.
 	 * 
 	 * @return the generated output report.
 	 * @see #generateInputReport()

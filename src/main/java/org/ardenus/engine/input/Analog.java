@@ -16,30 +16,34 @@ import java.util.Objects;
  * 
  * <pre>
  * public class GameController {
- *
- *	public static final Analog&lt;?&gt; LEFT_STICK = new AnalogStick("Left Stick");
+ *  
+ *	public static final Analog&lt;?&gt;
+ *			LS = new AnalogStick("left_stick"),
+ *			RS = new AnalogStick("right_stick");
  *
  *	private final Map&lt;Analog&lt;?&gt;, Object&gt; analogs;
  *
  *	public GameController() {
  *		this.analogs = new HashMap&lt;&gt;();
- *		analogs.put(LEFT_STICK, LEFT_STICK.zero());
+ *		analogs.put(LS, LS.zero());
+ *		analogs.put(RS, RS.zero());
  *	}
  *
+ *	&#64;SuppressWarnings("unchecked")
  *	public &lt;V&gt; V getValue(Analog&lt;V&gt; analog) {
  *		if (analog == null) {
  *			return null;
  *		}
  *    
  *		&sol;*
- *		 * As can be seen in this example, LEFT_STICK will be reused
+ *		 * As can be seen in this example, LS and RS will be reused
  *		 * for different instances of GameController. Each controller
  *		 * contains a map of each analog, with the stored value being
  *		 * the position of each analog via their container class. This
  *		 * works out well for groups of analogs known in advance.
  *		 *&sol;
  *		Object value = analogs.get(analog);
- *		return analog.cast(value);
+ *		return (V) value;
  *	}
  * 
  * }

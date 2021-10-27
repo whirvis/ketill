@@ -11,6 +11,16 @@ import org.ardenus.engine.util.FieldAlias;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+/**
+ * A mouse which can send and receive input data.
+ * <p>
+ * <b>Note:</b> For a mouse to work properly, it must be polled via
+ * {@link #poll()} before querying any input information. It is recommended to
+ * poll the mouse once on every application update.
+ * 
+ * @see Keyboard
+ * @see Controller
+ */
 @DeviceId("mouse")
 public class Mouse extends InputDevice {
 

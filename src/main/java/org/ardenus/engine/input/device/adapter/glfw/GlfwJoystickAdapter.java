@@ -17,8 +17,9 @@ import org.joml.Vector3f;
  *
  * @param <I>
  *            the input device type.
- * @see GlfwAnalogMapping
  * @see GlfwButtonMapping
+ * @see GlfwStickMapping
+ * @see GlfwTriggerMapping
  */
 public abstract class GlfwJoystickAdapter<I extends InputDevice>
 		extends GlfwDeviceAdapter<I> {

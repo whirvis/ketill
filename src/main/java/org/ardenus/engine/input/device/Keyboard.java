@@ -6,6 +6,16 @@ import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.KeyboardKey;
 import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 
+/**
+ * A keyboard which can send and receive input data.
+ * <p>
+ * <b>Note:</b> For a keyboard to work properly, it must be polled via
+ * {@link #poll()} before querying any input information. It is recommended to
+ * poll the keyboard once on every application update.
+ * 
+ * @see Mouse
+ * @see Controller
+ */
 @DeviceId("keyboard")
 public class Keyboard extends InputDevice {
 

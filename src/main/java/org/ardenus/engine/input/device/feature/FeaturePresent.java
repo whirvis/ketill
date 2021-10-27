@@ -9,10 +9,10 @@ import java.lang.annotation.Target;
 import org.ardenus.engine.input.device.InputDevice;
 
 /**
- * When present, signals to {@link InputDevice} that a {@link DeviceFeature}
- * field should be registered automatically. This will be done during
- * instantiation. Both static and instance fields may make use of this
- * annotation.
+ * When present, signals to {@link InputDevice} that a field should be
+ * registered as a device feature during instantiation. These fields must be
+ * {@code public} and, their type assignable from {@link DeviceFeature}. They
+ * may be either instance or static.
  * 
  * @see InputDevice#addFeature(DeviceFeature)
  */

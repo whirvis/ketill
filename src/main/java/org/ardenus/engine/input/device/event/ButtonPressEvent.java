@@ -16,9 +16,9 @@ public class ButtonPressEvent extends FeaturePressEvent {
 	 * @throws NullPointerException
 	 *             if {@code device} or {@code button} are {@code null}.
 	 */
-	public ButtonPressEvent(InputDevice controller, DeviceButton button,
+	public ButtonPressEvent(InputDevice device, DeviceButton button,
 			boolean held) {
-		super(controller, button, button.direction, held);
+		super(device, button, button.direction, held);
 	}
 
 	/**

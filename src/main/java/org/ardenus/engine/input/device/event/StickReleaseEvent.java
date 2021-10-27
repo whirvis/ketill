@@ -11,7 +11,7 @@ public class StickReleaseEvent extends FeatureReleaseEvent {
 	/**
 	 * @param device
 	 *            the device that released {@code stick}.
-	 * @param feature
+	 * @param stick
 	 *            the stick that was released.
 	 * @param direction
 	 *            the direction that {@code stick} was pressed towards.

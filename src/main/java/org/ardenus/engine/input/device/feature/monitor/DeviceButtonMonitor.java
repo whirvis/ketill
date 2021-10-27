@@ -13,7 +13,7 @@ public class DeviceButtonMonitor extends FeatureMonitor {
 
 	/**
 	 * @param device
-	 *            the device whose button to monitor.
+	 *            the device whose buttons to monitor.
 	 * @throws NullPointerException
 	 *             if {@code device} is {@code null}.
 	 */
@@ -28,11 +28,6 @@ public class DeviceButtonMonitor extends FeatureMonitor {
 			DeviceButton button = (DeviceButton) feature;
 			states.put(button, new DeviceButtonState(device, button));
 		}
-	}
-
-	@Override
-	public void forget(DeviceFeature<?> feature) {
-		states.remove(feature);
 	}
 
 	@Override

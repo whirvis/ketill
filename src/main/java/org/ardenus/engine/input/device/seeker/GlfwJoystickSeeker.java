@@ -22,7 +22,9 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @throws NullPointerException
-	 *             if {@code type} is {@code null}.
+	 *             if {@code type} is {@code null}; if {@code @DeviceId} is not
+	 *             present for {@code type}.
+	 * @see #seekGuid(String)
 	 */
 	public GlfwJoystickSeeker(Class<? extends InputDevice> type,
 			long ptr_glfwWindow) {
@@ -212,7 +214,8 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 			 * If the joystick is not present, glfwGetJoystickGUID() returns
 			 * null. This makes a call to glfwJoystickPresent() redundant.
 			 */
-			if (this.isSeeking(glfwGetJoystickGUID(i))) {
+			String guid = glfwGetJoystickGUID(i);
+			if (guid != null && this.isSeeking(guid)) {
 				this.joysticks[i] = this.createDevice(ptr_glfwWindow, i);
 				this.register(joysticks[i]);
 			}

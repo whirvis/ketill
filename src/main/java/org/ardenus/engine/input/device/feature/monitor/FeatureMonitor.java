@@ -38,8 +38,6 @@ public abstract class FeatureMonitor {
 	}
 
 	/**
-	 * Indicates this monitor of a new feature to track.
-	 * <p>
 	 * Whether or not the monitor actually tracks the state of the feature is
 	 * dependant on the implementation. Feature monitors have every right to
 	 * ignore a feature that they are told to monitor. This method is only to
@@ -52,16 +50,6 @@ public abstract class FeatureMonitor {
 	 *             if {@code feature} is {@code null}.
 	 */
 	public abstract void monitor(DeviceFeature<?> feature);
-
-	/**
-	 * Indicates this monitor of a feature to stop tracking.
-	 * 
-	 * @param feature
-	 *            the feature to stop tracking.
-	 * @throws NullPointerException
-	 *             if {@code feature} is {@code null}.
-	 */
-	public abstract void forget(DeviceFeature<?> feature);
 
 	public abstract void update();
 

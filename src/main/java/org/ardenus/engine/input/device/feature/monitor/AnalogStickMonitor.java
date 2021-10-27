@@ -1,7 +1,6 @@
 package org.ardenus.engine.input.device.feature.monitor;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.ardenus.engine.input.Direction;
@@ -15,7 +14,7 @@ public class AnalogStickMonitor extends FeatureMonitor {
 
 	/**
 	 * @param device
-	 *            the device whose stick to monitor.
+	 *            the device whose sticks to monitor.
 	 * @throws NullPointerException
 	 *             if {@code device} is {@code null}.
 	 */
@@ -30,17 +29,6 @@ public class AnalogStickMonitor extends FeatureMonitor {
 			AnalogStick stick = (AnalogStick) feature;
 			for (Direction direction : Direction.values()) {
 				states.add(new AnalogStickState(device, stick, direction));
-			}
-		}
-	}
-
-	@Override
-	public void forget(DeviceFeature<?> feature) {
-		Iterator<AnalogStickState> statesI = states.iterator();
-		while (statesI.hasNext()) {
-			AnalogStickState state = statesI.next();
-			if (state.stick == feature) {
-				statesI.remove();
 			}
 		}
 	}

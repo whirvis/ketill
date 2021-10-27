@@ -21,18 +21,21 @@ package org.ardenus.engine.input;
  *
  *	}
  *
- *	public static final Pressable BUTTON_A = new ControllerButton("A");
+ *	public static final Pressable
+ *			A = new DeviceButton("a"),
+ *			B = new DeviceButton("b");
  *
  *	private final Map&lt;Pressable, PressableState&gt; buttons;
  *
  *	public GameController() {
  *		this.buttons = new HashMap&lt;&gt;();
- *		buttons.put(BUTTON_A, new PressableState());
+ *		buttons.put(A, new PressableState());
+ *		buttons.put(B, new PressableState());
  *	}
  *
  *	public boolean isPressed(Pressable button) {
  *		&sol;*
- *		 * As can be seen in this example, BUTTON_A will be reused
+ *		 * As can be seen in this example, A and B will be reused
  *		 * for different instances of GameController. Each controller
  *		 * contains a map of each button, with the stored value being
  *		 * the state of each button via the PressableState class. This

@@ -5,17 +5,17 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
 /**
  * A {@link DeviceButton} mapping for use with a {@link DeviceAdapter}.
  * <p>
- * On their own, a mapped button can not provide a meaningful mapping for a
- * device button. It must be extended by a class which provides information
+ * On their own, a button mapping cannot provide a meaningful mapping for an
+ * button feature. It must be extended by a class which provides information
  * meaningful to the context of a relevant device adapter. This can be as simple
  * as providing an extra field for a button ID. An example of this would be:
  * 
  * <pre>
- * public class GLFWMappedButton extends MappedButton {
+ * public class GlfwButtonMapping extends ButtonMapping {
  * 
  * 	public final int glfwButton;
  * 
- * 	public GLFWMappedButton(DeviceButton button, int glfwButton) {
+ * 	public GlfwButtonMapping(DeviceButton button, int glfwButton) {
  * 		super(button);
  * 		this.glfwButton = glfwButton;
  * 	}
@@ -23,10 +23,8 @@ import org.ardenus.engine.input.device.feature.DeviceButton;
  * }
  * </pre>
  * 
- * @param <B>
- *            the device button type.
- * @see FeatureMapping
  * @see AnalogMapping
+ * @see RumbleMapping
  */
 public abstract class ButtonMapping extends FeatureMapping<DeviceButton> {
 

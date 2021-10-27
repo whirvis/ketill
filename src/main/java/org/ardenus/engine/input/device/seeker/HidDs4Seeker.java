@@ -35,9 +35,9 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 	 * follows:
 	 * 
 	 * <pre>
-	 * HID_USB_ID:       "vid_054c&pid_05c4"
+	 * HID_USB_ID:       "vid_054c&amp;pid_05c4"
 	 * HID_BLUETOOTH_ID: "{00001124-0000-1000-8000-00805f9b34fb}" +
-	 *                   "_vid&0002054c_pid&05c4"
+	 *                   "_vid&amp;0002054c_pid&amp;05c4"
 	 * </pre>
 	 */
 	/* @formatter: off */

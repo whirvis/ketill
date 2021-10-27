@@ -4,6 +4,8 @@ import org.ardenus.engine.input.device.InputDevice;
 
 /**
  * An interface used to listen for {@link DeviceSeeker} events.
+ * 
+ * @see DeviceSeeker#addListener(SeekerListener)
  */
 public interface SeekerListener {
 

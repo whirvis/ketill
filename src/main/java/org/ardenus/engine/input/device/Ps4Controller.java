@@ -125,7 +125,7 @@ public class Ps4Controller extends PsxController {
 	 * <p>
 	 * This method is a shorthand for
 	 * {@link #setLightbar(float, float, float, float)}, with the argument for
-	 * {@link alpha} being set to {@code 1.0F}.
+	 * {@code alpha} being set to {@code 1.0F}.
 	 * 
 	 * @param red
 	 *            the red channel intensity.

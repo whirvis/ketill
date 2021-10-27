@@ -52,6 +52,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 *            the input device type.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
+	 * @see #seekDevice(int, int)
 	 */
 	public UsbDeviceSeeker(Class<? extends InputDevice> type) {
 		super(type);
@@ -60,15 +61,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		this.troubled = new HashSet<>();
 	}
 
-	/**
-	 * @param vendorId
-	 *            the vendor ID.
-	 * @param productId
-	 *            the product ID.
-	 * @return {@code true} if this device seeker is seeking out devices with
-	 *         {@code vendorId} and {@code productId}, {@code false} otherwise.
-	 * @see #seekDevice(int, int)
-	 */
 	public boolean isSeeking(int vendorId, int productId) {
 		for (DeviceDesc desc : descs) {
 			if (desc.vendorId == vendorId && desc.productId == productId) {
@@ -97,7 +89,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 *            the vendor ID.
 	 * @param productId
 	 *            the product ID.
-	 * @return this device seeker.
 	 */
 	protected void seekDevice(int vendorId, int productId) {
 		if (!this.isSeeking(vendorId, productId)) {
@@ -112,9 +103,8 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 * 
 	 * @param vendorId
 	 *            the vendor ID.
-	 * @param product
+	 * @param productId
 	 *            ID the product ID.
-	 * @return this device seeker.
 	 */
 	protected void dropDevice(int vendorId, int productId) {
 		if (!this.isSeeking(vendorId, productId)) {

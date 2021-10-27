@@ -25,7 +25,7 @@ import org.ardenus.engine.input.device.InputDevice;
 public abstract class DeviceSeeker {
 
 	public final Class<? extends InputDevice> type;
-	protected final Set<SeekerListener> listeners;
+	private final Set<SeekerListener> listeners;
 	private final Set<InputDevice> devices;
 
 	/**
@@ -89,10 +89,6 @@ public abstract class DeviceSeeker {
 		}
 	}
 
-	/**
-	 * @param device
-	 *            the device to unregister.
-	 */
 	protected void unregister(InputDevice device) {
 		if (device != null && devices.contains(device)) {
 			devices.remove(device);
@@ -116,6 +112,8 @@ public abstract class DeviceSeeker {
 	public void poll() {
 		try {
 			this.seek();
+		} catch (InputException e) {
+			throw e; /* prevent wrapping */
 		} catch (Exception e) {
 			throw new InputException(e);
 		}

@@ -9,7 +9,6 @@ import org.ardenus.engine.input.device.adapter.DeviceAdapter;
  * @param <I>
  *            the input device type.
  * @see GlfwButtonMapping
- * @see GlfwAnalogMapping
  */
 public abstract class GlfwDeviceAdapter<I extends InputDevice>
 		extends DeviceAdapter<I> {

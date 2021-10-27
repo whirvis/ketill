@@ -64,17 +64,12 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 	private boolean rumbling;
 
 	/**
-	 * @param data
-	 *            the current data from the USB adapter, update the bytes within
-	 *            this array to update the data this adapter has access to.
+	 * @param device
+	 *            the USB adapter this controller belongs to.
 	 * @param slot
 	 *            the controller slot.
 	 * @throws NullPointerException
 	 *             if {@code data} is {@code null}.
-	 * @throws IllegalArgumentException
-	 *             if {@code data.length} is less than
-	 *             {@value GcUsbDevice#PAYLOAD_LENGTH}; if {@code slot} is out
-	 *             of range for this adapter.
 	 */
 	protected GcUsbAdapter(GcUsbDevice device, int slot) {
 		this.device = Objects.requireNonNull(device, "device");
@@ -83,7 +78,7 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 		this.analogs = new int[ANALOG_COUNT];
 	}
 
-	private float getPos(int gcAxis, int min, int max) {
+	private float getNormal(int gcAxis, int min, int max) {
 		int pos = analogs[gcAxis];
 
 		/*
@@ -113,13 +108,13 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 
 	@FeatureAdapter
 	public void updateStick(GcStickMapping mapping, Vector3f stick) {
-		stick.x = this.getPos(mapping.gcAxisX, mapping.xMin, mapping.xMax);
-		stick.y = this.getPos(mapping.gcAxisY, mapping.yMin, mapping.yMax);
+		stick.x = this.getNormal(mapping.gcAxisX, mapping.xMin, mapping.xMax);
+		stick.y = this.getNormal(mapping.gcAxisY, mapping.yMin, mapping.yMax);
 	}
 
 	@FeatureAdapter
 	public void updateTrigger(GcTriggerMapping mapping, Trigger1f trigger) {
-		float pos = this.getPos(mapping.gcAxis, mapping.min, mapping.max);
+		float pos = this.getNormal(mapping.gcAxis, mapping.min, mapping.max);
 		trigger.force = (pos + 1.0F) / 2.0F;
 	}
 
@@ -135,17 +130,13 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 		this.rumbling = motor.force > 0;
 	}
 
-	/**
-	 * @return {@code true} if the controller should currently be rumbling,
-	 *         {@code false} otherwise.
-	 */
 	public boolean isRumbling() {
 		return this.rumbling;
 	}
 
 	@Override
 	public void poll() {
-		byte[] data = device.getSlot(slot);
+		byte[] data = device.getSlotData(slot);
 		int offset = 0;
 
 		/*

@@ -5,17 +5,17 @@ import org.ardenus.engine.input.device.feature.DeviceAnalog;
 /**
  * A {@link DeviceAnalog} mapping for use with a {@link DeviceAdapter}.
  * <p>
- * On their own, a mapped analog can not provide a meaningful mapping for a
- * device analog. It must be extended by a class which provides information
+ * On their own, an analog mapping cannot provide a meaningful mapping for an
+ * analog feature. It must be extended by a class which provides information
  * meaningful to the context of a relevant device adapter. This can be as simple
  * as providing an extra field for an analog ID. An example of this would be:
  * 
  * <pre>
- * public class GLFWMappedAnalog extends MappedAnalog {
+ * public class GlfwAnalogMapping extends AnalogMapping {
  * 
  * 	public final int glfwAxis;
  * 
- * 	public GLFWMappedAnalog(DeviceAnalog analog, int glfwAxis) {
+ * 	public GlfwAnalogMapping(DeviceAnalog analog, int glfwAxis) {
  * 		super(analog);
  * 		this.glfwAxis = glfwAxis;
  * 	}
@@ -25,8 +25,8 @@ import org.ardenus.engine.input.device.feature.DeviceAnalog;
  * 
  * @param <A>
  *            the device analog type.
- * @see FeatureMapping
  * @see ButtonMapping
+ * @see RumbleMapping
  */
 public abstract class AnalogMapping<A extends DeviceAnalog<?>>
 		extends FeatureMapping<A> {

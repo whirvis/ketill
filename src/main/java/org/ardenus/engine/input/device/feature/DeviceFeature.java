@@ -17,7 +17,7 @@ import org.ardenus.engine.input.device.InputDevice;
 public interface DeviceFeature<T> {
 
 	/**
-	 * @return the ID of this feature.
+	 * @return the feature ID.
 	 */
 	public String id();
 
