@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
@@ -176,9 +177,17 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 */
 	protected abstract void poll(HidDevice device) throws Exception;
 
+	/**
+	 * @throws InputException
+	 *             if no targeted HID devices were specified.
+	 * @see #seekDevice(int, int)
+	 */
 	@Override
 	public void poll() {
 		super.poll();
+		if (descs.isEmpty()) {
+			throw new InputException("no HID devices specified");
+		}
 
 		Iterator<HidDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {

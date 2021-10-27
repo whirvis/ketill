@@ -17,6 +17,7 @@ import javax.usb.event.UsbDeviceErrorEvent;
 import javax.usb.event.UsbDeviceEvent;
 import javax.usb.event.UsbDeviceListener;
 
+import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 
 public abstract class UsbDeviceSeeker extends DeviceSeeker
@@ -203,9 +204,17 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 */
 	protected abstract void poll(UsbDevice device) throws Exception;
 
+	/**
+	 * @throws InputException
+	 *             if no targeted USB devices were specified.
+	 * @see #seekDevice(int, int)
+	 */
 	@Override
 	public void poll() {
 		super.poll();
+		if (descs.isEmpty()) {
+			throw new InputException("no USB devices specified");
+		}
 
 		Iterator<UsbDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {

@@ -280,8 +280,18 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	protected abstract InputDevice createDevice(long ptr_glfwWindow,
 			int glfwJoystick);
 
+	/**
+	 * @throws InputException
+	 *             if no GUIDs for the targeted joystick were specified.
+	 * @see #seekGuid(String)
+	 */
 	@Override
 	public void seek() {
+		if (guids.isEmpty()) {
+			throw new InputException(
+					"no GUIDs specified for " + typeId + " joystick");
+		}
+
 		for (int i = 0; i < joysticks.length; i++) {
 			InputDevice joystick = joysticks[i];
 			if (joystick != null) {
