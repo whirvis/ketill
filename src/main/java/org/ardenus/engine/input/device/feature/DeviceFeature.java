@@ -26,15 +26,4 @@ public interface DeviceFeature<T> {
 	 */
 	public T initial();
 
-	/**
-	 * If a feature is not optional, an implementation defined error will be
-	 * generated if it is not present.
-	 * 
-	 * @return {@code true} if this feature is optional, {@code false}
-	 *         otherwise.
-	 */
-	public default boolean optional() {
-		return true;
-	}
-
 }
