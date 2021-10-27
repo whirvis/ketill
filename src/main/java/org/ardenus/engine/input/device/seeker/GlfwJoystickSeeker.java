@@ -78,7 +78,7 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	 * @throws NullPointerException
 	 *             if {@code guids} is {@code null}.
 	 */
-	public GlfwJoystickSeeker seekGuids(Collection<String> guids) {
+	public GlfwJoystickSeeker seekGuids(Iterable<String> guids) {
 		Objects.requireNonNull(guids, "guids");
 		for (String guid : guids) {
 			this.seekGuid(guid);
@@ -91,7 +91,7 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	 * seeker should register it. This is to prevent undesired joysticks from
 	 * being erroneously registered.
 	 * <p>
-	 * This method is a shorthand for {@link #seekGuids(Collection)}, with the
+	 * This method is a shorthand for {@link #seekGuids(Iterable)}, with the
 	 * argument for {@code guids} being converted from an array to a list via
 	 * {@link Arrays#asList(Object...)}.
 	 * 
