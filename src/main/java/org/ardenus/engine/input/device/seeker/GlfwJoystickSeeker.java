@@ -8,11 +8,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ardenus.engine.input.InputException;
+import org.ardenus.engine.input.device.DeviceGuids;
 import org.ardenus.engine.input.device.InputDevice;
 import org.ardenus.engine.input.device.adapter.glfw.GlfwDeviceAdapter;
+import org.ardenus.engine.util.OperatingSystem;
 
 public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 
+	public final String typeId;
 	private final InputDevice[] joysticks;
 	private final Set<String> guids;
 
@@ -29,6 +33,12 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	public GlfwJoystickSeeker(Class<? extends InputDevice> type,
 			long ptr_glfwWindow) {
 		super(type, ptr_glfwWindow);
+
+		this.typeId = InputDevice.getId(type);
+		if (typeId == null) {
+			throw new NullPointerException("type missing @DeviceId");
+		}
+
 		this.joysticks = new InputDevice[GLFW_JOYSTICK_LAST + 1];
 		this.guids = new HashSet<>();
 	}
@@ -106,6 +116,41 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	}
 
 	/**
+	 * When detected, the GUID of a joystick will be checked to see if the
+	 * seeker should register it. This is to prevent undesired joysticks from
+	 * being erroneously registered.
+	 * <p>
+	 * This method is a shorthand for {@link #seekGuids(Iterable)}, with the
+	 * GUIDs to seek being fetched from {@code guids} using the ID of the
+	 * targeted joystick and current operating system.
+	 * <p>
+	 * <b>Note:</b> Only the current contents {@code guids} will be fetched.
+	 * 
+	 * @param guids
+	 *            the container of joystick GUIDs.
+	 * @return this device seeker.
+	 * @throws NullPointerException
+	 *             if {@code guids} is {@code null}.
+	 * @throws InputException
+	 *             if the current OS is unknown; if no GUIDs for the targeted
+	 *             joystick on the current OS are present within {@code guids}.
+	 */
+	public GlfwJoystickSeeker seekGuids(DeviceGuids guids) {
+		Objects.requireNonNull(guids, "guids");
+		OperatingSystem os = OperatingSystem.get();
+		if (os == null) {
+			throw new InputException("unknown OS");
+		}
+
+		Iterable<String> osGuids = guids.getGuids(typeId, os);
+		if (osGuids == null) {
+			throw new InputException(
+					"no GUIDs for " + typeId + " on " + os.name);
+		}
+		return this.seekGuids(osGuids);
+	}
+
+	/**
 	 * All currently registered joysticks with a matching GUID will be
 	 * automatically unregistered. This is to prevent the connection of
 	 * undesired joysticks from lingering.
@@ -180,6 +225,43 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	 */
 	public GlfwJoystickSeeker dropGuid(String toDrop) {
 		return this.dropGuids(toDrop);
+	}
+
+	/**
+	 * All currently registered joysticks with a matching GUID will be
+	 * automatically unregistered. This is to prevent the connection of
+	 * undesired joysticks from lingering.
+	 * <p>
+	 * This method is a shorthand for {@link #dropGuids(Collection)}, with the
+	 * GUIDs to drop being fetched from {@code toDrop} using the ID of the
+	 * targeted joystick and current operating system.
+	 * <p>
+	 * <b>Note:</b> Only the current contents {@code guids} will be fetched.
+	 * 
+	 * @param toDrop
+	 *            the container of GUIDs to drop.
+	 * @return this device seeker.
+	 */
+	public GlfwJoystickSeeker dropGuids(DeviceGuids toDrop) {
+		OperatingSystem os = OperatingSystem.get();
+		if (toDrop == null || os == null) {
+			return this;
+		}
+
+		Iterable<String> osGuids = toDrop.getGuids(typeId, os);
+		if (osGuids != null) {
+			/*
+			 * The Iterable is converted into a set here to allow the operation
+			 * to be O(2n), which cancels out to O(n). Using dropGuid(String)
+			 * for each element would result in the operation becoming O(n^2).
+			 */
+			Set<String> osGuidsSet = new HashSet<>();
+			for (String guid : osGuids) {
+				osGuidsSet.add(guid);
+			}
+			this.dropGuids(osGuidsSet);
+		}
+		return this;
 	}
 
 	/**
