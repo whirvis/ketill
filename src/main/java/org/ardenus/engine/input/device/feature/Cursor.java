@@ -1,9 +1,6 @@
 package org.ardenus.engine.input.device.feature;
 
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
-
-public class Cursor extends DeviceAnalog<Vector2fc> {
+public class Cursor extends DeviceAnalog<Cursor2f> {
 
 	/**
 	 * @param id
@@ -12,12 +9,12 @@ public class Cursor extends DeviceAnalog<Vector2fc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public Cursor(String id) {
-		super(Vector2fc.class, id);
+		super(Cursor2f.class, id);
 	}
 
 	@Override
-	public Vector2f zero() {
-		return new Vector2f();
+	public Cursor2f zero() {
+		return new Cursor2f();
 	}
 
 }

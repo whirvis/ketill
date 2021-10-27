@@ -3,10 +3,12 @@ package org.ardenus.engine.input.device;
 import org.ardenus.engine.input.device.adapter.DeviceAdapter;
 import org.ardenus.engine.input.device.feature.Button1bc;
 import org.ardenus.engine.input.device.feature.Cursor;
+import org.ardenus.engine.input.device.feature.Cursor2f;
 import org.ardenus.engine.input.device.feature.DeviceButton;
 import org.ardenus.engine.input.device.feature.FeaturePresent;
 import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
 import org.ardenus.engine.util.FieldAlias;
+import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
 @DeviceId("mouse")
@@ -82,6 +84,50 @@ public class Mouse extends InputDevice {
 	public float getY() {
 		Vector2fc pos = this.getState(CURSOR);
 		return pos.y();
+	}
+
+	/**
+	 * @return the position of the cursor.
+	 */
+	public Vector2fc getPos() {
+		return this.getState(CURSOR);
+	}
+
+	/**
+	 * @param pos
+	 *            the position the cursor should be at.
+	 */
+	public void setPosition(Vector2fc pos) {
+		Cursor2f cursor = this.getState(CURSOR);
+		cursor.requestPos(pos);
+	}
+
+	/**
+	 * @param x
+	 *            the X-axis position the cursor should be at.
+	 * @param y
+	 *            the Y-axis position the cursor should be at.
+	 */
+	public void setPosition(float x, float y) {
+		this.setPosition(new Vector2f(x, y));
+	}
+
+	/**
+	 * @return {@code true} if the cursor is visible, {@code false} otherwise.
+	 */
+	public boolean isVisible() {
+		Cursor2f cursor = this.getState(CURSOR);
+		return cursor.visible;
+	}
+
+	/**
+	 * @param visible
+	 *            {@code true} if the cursor should be visible, {@code false}
+	 *            otherwise.
+	 */
+	public void setVisible(boolean visible) {
+		Cursor2f cursor = this.getState(CURSOR);
+		cursor.visible = visible;
 	}
 
 }

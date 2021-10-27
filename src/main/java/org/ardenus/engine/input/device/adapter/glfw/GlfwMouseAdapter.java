@@ -6,7 +6,8 @@ import org.ardenus.engine.input.device.Mouse;
 import org.ardenus.engine.input.device.adapter.AdapterMapping;
 import org.ardenus.engine.input.device.adapter.FeatureAdapter;
 import org.ardenus.engine.input.device.feature.Button1b;
-import org.joml.Vector2f;
+import org.ardenus.engine.input.device.feature.Cursor2f;
+import org.joml.Vector2fc;
 
 public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
@@ -34,14 +35,16 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 	public static final GlfwCursorMapping
 			CURSOR = new GlfwCursorMapping(Mouse.CURSOR);
 	/* @formatter: on */
-	
+
 	private final double[] xPos;
 	private final double[] yPos;
+	private boolean wasVisible;
 
 	public GlfwMouseAdapter(long ptr_glfwWindow) {
 		super(ptr_glfwWindow);
 		this.xPos = new double[1];
 		this.yPos = new double[1];
+		this.wasVisible = true; /* visible by default */
 	}
 
 	@Override
@@ -54,11 +57,27 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 		int status = glfwGetMouseButton(ptr_glfwWindow, mapping.glfwButton);
 		button.pressed = status >= GLFW_PRESS;
 	}
-	
+
 	@FeatureAdapter
-	public void updatePos(GlfwCursorMapping mapping, Vector2f pos) {
-		pos.x = (float) this.xPos[0];
-		pos.y = (float) this.yPos[0];
+	public void updateCursor(GlfwCursorMapping mapping, Cursor2f cursor) {
+		Vector2fc requested = cursor.getRequestedPos();
+		if (requested != null) {
+			cursor.x = requested.x();
+			cursor.y = requested.y();
+			glfwSetCursorPos(ptr_glfwWindow, cursor.x, cursor.y);
+		} else {
+			cursor.x = (float) this.xPos[0];
+			cursor.y = (float) this.yPos[0];
+		}
+
+		boolean visible = cursor.visible;
+		if (!wasVisible && visible) {
+			glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			this.wasVisible = visible;
+		} else if (wasVisible && !visible) {
+			glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			this.wasVisible = visible;
+		}
 	}
 
 	@Override
