@@ -22,6 +22,14 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	private final HidServices services;
 	private boolean startedServices;
 
+	/*
+	 * Because the event methods drop any exceptions thrown into the void, all
+	 * of their code is wrapped into a try catch all block. If they experience
+	 * any exceptions, they will store them into this variable. Afterwards, the
+	 * seek() function will throw it on behalf of the listener functions.
+	 */
+	private Exception hidException;
+
 	/**
 	 * @param type
 	 *            the input device type.
@@ -38,6 +46,8 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 
 		HidServicesSpecification specs = new HidServicesSpecification();
 		specs.setAutoStart(false);
+		specs.setScanInterval(1000);
+		specs.setPauseInterval(0);
 		this.services = HidManager.getHidServices(specs);
 		services.addHidServicesListener(this);
 	}
@@ -124,43 +134,57 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 
 	@Override
 	public final void hidDeviceAttached(HidServicesEvent event) {
-		HidDevice device = event.getHidDevice();
-		if (devices.contains(device)) {
-			return;
-		}
+		try {
+			HidDevice device = event.getHidDevice();
+			if (devices.contains(device)) {
+				return;
+			}
 
-		/*
-		 * If a device is marked as "troubled", that means it was once
-		 * registered once but got disconnected due to an error. To prevent a
-		 * continuous loop of connecting devices, encountering an error, and
-		 * then disconnecting them again, troubled devices are ignored once they
-		 * are marked.
-		 */
-		if (troubled.contains(device)) {
-			return;
-		}
+			/*
+			 * If a device is marked as "troubled", that means it was once
+			 * registered once but got disconnected due to an error. To prevent
+			 * a continuous loop of connecting devices, encountering an error,
+			 * and then disconnecting them again, troubled devices are ignored
+			 * once they are marked.
+			 */
+			if (troubled.contains(device)) {
+				return;
+			}
 
-		if (this.isSeeking(device)) {
-			this.connect(device);
+			if (this.isSeeking(device)) {
+				this.connect(device);
+			}
+		} catch (Exception e) {
+			this.hidException = e;
 		}
 	}
 
 	@Override
 	public final void hidDeviceDetached(HidServicesEvent event) {
-		this.disconnect(event.getHidDevice());
+		try {
+			this.disconnect(event.getHidDevice());
+		} catch (Exception e) {
+			this.hidException = e;
+		}
 	}
 
 	@Override
 	public final void hidFailure(HidServicesEvent event) {
-		HidDevice device = event.getHidDevice();
-		troubled.add(device);
-		this.disconnect(device);
+		try {
+			HidDevice device = event.getHidDevice();
+			troubled.add(device);
+			this.disconnect(device);
+		} catch (Exception e) {
+			this.hidException = e;
+		}
 	}
 
 	@Override
 	protected void seek() throws Exception {
 		if (descs.isEmpty()) {
 			throw new InputException("no HID devices specified");
+		} else if (hidException != null) {
+			throw hidException;
 		}
 
 		if (!startedServices) {
