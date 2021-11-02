@@ -113,8 +113,11 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 		boolean ambigous = hasUsb && hasBt;
 		if (!wasAmbigous && ambigous) {
 			Input.sendEvent(new Ps4Controller.AmbigousEvent(false));
+			log.warn("USB and BT PS4 controllers connected, "
+					+ "physical devices are ambigous");
 		} else if (wasAmbigous && !ambigous) {
 			Input.sendEvent(new Ps4Controller.AmbigousEvent(true));
+			log.info("PS4 controllers are no longer ambigous");
 		}
 	}
 

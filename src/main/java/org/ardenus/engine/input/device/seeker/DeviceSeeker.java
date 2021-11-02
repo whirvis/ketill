@@ -6,6 +6,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.ardenus.engine.input.InputException;
 import org.ardenus.engine.input.device.InputDevice;
 
@@ -24,6 +26,7 @@ import org.ardenus.engine.input.device.InputDevice;
  */
 public abstract class DeviceSeeker {
 
+	protected final Logger log;
 	public final Class<? extends InputDevice> type;
 	private final Set<SeekerListener> listeners;
 	private final Set<InputDevice> devices;
@@ -35,6 +38,7 @@ public abstract class DeviceSeeker {
 	 *             if {@code type} is {@code null}.
 	 */
 	public DeviceSeeker(Class<? extends InputDevice> type) {
+		this.log = LogManager.getLogger(this.getClass());
 		this.type = Objects.requireNonNull(type, "type");
 		this.listeners = new HashSet<>();
 		this.devices = new HashSet<>();
@@ -86,6 +90,7 @@ public abstract class DeviceSeeker {
 		if (!devices.contains(device)) {
 			devices.add(device);
 			this.callEvent(l -> l.onRegister(this, device));
+			log.debug("Registered " + device.id + " device");
 		}
 	}
 
@@ -93,6 +98,7 @@ public abstract class DeviceSeeker {
 		if (device != null && devices.contains(device)) {
 			devices.remove(device);
 			this.callEvent(l -> l.onUnregister(this, device));
+			log.debug("Unregistered " + device.id + " device");
 		}
 	}
 
@@ -112,15 +118,20 @@ public abstract class DeviceSeeker {
 	public void poll() {
 		try {
 			this.seek();
+			log.trace("Sought out devices");
 		} catch (InputException e) {
 			throw e; /* prevent wrapping */
 		} catch (Exception e) {
 			throw new InputException(e);
 		}
 
+		long pollStart = System.currentTimeMillis();
 		for (InputDevice device : devices) {
 			device.poll();
 		}
+		long pollFinish = System.currentTimeMillis();
+		log.trace("Polled " + devices.size() + " devices (took"
+				+ (pollFinish - pollStart) + "ms)");
 	}
 
 }

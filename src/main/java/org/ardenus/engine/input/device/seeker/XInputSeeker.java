@@ -22,6 +22,7 @@ public class XInputSeeker extends DeviceSeeker {
 	private XInputDevice getDevice(int playerNum)
 			throws XInputNotLoadedException {
 		if (xinput14) {
+			log.info("Using XInput 1.4");
 			return XInputDevice14.getDeviceFor(playerNum);
 		} else {
 			return XInputDevice.getDeviceFor(playerNum);
@@ -42,8 +43,7 @@ public class XInputSeeker extends DeviceSeeker {
 
 			XInputDevice device = this.getDevice(i);
 			if (device.isConnected()) {
-				XboxAdapter adapter =
-						new XboxAdapter(device);
+				XboxAdapter adapter = new XboxAdapter(device);
 				this.controllers[i] = new XboxController(adapter);
 				this.register(controllers[i]);
 			}

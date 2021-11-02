@@ -16,6 +16,14 @@ import org.hid4java.event.HidServicesEvent;
 public abstract class HidDeviceSeeker extends DeviceSeeker
 		implements HidServicesListener {
 
+	private static String getSerialStr(HidDevice device) {
+		String serial = device.getSerialNumber();
+		if (serial != null) {
+			return "serial number " + serial;
+		}
+		return "unknown serial number";
+	}
+
 	private final Set<DeviceDesc> descs;
 	private final Set<HidDevice> devices;
 	private final Set<HidDevice> troubled;
@@ -81,9 +89,12 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 *            the product ID.
 	 */
 	protected void seekDevice(int vendorId, int productId) {
-		if (!this.isSeeking(vendorId, productId)) {
-			descs.add(new DeviceDesc(vendorId, productId));
+		if (this.isSeeking(vendorId, productId)) {
+			return;
 		}
+		descs.add(new DeviceDesc(vendorId, productId));
+		String idStr = DeviceDesc.getStr(vendorId, productId);
+		log.debug("Seeking devices with ID " + idStr);
 	}
 
 	/**
@@ -101,35 +112,63 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 			return;
 		}
 
+		int count = 0;
 		Iterator<HidDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {
 			HidDevice device = devicesI.next();
 			if (this.isSeeking(device)) {
 				devicesI.remove();
 				this.disconnect(device);
+				count++;
 			}
 		}
+
+		String idStr = DeviceDesc.getStr(vendorId, productId);
+		log.debug("Dropped " + count + " devices with ID " + idStr);
 	}
 
 	protected abstract void onConnect(HidDevice device);
 
 	private void connect(HidDevice device) {
-		if (!devices.contains(device)) {
-			device.open();
-			device.setNonBlocking(true);
-			this.onConnect(device);
-			devices.add(device);
+		if (devices.contains(device)) {
+			return;
 		}
+
+		device.open();
+		device.setNonBlocking(true);
+		this.onConnect(device);
+		devices.add(device);
+
+		String serialStr = getSerialStr(device);
+		log.trace("Device with " + serialStr + " connected");
 	}
 
 	protected abstract void onDisconnect(HidDevice device);
 
 	private void disconnect(HidDevice device) {
-		if (devices.contains(device)) {
-			device.close();
-			this.onDisconnect(device);
-			devices.remove(device);
+		if (!devices.contains(device)) {
+			return;
 		}
+
+		device.close();
+		this.onDisconnect(device);
+		devices.remove(device);
+
+		String serialStr = getSerialStr(device);
+		log.trace("Device with " + serialStr + " disconnected");
+	}
+
+	private void markTroubled(HidDevice device, Throwable cause) {
+		if (troubled.contains(device)) {
+			return;
+		}
+
+		troubled.add(device);
+		this.disconnect(device);
+
+		String serialStr = getSerialStr(device);
+		log.error("Permanently disconnected device " + serialStr
+				+ " due to unhandled issue", cause);
 	}
 
 	@Override
@@ -171,14 +210,19 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	@Override
 	public final void hidFailure(HidServicesEvent event) {
 		try {
-			HidDevice device = event.getHidDevice();
-			troubled.add(device);
-			this.disconnect(device);
+			this.markTroubled(event.getHidDevice(), null);
 		} catch (Exception e) {
 			this.hidException = e;
 		}
 	}
 
+	/**
+	 * @throws InputException
+	 *             if no targeted HID devices were specified.
+	 * @throws Exception
+	 *             if an HID error has occurred.
+	 * @see #seekDevice(int, int)
+	 */
 	@Override
 	protected void seek() throws Exception {
 		if (descs.isEmpty()) {
@@ -190,8 +234,8 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		if (!startedServices) {
 			services.start();
 			this.startedServices = true;
+			log.debug("Started HID services");
 		}
-
 	}
 
 	/**
@@ -207,11 +251,6 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 */
 	protected abstract void poll(HidDevice device) throws Exception;
 
-	/**
-	 * @throws InputException
-	 *             if no targeted HID devices were specified.
-	 * @see #seekDevice(int, int)
-	 */
 	@Override
 	public void poll() {
 		super.poll();
@@ -222,9 +261,8 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 			try {
 				this.poll(device);
 			} catch (Exception e) {
-				troubled.add(device);
 				devicesI.remove();
-				this.disconnect(device);
+				this.markTroubled(device, e);
 			}
 		}
 	}

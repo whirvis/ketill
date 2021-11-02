@@ -43,6 +43,18 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		return findDevices(services.getRootUsbHub());
 	}
 
+	private static String getSerialStr(UsbDevice device) {
+		try {
+			String serial = device.getSerialNumberString();
+			if (serial != null) {
+				return "serial number " + serial;
+			}
+		} catch (Exception e) {
+			/* don't care, honestly */
+		}
+		return "unkonwn serial number";
+	}
+
 	private final Set<DeviceDesc> descs;
 	private final Set<UsbDevice> devices;
 	private final Set<UsbDevice> troubled;
@@ -92,9 +104,12 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 *            the product ID.
 	 */
 	protected void seekDevice(int vendorId, int productId) {
-		if (!this.isSeeking(vendorId, productId)) {
-			descs.add(new DeviceDesc(vendorId, productId));
+		if (this.isSeeking(vendorId, productId)) {
+			return;
 		}
+		descs.add(new DeviceDesc(vendorId, productId));
+		String idStr = DeviceDesc.getStr(vendorId, productId);
+		log.debug("Seeking devices with ID " + idStr);
 	}
 
 	/**
@@ -112,34 +127,62 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 			return;
 		}
 
+		int count = 0;
 		Iterator<UsbDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {
 			UsbDevice device = devicesI.next();
 			if (this.isSeeking(device)) {
 				devicesI.remove();
 				this.detach(device);
+				count++;
 			}
 		}
+
+		String idStr = DeviceDesc.getStr(vendorId, productId);
+		log.debug("Dropped " + count + " devices with ID " + idStr);
 	}
 
 	protected abstract void onAttach(UsbDevice device);
 
 	private void attach(UsbDevice device) {
-		if (!devices.contains(device)) {
-			device.addUsbDeviceListener(this);
-			this.onAttach(device);
-			devices.add(device);
+		if (devices.contains(device)) {
+			return;
 		}
+
+		device.addUsbDeviceListener(this);
+		this.onAttach(device);
+		devices.add(device);
+
+		String serialStr = getSerialStr(device);
+		log.trace("Device with " + serialStr + " attached");
 	}
 
 	protected abstract void onDetach(UsbDevice device);
 
 	private void detach(UsbDevice device) {
-		if (devices.contains(device)) {
-			device.removeUsbDeviceListener(this);
-			this.onDetach(device);
-			devices.remove(device);
+		if (!devices.contains(device)) {
+			return;
 		}
+
+		device.removeUsbDeviceListener(this);
+		this.onDetach(device);
+		devices.remove(device);
+
+		String serialStr = getSerialStr(device);
+		log.trace("Device with " + serialStr + " detached");
+	}
+
+	private void markTroubled(UsbDevice device, Throwable cause) {
+		if (troubled.contains(device)) {
+			return;
+		}
+
+		troubled.add(device);
+		this.detach(device);
+
+		String serialStr = getSerialStr(device);
+		log.error("Permanently detached device " + serialStr
+				+ " due to unhandled issue", cause);
 	}
 
 	@Override
@@ -149,9 +192,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 
 	@Override
 	public final void errorEventOccurred(UsbDeviceErrorEvent event) {
-		UsbDevice device = event.getUsbDevice();
-		troubled.add(device);
-		this.detach(device);
+		this.markTroubled(event.getUsbDevice(), null);
 	}
 
 	@Override
@@ -182,12 +223,17 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		}
 	}
 
+	/**
+	 * @throws InputException
+	 *             if no targeted USB devices were specified.
+	 * @see #seekDevice(int, int)
+	 */
 	@Override
 	protected void seek() throws UsbException {
 		if (descs.isEmpty()) {
 			throw new InputException("no USB devices specified");
 		}
-		
+
 		long currentTime = System.currentTimeMillis();
 		if (currentTime - lastSearch >= SEARCH_RATE) {
 			this.searchDevices();
@@ -208,11 +254,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 */
 	protected abstract void poll(UsbDevice device) throws Exception;
 
-	/**
-	 * @throws InputException
-	 *             if no targeted USB devices were specified.
-	 * @see #seekDevice(int, int)
-	 */
 	@Override
 	public void poll() {
 		super.poll();
@@ -223,9 +264,8 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 			try {
 				this.poll(device);
 			} catch (Exception e) {
-				troubled.add(device);
 				devicesI.remove();
-				this.detach(device);
+				this.markTroubled(device, e);
 			}
 		}
 	}

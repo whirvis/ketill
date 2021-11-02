@@ -33,8 +33,11 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker {
 		boolean isAmbigous = this.registered().size() > 1;
 		if (!wasAmbigous && isAmbigous) {
 			Input.sendEvent(new Ps4Controller.AmbigousEvent(false));
+			log.warn("Multiple PS4 controllers connected, "
+					+ "physical devices are ambigous");
 		} else if (wasAmbigous && !isAmbigous) {
 			Input.sendEvent(new Ps4Controller.AmbigousEvent(true));
+			log.info("PS4 controllers are no longer ambigous");
 		}
 		this.wasAmbigous = isAmbigous;
 	}
