@@ -98,7 +98,7 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 
 	/**
 	 * @param hid
-	 *            the HID device.
+	 *            the HID device, must be open.
 	 * @param inputReportId
 	 *            the input report ID.
 	 * @param outputReportId
@@ -110,15 +110,14 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 	 * @throws NullPointerException
 	 *             if {@code hid} or {@code crcHeader} are {@code null}.
 	 * @throws InputException
-	 *             if {@code hid} is not open and could not be opened.
+	 *             if {@code hid} is not open.
 	 */
 	public Ds4HidAdapter(HidDevice hid, byte inputReportId, byte outputReportId,
 			byte[] crcHeader) {
 		this.hid = Objects.requireNonNull(hid, "hid");
 		Objects.requireNonNull(crcHeader, "crcHeader");
-
-		if (!hid.isOpen() && !hid.open()) {
-			throw new InputException("failed to open HID device");
+		if (!hid.isOpen()) {
+			throw new InputException("HID device not open");
 		}
 
 		this.inputReportId = inputReportId;
@@ -248,14 +247,6 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
 	@Override
 	public void poll() {
 		long currentTime = System.currentTimeMillis();
-
-		/*
-		 * The HID *must* be set to non-blocking, as otherwise the read code
-		 * will cause the entire thread to crawl to a halt. It is redundant to
-		 * set it non-blocking every poll, but this is done just in case the
-		 * device is somehow set to blocking somewhere else.
-		 */
-		hid.setNonBlocking(true);
 
 		/*
 		 * If the amount of data read is less than zero, that means that some

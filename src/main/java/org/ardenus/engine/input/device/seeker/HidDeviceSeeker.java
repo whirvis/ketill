@@ -106,6 +106,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	private void connect(HidDevice device) {
 		if (!devices.contains(device)) {
 			device.open();
+			device.setNonBlocking(true);
 			this.onConnect(device);
 			devices.add(device);
 		}
