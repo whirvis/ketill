@@ -37,7 +37,7 @@ public class Ds4BtAdapter extends Ds4HidAdapter {
 	
 	@AdapterMapping
 	public static final Ds4ButtonMapping
-			SQUARE = new Ds4ButtonMapping(Ps4Controller.SQUARE,7, 4),
+			SQUARE = new Ds4ButtonMapping(Ps4Controller.SQUARE, 7, 4),
 			CROSS = new Ds4ButtonMapping(Ps4Controller.CROSS, 7, 5),
 			CIRCLE = new Ds4ButtonMapping(Ps4Controller.CIRCLE, 7, 6),
 			TRIANGLE = new Ds4ButtonMapping(Ps4Controller.TRIANGLE, 7, 7),

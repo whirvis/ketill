@@ -18,7 +18,7 @@ import org.ardenus.engine.input.device.feature.monitor.DeviceButtonMonitor;
  */
 @DeviceId("keyboard")
 public class Keyboard extends InputDevice {
-
+	
 	/* @formatter: off */
 	@FeaturePresent /* printable keys */
 	public static final KeyboardKey
