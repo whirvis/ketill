@@ -288,12 +288,11 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	@Override
 	public void seek() {
 		if (guids.isEmpty()) {
-			throw new InputException(
-					"no GUIDs specified for " + typeId + " joystick");
+			throw new InputException("no GUIDs specified for " + typeId);
 		}
 
 		for (int i = 0; i < joysticks.length; i++) {
-			InputDevice joystick = joysticks[i];
+			InputDevice joystick = this.joysticks[i];
 			if (joystick != null) {
 				if (!joystick.isConnected()) {
 					this.unregister(joystick);
