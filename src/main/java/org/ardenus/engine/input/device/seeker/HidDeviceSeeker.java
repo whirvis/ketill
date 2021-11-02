@@ -158,11 +158,16 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	}
 
 	@Override
-	protected void seek() {
+	protected void seek() throws Exception {
+		if (descs.isEmpty()) {
+			throw new InputException("no HID devices specified");
+		}
+
 		if (!startedServices) {
 			services.start();
 			this.startedServices = true;
 		}
+
 	}
 
 	/**
@@ -186,9 +191,6 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	@Override
 	public void poll() {
 		super.poll();
-		if (descs.isEmpty()) {
-			throw new InputException("no HID devices specified");
-		}
 
 		Iterator<HidDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {

@@ -184,6 +184,10 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 
 	@Override
 	protected void seek() throws UsbException {
+		if (descs.isEmpty()) {
+			throw new InputException("no USB devices specified");
+		}
+		
 		long currentTime = System.currentTimeMillis();
 		if (currentTime - lastSearch >= SEARCH_RATE) {
 			this.searchDevices();
@@ -212,9 +216,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	@Override
 	public void poll() {
 		super.poll();
-		if (descs.isEmpty()) {
-			throw new InputException("no USB devices specified");
-		}
 
 		Iterator<UsbDevice> devicesI = devices.iterator();
 		while (devicesI.hasNext()) {
