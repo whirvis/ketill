@@ -118,20 +118,15 @@ public abstract class DeviceSeeker {
 	public void poll() {
 		try {
 			this.seek();
-			log.trace("Sought out devices");
 		} catch (InputException e) {
 			throw e; /* prevent wrapping */
 		} catch (Exception e) {
 			throw new InputException(e);
 		}
 
-		long pollStart = System.currentTimeMillis();
 		for (InputDevice device : devices) {
 			device.poll();
 		}
-		long pollFinish = System.currentTimeMillis();
-		log.trace("Polled " + devices.size() + " devices (took"
-				+ (pollFinish - pollStart) + "ms)");
 	}
 
 }
