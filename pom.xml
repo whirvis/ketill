@@ -11,7 +11,7 @@
 	<!-- Project information -->
 	<name>Kibasan Nyuryoku</name>
 	<description>A dynamic input API for Java.</description>
-	<url>http://gitlab.com/whirvis/kibasan/</url>
+	<url>http://github.com/whirvis/kibasan/</url>
 	<inceptionYear>2021</inceptionYear>
 	
 	<!-- Build properties -->
