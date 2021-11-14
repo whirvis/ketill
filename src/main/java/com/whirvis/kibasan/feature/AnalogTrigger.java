@@ -9,11 +9,11 @@ public class AnalogTrigger extends DeviceAnalog<Trigger1fc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public AnalogTrigger(String id) {
-		super(Trigger1fc.class, id);
+		super(id);
 	}
 
 	@Override
-	public Trigger1fc zero() {
+	public Trigger1fc initial() {
 		return new Trigger1f();
 	}
 

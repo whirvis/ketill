@@ -51,7 +51,7 @@ public class AnalogStick extends DeviceAnalog<Vector3fc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public AnalogStick(String id, DeviceButton zButton) {
-		super(Vector3fc.class, id);
+		super(id);
 		this.zButton = zButton;
 	}
 
@@ -66,7 +66,7 @@ public class AnalogStick extends DeviceAnalog<Vector3fc> {
 	}
 
 	@Override
-	public Vector3fc zero() {
+	public Vector3fc initial() {
 		return new Vector3f();
 	}
 

@@ -11,11 +11,11 @@ public class Lightbar extends DeviceAnalog<Vector4f> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public Lightbar(String id) {
-		super(Vector4f.class, id);
+		super(id);
 	}
 
 	@Override
-	public Vector4f zero() {
+	public Vector4f initial() {
 		return new Vector4f();
 	}
 

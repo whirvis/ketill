@@ -9,11 +9,11 @@ public class Cursor extends DeviceAnalog<Cursor2f> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public Cursor(String id) {
-		super(Cursor2f.class, id);
+		super(id);
 	}
 
 	@Override
-	public Cursor2f zero() {
+	public Cursor2f initial() {
 		return new Cursor2f();
 	}
 
