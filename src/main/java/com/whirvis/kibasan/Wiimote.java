@@ -4,6 +4,7 @@ import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.DeviceButton;
 import com.whirvis.kibasan.feature.FeaturePresent;
+import com.whirvis.kibasan.feature.PlayerLed;
 import com.whirvis.kibasan.feature.RumbleMotor;
 
 /**
@@ -30,6 +31,10 @@ public class Wiimote extends Controller {
 	@FeaturePresent
 	public static final RumbleMotor
 			RUMBLE = new RumbleMotor("rumble");
+	
+	@FeaturePresent
+	public static final PlayerLed
+			PLAYER_LED = new PlayerLed("player_led");
 	/* @formatter: on */
 
 	/**
