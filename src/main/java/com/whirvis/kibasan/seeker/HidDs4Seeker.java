@@ -156,6 +156,11 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 			this.checkAmbiguity();
 		}
 	}
+	
+	@Override
+	protected void onTrouble(HidDevice device, Throwable cause) {
+		/* TODO: handle this situation */
+	}
 
 	@Override
 	protected void poll(HidDevice device) {

@@ -75,9 +75,6 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	}
 
 	private boolean isSeeking(HidDevice device) {
-		if (device == null) {
-			return false;
-		}
 		int vendorId = device.getVendorId();
 		int productId = device.getProductId();
 		return this.isSeeking(vendorId, productId);
@@ -162,12 +159,15 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		String serialStr = getSerialStr(device);
 		log.trace("Device with " + serialStr + " disconnected");
 	}
+	
+	protected abstract void onTrouble(HidDevice device, Throwable cause);
 
 	private void markTroubled(HidDevice device, Throwable cause) {
 		if (troubled.contains(device)) {
-			return;
+			throw new IllegalStateException("already troubled");
 		}
-
+		
+		this.onTrouble(device, cause);
 		troubled.add(device);
 		this.disconnect(device);
 
