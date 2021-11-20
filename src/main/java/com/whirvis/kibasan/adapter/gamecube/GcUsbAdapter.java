@@ -121,18 +121,16 @@ public class GcUsbAdapter extends DeviceAdapter<GcController> {
 
 	@FeatureAdapter
 	public void doRumble(GcRumbleMapping mapping, Vibration1f motor) {
-		/*
-		 * TODO: At the moment, it is unknown how to make the GameCube
-		 * controller rumble in accordance to a specific force. It is only known
-		 * how to make it rumble, and then stop rumbling. For the time being,
-		 * just make it start rumbling if the force is greater than 0 as a
-		 * compromise.
-		 */
 		this.rumbling = motor.force > 0;
 	}
 
 	public boolean isRumbling() {
-		return this.rumbling;
+		/*
+		 * It is possible that the program disconnects from the adapter while
+		 * the controller should still be rumbling. Checking if the controller
+		 * is connected is an easy to tell if it should stop rumbling.
+		 */
+		return this.isConnected() && this.rumbling;
 	}
 
 	@Override

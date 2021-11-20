@@ -3,8 +3,7 @@ package com.whirvis.kibasan.seeker;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.usb.UsbDevice;
-import javax.usb.UsbException;
+import org.usb4java.DeviceHandle;
 
 import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.GcController;
@@ -14,7 +13,7 @@ import com.whirvis.kibasan.adapter.gamecube.GcUsbDevice;
 public class UsbGcSeeker extends UsbDeviceSeeker {
 
 	private final boolean allowMultiple;
-	private final Map<UsbDevice, GcUsbDevice> hubs;
+	private final Map<DeviceHandle, GcUsbDevice> hubs;
 	private final Map<GcUsbAdapter, GcController> controllers;
 
 	/**
@@ -47,19 +46,35 @@ public class UsbGcSeeker extends UsbDeviceSeeker {
 	}
 
 	@Override
-	protected void onAttach(UsbDevice device) {
+	protected void onAttach(DeviceHandle handle) {
 		if (hubs.isEmpty() || allowMultiple) {
-			hubs.put(device, new GcUsbDevice(device));
+			hubs.put(handle, new GcUsbDevice(handle));
 		}
 	}
 
 	@Override
-	protected void onDetach(UsbDevice device) {
-		hubs.remove(device);
+	protected void onDetach(DeviceHandle device) {
+		GcUsbDevice hub = hubs.remove(device);
+		if (hub == null) {
+			return;
+		}
+		
+		hub.shutdown();
+		for (GcUsbAdapter adapter : hub.getAdapters()) {
+			GcController controller = controllers.get(adapter);
+			if (controller != null) {
+				this.unregister(controller);
+			}
+		}
 	}
 
 	@Override
-	protected void poll(UsbDevice device) throws UsbException {
+	protected void onTrouble(DeviceHandle handle, Throwable cause) {
+		/* TODO: handle this situation */
+	}
+
+	@Override
+	protected void poll(DeviceHandle device) throws Exception {
 		GcUsbDevice hub = hubs.get(device);
 		if (hub == null) {
 			return;
