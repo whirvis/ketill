@@ -7,14 +7,17 @@ import com.whirvis.kibasan.feature.DeviceButton;
 import com.whirvis.kibasan.feature.FeaturePresent;
 import com.whirvis.kibasan.feature.RumbleMotor;
 
+/**
+ * A Sony PlayStation 3 controller.
+ */
+@DeviceId("ps3")
 public class Ps3Controller extends PsxController {
 
 	/* @formatter: off */
 	@FeaturePresent
 	public static final DeviceButton
-			START = new DeviceButton("start"),
-			SELECT = new DeviceButton("select");
-			/* TODO: add missing buttons, if any */
+			SELECT = new DeviceButton("select"),
+			START = new DeviceButton("start");
 	
 	@FeaturePresent
 	public static final AnalogTrigger
