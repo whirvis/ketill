@@ -1,22 +1,19 @@
 package com.whirvis.kibasan.adapter.gamecube;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 
-import javax.usb.UsbConfiguration;
-import javax.usb.UsbDevice;
-import javax.usb.UsbDeviceDescriptor;
-import javax.usb.UsbEndpoint;
-import javax.usb.UsbException;
-import javax.usb.UsbInterface;
-import javax.usb.UsbPipe;
-import javax.usb.event.UsbPipeDataEvent;
-import javax.usb.event.UsbPipeErrorEvent;
-import javax.usb.event.UsbPipeListener;
+import org.usb4java.Device;
+import org.usb4java.DeviceDescriptor;
+import org.usb4java.DeviceHandle;
+import org.usb4java.LibUsb;
+import org.usb4java.LibUsbException;
+import org.usb4java.Transfer;
+import org.usb4java.TransferCallback;
 
 /**
  * An implementation of the official Nintendo GameCube USB adapter for the Wii U
@@ -26,7 +23,7 @@ import javax.usb.event.UsbPipeListener;
  * @see #isAdapter(UsbDevice)
  * @see #getAdapters()
  */
-public class GcUsbDevice implements UsbPipeListener {
+public class GcUsbDevice implements TransferCallback {
 
 	/* @formatter: off */
 	public static final short
@@ -40,16 +37,16 @@ public class GcUsbDevice implements UsbPipeListener {
 	
 	private static final byte
 			RUMBLE_ID = 0x11,
+			INIT_ID = 0x13,
 			DATA_ID = 0x21;
 	
 	private static final byte
 			RUMBLE_STOP = 0x00,
 			RUMBLE_START = 0x01;
-			/* RUMBLE_STOP_HARD = 0x02; */
-	
-	private static final byte[]
-			INIT_PACKET = new byte[] { 0x13 },
-			DATA_PACKET = new byte[37];
+		 /* RUMBLE_STOP_HARD = 0x02; */
+
+	private static final int
+			DATA_LEN = 37;
 	/* @formatter: on */
 
 	/**
@@ -58,28 +55,39 @@ public class GcUsbDevice implements UsbPipeListener {
 	 * @return {@code true} if {@code device} is a GameCube USB adapter,
 	 *         {@code false} otherwise.
 	 */
-	public static boolean isAdapter(UsbDevice device) {
-		if (device == null || device.isUsbHub()) {
+	public static boolean isAdapter(Device device) {
+		if (device == null) {
 			return false;
 		}
-		UsbDeviceDescriptor desc = device.getUsbDeviceDescriptor();
+		DeviceDescriptor desc = new DeviceDescriptor();
+		LibUsb.getDeviceDescriptor(device, desc);
 		return desc.idVendor() == VENDOR_ID && desc.idProduct() == PRODUCT_ID;
 	}
 
-	private final UsbDevice device;
+	/**
+	 * @param handle
+	 *            the handle of the USB device to check.
+	 * @return {@code true} if {@code handle} is for a GameCube USB adapter
+	 *         device, {@code false} otherwise.
+	 */
+	public static boolean isAdapter(DeviceHandle handle) {
+		if (handle == null) {
+			return false;
+		}
+		return isAdapter(LibUsb.getDevice(handle));
+	}
+
+	private final DeviceHandle handle;
 	private boolean initialized;
-	private UsbInterface usbi;
-	private UsbPipe in, out;
 
 	private final GcUsbAdapter[] adapters;
 	private final List<GcUsbAdapter> adapterList;
-	private final Queue<UsbException> usbExceptions;
 	private boolean requestedSlots;
 	private final byte[][] slots;
-	private final byte[] rumble;
+	private final ByteBuffer rumble;
 
 	/**
-	 * @param device
+	 * @param handle
 	 *            the GameCube USB adapter device.
 	 * @throws NullPointerException
 	 *             if {@code device} is {@code null}.
@@ -87,13 +95,17 @@ public class GcUsbDevice implements UsbPipeListener {
 	 *             if {@code device} is not a GameCube USB adapter according to
 	 *             {@link #isAdapter(UsbDevice)}.
 	 */
-	public GcUsbDevice(UsbDevice device) {
-		this.device = Objects.requireNonNull(device, "device");
-		if (!isAdapter(device)) {
+	public GcUsbDevice(DeviceHandle handle) {
+		this.handle = Objects.requireNonNull(handle, "handle");
+		if (!isAdapter(handle)) {
 			throw new IllegalArgumentException("not a USB GameCube adapter");
 		}
 
-		this.usbExceptions = new LinkedList<>();
+		/*
+		 * This is cached into an unmodifiable list so as to prevent many calls
+		 * to getAdapters() from creating a many collections on the heap if
+		 * called numerous times.
+		 */
 		this.adapters = new GcUsbAdapter[4];
 		for (int i = 0; i < adapters.length; i++) {
 			this.adapters[i] = new GcUsbAdapter(this, i);
@@ -102,8 +114,8 @@ public class GcUsbDevice implements UsbPipeListener {
 				Collections.unmodifiableList(Arrays.asList(adapters));
 
 		this.slots = new byte[adapters.length][9];
-		this.rumble = new byte[1 + adapters.length];
-		this.rumble[0] = RUMBLE_ID;
+		this.rumble = ByteBuffer.allocateDirect(1 + adapters.length);
+		rumble.put(RUMBLE_ID);
 	}
 
 	public List<GcUsbAdapter> getAdapters() {
@@ -114,41 +126,35 @@ public class GcUsbDevice implements UsbPipeListener {
 		return this.slots[slot];
 	}
 
-	private UsbPipe openPipe(byte address) throws UsbException {
-		UsbEndpoint endpoint = usbi.getUsbEndpoint(address);
-		UsbPipe pipe = endpoint.getUsbPipe();
-		pipe.open();
-		return pipe;
-	}
-
-	private void initAdapter() throws UsbException {
+	private void initAdapter() {
 		if (initialized) {
 			throw new IllegalStateException("already initialized");
 		}
 
-		UsbConfiguration config = device.getActiveUsbConfiguration();
-		this.usbi = config.getUsbInterface(CONFIG);
+		int result = LibUsb.claimInterface(handle, CONFIG);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
+		}
 
-		usbi.claim();
-		this.in = this.openPipe(ENDPOINT_IN);
-		this.out = this.openPipe(ENDPOINT_OUT);
+		ByteBuffer init = ByteBuffer.allocateDirect(1);
+		init.put(INIT_ID);
+		IntBuffer transferred = IntBuffer.allocate(1);
+		result = LibUsb.interruptTransfer(handle, ENDPOINT_OUT, init,
+				transferred, 0);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
+		}
 
-		in.addUsbPipeListener(this);
-		out.syncSubmit(INIT_PACKET);
 		this.initialized = true;
 	}
 
-	@Override
-	public void dataEventOccurred(UsbPipeDataEvent event) {
-		int offset = 0;
-		byte[] packet = event.getData();
-		byte id = packet[offset++];
-
+	private void handlePacket(ByteBuffer packet) {
+		byte id = packet.get();
 		if (id == DATA_ID) {
 			for (int i = 0; i < slots.length; i++) {
 				byte[] slot = this.slots[i];
 				for (int j = 0; j < slot.length; j++) {
-					slot[j] = packet[offset++];
+					slot[j] = packet.get();
 				}
 			}
 
@@ -159,20 +165,15 @@ public class GcUsbDevice implements UsbPipeListener {
 		}
 	}
 
-	@Override
-	public void errorEventOccurred(UsbPipeErrorEvent event) {
-		usbExceptions.add(event.getUsbException());
-	}
-
-	private void updateRumble() throws UsbException {
+	private void updateRumble() {
 		boolean submit = false;
 
 		for (int i = 0; i < adapters.length; i++) {
-			int offset = i + 1; /* RUMBLE_ID */
+			int offset = i + 1; /* account for rumble ID */
 			boolean rumbling = adapters[i].isRumbling();
 			byte state = (byte) (rumbling ? RUMBLE_START : RUMBLE_STOP);
-			if (rumble[offset] != state) {
-				rumble[offset] = state;
+			if (rumble.get(offset) != state) {
+				rumble.put(offset, state);
 				submit = true;
 			}
 		}
@@ -183,8 +184,24 @@ public class GcUsbDevice implements UsbPipeListener {
 		 * update call.
 		 */
 		if (submit) {
-			out.asyncSubmit(rumble);
+			Transfer transfer = LibUsb.allocTransfer();
+			LibUsb.fillInterruptTransfer(transfer, handle, ENDPOINT_OUT, rumble,
+					this, null, 0);
+			int result = LibUsb.submitTransfer(transfer);
+			if (result != LibUsb.SUCCESS) {
+				throw new LibUsbException(result);
+			}
 		}
+	}
+
+	@Override
+	public void processTransfer(Transfer transfer) {
+		if (!handle.equals(transfer.devHandle())) {
+			return; /* not our device */
+		} else if (transfer.endpoint() == ENDPOINT_IN) {
+			this.handlePacket(transfer.buffer());
+		}
+		LibUsb.freeTransfer(transfer);
 	}
 
 	/**
@@ -193,29 +210,68 @@ public class GcUsbDevice implements UsbPipeListener {
 	 * and out of date input data will be returned. It is recommended to call
 	 * this method once every update.
 	 * 
-	 * @throws UsbException
-	 *             if a USB error occurs.
+	 * @throws LibUsbException
+	 *             if an error in LibUSB occurs.
 	 */
-	public void poll() throws UsbException {
-		/*
-		 * If any errors occurred outside of the polling method, go ahead and
-		 * throw them here. They are not inconsequential, and should be seen by
-		 * the developer.
-		 */
-		if (!usbExceptions.isEmpty()) {
-			throw usbExceptions.remove();
-		}
-
+	public void poll() {
 		if (!initialized) {
 			this.initAdapter();
 		}
 
+		/*
+		 * The USB device code makes use of asynchronous IO. As such, it must
+		 * ask LibUsb to handle the events manually. If this is not done, no
+		 * data will come in for transfers!
+		 */
+		int result = LibUsb.handleEventsTimeout(null, 0);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
+		}
+
+		/*
+		 * The requestedSlots boolean is used to prevent needless transfers to
+		 * through the USB pipe (in hopes of increasing performance.) It is set
+		 * to true when data has been requested. When slot data has arrived, the
+		 * handler will set requestedSlots to false again.
+		 */
 		if (!requestedSlots) {
-			in.asyncSubmit(DATA_PACKET);
+			Transfer transfer = LibUsb.allocTransfer();
+			ByteBuffer data = ByteBuffer.allocateDirect(DATA_LEN);
+			LibUsb.fillInterruptTransfer(transfer, handle, ENDPOINT_IN, data,
+					this, null, 0L);
+
+			result = LibUsb.submitTransfer(transfer);
+			if (result != LibUsb.SUCCESS) {
+				throw new LibUsbException(result);
+			}
+
 			this.requestedSlots = true;
 		}
 
 		this.updateRumble();
+	}
+
+	public void shutdown() {
+		if (!initialized) {
+			throw new IllegalStateException("not initialized");
+		}
+
+		/* zero out all slot data to prevent false positives */
+		for (int i = 0; i < slots.length; i++) {
+			byte[] data = this.slots[i];
+			for (int j = 0; j < data.length; j++) {
+				data[j] = 0x00;
+			}
+		}
+		
+		/* tell controllers to stop rumbling if possible */
+		try {
+			this.updateRumble();
+		} catch(Exception e) {
+			/* oh well, we tried */
+		}
+
+		this.initialized = false;
 	}
 
 }

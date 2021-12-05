@@ -85,6 +85,14 @@ public abstract class DeviceSeeker {
 
 	protected void unregister(InputDevice device) {
 		if (device != null && devices.contains(device)) {
+			/*
+			 * A final poll is performed for the device here, just in case it
+			 * needs to perform some sort of disconnect routine. How it knows
+			 * that its been disconnected is dependent on its implementation.
+			 */
+			device.poll();
+
+			/* now the device can be unregistered */
 			devices.remove(device);
 			events.send(new DeviceUnregisterEvent(this, device));
 			log.debug("Unregistered " + device.id + " device");

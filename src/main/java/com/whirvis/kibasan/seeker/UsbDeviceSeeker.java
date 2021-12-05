@@ -1,67 +1,93 @@
 package com.whirvis.kibasan.seeker;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import javax.usb.UsbDevice;
-import javax.usb.UsbDeviceDescriptor;
-import javax.usb.UsbException;
-import javax.usb.UsbHostManager;
-import javax.usb.UsbHub;
-import javax.usb.UsbServices;
-import javax.usb.event.UsbDeviceDataEvent;
-import javax.usb.event.UsbDeviceErrorEvent;
-import javax.usb.event.UsbDeviceEvent;
-import javax.usb.event.UsbDeviceListener;
+import org.usb4java.Device;
+import org.usb4java.DeviceDescriptor;
+import org.usb4java.DeviceHandle;
+import org.usb4java.DeviceList;
+import org.usb4java.LibUsb;
+import org.usb4java.LibUsbException;
 
 import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.InputDevice;
 import com.whirvis.kibasan.InputException;
 
-public abstract class UsbDeviceSeeker extends DeviceSeeker
-		implements UsbDeviceListener {
+public abstract class UsbDeviceSeeker extends DeviceSeeker {
 
 	private static final long SEARCH_RATE = 1000L;
+	private static boolean initializedLibUsb = false;
 
-	private static List<UsbDevice> findDevices(UsbHub hub) {
-		List<UsbDevice> devices = new ArrayList<>();
-		for (Object obj : hub.getAttachedUsbDevices()) {
-			UsbDevice device = (UsbDevice) obj;
-			if (device.isUsbHub()) {
-				devices.addAll(findDevices((UsbHub) device));
-			} else {
-				devices.add(device);
-			}
+	private static void initializeLibUsb() {
+		if (initializedLibUsb) {
+			return;
 		}
+
+		int result = LibUsb.init(null);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
+		}
+
+		initializedLibUsb = true;
+	}
+
+	private static Set<Device> findDevices() {
+		DeviceList list = new DeviceList();
+		int result = LibUsb.getDeviceList(null, list);
+		if (result < 0) {
+			throw new LibUsbException(result);
+		}
+
+		/*
+		 * Just to be safe, take every device from the device list and throw it
+		 * into this set. The list is a handle for some native memory, which
+		 * must in turn be freed as well. I personally do not trust myself to
+		 * remember to free this list outside of this method.
+		 */
+		Set<Device> devices = new HashSet<>();
+		for (Device device : list) {
+			devices.add(device);
+		}
+
+		/*
+		 * Now that the devices have been transferred to garbage collected
+		 * memory, free the list handle (but keep the devices in tact.) The
+		 * second parameter *must* be false. If it is true, the devices will all
+		 * be freed from memory, making them dead on arrival.
+		 */
+		LibUsb.freeDeviceList(list, false);
 		return devices;
 	}
 
-	private static List<UsbDevice> findDevices() throws UsbException {
-		UsbServices services = UsbHostManager.getUsbServices();
-		return findDevices(services.getRootUsbHub());
-	}
-
-	private static String getSerialStr(UsbDevice device) {
-		try {
-			String serial = device.getSerialNumberString();
-			if (serial != null) {
-				return "serial number " + serial;
-			}
-		} catch (Exception e) {
-			/* don't care, honestly */
+	private static String getSerialStr(DeviceHandle handle) {
+		Device device = LibUsb.getDevice(handle);
+		DeviceDescriptor desc = new DeviceDescriptor();
+		int result = LibUsb.getDeviceDescriptor(device, desc);
+		if (result != LibUsb.SUCCESS) {
+			return "unretrievable serial number";
 		}
-		return "unkonwn serial number";
+
+		byte index = desc.iSerialNumber();
+		String serial = LibUsb.getStringDescriptor(handle, index);
+		if (serial != null) {
+			return "serial number " + serial;
+		}
+		return "unknown serial number";
 	}
 
 	private final Set<DeviceDesc> descs;
-	private final Set<UsbDevice> devices;
-	private final Set<UsbDevice> troubled;
+	private final Map<Device, DeviceHandle> handles;
+	private final Set<Device> troubled;
 	private long lastSearch;
 
 	/**
+	 * After initial setup, this constructor will initialize LibUsb if it has
+	 * not been initialized already.
+	 * 
 	 * @param type
 	 *            the input device type.
 	 * @param events
@@ -73,9 +99,13 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	public UsbDeviceSeeker(Class<? extends InputDevice> type,
 			EventManager events) {
 		super(type, events);
+
 		this.descs = new HashSet<>();
-		this.devices = new HashSet<>();
+		this.handles = new HashMap<>();
 		this.troubled = new HashSet<>();
+
+		/* ensure LibUsb is initialized */
+		initializeLibUsb();
 	}
 
 	public boolean isSeeking(int vendorId, int productId) {
@@ -87,11 +117,12 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		return false;
 	}
 
-	private boolean isSeeking(UsbDevice device) {
-		if (device == null) {
-			return false;
+	private boolean isSeeking(Device device) {
+		DeviceDescriptor desc = new DeviceDescriptor();
+		int result = LibUsb.getDeviceDescriptor(device, desc);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
 		}
-		UsbDeviceDescriptor desc = device.getUsbDeviceDescriptor();
 		int vendorId = desc.idVendor();
 		int productId = desc.idProduct();
 		return this.isSeeking(vendorId, productId);
@@ -132,12 +163,13 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		}
 
 		int count = 0;
-		Iterator<UsbDevice> devicesI = devices.iterator();
+		Iterator<Device> devicesI = handles.keySet().iterator();
 		while (devicesI.hasNext()) {
-			UsbDevice device = devicesI.next();
+			Device device = devicesI.next();
+			DeviceHandle handle = handles.get(device);
 			if (this.isSeeking(device)) {
 				devicesI.remove();
-				this.detach(device);
+				this.detach(handle);
 				count++;
 			}
 		}
@@ -146,67 +178,76 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 		log.debug("Dropped " + count + " devices with ID " + idStr);
 	}
 
-	protected abstract void onAttach(UsbDevice device);
+	protected abstract void onAttach(DeviceHandle handle);
 
-	private void attach(UsbDevice device) {
-		if (devices.contains(device)) {
+	private void attach(Device device) {
+		if (handles.containsKey(device)) {
 			return;
 		}
 
-		device.addUsbDeviceListener(this);
-		this.onAttach(device);
-		devices.add(device);
+		DeviceHandle handle = new DeviceHandle();
+		int result = LibUsb.open(device, handle);
+		if (result != LibUsb.SUCCESS) {
+			throw new LibUsbException(result);
+		}
 
-		String serialStr = getSerialStr(device);
+		/*
+		 * Only increment the device's reference count after it has been opened
+		 * successfully. This should prevent a memory leak if opening the device
+		 * fails. The reference count is increased here as it will be decreased
+		 * later when the device is detached.
+		 */
+		LibUsb.refDevice(device);
+		handles.put(device, handle);
+
+		this.onAttach(handle);
+		String serialStr = getSerialStr(handle);
 		log.trace("Device with " + serialStr + " attached");
 	}
 
-	protected abstract void onDetach(UsbDevice device);
+	protected abstract void onDetach(DeviceHandle handle);
 
-	private void detach(UsbDevice device) {
-		if (!devices.contains(device)) {
-			return;
-		}
+	private void detach(DeviceHandle handle) {
+		Device device = LibUsb.getDevice(handle);
 
-		device.removeUsbDeviceListener(this);
-		this.onDetach(device);
-		devices.remove(device);
-
-		String serialStr = getSerialStr(device);
+		this.onDetach(handle);
+		String serialStr = getSerialStr(handle);
 		log.trace("Device with " + serialStr + " detached");
-	}
 
-	private void markTroubled(UsbDevice device, Throwable cause) {
+		/*
+		 * Now that the device is no longer being used by this seeker, its
+		 * reference count must be decreased. If this is not done, a leak in
+		 * memory is sure to follow.
+		 */
+		handles.remove(device);
+		LibUsb.unrefDevice(device);
+	}
+	
+	protected abstract void onTrouble(DeviceHandle handle, Throwable cause);
+
+	private void markTroubled(DeviceHandle handle, Throwable cause) {
+		Device device = LibUsb.getDevice(handle);
 		if (troubled.contains(device)) {
-			return;
+			throw new IllegalStateException("already troubled");
 		}
 
 		troubled.add(device);
-		this.detach(device);
+		this.onTrouble(handle, cause);
 
-		String serialStr = getSerialStr(device);
-		log.error("Permanently detached device " + serialStr
-				+ " due to unhandled issue", cause);
+		/*
+		 * The device handle will become invalid after the device is detached.
+		 * As such, this information (namely, the serial string for the log
+		 * output) must be fetched before the device is detached.
+		 */
+		String serialStr = getSerialStr(handle);
+		this.detach(handle);
+		log.error("Detached device with serial number " + serialStr
+				+ " permanently due to unhandled issue", cause);
 	}
 
-	@Override
-	public final void usbDeviceDetached(UsbDeviceEvent event) {
-		this.detach(event.getUsbDevice());
-	}
-
-	@Override
-	public final void errorEventOccurred(UsbDeviceErrorEvent event) {
-		this.markTroubled(event.getUsbDevice(), null);
-	}
-
-	@Override
-	public final void dataEventOccurred(UsbDeviceDataEvent event) {
-		/* no data to handle */
-	}
-
-	private void searchDevices() throws UsbException {
-		for (UsbDevice device : findDevices()) {
-			if (devices.contains(device)) {
+	private void searchDevices() {
+		for (Device device : findDevices()) {
+			if (handles.containsKey(device)) {
 				continue;
 			}
 
@@ -218,11 +259,20 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 			 * once they are marked.
 			 */
 			if (troubled.contains(device)) {
+				LibUsb.unrefDevice(device);
 				continue;
 			}
 
 			if (this.isSeeking(device)) {
 				this.attach(device);
+			} else {
+				/*
+				 * Only unref the device after it has been determined it will no
+				 * longer be needed. If it gets attached, the attach method will
+				 * increase its reference count to keep it in memory. Otherwise,
+				 * it will be freed here since it is not being sought after.
+				 */
+				LibUsb.unrefDevice(device);
 			}
 		}
 	}
@@ -233,7 +283,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 * @see #seekDevice(int, int)
 	 */
 	@Override
-	protected void seek() throws UsbException {
+	protected void seek() {
 		if (descs.isEmpty()) {
 			throw new InputException("no USB devices specified");
 		}
@@ -256,20 +306,21 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker
 	 * @throws Exception
 	 *             if an error occurs.
 	 */
-	protected abstract void poll(UsbDevice device) throws Exception;
+	protected abstract void poll(DeviceHandle handle) throws Exception;
 
 	@Override
 	public void poll() {
 		super.poll();
 
-		Iterator<UsbDevice> devicesI = devices.iterator();
+		Iterator<Device> devicesI = handles.keySet().iterator();
 		while (devicesI.hasNext()) {
-			UsbDevice device = devicesI.next();
+			Device device = devicesI.next();
+			DeviceHandle handle = handles.get(device);
 			try {
-				this.poll(device);
+				this.poll(handle);
 			} catch (Exception e) {
 				devicesI.remove();
-				this.markTroubled(device, e);
+				this.markTroubled(handle, e);
 			}
 		}
 	}
