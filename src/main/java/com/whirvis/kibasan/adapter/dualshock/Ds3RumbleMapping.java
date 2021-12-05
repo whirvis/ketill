@@ -5,8 +5,11 @@ import com.whirvis.kibasan.feature.RumbleMotor;
 
 public class Ds3RumbleMapping extends RumbleMapping {
 
-	public Ds3RumbleMapping(RumbleMotor motor) {
+	public final int byteOffset;
+	
+	public Ds3RumbleMapping(RumbleMotor motor, int byteOffset) {
 		super(motor);
+		this.byteOffset = byteOffset;
 	}
 
 }
