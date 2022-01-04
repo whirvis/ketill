@@ -1,6 +1,5 @@
 package com.whirvis.kibasan;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.AnalogStick;
 import com.whirvis.kibasan.feature.DeviceButton;
@@ -43,16 +42,13 @@ public class SwitchProController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the Switch controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public SwitchProController(EventManager events,
-			DeviceAdapter<SwitchProController> adapter) {
-		super(events, adapter, LS, RS, null, null);
+	public SwitchProController(DeviceAdapter<SwitchProController> adapter) {
+		super(adapter, LS, RS, null, null);
 	}
 
 	/**

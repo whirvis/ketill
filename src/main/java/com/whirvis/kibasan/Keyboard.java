@@ -1,11 +1,9 @@
 package com.whirvis.kibasan;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.Button1bc;
 import com.whirvis.kibasan.feature.FeaturePresent;
 import com.whirvis.kibasan.feature.KeyboardKey;
-import com.whirvis.kibasan.feature.monitor.DeviceButtonMonitor;
 
 /**
  * A keyboard which can send and receive input data.
@@ -149,20 +147,13 @@ public class Keyboard extends InputDevice {
 	/* @formatter: on */
 
 	/**
-	 * By default, a {@code Keyboard} expects device features of type
-	 * {@link KeyboardKey}. As a result, an instance of
-	 * {@link DeviceButtonMonitor} will be added on instantiation.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the device adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Keyboard(EventManager events, DeviceAdapter<Keyboard> adapter) {
-		super(events, adapter);
-		this.addMonitor(new DeviceButtonMonitor(this, events));
+	public Keyboard(DeviceAdapter<Keyboard> adapter) {
+		super(adapter);
 	}
 
 	/**

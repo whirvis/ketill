@@ -4,18 +4,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.DeviceFeature;
 import com.whirvis.kibasan.feature.FeaturePresent;
-import com.whirvis.kibasan.feature.monitor.ConnectionMonitor;
-import com.whirvis.kibasan.feature.monitor.FeatureMonitor;
 import com.whirvis.kibasan.seeker.DeviceSeeker;
 
 /**
@@ -36,7 +32,6 @@ import com.whirvis.kibasan.seeker.DeviceSeeker;
  * @see DeviceAdapter
  * @see DeviceFeature
  * @see FeaturePresent
- * @see FeatureMonitor
  */
 public abstract class InputDevice {
 
@@ -57,21 +52,16 @@ public abstract class InputDevice {
 	}
 
 	public final String id;
-	protected final EventManager events;
 	protected final DeviceAdapter<?> adapter;
-	private final Set<FeatureMonitor> monitors;
 	private final Map<DeviceFeature<?>, Object> features;
 
 	/**
 	 * All device feature fields annotated with {@link FeaturePresent} will be
-	 * registered by this constructor. Since all input devices are expected to
-	 * connect and disconnect, a {@link ConnectionMonitor} will also be added.
+	 * registered by this constructor.
 	 * 
 	 * @param id
 	 *            the device ID, should be {@code null} if the {@link DeviceId}
 	 *            annotation is present for this class.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the device adapter.
 	 * @throws IllegalArgumentException
@@ -82,8 +72,7 @@ public abstract class InputDevice {
 	 *             {@code null}.
 	 * @see #addFeature(DeviceFeature)
 	 */
-	public InputDevice(String id, EventManager events,
-			DeviceAdapter<?> adapter) {
+	public InputDevice(String id, DeviceAdapter<?> adapter) {
 		/*
 		 * It would not make logical sense for the device to have both a static
 		 * ID and an instance ID specified at construction. Even if they match,
@@ -101,14 +90,10 @@ public abstract class InputDevice {
 		} else {
 			throw new NullPointerException("missing ID");
 		}
-		
-		this.events = EventManager.valueOf(events);
+
 		this.adapter = Objects.requireNonNull(adapter);
-		this.monitors = new HashSet<>();
 		this.features = new HashMap<>();
 		this.loadFeatures();
-
-		this.addMonitor(new ConnectionMonitor(this, events));
 	}
 
 	/**
@@ -116,50 +101,17 @@ public abstract class InputDevice {
 	 * {@link DeviceId} annotation, which must be present for this class.
 	 * <p>
 	 * All device feature fields annotated with {@link FeaturePresent} will be
-	 * registered by this constructor. Since all input devices are expected to
-	 * connect and disconnect, a {@link ConnectionMonitor} will also be added.
+	 * registered by this constructor.
 	 * 
 	 * @param adapter
 	 *            the device adapter.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @throws NullPointerException
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
 	 * @see #addFeature(DeviceFeature)
 	 */
-	public InputDevice(EventManager events, DeviceAdapter<?> adapter) {
-		this(null, events, adapter);
-	}
-
-	/**
-	 * @param monitor
-	 *            the monitor to add.
-	 * @throws NullPointerException
-	 *             if {@code monitor} is {@code null}.
-	 * @throws IllegalArgumentException
-	 *             if {@code monitor} is not assigned to this input device.
-	 */
-	protected void addMonitor(FeatureMonitor monitor) {
-		Objects.requireNonNull(monitor, "monitor");
-		if (!monitor.isAssignedTo(this)) {
-			throw new IllegalArgumentException(
-					"monitor not assigned to this device");
-		}
-
-		/*
-		 * It must be checked that the monitor has not already been added. This
-		 * is because when a feature monitor is added, it is told to monitor all
-		 * features added to this input device added in its absence. If this
-		 * code is ran again, it will be told to monitor the same features
-		 * previously being monitored. Such a mishap is likely to cause bugs.
-		 */
-		if (!monitors.contains(monitor)) {
-			monitors.add(monitor);
-			for (DeviceFeature<?> feature : features.keySet()) {
-				monitor.monitor(feature);
-			}
-		}
+	public InputDevice(DeviceAdapter<?> adapter) {
+		this(null, adapter);
 	}
 
 	public boolean hasFeature(DeviceFeature<?> feature) {
@@ -196,13 +148,7 @@ public abstract class InputDevice {
 		if (this.hasFeature(feature)) {
 			throw new InputException("feature already registered");
 		}
-
-		if (!features.containsKey(feature)) {
-			features.put(feature, feature.initial());
-			for (FeatureMonitor monitor : monitors) {
-				monitor.monitor(feature);
-			}
-		}
+		features.put(feature, feature.initial());
 	}
 
 	private void loadFeatures() {
@@ -280,11 +226,6 @@ public abstract class InputDevice {
 		adapter.poll();
 		for (Entry<DeviceFeature<?>, Object> entry : features.entrySet()) {
 			adapter.update(entry.getKey(), entry.getValue());
-		}
-
-		/* monitors should be updated after each feature */
-		for (FeatureMonitor monitor : monitors) {
-			monitor.update();
 		}
 	}
 

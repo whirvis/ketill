@@ -3,14 +3,12 @@ package com.whirvis.kibasan;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.Button1bc;
 import com.whirvis.kibasan.feature.Cursor;
 import com.whirvis.kibasan.feature.Cursor2f;
 import com.whirvis.kibasan.feature.DeviceButton;
 import com.whirvis.kibasan.feature.FeaturePresent;
-import com.whirvis.kibasan.feature.monitor.DeviceButtonMonitor;
 
 /**
  * A mouse which can send and receive input data.
@@ -48,20 +46,13 @@ public class Mouse extends InputDevice {
 	/* @formatter: on */
 
 	/**
-	 * By default, a {@code Mouse} expects device features of type
-	 * {@link DeviceButton}. As a result, an instance of
-	 * {@link DeviceButtonMonitor} will be added on instantiation.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the device adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Mouse(EventManager events, DeviceAdapter<Mouse> adapter) {
-		super(events, adapter);
-		this.addMonitor(new DeviceButtonMonitor(this, events));
+	public Mouse(DeviceAdapter<Mouse> adapter) {
+		super(adapter);
 	}
 
 	/**

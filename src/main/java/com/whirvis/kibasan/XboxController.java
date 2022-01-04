@@ -1,6 +1,5 @@
 package com.whirvis.kibasan;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.AnalogStick;
 import com.whirvis.kibasan.feature.AnalogTrigger;
@@ -49,16 +48,13 @@ public class XboxController extends Controller {
 	/* @formatter: on */
 
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the XBOX controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public XboxController(EventManager events,
-			DeviceAdapter<XboxController> adapter) {
-		super(events, adapter, LS, RS, LT, RT);
+	public XboxController(DeviceAdapter<XboxController> adapter) {
+		super(adapter, LS, RS, LT, RT);
 	}
 
 }

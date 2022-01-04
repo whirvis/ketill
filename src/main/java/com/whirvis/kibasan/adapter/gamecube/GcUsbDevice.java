@@ -19,8 +19,8 @@ import org.usb4java.TransferCallback;
  * An implementation of the official Nintendo GameCube USB adapter for the Wii U
  * and Nintendo Switch. Its purpose is to communicate with the adapter and
  * provide the input data necessary for a {@link GcUsbAdapter} to function.
- * 
- * @see #isAdapter(UsbDevice)
+ *
+ * @see #isAdapter(Device)
  * @see #getAdapters()
  */
 public class GcUsbDevice implements TransferCallback {
@@ -93,7 +93,7 @@ public class GcUsbDevice implements TransferCallback {
 	 *             if {@code device} is {@code null}.
 	 * @throws IllegalArgumentException
 	 *             if {@code device} is not a GameCube USB adapter according to
-	 *             {@link #isAdapter(UsbDevice)}.
+	 *             {@link #isAdapter(Device)}.
 	 */
 	public GcUsbDevice(DeviceHandle handle) {
 		this.handle = Objects.requireNonNull(handle, "handle");

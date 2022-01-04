@@ -13,7 +13,6 @@ import org.usb4java.DeviceList;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.InputDevice;
 import com.whirvis.kibasan.InputException;
 
@@ -90,15 +89,12 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 	 * 
 	 * @param type
 	 *            the input device type.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
 	 * @see #seekDevice(int, int)
 	 */
-	public UsbDeviceSeeker(Class<? extends InputDevice> type,
-			EventManager events) {
-		super(type, events);
+	public UsbDeviceSeeker(Class<? extends InputDevice> type) {
+		super(type);
 
 		this.descs = new HashSet<>();
 		this.handles = new HashMap<>();
@@ -300,9 +296,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 	 * this seeker. If an exception is thrown, the seeker will mark the USB
 	 * device to be "troubled", and automatically disconnect it. Afterwards, it
 	 * will not be reconnected.
-	 * 
-	 * @param device
-	 *            the USB device being polled.
+	 *
 	 * @throws Exception
 	 *             if an error occurs.
 	 */

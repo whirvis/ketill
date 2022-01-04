@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.hid4java.HidDevice;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.Ps4Controller;
 import com.whirvis.kibasan.adapter.dualshock.Ds4BtAdapter;
 import com.whirvis.kibasan.adapter.dualshock.Ds4HidAdapter;
@@ -56,9 +55,7 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 	 * that the same PlayStation 4 controller will report itself as both a USB
 	 * controller and Bluetooth controller. To know when this has possibly
 	 * occurred, listen for {@link Ps4Controller.AmbigousEvent}.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
+	 *
 	 * @param allowUsb
 	 *            {@code true} if USB connections should be allowed,
 	 *            {@code false} otherwise.
@@ -69,9 +66,9 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 	 *             if {@code allowUsb} and {@code allowBt} are both
 	 *             {@code false}.
 	 */
-	public HidDs4Seeker(EventManager events, boolean allowUsb,
+	public HidDs4Seeker(boolean allowUsb,
 			boolean allowBt) {
-		super(Ps4Controller.class, events);
+		super(Ps4Controller.class);
 		if (!allowUsb && !allowBt) {
 			throw new IllegalArgumentException("must allow USB or Bluetooth");
 		}
@@ -91,12 +88,10 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 	 * possibility that the same PlayStation 4 controller will report itself as
 	 * both a USB controller and Bluetooth controller. To know when this has
 	 * possibly occurred, listen for {@link Ps4Controller.AmbigousEvent}.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
+	 *
 	 */
-	public HidDs4Seeker(EventManager events) {
-		this(events, true, true);
+	public HidDs4Seeker() {
+		this(true, true);
 	}
 
 	private void checkAmbiguity() {
@@ -117,13 +112,12 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 		 * As such, the best course of action is to send an event, notifying
 		 * listeners of the ambiguity.
 		 */
+		/* TODO: callbacks */
 		boolean ambigous = hasUsb && hasBt;
 		if (!wasAmbigous && ambigous) {
-			events.send(new Ps4Controller.AmbigousEvent(false));
 			log.warn("USB and BT PS4 controllers connected, "
 					+ "physical devices are ambigous");
 		} else if (wasAmbigous && !ambigous) {
-			events.send(new Ps4Controller.AmbigousEvent(true));
 			log.info("PS4 controllers are no longer ambigous");
 		}
 	}
@@ -141,7 +135,7 @@ public class HidDs4Seeker extends HidDeviceSeeker {
 		}
 
 		if (adapter != null) {
-			Ps4Controller controller = new Ps4Controller(events, adapter);
+			Ps4Controller controller = new Ps4Controller(adapter);
 			ds4s.put(device, new Ds4Info(controller, hidId));
 			this.register(controller);
 			this.checkAmbiguity();

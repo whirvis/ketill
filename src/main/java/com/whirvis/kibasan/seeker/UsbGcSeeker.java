@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.usb4java.DeviceHandle;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.GcController;
 import com.whirvis.kibasan.adapter.gamecube.GcUsbAdapter;
 import com.whirvis.kibasan.adapter.gamecube.GcUsbDevice;
@@ -17,15 +16,13 @@ public class UsbGcSeeker extends UsbDeviceSeeker {
 	private final Map<GcUsbAdapter, GcController> controllers;
 
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param allowMultiple
 	 *            {@code true} if multiple USB GameCube adapters should be
 	 *            recognized, {@code false} if only the first one found should
 	 *            be used.
 	 */
-	public UsbGcSeeker(EventManager events, boolean allowMultiple) {
-		super(GcController.class, events);
+	public UsbGcSeeker(boolean allowMultiple) {
+		super(GcController.class);
 
 		this.allowMultiple = allowMultiple;
 		this.hubs = new HashMap<>();
@@ -37,12 +34,9 @@ public class UsbGcSeeker extends UsbDeviceSeeker {
 	/**
 	 * Constructs a new {@code UsbGcSeeker} with support for multiple USB
 	 * GameCube adapters enabled.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 */
-	public UsbGcSeeker(EventManager events) {
-		this(events, true);
+	public UsbGcSeeker() {
+		this(true);
 	}
 
 	@Override
@@ -85,7 +79,7 @@ public class UsbGcSeeker extends UsbDeviceSeeker {
 			boolean connected = adapter.isConnected();
 			boolean registered = controllers.containsKey(adapter);
 			if (connected && !registered) {
-				GcController controller = new GcController(events, adapter);
+				GcController controller = new GcController(adapter);
 				controllers.put(adapter, controller);
 				this.register(controller);
 			} else if (!connected && registered) {

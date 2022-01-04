@@ -1,20 +1,8 @@
 package com.whirvis.kibasan;
 
-import org.joml.Vector3fc;
-
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
-import com.whirvis.kibasan.feature.AnalogStick;
-import com.whirvis.kibasan.feature.AnalogTrigger;
-import com.whirvis.kibasan.feature.Button1bc;
-import com.whirvis.kibasan.feature.DeviceAnalog;
-import com.whirvis.kibasan.feature.DeviceButton;
-import com.whirvis.kibasan.feature.DeviceFeature;
-import com.whirvis.kibasan.feature.RumbleMotor;
-import com.whirvis.kibasan.feature.Trigger1fc;
-import com.whirvis.kibasan.feature.Vibration1f;
-import com.whirvis.kibasan.feature.monitor.AnalogStickMonitor;
-import com.whirvis.kibasan.feature.monitor.DeviceButtonMonitor;
+import com.whirvis.kibasan.feature.*;
+import org.joml.Vector3fc;
 
 /**
  * A controller which and can send receive input data.
@@ -46,16 +34,9 @@ public abstract class Controller extends InputDevice {
 	public final AnalogTrigger lt, rt;
 
 	/**
-	 * By default, a {@code Controller} expects device features of type
-	 * {@link DeviceButton} and {@link DeviceAnalog}. As a result, instances of
-	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} are added
-	 * automatically on instantiation.
-	 * 
 	 * @param id
 	 *            the controller ID, should be {@code null} if the
 	 *            {@link DeviceId} annotation is present for this class.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the device adapter.
 	 * @param ls
@@ -73,31 +54,21 @@ public abstract class Controller extends InputDevice {
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
 	 */
-	public Controller(String id, EventManager events, DeviceAdapter<?> adapter,
+	public Controller(String id, DeviceAdapter<?> adapter,
 			AnalogStick ls, AnalogStick rs, AnalogTrigger lt,
 			AnalogTrigger rt) {
-		super(id, events, adapter);
+		super(id, adapter);
 
 		this.ls = ls;
 		this.rs = rs;
 		this.lt = lt;
 		this.rt = rt;
-
-		this.addMonitor(new DeviceButtonMonitor(this, events));
-		this.addMonitor(new AnalogStickMonitor(this, events));
 	}
 
 	/**
 	 * When using this constructor, the device ID is determined by the
 	 * {@link DeviceId} annotation, which must be present for this class.
-	 * <p>
-	 * By default, a {@code Controller} expects device features of type
-	 * {@link DeviceButton} and {@link DeviceAnalog}. As a result, instances of
-	 * {@link DeviceButtonMonitor} and {@link AnalogStickMonitor} are added
-	 * automatically on instantiation.
-	 * 
-	 * @param events
-	 *            the event manager, may be {@code null}.
+	 *
 	 * @param adapter
 	 *            the device adapter.
 	 * @param ls
@@ -112,10 +83,10 @@ public abstract class Controller extends InputDevice {
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
 	 */
-	public Controller(EventManager events, DeviceAdapter<?> adapter,
+	public Controller(DeviceAdapter<?> adapter,
 			AnalogStick ls, AnalogStick rs, AnalogTrigger lt,
 			AnalogTrigger rt) {
-		this(null, events, adapter, ls, rs, lt, rt);
+		this(null, adapter, ls, rs, lt, rt);
 	}
 
 	/**

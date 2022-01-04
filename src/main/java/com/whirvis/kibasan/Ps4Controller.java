@@ -5,9 +5,7 @@ import java.awt.Color;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
-import com.whirvis.kibasan.event.InputEvent;
 import com.whirvis.kibasan.feature.AnalogTrigger;
 import com.whirvis.kibasan.feature.DeviceButton;
 import com.whirvis.kibasan.feature.FeaturePresent;
@@ -19,40 +17,6 @@ import com.whirvis.kibasan.feature.RumbleMotor;
  */
 @DeviceId("ps4")
 public class Ps4Controller extends PsxController {
-
-	/**
-	 * Signals that it has become ambiguous which PS4 controllers are which.
-	 * <p>
-	 * It is possible that a PlayStation 4 controller will report itself as two
-	 * devices to one machine. This situation usually occurs when a controller
-	 * that has been paired via Bluetooth is also connected via USB. There is no
-	 * way to determine which PS4 controllers connected via USB and Bluetooth
-	 * are the same device in the real world. As such, this event is used as a
-	 * way to inform the program that it may be receiving dual input from the
-	 * same device. How this situation is handled is up to the program.
-	 */
-	public static class AmbigousEvent extends InputEvent {
-
-		private boolean resolved;
-
-		/**
-		 * @param resolved
-		 *            {@code true} if the ambiguity has been resolved,
-		 *            {@code false} otherwise.
-		 */
-		public AmbigousEvent(boolean resolved) {
-			this.resolved = resolved;
-		}
-
-		/**
-		 * @return {@code true} if the ambiguity has been resolved,
-		 *         {@code false} otherwise.
-		 */
-		public boolean isResolved() {
-			return this.resolved;
-		}
-
-	}
 
 	/* @formatter: off */
 	@FeaturePresent
@@ -78,16 +42,13 @@ public class Ps4Controller extends PsxController {
 	/* @formatter: on */
 
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the PlayStation 4 controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Ps4Controller(EventManager events,
-			DeviceAdapter<Ps4Controller> adapter) {
-		super(events, adapter, LT, RT);
+	public Ps4Controller(DeviceAdapter<Ps4Controller> adapter) {
+		super(adapter, LT, RT);
 	}
 
 	/**

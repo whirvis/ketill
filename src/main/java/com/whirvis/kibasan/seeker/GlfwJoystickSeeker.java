@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.DeviceGuids;
 import com.whirvis.kibasan.InputDevice;
 import com.whirvis.kibasan.InputException;
@@ -24,8 +23,6 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	/**
 	 * @param type
 	 *            the joystick type.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @throws NullPointerException
@@ -34,8 +31,8 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	 * @see #seekGuid(String)
 	 */
 	public GlfwJoystickSeeker(Class<? extends InputDevice> type,
-			EventManager events, long ptr_glfwWindow) {
-		super(type, events, ptr_glfwWindow);
+			long ptr_glfwWindow) {
+		super(type, ptr_glfwWindow);
 
 		this.typeId = InputDevice.getId(type);
 		if (typeId == null) {

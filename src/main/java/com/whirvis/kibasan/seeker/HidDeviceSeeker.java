@@ -11,7 +11,6 @@ import org.hid4java.HidServicesListener;
 import org.hid4java.HidServicesSpecification;
 import org.hid4java.event.HidServicesEvent;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.InputDevice;
 import com.whirvis.kibasan.InputException;
 
@@ -43,15 +42,12 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	/**
 	 * @param type
 	 *            the input device type.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
 	 * @see #seekDevice(int, int)
 	 */
-	public HidDeviceSeeker(Class<? extends InputDevice> type,
-			EventManager events) {
-		super(type, events);
+	public HidDeviceSeeker(Class<? extends InputDevice> type) {
+		super(type);
 
 		this.descs = new HashSet<>();
 		this.devices = new HashSet<>();

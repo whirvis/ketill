@@ -8,11 +8,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.InputDevice;
 import com.whirvis.kibasan.InputException;
-import com.whirvis.kibasan.seeker.event.DeviceRegisterEvent;
-import com.whirvis.kibasan.seeker.event.DeviceUnregisterEvent;
 
 /**
  * A scanner for input devices.
@@ -31,22 +28,17 @@ public abstract class DeviceSeeker {
 
 	protected final Logger log;
 	public final Class<? extends InputDevice> type;
-	protected final EventManager events;
 	private final Set<InputDevice> devices;
 
 	/**
 	 * @param type
 	 *            the device type to seek out.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
 	 */
-	public DeviceSeeker(Class<? extends InputDevice> type,
-			EventManager events) {
+	public DeviceSeeker(Class<? extends InputDevice> type) {
 		this.log = LogManager.getLogger(this.getClass());
 		this.type = Objects.requireNonNull(type, "type");
-		this.events = EventManager.valueOf(events);
 		this.devices = new HashSet<>();
 	}
 
@@ -78,7 +70,6 @@ public abstract class DeviceSeeker {
 
 		if (!devices.contains(device)) {
 			devices.add(device);
-			events.send(new DeviceRegisterEvent(this, device));
 			log.debug("Registered " + device.id + " device");
 		}
 	}
@@ -94,7 +85,6 @@ public abstract class DeviceSeeker {
 
 			/* now the device can be unregistered */
 			devices.remove(device);
-			events.send(new DeviceUnregisterEvent(this, device));
 			log.debug("Unregistered " + device.id + " device");
 		}
 	}

@@ -1,6 +1,5 @@
 package com.whirvis.kibasan;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.AnalogStick;
 import com.whirvis.kibasan.feature.AnalogTrigger;
@@ -40,8 +39,6 @@ public abstract class PsxController extends Controller {
 	 * @param id
 	 *            the controller ID, should be {@code null} if the
 	 *            {@link DeviceId} annotation is present for this class.
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the PlayStation controller adapter.
 	 * @param lt
@@ -55,14 +52,12 @@ public abstract class PsxController extends Controller {
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
 	 */
-	public PsxController(String id, EventManager events,
+	public PsxController(String id,
 			DeviceAdapter<?> adapter, AnalogTrigger lt, AnalogTrigger rt) {
-		super(id, events, adapter, LS, RS, lt, rt);
+		super(id, adapter, LS, RS, lt, rt);
 	}
 
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the PlayStation controller adapter.
 	 * @param lt
@@ -73,9 +68,9 @@ public abstract class PsxController extends Controller {
 	 *             if no ID was specified for this device; if {@code adapter} is
 	 *             {@code null}.
 	 */
-	public PsxController(EventManager events, DeviceAdapter<?> adapter,
+	public PsxController(DeviceAdapter<?> adapter,
 			AnalogTrigger lt, AnalogTrigger rt) {
-		this(null, events, adapter, lt, rt);
+		this(null, adapter, lt, rt);
 	}
 
 }

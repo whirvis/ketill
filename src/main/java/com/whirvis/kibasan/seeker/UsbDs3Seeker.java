@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.usb4java.DeviceHandle;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.Ps3Controller;
 import com.whirvis.kibasan.adapter.dualshock.Ds3UsbAdapter;
 
@@ -16,12 +15,8 @@ public class UsbDs3Seeker extends UsbDeviceSeeker {
 
 	private final Map<DeviceHandle, Ps3Controller> controllers;
 
-	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
-	 */
-	public UsbDs3Seeker(EventManager events) {
-		super(Ps3Controller.class, events);
+	public UsbDs3Seeker() {
+		super(Ps3Controller.class);
 		this.controllers = new HashMap<>();
 		this.seekDevice(VENDOR_ID, PRODUCT_ID);
 	}
@@ -29,7 +24,7 @@ public class UsbDs3Seeker extends UsbDeviceSeeker {
 	@Override
 	protected void onAttach(DeviceHandle handle) {
 		Ps3Controller controller =
-				new Ps3Controller(events, new Ds3UsbAdapter(handle));
+				new Ps3Controller(new Ds3UsbAdapter(handle));
 		controllers.put(handle, controller);
 		this.register(controller);
 	}

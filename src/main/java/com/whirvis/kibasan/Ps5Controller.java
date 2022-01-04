@@ -1,6 +1,5 @@
 package com.whirvis.kibasan;
 
-import com.whirvex.event.EventManager;
 import com.whirvis.kibasan.adapter.DeviceAdapter;
 import com.whirvis.kibasan.feature.AnalogTrigger;
 import com.whirvis.kibasan.feature.DeviceButton;
@@ -28,15 +27,13 @@ public class Ps5Controller extends PsxController {
 	/* @formatter: on */
 	
 	/**
-	 * @param events
-	 *            the event manager, may be {@code null}.
 	 * @param adapter
 	 *            the PlayStation 5 controller adapter.
 	 * @throws NullPointerException
 	 *             if {@code adapter} is {@code null}.
 	 */
-	public Ps5Controller(EventManager events, DeviceAdapter<Ps5Controller> adapter) {
-		super(events, adapter, LT, RT);
+	public Ps5Controller(DeviceAdapter<Ps5Controller> adapter) {
+		super(adapter, LT, RT);
 	}
 	
 }
