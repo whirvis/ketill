@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+
+    maven {
+        url = uri('https://jitpack.io')
+    }
+}
+
+dependencies {
+    implementation project(':api')
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
+
+    implementation 'org.joml:joml:1.10.0'
+    implementation 'org.lwjgl:lwjgl:3.2.3'
+    implementation 'org.lwjgl:lwjgl:3.2.3'
+    implementation 'org.lwjgl:lwjgl-glfw:3.2.3'
+    implementation 'org.lwjgl:lwjgl-glfw:3.2.3'
+
+    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.github.strikerx3:jxinput:1.0.0'
+
+    implementation 'javax.usb:usb-api:1.0.2'
+    implementation 'org.usb4java:usb4java:1.3.0'
+    implementation 'org.usb4java:usb4java-javax:1.3.0'
+    implementation 'org.hid4java:hid4java:0.7.0'
+    implementation 'net.java.dev.jna:jna:5.9.0'
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
