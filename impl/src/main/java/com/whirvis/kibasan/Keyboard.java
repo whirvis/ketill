@@ -1,6 +1,7 @@
 package com.whirvis.kibasan;
 
-import com.whirvis.kibasan.feature.Button1bc;
+import com.whirvis.controller.Button1bc;
+import com.whirvis.controller.Controller;
 import com.whirvis.kibasan.feature.KeyboardKey;
 
 /**

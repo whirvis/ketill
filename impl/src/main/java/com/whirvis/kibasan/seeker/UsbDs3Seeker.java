@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.seeker;
 
-import com.whirvis.kibasan.Ps3Controller;
 import com.whirvis.kibasan.adapter.dualshock.Ds3UsbAdapter;
+import com.whirvis.kibasan.psx.Ps3Controller;
 import org.usb4java.DeviceHandle;
 
 import java.util.HashMap;

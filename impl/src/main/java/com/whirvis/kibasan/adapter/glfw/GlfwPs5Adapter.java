@@ -1,9 +1,9 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.Trigger1f;
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.Ps5Controller;
-import com.whirvis.kibasan.feature.Trigger1f;
+import com.whirvis.kibasan.psx.Ps5Controller;
 
 public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
 

@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.AnalogStick;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogStick;
 
 public class GlfwStickMapping extends AnalogMapping<AnalogStick> {
 

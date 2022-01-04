@@ -1,9 +1,10 @@
 package com.whirvis.kibasan;
 
-import com.whirvis.kibasan.feature.Button1bc;
+import com.whirvis.controller.Button1bc;
+import com.whirvis.controller.Controller;
+import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.feature.Cursor;
 import com.whirvis.kibasan.feature.Cursor2f;
-import com.whirvis.kibasan.feature.DeviceButton;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 

@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.adapter.xinput;
 
 import com.github.strikerx3.jxinput.XInputButtons;
+import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.adapter.ButtonMapping;
-import com.whirvis.kibasan.feature.DeviceButton;
 
 import java.lang.reflect.Field;
 import java.util.Objects;

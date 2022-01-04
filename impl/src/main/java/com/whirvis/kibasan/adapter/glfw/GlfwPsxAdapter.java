@@ -2,7 +2,7 @@ package com.whirvis.kibasan.adapter.glfw;
 
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.PsxController;
+import com.whirvis.kibasan.psx.PsxController;
 import org.joml.Vector3f;
 
 public abstract class GlfwPsxAdapter<I extends PsxController> extends GlfwJoystickAdapter<I> {

@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.adapter;
 
+import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeatureMapping;
-import com.whirvis.kibasan.feature.DeviceButton;
 
 /**
  * A {@link DeviceButton} mapping for use with a {@link DeviceAdapter}.

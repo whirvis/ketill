@@ -1,9 +1,9 @@
 package com.whirvis.kibasan.seeker;
 
-import com.whirvis.kibasan.Ps4Controller;
 import com.whirvis.kibasan.adapter.dualshock.Ds4BtAdapter;
 import com.whirvis.kibasan.adapter.dualshock.Ds4HidAdapter;
 import com.whirvis.kibasan.adapter.dualshock.Ds4UsbAdapter;
+import com.whirvis.kibasan.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 
 import java.util.HashMap;

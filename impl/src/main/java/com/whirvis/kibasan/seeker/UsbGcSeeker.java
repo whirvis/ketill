@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.seeker;
 
-import com.whirvis.kibasan.GcController;
 import com.whirvis.kibasan.adapter.gamecube.GcUsbAdapter;
 import com.whirvis.kibasan.adapter.gamecube.GcUsbDevice;
+import com.whirvis.kibasan.gc.GcController;
 import org.usb4java.DeviceHandle;
 
 import java.util.HashMap;

@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.seeker;
 
 import com.whirvis.kibasan.InputDevice;
-import com.whirvis.kibasan.XboxController;
 import com.whirvis.kibasan.adapter.glfw.GlfwXboxAdapter;
+import com.whirvis.kibasan.xbox.XboxController;
 
 public class GlfwXboxSeeker extends GlfwJoystickSeeker {
 

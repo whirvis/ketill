@@ -1,5 +1,7 @@
 package com.whirvis.kibasan.feature;
 
+import com.whirvis.controller.DeviceButton;
+
 public class KeyboardKey extends DeviceButton {
 
 	/**

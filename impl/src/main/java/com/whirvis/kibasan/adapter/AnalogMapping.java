@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.adapter;
 
+import com.whirvis.controller.DeviceAnalog;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeatureMapping;
-import com.whirvis.kibasan.feature.DeviceAnalog;
 
 /**
  * A {@link DeviceAnalog} mapping for use with a {@link DeviceAdapter}.

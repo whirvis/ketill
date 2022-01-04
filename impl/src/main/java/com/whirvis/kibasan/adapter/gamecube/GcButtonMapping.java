@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.gamecube;
 
+import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.adapter.ButtonMapping;
-import com.whirvis.kibasan.feature.DeviceButton;
 
 public class GcButtonMapping extends ButtonMapping {
 

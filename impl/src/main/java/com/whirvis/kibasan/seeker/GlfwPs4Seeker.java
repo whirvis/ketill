@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.seeker;
 
 import com.whirvis.kibasan.InputDevice;
-import com.whirvis.kibasan.Ps4Controller;
 import com.whirvis.kibasan.adapter.glfw.GlfwPs4Adapter;
+import com.whirvis.kibasan.psx.Ps4Controller;
 
 public class GlfwPs4Seeker extends GlfwJoystickSeeker {
 

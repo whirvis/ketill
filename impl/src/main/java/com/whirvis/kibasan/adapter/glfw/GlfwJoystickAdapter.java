@@ -1,10 +1,10 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.Button1b;
+import com.whirvis.controller.DeviceButton;
+import com.whirvis.controller.Trigger1f;
 import com.whirvis.kibasan.FeatureAdapter;
 import com.whirvis.kibasan.InputDevice;
-import com.whirvis.kibasan.feature.Button1b;
-import com.whirvis.kibasan.feature.DeviceButton;
-import com.whirvis.kibasan.feature.Trigger1f;
 import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;

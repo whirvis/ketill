@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
+import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogTrigger;
 
 public class Ds4TriggerMapping extends AnalogMapping<AnalogTrigger> {
 

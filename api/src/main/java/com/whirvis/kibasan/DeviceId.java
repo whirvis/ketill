@@ -1,10 +1,6 @@
 package com.whirvis.kibasan;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * When present, gives a static ID to an {@link InputDevice} class. This allows

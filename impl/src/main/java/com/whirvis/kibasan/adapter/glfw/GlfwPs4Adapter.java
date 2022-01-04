@@ -1,9 +1,9 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.Trigger1f;
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.Ps4Controller;
-import com.whirvis.kibasan.feature.Trigger1f;
+import com.whirvis.kibasan.psx.Ps4Controller;
 
 public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
 

@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
+import com.whirvis.controller.AnalogStick;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogStick;
 
 public class Ds4StickMapping
 		extends AnalogMapping<AnalogStick> {

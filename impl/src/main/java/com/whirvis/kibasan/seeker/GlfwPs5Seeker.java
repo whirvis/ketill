@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.seeker;
 
 import com.whirvis.kibasan.InputDevice;
-import com.whirvis.kibasan.Ps5Controller;
 import com.whirvis.kibasan.adapter.glfw.GlfwPs5Adapter;
+import com.whirvis.kibasan.psx.Ps5Controller;
 
 public class GlfwPs5Seeker extends GlfwJoystickSeeker {
 

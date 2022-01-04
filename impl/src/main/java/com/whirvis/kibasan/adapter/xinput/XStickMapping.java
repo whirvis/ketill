@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.adapter.xinput;
 
 import com.github.strikerx3.jxinput.enums.XInputAxis;
+import com.whirvis.controller.AnalogStick;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogStick;
 
 public class XStickMapping extends AnalogMapping<AnalogStick> {
 

@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.gamecube;
 
+import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogTrigger;
 
 public class GcTriggerMapping extends AnalogMapping<AnalogTrigger> {
 

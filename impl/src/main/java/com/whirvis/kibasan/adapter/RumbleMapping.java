@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.adapter;
 
+import com.whirvis.controller.RumbleMotor;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeatureMapping;
-import com.whirvis.kibasan.feature.RumbleMotor;
 
 /**
  * A {@link RumbleMotor} mapping for use with a {@link DeviceAdapter}.

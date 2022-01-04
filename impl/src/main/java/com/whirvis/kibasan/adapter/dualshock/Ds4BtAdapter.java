@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
 import com.whirvis.kibasan.AdapterMapping;
-import com.whirvis.kibasan.Ps4Controller;
+import com.whirvis.kibasan.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 
 public class Ds4BtAdapter extends Ds4HidAdapter {

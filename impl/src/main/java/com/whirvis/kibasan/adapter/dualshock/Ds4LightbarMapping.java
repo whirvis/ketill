@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.Lightbar;
+import com.whirvis.kibasan.psx.Lightbar;
 
 public class Ds4LightbarMapping extends AnalogMapping<Lightbar> {
 	

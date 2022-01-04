@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
+import com.whirvis.controller.RumbleMotor;
 import com.whirvis.kibasan.adapter.RumbleMapping;
-import com.whirvis.kibasan.feature.RumbleMotor;
 
 public class Ds3RumbleMapping extends RumbleMapping {
 

@@ -1,8 +1,8 @@
 package com.whirvis.kibasan.seeker;
 
 import com.whirvis.kibasan.InputDevice;
-import com.whirvis.kibasan.SwitchProController;
 import com.whirvis.kibasan.adapter.glfw.GlfwSwitchProAdapter;
+import com.whirvis.kibasan.nx.SwitchProController;
 
 public class GlfwSwitchProSeeker extends GlfwJoystickSeeker {
 

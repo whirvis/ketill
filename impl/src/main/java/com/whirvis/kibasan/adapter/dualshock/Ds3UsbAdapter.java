@@ -1,12 +1,12 @@
 package com.whirvis.kibasan.adapter.dualshock;
 
+import com.whirvis.controller.Button1b;
+import com.whirvis.controller.Trigger1f;
+import com.whirvis.controller.Vibration1f;
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.Ps3Controller;
-import com.whirvis.kibasan.feature.Button1b;
-import com.whirvis.kibasan.feature.Trigger1f;
-import com.whirvis.kibasan.feature.Vibration1f;
+import com.whirvis.kibasan.psx.Ps3Controller;
 import org.usb4java.*;
 
 import java.nio.ByteBuffer;

@@ -1,5 +1,7 @@
 package com.whirvis.kibasan.feature;
 
+import com.whirvis.controller.DeviceAnalog;
+
 public class Cursor extends DeviceAnalog<Cursor2f> {
 
 	/**

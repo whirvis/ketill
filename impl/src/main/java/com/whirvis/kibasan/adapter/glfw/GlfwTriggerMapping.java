@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.kibasan.adapter.AnalogMapping;
-import com.whirvis.kibasan.feature.AnalogTrigger;
 
 public class GlfwTriggerMapping extends AnalogMapping<AnalogTrigger> {
 

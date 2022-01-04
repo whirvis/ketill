@@ -2,7 +2,7 @@ package com.whirvis.kibasan.adapter.glfw;
 
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.SwitchProController;
+import com.whirvis.kibasan.nx.SwitchProController;
 import org.joml.Vector3f;
 
 public class GlfwSwitchProAdapter extends GlfwJoystickAdapter<SwitchProController> {

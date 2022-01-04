@@ -1,9 +1,9 @@
 package com.whirvis.kibasan.adapter.glfw;
 
+import com.whirvis.controller.Button1b;
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.FeatureAdapter;
 import com.whirvis.kibasan.Keyboard;
-import com.whirvis.kibasan.feature.Button1b;
 
 import static org.lwjgl.glfw.GLFW.*;
 

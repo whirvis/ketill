@@ -1,12 +1,12 @@
 package com.whirvis.kibasan.adapter.gamecube;
 
+import com.whirvis.controller.Button1b;
+import com.whirvis.controller.Trigger1f;
+import com.whirvis.controller.Vibration1f;
 import com.whirvis.kibasan.AdapterMapping;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeatureAdapter;
-import com.whirvis.kibasan.GcController;
-import com.whirvis.kibasan.feature.Button1b;
-import com.whirvis.kibasan.feature.Trigger1f;
-import com.whirvis.kibasan.feature.Vibration1f;
+import com.whirvis.kibasan.gc.GcController;
 import org.joml.Vector3f;
 
 import java.util.Objects;
