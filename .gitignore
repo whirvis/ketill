@@ -20,3 +20,6 @@ doc
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 .apt_generated
+
+# IntelliJ IDEA
+.idea/
