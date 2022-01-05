@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.adapter.xinput;
+package com.whirvis.kibasan.xinput;
 
 import com.github.strikerx3.jxinput.XInputAxes;
 import com.github.strikerx3.jxinput.XInputButtons;

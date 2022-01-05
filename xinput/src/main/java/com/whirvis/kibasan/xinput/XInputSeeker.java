@@ -1,11 +1,10 @@
-package com.whirvis.kibasan.seeker;
+package com.whirvis.kibasan.xinput;
 
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
 import com.whirvis.kibasan.DeviceSeeker;
-import com.whirvis.kibasan.adapter.xinput.XboxAdapter;
 import com.whirvis.kibasan.xbox.XboxController;
 
 public class XInputSeeker extends DeviceSeeker {

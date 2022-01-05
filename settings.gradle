@@ -7,3 +7,4 @@ include 'devices:psx', 'devices:xbox'
 include 'devices:switch', 'devices:gamecube'
 
 include 'glfw'
+include 'xinput'

@@ -1,7 +1,7 @@
-package com.whirvis.kibasan.adapter.xinput;
+package com.whirvis.kibasan.xinput;
 
+import com.whirvis.controller.RumbleMapping;
 import com.whirvis.controller.RumbleMotor;
-import com.whirvis.kibasan.adapter.RumbleMapping;
 
 public class XRumbleMapping extends RumbleMapping {
 
