@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation project(':api')
+
+    implementation project(':devices:pc')
+    implementation project(':devices:controller')
+    implementation project(':devices:xbox')
+    implementation project(':devices:psx')
+    implementation project(':devices:switch')
+
+    implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
+    implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
+
+    implementation 'org.lwjgl:lwjgl-glfw:3.3.0'
+    implementation 'com.google.code.gson:gson:2.8.8'
+
+    implementation 'org.joml:joml:1.10.0'
+}
+
+java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.targetCompatibility = JavaVersion.VERSION_1_8
