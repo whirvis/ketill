@@ -1,5 +1,8 @@
 package com.whirvis.kibasan;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 /**
  * A feature for an {@link InputDevice}.
  * <p>
@@ -12,16 +15,22 @@ package com.whirvis.kibasan;
  *            the container type.
  * @see InputDevice#addFeature(DeviceFeature)
  */
-public interface DeviceFeature<T> {
+public abstract class DeviceFeature<T> {
+
+	public final String id;
+	public final Supplier<T> initial;
 
 	/**
-	 * @return the feature ID.
+	 * @param id
+	 * 			the feature ID.
+	 * @param initial
+	 * 			a supplier for a container of this feature's initial state.
+	 * @throws NullPointerException
+	 * 			if {@code id} or {@code initial} are {@code null}.
 	 */
-	public String id();
-
-	/**
-	 * @return a container for the initial state of this feature.
-	 */
-	public T initial();
+	public DeviceFeature(String id, Supplier<T> initial) {
+		this.id = Objects.requireNonNull(id, "id");
+		this.initial = Objects.requireNonNull(initial, "initial");
+	}
 
 }

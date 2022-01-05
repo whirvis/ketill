@@ -139,7 +139,7 @@ public abstract class InputDevice {
 		if (this.hasFeature(feature)) {
 			throw new InputException("feature already registered");
 		}
-		features.put(feature, feature.initial());
+		features.put(feature, feature.initial.get());
 	}
 
 	private void loadFeatures() {
@@ -197,7 +197,7 @@ public abstract class InputDevice {
 		T value = (T) features.get(feature);
 		if (value == null) {
 			throw new IllegalArgumentException(
-					"no such feature \"" + feature.id() + "\"");
+					"no such feature \"" + feature.id + "\"");
 		}
 		return value;
 	}

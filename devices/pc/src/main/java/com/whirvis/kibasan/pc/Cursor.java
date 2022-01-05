@@ -4,9 +4,7 @@ import com.whirvis.kibasan.DeviceFeature;
 
 import java.util.Objects;
 
-public class Cursor implements DeviceFeature<Cursor2f> {
-
-	private final String id;
+public class Cursor extends DeviceFeature<Cursor2f> {
 
 	/**
 	 * @param id
@@ -15,17 +13,7 @@ public class Cursor implements DeviceFeature<Cursor2f> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public Cursor(String id) {
-		this.id = Objects.requireNonNull(id, "id");
-	}
-
-	@Override
-	public String id() {
-		return this.id;
-	}
-
-	@Override
-	public Cursor2f initial() {
-		return new Cursor2f();
+		super(id, Cursor2f::new);
 	}
 
 }

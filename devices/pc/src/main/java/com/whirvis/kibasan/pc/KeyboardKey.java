@@ -4,9 +4,7 @@ import com.whirvis.kibasan.DeviceFeature;
 
 import java.util.Objects;
 
-public class KeyboardKey implements DeviceFeature<Key1bc> {
-
-	private final String id;
+public class KeyboardKey extends DeviceFeature<Key1bc> {
 
 	/**
 	 * @param id
@@ -15,17 +13,7 @@ public class KeyboardKey implements DeviceFeature<Key1bc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public KeyboardKey(String id) {
-		this.id = Objects.requireNonNull(id, "id");
-	}
-
-	@Override
-	public String id() {
-		return this.id;
-	}
-
-	@Override
-	public Key1bc initial() {
-		return new Key1b();
+		super(id, Key1b::new);
 	}
 
 }

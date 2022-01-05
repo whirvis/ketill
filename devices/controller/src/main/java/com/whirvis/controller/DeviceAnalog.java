@@ -3,6 +3,7 @@ package com.whirvis.controller;
 import com.whirvis.kibasan.DeviceFeature;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Represents an analog input on a device.
@@ -10,7 +11,7 @@ import java.util.Objects;
  * Analog input objects come in multiple forms. Examples include, but are not
  * limited to: analog sticks, triggers, or gyroscopes. The internal value of
  * these analog inputs is usually stored via an instance of one of their
- * containers (which can be created via {@link #initial()}).
+ * containers (which can be created via {@link #initial}).
  * <p>
  * While this is also not a requirement, instances of {@code DeviceAnalog} are
  * usually only the representation.<br>
@@ -27,8 +28,8 @@ import java.util.Objects;
  *
  *	public GameController() {
  *		this.analogs = new HashMap&lt;&gt;();
- *		analogs.put(LS, LS.zero());
- *		analogs.put(RS, RS.zero());
+ *		analogs.put(LS, LS.initial.get());
+ *		analogs.put(RS, RS.initial.get());
  *	}
  *
  *	&#64;SuppressWarnings("unchecked")
@@ -54,26 +55,18 @@ import java.util.Objects;
  * @param <V>
  *            the value type.
  */
-public abstract class DeviceAnalog<V> implements DeviceFeature<V> {
-
-	private final String id;
+public abstract class DeviceAnalog<V> extends DeviceFeature<V> {
 
 	/**
 	 * @param id
 	 *            the analog input ID.
+	 * @param initial
+	 * 			a supplier for a container of this feature's initial state.
 	 * @throws NullPointerException
 	 *             if {@code type} or {@code id} are {@code null}.
 	 */
-	public DeviceAnalog(String id) {
-		this.id = Objects.requireNonNull(id, "id");
+	public DeviceAnalog(String id, Supplier<V> initial) {
+		super(id, initial);
 	}
-
-	@Override
-	public final String id() {
-		return this.id;
-	}
-
-	@Override
-	public abstract V initial();
 
 }

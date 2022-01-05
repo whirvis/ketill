@@ -9,12 +9,7 @@ public class AnalogTrigger extends DeviceAnalog<Trigger1fc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public AnalogTrigger(String id) {
-		super(id);
-	}
-
-	@Override
-	public Trigger1fc initial() {
-		return new Trigger1f();
+		super(id, Trigger1f::new);
 	}
 
 }

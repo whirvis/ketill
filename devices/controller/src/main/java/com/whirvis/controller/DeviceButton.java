@@ -56,9 +56,8 @@ import java.util.Objects;
  * }
  * </pre>
  */
-public class DeviceButton implements DeviceFeature<Button1bc> {
+public class DeviceButton extends DeviceFeature<Button1bc> {
 
-	private final String id;
 	public final Direction direction;
 
 	/**
@@ -72,7 +71,7 @@ public class DeviceButton implements DeviceFeature<Button1bc> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public DeviceButton(String id, Direction direction) {
-		this.id = Objects.requireNonNull(id, "id");
+		super(id, Button1b::new);
 		this.direction = direction;
 	}
 
@@ -84,16 +83,6 @@ public class DeviceButton implements DeviceFeature<Button1bc> {
 	 */
 	public DeviceButton(String id) {
 		this(id, null);
-	}
-
-	@Override
-	public final String id() {
-		return this.id;
-	}
-
-	@Override
-	public Button1bc initial() {
-		return new Button1b();
 	}
 
 }

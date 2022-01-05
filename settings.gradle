@@ -1,6 +1,6 @@
 rootProject.name = 'kibasan'
 
-include 'api', 'impl'
+include 'api'
 
 include 'devices:pc', 'devices:controller'
 include 'devices:psx', 'devices:xbox'

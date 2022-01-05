@@ -185,7 +185,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		DeviceFeature<?> feature = mapping.feature;
 		if (this.hasMapping(feature)) {
 			throw new InputException(
-					"feature \"" + feature.id() + "\" already mapped");
+					"feature \"" + feature.id + "\" already mapped");
 		}
 
 		this.requireAdapter(mapping.getClass());
@@ -313,7 +313,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		FeatureMapping<?> mapping = mappings.get(feature);
 		if (mapping == null) {
 			if (!absentMappings.contains(feature)) {
-				log.warn("no mapping for feature \"" + feature.id() + "\"");
+				log.warn("no mapping for feature \"" + feature.id + "\"");
 				absentMappings.add(feature);
 			}
 			return;
@@ -322,7 +322,7 @@ public abstract class DeviceAdapter<I extends InputDevice> {
 		Class<?> adapterClazz = adapterHierarchy.get(mapping.getClass());
 		if (adapterClazz == null) {
 			throw new InputException(
-					"no adapter for feature \"" + feature.id() + "\"");
+					"no adapter for feature \"" + feature.id + "\"");
 		}
 
 		Method adapter = adapters.get(adapterClazz);

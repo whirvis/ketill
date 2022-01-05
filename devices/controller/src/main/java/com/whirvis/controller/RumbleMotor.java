@@ -4,9 +4,7 @@ import com.whirvis.kibasan.DeviceFeature;
 
 import java.util.Objects;
 
-public class RumbleMotor implements DeviceFeature<Vibration1f> {
-
-	private final String id;
+public class RumbleMotor extends DeviceFeature<Vibration1f> {
 
 	/**
 	 * @param id
@@ -15,17 +13,7 @@ public class RumbleMotor implements DeviceFeature<Vibration1f> {
 	 *             if {@code id} is {@code null}.
 	 */
 	public RumbleMotor(String id) {
-		this.id = Objects.requireNonNull(id, "id");
-	}
-
-	@Override
-	public String id() {
-		return this.id;
-	}
-
-	@Override
-	public Vibration1f initial() {
-		return new Vibration1f();
+		super(id, Vibration1f::new);
 	}
 
 }
