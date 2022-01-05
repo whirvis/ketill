@@ -8,3 +8,7 @@ include 'devices:switch', 'devices:gamecube'
 
 include 'glfw'
 include 'xinput'
+
+include 'hid-usb:api'
+include 'hid-usb:dualshock'
+include 'hid-usb:gamecube'
