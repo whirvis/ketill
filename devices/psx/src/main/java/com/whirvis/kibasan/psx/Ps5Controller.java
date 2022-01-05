@@ -3,13 +3,11 @@ package com.whirvis.kibasan.psx;
 import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.FeaturePresent;
 
 /**
  * A Sony PlayStation 5 controller.
  */
-@DeviceId("ps5")
 public class Ps5Controller extends PsxController {
 
 	/* @formatter: off */
@@ -34,7 +32,7 @@ public class Ps5Controller extends PsxController {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Ps5Controller(DeviceAdapter<Ps5Controller> adapter) {
-		super(adapter, LT, RT);
+		super("ps5", adapter, LT, RT);
 	}
 	
 }

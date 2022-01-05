@@ -7,7 +7,7 @@ import com.whirvis.kibasan.nx.SwitchProController;
 public class GlfwSwitchProSeeker extends GlfwJoystickSeeker {
 
 	public GlfwSwitchProSeeker(long ptr_glfwWindow) {
-		super(SwitchProController.class, ptr_glfwWindow);
+		super(SwitchProController.class, "switch_pro", ptr_glfwWindow);
 	}
 
 	@Override

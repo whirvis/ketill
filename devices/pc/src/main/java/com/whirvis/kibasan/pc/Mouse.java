@@ -1,7 +1,6 @@
 package com.whirvis.kibasan.pc;
 
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.InputDevice;
 import org.joml.Vector2f;
@@ -16,7 +15,6 @@ import org.joml.Vector2fc;
  * 
  * @see Keyboard
  */
-@DeviceId("mouse")
 public class Mouse extends InputDevice {
 
 	/* @formatter: off */
@@ -48,7 +46,7 @@ public class Mouse extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Mouse(DeviceAdapter<Mouse> adapter) {
-		super(adapter);
+		super("mouse", adapter);
 	}
 
 	/**

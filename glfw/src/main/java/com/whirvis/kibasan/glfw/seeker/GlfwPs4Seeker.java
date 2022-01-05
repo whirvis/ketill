@@ -9,7 +9,7 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker {
 	private boolean wasAmbigous;
 
 	public GlfwPs4Seeker(long ptr_glfwWindow) {
-		super(Ps4Controller.class, ptr_glfwWindow);
+		super(Ps4Controller.class, "ps4", ptr_glfwWindow);
 	}
 
 	@Override

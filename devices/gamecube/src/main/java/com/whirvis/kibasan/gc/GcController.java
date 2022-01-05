@@ -2,14 +2,12 @@ package com.whirvis.kibasan.gc;
 
 import com.whirvis.controller.*;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 
 /**
  * A Nintendo GameCube controller.
  */
-@DeviceId("gc")
 public class GcController extends Controller {
 
 	/* @formatter: off */
@@ -50,7 +48,7 @@ public class GcController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public GcController(DeviceAdapter<GcController> adapter) {
-		super(adapter, LS, RS, LT, RT);
+		super("gc", adapter, LS, RS, LT, RT);
 	}
 
 }

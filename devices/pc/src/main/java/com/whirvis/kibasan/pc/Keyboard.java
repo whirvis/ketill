@@ -1,7 +1,6 @@
 package com.whirvis.kibasan.pc;
 
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.InputDevice;
 
@@ -14,7 +13,6 @@ import com.whirvis.kibasan.InputDevice;
  * 
  * @see Mouse
  */
-@DeviceId("keyboard")
 public class Keyboard extends InputDevice {
 	
 	/* @formatter: off */
@@ -152,7 +150,7 @@ public class Keyboard extends InputDevice {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Keyboard(DeviceAdapter<Keyboard> adapter) {
-		super(adapter);
+		super("keyboard", adapter);
 	}
 
 	/**

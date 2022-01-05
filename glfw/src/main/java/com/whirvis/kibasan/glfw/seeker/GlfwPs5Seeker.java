@@ -7,7 +7,7 @@ import com.whirvis.kibasan.psx.Ps5Controller;
 public class GlfwPs5Seeker extends GlfwJoystickSeeker {
 
 	public GlfwPs5Seeker(long ptr_glfwWindow) {
-		super(Ps5Controller.class, ptr_glfwWindow);
+		super(Ps5Controller.class, "ps5", ptr_glfwWindow);
 	}
 
 	@Override

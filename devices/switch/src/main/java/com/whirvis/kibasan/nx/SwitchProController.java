@@ -4,14 +4,12 @@ import com.whirvis.controller.AnalogStick;
 import com.whirvis.controller.Controller;
 import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 
 /**
  * A Nintendo Switch Pro controller.
  */
-@DeviceId("switch_pro")
 public class SwitchProController extends Controller {
 
 	/* @formatter: off */
@@ -51,7 +49,7 @@ public class SwitchProController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public SwitchProController(DeviceAdapter<SwitchProController> adapter) {
-		super(adapter, LS, RS, null, null);
+		super("switch_pro", adapter, LS, RS, null, null);
 	}
 
 	/**

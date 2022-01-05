@@ -4,7 +4,6 @@ import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.controller.DeviceButton;
 import com.whirvis.controller.RumbleMotor;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.FeaturePresent;
 import org.joml.Vector4f;
 import org.joml.Vector4fc;
@@ -14,7 +13,6 @@ import java.awt.*;
 /**
  * A Sony PlayStation 4 controller.
  */
-@DeviceId("ps4")
 public class Ps4Controller extends PsxController {
 
 	/* @formatter: off */
@@ -47,7 +45,7 @@ public class Ps4Controller extends PsxController {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public Ps4Controller(DeviceAdapter<Ps4Controller> adapter) {
-		super(adapter, LT, RT);
+		super("ps4", adapter, LT, RT);
 	}
 
 	/**

@@ -5,7 +5,6 @@ import com.whirvis.controller.AnalogTrigger;
 import com.whirvis.controller.Controller;
 import com.whirvis.controller.DeviceButton;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 
@@ -40,40 +39,19 @@ public abstract class PsxController extends Controller {
 
 	/**
 	 * @param id
-	 *            the controller ID, should be {@code null} if the
-	 *            {@link DeviceId} annotation is present for this class.
+	 *            the controller ID.
 	 * @param adapter
 	 *            the PlayStation controller adapter.
 	 * @param lt
 	 *            the left analog trigger, may be {@code null}.
 	 * @param rt
 	 *            the right analog trigger, may be {@code null}.
-	 * @throws IllegalArgumentException
-	 *             if the {@link DeviceId} annotation is present and {@code id}
-	 *             is not {@code null}.
 	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
+	 *             if {@code id} or {@code adapter} are {@code null}.
 	 */
 	public PsxController(String id,
 						 DeviceAdapter<?> adapter, AnalogTrigger lt, AnalogTrigger rt) {
 		super(id, adapter, LS, RS, lt, rt);
-	}
-
-	/**
-	 * @param adapter
-	 *            the PlayStation controller adapter.
-	 * @param lt
-	 *            the left analog trigger, may be {@code null}.
-	 * @param rt
-	 *            the right analog trigger, may be {@code null}.
-	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
-	 */
-	public PsxController(DeviceAdapter<?> adapter,
-			AnalogTrigger lt, AnalogTrigger rt) {
-		this(null, adapter, lt, rt);
 	}
 
 }

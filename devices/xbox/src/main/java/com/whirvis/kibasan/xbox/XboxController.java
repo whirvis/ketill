@@ -2,14 +2,12 @@ package com.whirvis.kibasan.xbox;
 
 import com.whirvis.controller.*;
 import com.whirvis.kibasan.DeviceAdapter;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 
 /**
  * A Microsoft XBOX controller.
  */
-@DeviceId("xbox")
 public class XboxController extends Controller {
 
 	/* @formatter: off */
@@ -53,7 +51,7 @@ public class XboxController extends Controller {
 	 *             if {@code adapter} is {@code null}.
 	 */
 	public XboxController(DeviceAdapter<XboxController> adapter) {
-		super(adapter, LS, RS, LT, RT);
+		super("xbox", adapter, LS, RS, LT, RT);
 	}
 
 }

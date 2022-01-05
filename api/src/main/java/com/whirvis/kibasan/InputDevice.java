@@ -17,30 +17,13 @@ import java.util.Map.Entry;
  * <b>Note:</b> For an input device to work properly, it must be polled via
  * {@link #poll()} before querying any input information. It is recommended to
  * poll the device once on every application update.
- * 
- * @see DeviceId
+ *
  * @see DeviceSeeker
  * @see DeviceAdapter
  * @see DeviceFeature
  * @see FeaturePresent
  */
 public abstract class InputDevice {
-
-	/**
-	 * @param clazz
-	 *            the input device class.
-	 * @return the ID, {@code null} if {@code clazz} has no {@link DeviceId}
-	 *         annotation present.
-	 */
-	public static String getId(Class<? extends InputDevice> clazz) {
-		if (clazz != null) {
-			DeviceId id = clazz.getAnnotation(DeviceId.class);
-			if (id != null) {
-				return id.value();
-			}
-		}
-		return null;
-	}
 
 	public final String id;
 	protected final DeviceAdapter<?> adapter;
@@ -51,58 +34,18 @@ public abstract class InputDevice {
 	 * registered by this constructor.
 	 * 
 	 * @param id
-	 *            the device ID, should be {@code null} if the {@link DeviceId}
-	 *            annotation is present for this class.
+	 *            the device ID.
 	 * @param adapter
 	 *            the device adapter.
-	 * @throws IllegalArgumentException
-	 *             if the {@link DeviceId} annotation is present and {@code id}
-	 *             is not {@code null}.
 	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
+	 *             if {@code id} or {@code adapter} are {@code null}.
 	 * @see #addFeature(DeviceFeature)
 	 */
 	public InputDevice(String id, DeviceAdapter<?> adapter) {
-		/*
-		 * It would not make logical sense for the device to have both a static
-		 * ID and an instance ID specified at construction. Even if they match,
-		 * it is likely that this was done by mistake. As such, throw an error
-		 * to force the user to pick one or the other.
-		 */
-		String statikId = getId(this.getClass());
-		if (statikId != null && id != null) {
-			throw new IllegalArgumentException(
-					"cannot have a static ID and instance ID");
-		} else if (statikId != null) {
-			this.id = statikId;
-		} else if (id != null) {
-			this.id = id;
-		} else {
-			throw new NullPointerException("missing ID");
-		}
-
+		this.id = Objects.requireNonNull(id);
 		this.adapter = Objects.requireNonNull(adapter);
 		this.features = new HashMap<>();
 		this.loadFeatures();
-	}
-
-	/**
-	 * When using this constructor, the device ID is determined by the
-	 * {@link DeviceId} annotation, which must be present for this class.
-	 * <p>
-	 * All device feature fields annotated with {@link FeaturePresent} will be
-	 * registered by this constructor.
-	 * 
-	 * @param adapter
-	 *            the device adapter.
-	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
-	 * @see #addFeature(DeviceFeature)
-	 */
-	public InputDevice(DeviceAdapter<?> adapter) {
-		this(null, adapter);
 	}
 
 	public boolean hasFeature(DeviceFeature<?> feature) {

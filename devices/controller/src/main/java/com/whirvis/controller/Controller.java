@@ -2,7 +2,6 @@ package com.whirvis.controller;
 
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.DeviceFeature;
-import com.whirvis.kibasan.DeviceId;
 import com.whirvis.kibasan.InputDevice;
 import org.joml.Vector3fc;
 
@@ -34,10 +33,9 @@ public abstract class Controller extends InputDevice {
 
 	/**
 	 * @param id
-	 *            the controller ID, should be {@code null} if the
-	 *            {@link DeviceId} annotation is present for this class.
+	 *            the controller ID.
 	 * @param adapter
-	 *            the device adapter.
+	 *            the controller adapter.
 	 * @param ls
 	 *            the left analog stick, may be {@code null}.
 	 * @param rs
@@ -46,12 +44,8 @@ public abstract class Controller extends InputDevice {
 	 *            the left analog trigger, may be {@code null}.
 	 * @param rt
 	 *            the right analog trigger, may be {@code null}.
-	 * @throws IllegalArgumentException
-	 *             if the {@link DeviceId} annotation is present and {@code id}
-	 *             is not {@code null}.
 	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
+	 *             if {@code id} or {@code adapter} are {@code null}.
 	 */
 	public Controller(String id, DeviceAdapter<?> adapter,
 			AnalogStick ls, AnalogStick rs, AnalogTrigger lt,
@@ -62,30 +56,6 @@ public abstract class Controller extends InputDevice {
 		this.rs = rs;
 		this.lt = lt;
 		this.rt = rt;
-	}
-
-	/**
-	 * When using this constructor, the device ID is determined by the
-	 * {@link DeviceId} annotation, which must be present for this class.
-	 *
-	 * @param adapter
-	 *            the device adapter.
-	 * @param ls
-	 *            the left analog stick, may be {@code null}.
-	 * @param rs
-	 *            the right analog stick, may be {@code null}.
-	 * @param lt
-	 *            the left analog trigger, may be {@code null}.
-	 * @param rt
-	 *            the right analog trigger, may be {@code null}.
-	 * @throws NullPointerException
-	 *             if no ID was specified for this device; if {@code adapter} is
-	 *             {@code null}.
-	 */
-	public Controller(DeviceAdapter<?> adapter,
-			AnalogStick ls, AnalogStick rs, AnalogTrigger lt,
-			AnalogTrigger rt) {
-		this(null, adapter, ls, rs, lt, rt);
 	}
 
 	/**

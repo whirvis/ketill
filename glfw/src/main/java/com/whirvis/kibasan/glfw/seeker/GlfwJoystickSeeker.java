@@ -19,22 +19,18 @@ public abstract class GlfwJoystickSeeker extends GlfwDeviceSeeker {
 	/**
 	 * @param type
 	 *            the joystick type.
+	 * @param typeId
+	 * 			  the joystick type ID, used to determine GUIDs.
 	 * @param ptr_glfwWindow
 	 *            the GLFW window pointer.
 	 * @throws NullPointerException
-	 *             if {@code type} is {@code null}; if {@code @DeviceId} is not
-	 *             present for {@code type}.
+	 *             if {@code type} or {@code typeId} are {@code null}.
 	 * @see #seekGuid(String)
 	 */
 	public GlfwJoystickSeeker(Class<? extends InputDevice> type,
-			long ptr_glfwWindow) {
+			String typeId, long ptr_glfwWindow) {
 		super(type, ptr_glfwWindow);
-
-		this.typeId = InputDevice.getId(type);
-		if (typeId == null) {
-			throw new NullPointerException("type missing @DeviceId");
-		}
-
+		this.typeId = Objects.requireNonNull(typeId);
 		this.joysticks = new InputDevice[GLFW_JOYSTICK_LAST + 1];
 		this.guids = new HashSet<>();
 	}

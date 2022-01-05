@@ -7,7 +7,7 @@ import com.whirvis.kibasan.xbox.XboxController;
 public class GlfwXboxSeeker extends GlfwJoystickSeeker {
 
 	public GlfwXboxSeeker(long ptr_glfwWindow) {
-		super(XboxController.class, ptr_glfwWindow);
+		super(XboxController.class, "xbox", ptr_glfwWindow);
 	}
 
 	@Override
