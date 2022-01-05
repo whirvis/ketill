@@ -1,8 +1,9 @@
-package com.whirvis.kibasan;
+package com.whirvis.kibasan.pc;
 
-import com.whirvis.controller.Button1bc;
-import com.whirvis.controller.Controller;
-import com.whirvis.kibasan.feature.KeyboardKey;
+import com.whirvis.kibasan.DeviceAdapter;
+import com.whirvis.kibasan.DeviceId;
+import com.whirvis.kibasan.FeaturePresent;
+import com.whirvis.kibasan.InputDevice;
 
 /**
  * A keyboard which can send and receive input data.
@@ -12,7 +13,6 @@ import com.whirvis.kibasan.feature.KeyboardKey;
  * poll the keyboard once on every application update.
  * 
  * @see Mouse
- * @see Controller
  */
 @DeviceId("keyboard")
 public class Keyboard extends InputDevice {
@@ -161,7 +161,7 @@ public class Keyboard extends InputDevice {
 	 * @return {@code true} if {@code key} is pressed, {@code false} otherwise.
 	 */
 	public boolean isPressed(KeyboardKey key) {
-		Button1bc state = this.getState(key);
+		Key1bc state = this.getState(key);
 		return state.pressed();
 	}
 	

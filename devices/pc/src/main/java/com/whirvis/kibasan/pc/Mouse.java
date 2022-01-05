@@ -1,10 +1,9 @@
-package com.whirvis.kibasan;
+package com.whirvis.kibasan.pc;
 
-import com.whirvis.controller.Button1bc;
-import com.whirvis.controller.Controller;
-import com.whirvis.controller.DeviceButton;
-import com.whirvis.kibasan.feature.Cursor;
-import com.whirvis.kibasan.feature.Cursor2f;
+import com.whirvis.kibasan.DeviceAdapter;
+import com.whirvis.kibasan.DeviceId;
+import com.whirvis.kibasan.FeaturePresent;
+import com.whirvis.kibasan.InputDevice;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -16,24 +15,23 @@ import org.joml.Vector2fc;
  * poll the mouse once on every application update.
  * 
  * @see Keyboard
- * @see Controller
  */
 @DeviceId("mouse")
 public class Mouse extends InputDevice {
 
 	/* @formatter: off */
 	@FeaturePresent
-	public static final DeviceButton
-			BUTTON_1 = new DeviceButton("mouse_1"),
-			BUTTON_2 = new DeviceButton("mouse_2"),
-			BUTTON_3 = new DeviceButton("mouse_3"),
-			BUTTON_4 = new DeviceButton("mouse_4"),
-			BUTTON_5 = new DeviceButton("mouse_5"),
-			BUTTON_6 = new DeviceButton("mouse_6"),
-			BUTTON_7 = new DeviceButton("mouse_7"),
-			BUTTON_8 = new DeviceButton("mouse_8");
+	public static final MouseButton
+			BUTTON_1 = new MouseButton("mouse_1"),
+			BUTTON_2 = new MouseButton("mouse_2"),
+			BUTTON_3 = new MouseButton("mouse_3"),
+			BUTTON_4 = new MouseButton("mouse_4"),
+			BUTTON_5 = new MouseButton("mouse_5"),
+			BUTTON_6 = new MouseButton("mouse_6"),
+			BUTTON_7 = new MouseButton("mouse_7"),
+			BUTTON_8 = new MouseButton("mouse_8");
 	
-	public static final DeviceButton
+	public static final MouseButton
 			LEFT = BUTTON_1,
 			RIGHT = BUTTON_2,
 			MIDDLE = BUTTON_3;
@@ -59,7 +57,7 @@ public class Mouse extends InputDevice {
 	 * @return {@code true} if {@code button} is pressed, {@code false}
 	 *         otherwise.
 	 */
-	public boolean isPressed(DeviceButton button) {
+	public boolean isPressed(MouseButton button) {
 		Button1bc state = this.getState(button);
 		return state.pressed();
 	}

@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.feature;
+package com.whirvis.kibasan.pc;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
