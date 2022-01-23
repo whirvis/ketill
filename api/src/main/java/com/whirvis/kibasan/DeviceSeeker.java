@@ -1,116 +1,101 @@
 package com.whirvis.kibasan;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
- * A scanner for input devices.
- * <p>
  * The purpose of a device seeker is to scan for input devices currently
- * connected to the system. When an input device is detected, the appropriate
- * {@code InputDevice} instance and adapter will be created. Afterwards, the
- * device will be registered to the device seeker. Once an input device is
- * registered to a seeker, it will be polled in the {@link #poll()} method.
- * <p>
- * <b>Note:</b> For a device seeker to work properly, it must be polled via
- * {@link #poll()} before querying any input information. It is recommended to
- * poll the device seeker once on every application update.
+ * connected to the system. When such device is detected, the appropriate
+ * {@code InputDevice} instance and adapter will be created. Devices must
+ * be polled manually after creation using {@link InputDevice#poll()}. They
+ * can be retrieved from {@link #discoveredDevices}.
+ * <p/>
+ * Implementations should call {@link #discoverDevice(InputDevice)} when a
+ * device is discovered and {@link #forgetDevice(InputDevice)} when a device
+ * is forgotten.
+ * <p/>
+ * <b>Note:</b> For a device seeker to work as expected, it must be told to
+ * perform device scans periodically via {@link #seek()}. It is recommended
+ * to perform a scan once every application update.
+ *
+ * @param <I> the input device type.
+ * @see #addListener(SeekerListener)
+ * @see DeviceAdapter
  */
-public abstract class DeviceSeeker {
+public abstract class DeviceSeeker<I extends InputDevice> {
 
-	protected final Logger log;
-	public final Class<? extends InputDevice> type;
-	private final Set<InputDevice> devices;
+    private final Set<I> devices;
+    private final Set<SeekerListener<I>> listeners;
+    public final @NotNull Set<I> discoveredDevices; /* read only view */
 
-	/**
-	 * @param type
-	 *            the device type to seek out.
-	 * @throws NullPointerException
-	 *             if {@code type} is {@code null}.
-	 */
-	public DeviceSeeker(Class<? extends InputDevice> type) {
-		this.log = LogManager.getLogger(this.getClass());
-		this.type = Objects.requireNonNull(type, "type");
-		this.devices = new HashSet<>();
-	}
+    public DeviceSeeker() {
+        this.devices = new HashSet<>();
+        this.listeners = new HashSet<>();
+        this.discoveredDevices = Collections.unmodifiableSet(devices);
+    }
 
-	/**
-	 * <b>Note:</b> Just because a device is registered to the seeker does
-	 * <i>not</i> indicate that it is currently connected. It only means that
-	 * the seeker has detected its presence and as such has registered it.
-	 * 
-	 * @return all devices registered to this seeker.
-	 */
-	public Set<InputDevice> registered() {
-		return Collections.unmodifiableSet(devices);
-	}
+    public void addListener(@NotNull SeekerListener<I> listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
 
-	/**
-	 * @param device
-	 *            the device to register.
-	 * @throws NullPointerException
-	 *             if {@code device} is {@code null}.
-	 * @throws ClassCastException
-	 *             if the class of {@code device} is not equal to {@code type}
-	 *             which was specified during construction.
-	 */
-	protected void register(InputDevice device) {
-		Objects.requireNonNull(device, "device");
-		if (type != device.getClass()) {
-			throw new ClassCastException("device class must equal type");
-		}
+    public void removeListener(@NotNull SeekerListener<I> listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
 
-		if (!devices.contains(device)) {
-			devices.add(device);
-			log.debug("Registered " + device.id + " device");
-		}
-	}
+    private void sendCallback(@NotNull Consumer<SeekerListener<I>> event) {
+        synchronized (listeners) {
+            for (SeekerListener<I> listener : listeners) {
+                event.accept(listener);
+            }
+        }
+    }
 
-	protected void unregister(InputDevice device) {
-		if (device != null && devices.contains(device)) {
-			/*
-			 * A final poll is performed for the device here, just in case it
-			 * needs to perform some sort of disconnect routine. How it knows
-			 * that its been disconnected is dependent on its implementation.
-			 */
-			device.poll();
+    protected void discoverDevice(@NotNull I device) {
+        if (devices.contains(device)) {
+            return;
+        }
+        devices.add(device);
+        this.sendCallback(l -> l.onDiscoverDevice(this, device));
+    }
 
-			/* now the device can be unregistered */
-			devices.remove(device);
-			log.debug("Unregistered " + device.id + " device");
-		}
-	}
+    protected void forgetDevice(@NotNull I device) {
+        if (!devices.contains(device)) {
+            return;
+        }
+        devices.remove(device);
+        this.sendCallback(l -> l.onForgetDevice(this, device));
+    }
 
-	protected abstract void seek() throws Exception;
+    /**
+     * Called by {@link #seek()}, this method can throw any exception without
+     * needing to catch it. When an exception is thrown, {@link #seek()} will
+     * wrap it into a {@link InputException} and throw it to the caller.
+     *
+     * @throws Exception if an error occurs.
+     */
+    protected abstract void seekImpl() throws Exception;
 
-	/**
-	 * Polling a device seeker is usually necessary for it to work properly. It
-	 * is recommended to poll the device seeker once on every application
-	 * update. When a device seeker is polled, it will make a call to its
-	 * internal {@link #seek()} method, of which what it does is dependent on
-	 * the implementation. Afterwards, it will poll each input device that it
-	 * has registered.
-	 * 
-	 * @throws InputException
-	 *             if an error occurs while seeking.
-	 */
-	public void poll() {
-		try {
-			this.seek();
-		} catch (InputException e) {
-			throw e; /* prevent wrapping */
-		} catch (Exception e) {
-			throw new InputException(e);
-		}
-
-		for (InputDevice device : devices) {
-			device.poll();
-		}
-	}
+    /**
+     * Performs a <i>single</i> scan for devices connected to this system.
+     * For continuous scanning, this method must be called periodically once
+     * every application update.
+     *
+     * @throws InputException if an error occurs while seeking.
+     */
+    public final void seek() {
+        try {
+            this.seekImpl();
+        } catch (Throwable cause) {
+            this.sendCallback(l -> l.onError(this, cause));
+        }
+    }
 
 }

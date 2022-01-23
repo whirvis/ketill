@@ -1,166 +1,130 @@
 package com.whirvis.kibasan;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * A device which can send and receive input data.
- * <p>
- * Examples of input devices include, but are not limited to: keyboards, mouses,
- * XBOX controllers, PlayStation controllers, etc. By design, an input device
- * does not support any device feature by default. While an input device will
- * usually accept any device feature it is given, it is up to the implementation
- * to provide shorthands for easy access and communication with them.
- * <p>
- * <b>Note:</b> For an input device to work properly, it must be polled via
- * {@link #poll()} before querying any input information. It is recommended to
- * poll the device once on every application update.
+ * <p/>
+ * Examples of input devices include, but are not limited to: keyboards, mice,
+ * XBOX controllers, etc. By design, an input device supports no features by
+ * default. Rather, an extending class must provide them. The responsibility
+ * of providing support for a feature is designed to the device adapter.
+ * <p/>
+ * <b>Note:</b> For input data to stay up-to-date, the input device must be
+ * polled periodically via the {@link #poll()} method. It is recommended to
+ * poll the device once every application update.
  *
  * @see DeviceSeeker
  * @see DeviceAdapter
  * @see DeviceFeature
  * @see FeaturePresent
  */
-public abstract class InputDevice {
+public abstract class InputDevice implements FeatureRegistry {
 
-	public final String id;
-	protected final DeviceAdapter<?> adapter;
-	private final Map<DeviceFeature<?>, Object> features;
+    public final @NotNull String id;
+    private final DeviceAdapter<InputDevice> adapter;
+    private final MappedFeatureRegistry registry;
 
-	/**
-	 * All device feature fields annotated with {@link FeaturePresent} will be
-	 * registered by this constructor.
-	 * 
-	 * @param id
-	 *            the device ID.
-	 * @param adapter
-	 *            the device adapter.
-	 * @throws NullPointerException
-	 *             if {@code id} or {@code adapter} are {@code null}.
-	 * @see #addFeature(DeviceFeature)
-	 */
-	public InputDevice(String id, DeviceAdapter<?> adapter) {
-		this.id = Objects.requireNonNull(id);
-		this.adapter = Objects.requireNonNull(adapter);
-		this.features = new HashMap<>();
-		this.loadFeatures();
-	}
+    /**
+     * @param id      the device ID.
+     * @param adapter the device adapter.
+     */
+    @SuppressWarnings("unchecked")
+    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter) {
+        this.id = id;
+        this.adapter = (DeviceAdapter<InputDevice>) adapter;
+        this.registry = new MappedFeatureRegistry(this);
 
-	public boolean hasFeature(DeviceFeature<?> feature) {
-		if (feature != null) {
-			return features.containsKey(feature);
-		}
-		return false;
-	}
+        Class<?> clazz = this.getClass();
+        for (Field field : ReflectionUtils.getAllFields(clazz)) {
+            this.registerFeatureField(field);
+        }
 
-	public Set<DeviceFeature<?>> getFeatures() {
-		return Collections.unmodifiableSet(features.keySet());
-	}
+        /*  */
+        this.adapter.initAdapter(this, registry);
+    }
 
-	/**
-	 * When a feature is registered, it is stored alongside an instance of its
-	 * initial state. If {@code feature} is already registered, its current
-	 * state will not be reset to its initial value.
-	 * <p>
-	 * <b>Note:</b> This method can be called before {@code InputDevice} is
-	 * finished constructing, as it is called by the {@link #loadFeatures()}
-	 * method (which is called inside the constructor). As such, extending
-	 * classes should take care to write code around this fact should they
-	 * override this method.
-	 * 
-	 * @param feature
-	 *            the feature to register.
-	 * @throws NullPointerException
-	 *             if {@code feature} is {@code null}.
-	 * @throws InputException
-	 *             if {@code feature} is already registered.
-	 */
-	protected void addFeature(DeviceFeature<?> feature) {
-		Objects.requireNonNull(feature, "feature");
-		if (this.hasFeature(feature)) {
-			throw new InputException("feature already registered");
-		}
-		features.put(feature, feature.initial.get());
-	}
+    /* @formatter:off */
+    private void registerFeatureField(@NotNull Field field) {
+        if (!field.isAnnotationPresent(FeaturePresent.class)) {
+            return;
+        }
 
-	private void loadFeatures() {
-		Class<?> clazz = this.getClass();
-		for (Field field : Reflection.getAllFields(clazz)) {
-			if (!field.isAnnotationPresent(FeaturePresent.class)) {
-				continue;
-			}
+        String fieldDesc = "@" + FeaturePresent.class.getSimpleName() +
+                " annotated field \"" + field.getName()
+                + "\" in class " + this.getClass().getName();
 
-			String fieldDesc = "@" + FeaturePresent.class.getSimpleName()
-					+ " field \"" + field.getName() + "\" in class "
-					+ clazz.getName();
+        Class<?> type = field.getType();
+        if (!DeviceFeature.class.isAssignableFrom(type)) {
+            throw new InputException(fieldDesc + " must be assignable"
+                    + " from " + this.getClass().getName());
+        }
 
-			Class<?> type = field.getType();
-			if (!DeviceFeature.class.isAssignableFrom(type)) {
-				throw new InputException(fieldDesc + " must be assignable from "
-						+ DeviceFeature.class.getName());
-			}
+        /*
+         * It would make no sense for @FeaturePresent annotated field to
+         * be hidden. As such, it is required that they be public.
+         */
+        int mods = field.getModifiers();
+        if (!Modifier.isPublic(mods)) {
+            throw new InputException(fieldDesc + " must be public");
+        }
 
-			/*
-			 * Require that all present features be public to ensure that they
-			 * are accessible to this class. It would make no sense for feature
-			 * field annotated with @FeaturePresent to be hidden.
-			 */
-			int mods = field.getModifiers();
-			if (!Modifier.isPublic(mods)) {
-				throw new InputException(fieldDesc + " must be public");
-			}
+        try {
+            boolean statik = Modifier.isStatic(mods);
+            Object obj = field.get(statik ? null : this);
+            this.registerFeature((DeviceFeature<?>) obj);
+        } catch (IllegalAccessException e) {
+            throw new InputException("failure to access"
+                    + " @" + FeaturePresent.class.getSimpleName()
+                    + " annotated field", e);
+        }
+    }
+    /* @formatter:on */
 
-			try {
-				boolean statik = Modifier.isStatic(mods);
-				Object obj = field.get(statik ? null : this);
-				this.addFeature((DeviceFeature<?>) obj);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
+    @Override
+    public boolean isRegistered(@NotNull DeviceFeature<?> feature) {
+        return registry.isRegistered(feature);
+    }
 
-	/**
-	 * @param <T>
-	 *            the feature value type.
-	 * @param feature
-	 *            the feature whose state to fetch.
-	 * @return the current value of {@code feature}.
-	 * @throws NullPointerException
-	 *             if {@code feature} is {@code null}.
-	 * @throws IllegalArgumentException
-	 *             if {@code feature} is not registered.
-	 * @see #addFeature(DeviceFeature)
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getState(DeviceFeature<T> feature) {
-		Objects.requireNonNull(feature, "feature");
-		T value = (T) features.get(feature);
-		if (value == null) {
-			throw new IllegalArgumentException(
-					"no such feature \"" + feature.id + "\"");
-		}
-		return value;
-	}
+    /* @formatter:off */
+    @Override
+    public <S> @Nullable RegisteredFeature<?, S>
+            getRegistered(@NotNull DeviceFeature<S> feature) {
+        return registry.getRegistered(feature);
+    }
+    /* @formatter:on */
 
-	public boolean isConnected() {
-		return adapter.isConnected();
-	}
+    /* @formatter:off */
+    @Override
+    public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
+            registerFeature(@NotNull F feature) {
+        return registry.registerFeature(feature);
+    }
+    /* @formatter:on */
 
-	/**
-	 * Polling an input device is usually necessary for retrieving up to date
-	 * input information (some implementations technically do not require it.)
-	 * Nevertheless, it is recommended to poll all input devices once on each
-	 * program update. The information that is updated on each poll is dependent
-	 * on the input device and its implementation.
-	 */
-	public void poll() {
-		adapter.poll();
-		for (Entry<DeviceFeature<?>, Object> entry : features.entrySet()) {
-			adapter.update(entry.getKey(), entry.getValue());
-		}
-	}
+    @Override
+    public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
+        registry.unregisterFeature(feature);
+    }
+
+    public boolean isConnected() {
+        return adapter.isDeviceConnected(this);
+    }
+
+    /**
+     * Performs a <i>single</i> query of input information from the device
+     * adapter and updates all features registered to the input device. It
+     * is recommended to call this method once every application update.
+     *
+     * @see #isConnected()
+     */
+    public void poll() {
+        adapter.pollDevice(this);
+        registry.updateFeatures();
+    }
 
 }

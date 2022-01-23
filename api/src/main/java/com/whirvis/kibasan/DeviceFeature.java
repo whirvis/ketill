@@ -1,36 +1,32 @@
 package com.whirvis.kibasan;
 
-import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 /**
- * A feature for an {@link InputDevice}.
- * <p>
- * Input device features can represent either input or output. Examples of input
- * features include, but are not limited to: buttons, analog sticks, analog
- * triggers, etc. Examples of output features include, but are not limited to:
- * motor rumble, LED lighting, etc.
+ * Device features provide a definition of a capability present on an
+ * {@link InputDevice}. Some examples would be a button, an analog stick, a
+ * rumble motor, or an LED indicator. Depending on the feature, their state
+ * can be either read-only (e.g., button state) or read-write (e.g., rumble
+ * motor vibration).
  *
- * @param <T>
- *            the container type.
- * @see InputDevice#addFeature(DeviceFeature)
+ * @param <S> the state container type.
+ * @see InputDevice#registerFeature(DeviceFeature)
  */
-public abstract class DeviceFeature<T> {
+public abstract class DeviceFeature<S> {
 
-	public final String id;
-	public final Supplier<T> initial;
+    public final @NotNull String id;
+    public final @NotNull Supplier<S> initialState;
 
-	/**
-	 * @param id
-	 * 			the feature ID.
-	 * @param initial
-	 * 			a supplier for a container of this feature's initial state.
-	 * @throws NullPointerException
-	 * 			if {@code id} or {@code initial} are {@code null}.
-	 */
-	public DeviceFeature(String id, Supplier<T> initial) {
-		this.id = Objects.requireNonNull(id, "id");
-		this.initial = Objects.requireNonNull(initial, "initial");
-	}
+    /**
+     * @param id           the feature ID.
+     * @param initialState a supplier for the feature's initial state.
+     */
+    public DeviceFeature(@NotNull String id,
+                         @NotNull Supplier<S> initialState) {
+        this.id = id;
+        this.initialState = initialState;
+    }
 
 }
