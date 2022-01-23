@@ -9,9 +9,12 @@ repositories {
 
 dependencies {
     implementation project(':api')
+    implementation project(':devices:features')
     implementation project(':devices:controller')
 
     implementation 'org.joml:joml:1.10.0'
+
+    compileOnly 'org.jetbrains:annotations:16.0.2'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

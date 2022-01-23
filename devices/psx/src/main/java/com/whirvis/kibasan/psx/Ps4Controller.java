@@ -1,12 +1,16 @@
 package com.whirvis.kibasan.psx;
 
-import com.whirvis.controller.AnalogTrigger;
-import com.whirvis.controller.DeviceButton;
-import com.whirvis.controller.RumbleMotor;
+import com.whirvis.kibasan.AnalogTrigger;
+import com.whirvis.kibasan.Button1bc;
+import com.whirvis.kibasan.DeviceButton;
+import com.whirvis.kibasan.RumbleMotor;
+import com.whirvis.kibasan.Vibration1f;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
+import com.whirvis.kibasan.FeatureState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
-import org.joml.Vector4fc;
 
 import java.awt.*;
 
@@ -15,139 +19,130 @@ import java.awt.*;
  */
 public class Ps4Controller extends PsxController {
 
-	/* @formatter: off */
-	@FeaturePresent
-	public static final DeviceButton
-			SHARE = new DeviceButton("share"),
-			OPTIONS = new DeviceButton("options"),
-			PS = new DeviceButton("playstation"),
-			TPAD = new DeviceButton("trackpad");
-	
-	@FeaturePresent
-	public static final AnalogTrigger
-			LT = new AnalogTrigger("lt"),
-			RT = new AnalogTrigger("rt");
-	
-	@FeaturePresent
-	public static final RumbleMotor
-			RUMBLE_STRONG = new RumbleMotor("strong_rumble"),
-			RUMBLE_WEAK = new RumbleMotor("weak_rumble");
-	
-	@FeaturePresent
-	public static final Lightbar
-			LIGHTBAR = new Lightbar("lightbar");
-	/* @formatter: on */
+    private static float capValue(float value, float min, float max) {
+        return Math.min(Math.max(value, min), max);
+    }
 
-	/**
-	 * @param adapter
-	 *            the PlayStation 4 controller adapter.
-	 * @throws NullPointerException
-	 *             if {@code adapter} is {@code null}.
-	 */
-	public Ps4Controller(DeviceAdapter<Ps4Controller> adapter) {
-		super("ps4", adapter, LT, RT);
-	}
+    /* @formatter:off */
+    @FeaturePresent
+    public static final @NotNull DeviceButton
+            BUTTON_SHARE = new DeviceButton("share"),
+            BUTTON_OPTIONS = new DeviceButton("options"),
+            BUTTON_PS = new DeviceButton("playstation"),
+            BUTTON_TPAD = new DeviceButton("trackpad");
 
-	/**
-	 * @return the current lightbar color.
-	 */
-	public Vector4fc getLightbar() {
-		return this.getState(LIGHTBAR);
-	}
+    @FeaturePresent
+    public static final @NotNull AnalogTrigger
+            TRIGGER_LT = new AnalogTrigger("lt"),
+            TRIGGER_RT = new AnalogTrigger("rt");
 
-	/**
-	 * Sets the current lightbar color.
-	 * <p>
-	 * The intensity of each color channel should be on a scale of {@code 0.0F}
-	 * to {@code 1.0F}.<br>
-	 * Values outside of this range will lead to unexpected results!
-	 * 
-	 * @param red
-	 *            the red channel intensity.
-	 * @param green
-	 *            the green channel intensity.
-	 * @param blue
-	 *            the blue channel intensity.
-	 * @param alpha
-	 *            the alpha channel intensity.
-	 */
-	public void setLightbar(float red, float green, float blue, float alpha) {
-		Vector4f color = this.getState(LIGHTBAR);
-		color.x = red;
-		color.y = green;
-		color.z = blue;
-		color.w = alpha;
-	}
+    @FeaturePresent
+    public static final @NotNull RumbleMotor
+            MOTOR_STRONG = new RumbleMotor("rumble_strong"),
+            MOTOR_WEAK = new RumbleMotor("rumble_weak");
 
-	/**
-	 * Sets the current lightbar color.
-	 * <p>
-	 * The intensity of each color channel should be on a scale of {@code 0.0F}
-	 * to {@code 1.0F}.<br>
-	 * Values outside of this range will lead to unexpected results!
-	 * <p>
-	 * This method is a shorthand for
-	 * {@link #setLightbar(float, float, float, float)}, with the argument for
-	 * {@code alpha} being set to {@code 1.0F}.
-	 * 
-	 * @param red
-	 *            the red channel intensity.
-	 * @param green
-	 *            the green channel intensity.
-	 * @param blue
-	 *            the blue channel intensity.
-	 */
-	public void setLightbar(float red, float green, float blue) {
-		this.setLightbar(red, green, blue, 1.0F);
-	}
+    @FeaturePresent
+    public static final @NotNull Lightbar
+            FEATURE_LIGHTBAR = new Lightbar("lightbar");
+    /* @formatter:on */
 
-	/**
-	 * Sets the current lightbar color.
-	 * 
-	 * @param rgba
-	 *            the RGBA color value.
-	 * @param useAlpha
-	 *            {@code true} if the alpha channel of {@code rgba} should be
-	 *            used, {@code false} if it should be discarded.
-	 */
-	public void setLightbar(int rgba, boolean useAlpha) {
-		Vector4f color = this.getState(LIGHTBAR);
-		color.x = ((byte) (rgba >> 0)) / 255.0F;
-		color.y = ((byte) (rgba >> 8)) / 255.0F;
-		color.z = ((byte) (rgba >> 16)) / 255.0F;
-		if (useAlpha) {
-			color.w = ((byte) (rgba >> 24)) / 255.0F;
-		} else {
-			color.w = 1.0F;
-		}
-	}
+    /* @formatter:off */
+    @FeatureState
+    public final @NotNull Button1bc
+            share = this.getState(BUTTON_SHARE),
+            options = this.getState(BUTTON_OPTIONS),
+            ps = this.getState(BUTTON_PS),
+            tpad = this.getState(BUTTON_TPAD);
 
-	/**
-	 * Sets the current lightbar color.
-	 * <p>
-	 * This method is a shorthand for {@link #setLightbar(int, boolean)}, with
-	 * the argument {@code rgba} being {@code rgb} and the argument for
-	 * {@code useAlpha} being {@code false}.
-	 * 
-	 * @param rgb
-	 *            the RGB color value.
-	 */
-	public void setLightbar(int rgb) {
-		this.setLightbar(rgb, false);
-	}
+    @FeatureState
+    public final @NotNull Vibration1f
+            rumbleStrong = this.getState(MOTOR_STRONG),
+            rumbleWeak = this.getState(MOTOR_WEAK);
 
-	/**
-	 * Sets the current lightbar color.
-	 * 
-	 * @param color
-	 *            the color, may be {@code null}.
-	 */
-	public void setLightbar(Color color) {
-		if (color == null) {
-			this.setLightbar(0x00000000);
-		} else {
-			this.setLightbar(color.getRGB());
-		}
-	}
+    @FeatureState
+    public final @NotNull Vector4f
+            lightbar = this.getState(FEATURE_LIGHTBAR);
+    /* @formatter:on */
+
+    public Ps4Controller(@NotNull DeviceAdapter<Ps4Controller> adapter) {
+        super("ps4", adapter, TRIGGER_LT, TRIGGER_RT);
+    }
+
+    /**
+     * To prevent unexpected behavior, the intensity of each color channel
+     * is capped between a value of {@code 0.0F} and {@code 1.0F}.
+     *
+     * @param red   the red channel intensity.
+     * @param green the green channel intensity.
+     * @param blue  the blue channel intensity.
+     * @param alpha the alpha channel intensity.
+     */
+    public void setLightbarColor(float red, float green, float blue,
+                                 float alpha) {
+        float min = 0.0F, max = 1.0F;
+        lightbar.x = capValue(red, min, max);
+        lightbar.y = capValue(green, min, max);
+        lightbar.z = capValue(blue, min, max);
+        lightbar.w = capValue(alpha, min, max);
+    }
+
+    /**
+     * To prevent unexpected behavior, the intensity of each color channel
+     * is capped between a value of {@code 0.0F} and {@code 1.0F}.
+     * <p/>
+     * This method is a shorthand for
+     * {@link #setLightbarColor(float, float, float, float)}, with the
+     * argument for {@code alpha} being set to {@code 1.0F}.
+     *
+     * @param red   the red channel intensity.
+     * @param green the green channel intensity.
+     * @param blue  the blue channel intensity.
+     */
+    public void setLightbarColor(float red, float green, float blue) {
+        this.setLightbarColor(red, green, blue, 1.0F);
+    }
+
+    /**
+     * @param rgba     the RGBA color value.
+     * @param useAlpha {@code true} if the alpha channel of {@code rgba}
+     *                 should be used, {@code false} to have it discarded.
+     */
+    public void setLightbarColor(int rgba, boolean useAlpha) {
+        lightbar.x = ((byte) rgba) / 255.0F;
+        lightbar.y = ((byte) (rgba >> 8)) / 255.0F;
+        lightbar.z = ((byte) (rgba >> 16)) / 255.0F;
+        if (useAlpha) {
+            lightbar.w = ((byte) (rgba >> 24)) / 255.0F;
+        } else {
+            lightbar.w = 1.0F;
+        }
+    }
+
+    /**
+     * This method is a shorthand for {@link #setLightbarColor(int, boolean)},
+     * with the argument for {@code rgba} being {@code rgb} and the argument
+     * for {@code useAlpha} being {@code false}.
+     *
+     * @param rgb the RGB color value.
+     */
+    public void setLightbarColor(int rgb) {
+        this.setLightbarColor(rgb, false);
+    }
+
+    /**
+     * This method is a shorthand for {@link #setLightbarColor(int, boolean)},
+     * with the argument for {@code rgba} being {@code color.getRGB()} (or
+     * {@code 0x00000000} if {@code color} is {@code null}) and the argument
+     * for {@code useAlpha} being {@code true}.
+     *
+     * @param color the color value.
+     */
+    public void setLightbarColor(@Nullable Color color) {
+        if (color == null) {
+            this.setLightbarColor(0x00000000, true);
+        } else {
+            this.setLightbarColor(color.getRGB(), true);
+        }
+    }
 
 }

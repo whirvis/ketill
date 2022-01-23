@@ -1,19 +1,13 @@
 package com.whirvis.kibasan.pc;
 
+import com.whirvis.kibasan.Button1b;
 import com.whirvis.kibasan.DeviceFeature;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
+public class KeyboardKey extends DeviceFeature<Button1b> {
 
-public class KeyboardKey extends DeviceFeature<Key1bc> {
-
-	/**
-	 * @param id
-	 *            the key ID.
-	 * @throws NullPointerException
-	 *             if {@code id} is {@code null}.
-	 */
-	public KeyboardKey(String id) {
-		super(id, Key1b::new);
-	}
+    public KeyboardKey(@NotNull String id) {
+        super(id, Button1b::new);
+    }
 
 }

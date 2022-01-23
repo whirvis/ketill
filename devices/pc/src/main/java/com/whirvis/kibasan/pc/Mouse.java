@@ -1,130 +1,59 @@
 package com.whirvis.kibasan.pc;
 
+import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
+import com.whirvis.kibasan.FeatureState;
 import com.whirvis.kibasan.InputDevice;
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * A mouse which can send and receive input data.
- * <p>
- * <b>Note:</b> For a mouse to work properly, it must be polled via
- * {@link #poll()} before querying any input information. It is recommended to
- * poll the mouse once on every application update.
- * 
- * @see Keyboard
- */
 public class Mouse extends InputDevice {
 
-	/* @formatter: off */
-	@FeaturePresent
-	public static final MouseButton
-			BUTTON_1 = new MouseButton("mouse_1"),
-			BUTTON_2 = new MouseButton("mouse_2"),
-			BUTTON_3 = new MouseButton("mouse_3"),
-			BUTTON_4 = new MouseButton("mouse_4"),
-			BUTTON_5 = new MouseButton("mouse_5"),
-			BUTTON_6 = new MouseButton("mouse_6"),
-			BUTTON_7 = new MouseButton("mouse_7"),
-			BUTTON_8 = new MouseButton("mouse_8");
-	
-	public static final MouseButton
-			LEFT = BUTTON_1,
-			RIGHT = BUTTON_2,
-			MIDDLE = BUTTON_3;
-	
-	@FeaturePresent
-	public static final Cursor
-			CURSOR = new Cursor("mouse_cursor");
-	/* @formatter: on */
+    /* @formatter:off */
+    @FeaturePresent
+    public static final @NotNull MouseButton
+            BUTTON_M1 = new MouseButton("mouse_1"),
+            BUTTON_M2 = new MouseButton("mouse_2"),
+            BUTTON_M3 = new MouseButton("mouse_3"),
+            BUTTON_M4 = new MouseButton("mouse_4"),
+            BUTTON_M5 = new MouseButton("mouse_5"),
+            BUTTON_M6 = new MouseButton("mouse_6"),
+            BUTTON_M7 = new MouseButton("mouse_7"),
+            BUTTON_M8 = new MouseButton("mouse_8");
 
-	/**
-	 * @param adapter
-	 *            the device adapter.
-	 * @throws NullPointerException
-	 *             if {@code adapter} is {@code null}.
-	 */
-	public Mouse(DeviceAdapter<Mouse> adapter) {
-		super("mouse", adapter);
-	}
+    @FeaturePresent
+    public static final @NotNull Cursor
+            FEATURE_CURSOR = new Cursor("mouse_cursor");
+    /* @formatter:on */
 
-	/**
-	 * @param button
-	 *            the mouse button.
-	 * @return {@code true} if {@code button} is pressed, {@code false}
-	 *         otherwise.
-	 */
-	public boolean isPressed(MouseButton button) {
-		Button1bc state = this.getState(button);
-		return state.pressed();
-	}
+    /* @formatter:off */
+    @FeatureState
+    public final @NotNull Button1bc
+            m1 = this.getState(BUTTON_M1),
+            m2 = this.getState(BUTTON_M2),
+            m3 = this.getState(BUTTON_M3),
+            m4 = this.getState(BUTTON_M4),
+            m5 = this.getState(BUTTON_M5),
+            m6 = this.getState(BUTTON_M6),
+            m7 = this.getState(BUTTON_M7),
+            m8 = this.getState(BUTTON_M8);
 
-	/**
-	 * @return the cursor position.
-	 */
-	public Vector2fc getPosition() {
-		return this.getState(CURSOR);
-	}
+    /**
+     * Aliases for {@link #m1}, {@link #m2}, and {@link #m3}.
+     */
+    @FeatureState
+    public final @NotNull Button1bc
+            left = m1,
+            right = m2,
+            middle = m3;
 
-	/**
-	 * @return the X-axis position of the cursor.
-	 */
-	public float getX() {
-		Vector2fc pos = this.getState(CURSOR);
-		return pos.x();
-	}
+    @FeatureState
+    public final @NotNull Cursor2f
+            cursor = this.getState(FEATURE_CURSOR);
+    /* @formatter:on */
 
-	/**
-	 * @return the Y-axis position of the cursor.
-	 */
-	public float getY() {
-		Vector2fc pos = this.getState(CURSOR);
-		return pos.y();
-	}
-
-	/**
-	 * @return the position of the cursor.
-	 */
-	public Vector2fc getPos() {
-		return this.getState(CURSOR);
-	}
-
-	/**
-	 * @param pos
-	 *            the position the cursor should be at.
-	 */
-	public void setPosition(Vector2fc pos) {
-		Cursor2f cursor = this.getState(CURSOR);
-		cursor.requestPos(pos);
-	}
-
-	/**
-	 * @param x
-	 *            the X-axis position the cursor should be at.
-	 * @param y
-	 *            the Y-axis position the cursor should be at.
-	 */
-	public void setPosition(float x, float y) {
-		this.setPosition(new Vector2f(x, y));
-	}
-
-	/**
-	 * @return {@code true} if the cursor is visible, {@code false} otherwise.
-	 */
-	public boolean isVisible() {
-		Cursor2f cursor = this.getState(CURSOR);
-		return cursor.visible;
-	}
-
-	/**
-	 * @param visible
-	 *            {@code true} if the cursor should be visible, {@code false}
-	 *            otherwise.
-	 */
-	public void setVisible(boolean visible) {
-		Cursor2f cursor = this.getState(CURSOR);
-		cursor.visible = visible;
-	}
+    public Mouse(@NotNull DeviceAdapter<Mouse> adapter) {
+        super("mouse", adapter);
+    }
 
 }
