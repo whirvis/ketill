@@ -30,7 +30,13 @@ public abstract class Controller extends InputDevice {
      */
     public final @Nullable Trigger1fc lt, rt;
 
-    private final Map<RumbleMotor, Vibration1f> rumbleMotors;
+    /*
+     * Due to some specificities with how InputDevice is constructed, this
+     * field is initialized only when first required. If it were initialized
+     * in this class's constructor, it would not be initialized in time for
+     * device features registered via the @FeaturePresent annotation.
+     */
+    private @Nullable Map<RumbleMotor, Vibration1f> rumbleMotors;
 
     /**
      * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
@@ -56,8 +62,6 @@ public abstract class Controller extends InputDevice {
         this.rs = this.registerAndGetState(rs);
         this.lt = this.registerAndGetState(lt);
         this.rt = this.registerAndGetState(rt);
-
-        this.rumbleMotors = new HashMap<>();
     }
 
     /**
@@ -91,10 +95,11 @@ public abstract class Controller extends InputDevice {
             registerFeature(@NotNull F feature) {
         RegisteredFeature<F, S> registered = super.registerFeature(feature);
         if (feature instanceof RumbleMotor) {
-            synchronized (rumbleMotors) {
-                rumbleMotors.put((RumbleMotor) feature,
-                        (Vibration1f) this.getState(feature));
+            if (rumbleMotors == null) {
+                this.rumbleMotors = new HashMap<>();
             }
+            rumbleMotors.put((RumbleMotor) feature,
+                        (Vibration1f) this.getState(feature));
         }
         return registered;
     }
@@ -103,10 +108,8 @@ public abstract class Controller extends InputDevice {
     @Override
     public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
         super.unregisterFeature(feature);
-        if (feature instanceof RumbleMotor) {
-            synchronized (rumbleMotors) {
-                rumbleMotors.remove(feature);
-            }
+        if (feature instanceof RumbleMotor && rumbleMotors != null) {
+            rumbleMotors.remove(feature);
         }
     }
 
@@ -118,11 +121,12 @@ public abstract class Controller extends InputDevice {
      * @param force the vibration force to set each motor to.
      */
     public void rumble(float force) {
+        if (rumbleMotors == null) {
+            return;
+        }
         float capped = Math.min(Math.max(force, 0.0F), 1.0F);
-        synchronized (rumbleMotors) {
-            for (Vibration1f vibration : rumbleMotors.values()) {
-                vibration.force = capped;
-            }
+        for (Vibration1f vibration : rumbleMotors.values()) {
+            vibration.force = capped;
         }
     }
 

@@ -98,6 +98,14 @@ public abstract class InputDevice implements FeatureRegistry {
     }
     /* @formatter:on */
 
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * <b>Note:</b> This method can be called before {@code InputDevice} is
+     * finished constructing by the {@link #registerFeatureField(Field)}
+     * method. As such, extending classes should take care to write code
+     * around this fact if they override this method.
+     */
     /* @formatter:off */
     @Override
     public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
