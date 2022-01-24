@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.jetbrains:annotations:16.0.2'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

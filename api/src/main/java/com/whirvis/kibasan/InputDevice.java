@@ -1,5 +1,6 @@
 package com.whirvis.kibasan;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,6 +131,7 @@ public abstract class InputDevice implements FeatureRegistry {
      *
      * @see #isConnected()
      */
+    @MustBeInvokedByOverriders
     public void poll() {
         adapter.pollDevice(this);
         registry.updateFeatures();

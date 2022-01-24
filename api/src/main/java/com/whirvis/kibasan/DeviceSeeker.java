@@ -1,5 +1,6 @@
 package com.whirvis.kibasan;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -58,6 +59,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
         }
     }
 
+    @MustBeInvokedByOverriders
     protected void discoverDevice(@NotNull I device) {
         if (devices.contains(device)) {
             return;
@@ -66,6 +68,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
         this.sendCallback(l -> l.onDiscoverDevice(this, device));
     }
 
+    @MustBeInvokedByOverriders
     protected void forgetDevice(@NotNull I device) {
         if (!devices.contains(device)) {
             return;
