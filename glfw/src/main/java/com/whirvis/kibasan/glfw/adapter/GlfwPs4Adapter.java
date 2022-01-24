@@ -1,42 +1,45 @@
 package com.whirvis.kibasan.glfw.adapter;
 
-import com.whirvis.controller.Trigger1f;
-import com.whirvis.kibasan.AdapterMapping;
-import com.whirvis.kibasan.FeatureAdapter;
+import com.whirvis.kibasan.MappedFeatureRegistry;
+import com.whirvis.kibasan.Trigger1f;
 import com.whirvis.kibasan.psx.Ps4Controller;
+import org.jetbrains.annotations.NotNull;
+
+import static com.whirvis.kibasan.psx.Ps4Controller.*;
 
 public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
 
-	/* @formatter: off */
-	@AdapterMapping
-	public static final GlfwButtonMapping
-			SHARE = new GlfwButtonMapping(Ps4Controller.SHARE, 8),
-			OPTIONS = new GlfwButtonMapping(Ps4Controller.OPTIONS, 9),
-			PS = new GlfwButtonMapping(Ps4Controller.PS, 12),
-			TPAD = new GlfwButtonMapping(Ps4Controller.TPAD, 13),
-			UP = new GlfwButtonMapping(Ps4Controller.UP, 14),
-			RIGHT = new GlfwButtonMapping(Ps4Controller.RIGHT, 15),
-			DOWN = new GlfwButtonMapping(Ps4Controller.DOWN, 16),
-			LEFT = new GlfwButtonMapping(Ps4Controller.LEFT, 17);
+    protected static final int AXIS_LT = 3, AXIS_RT = 4;
 
-	@AdapterMapping
-	public static final GlfwTriggerMapping
-			LT = new GlfwTriggerMapping(Ps4Controller.LT, 3),
-			RT = new GlfwTriggerMapping(Ps4Controller.RT, 4);
-	/* @formatter: on */
-	
-	public GlfwPs4Adapter(long ptr_glfwWindow, int glfwJoystick) {
-		super(ptr_glfwWindow, glfwJoystick);
-	}
-	
-	@Override
-	@FeatureAdapter
-	public void updateTrigger(GlfwTriggerMapping mapping, Trigger1f trigger) {
-		super.updateTrigger(mapping, trigger);
-		if (mapping == LT || mapping == RT) {
-			trigger.force += 1.0F;
-			trigger.force /= 2.0F;
-		}
-	}
+    public GlfwPs4Adapter(long ptr_glfwWindow, int glfwJoystick) {
+        super(ptr_glfwWindow, glfwJoystick);
+    }
+
+    @Override
+    protected void initAdapter(@NotNull Ps4Controller controller,
+                               @NotNull MappedFeatureRegistry registry) {
+        super.initAdapter(controller, registry);
+
+        this.mapButton(registry, BUTTON_SHARE, 8);
+        this.mapButton(registry, BUTTON_OPTIONS, 9);
+        this.mapButton(registry, BUTTON_PS, 12);
+        this.mapButton(registry, BUTTON_TPAD, 13);
+        this.mapButton(registry, BUTTON_UP, 14);
+        this.mapButton(registry, BUTTON_RIGHT, 15);
+        this.mapButton(registry, BUTTON_DOWN, 16);
+        this.mapButton(registry, BUTTON_LEFT, 17);
+
+        this.mapTrigger(registry, TRIGGER_LT, AXIS_LT);
+        this.mapTrigger(registry, TRIGGER_RT, AXIS_RT);
+    }
+
+    @Override
+    protected void updateTrigger(@NotNull Trigger1f trigger, int glfwAxis) {
+        super.updateTrigger(trigger, glfwAxis);
+        if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
+            trigger.force += 1.0F;
+            trigger.force /= 2.0F;
+        }
+    }
 
 }

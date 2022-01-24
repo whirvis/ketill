@@ -1,18 +1,26 @@
 package com.whirvis.kibasan.glfw.adapter;
 
-import com.whirvis.controller.AnalogMapping;
-import com.whirvis.controller.AnalogStick;
+public class GlfwStickMapping {
 
-public class GlfwStickMapping extends AnalogMapping<AnalogStick> {
+    public final int glfwAxisX;
+    public final int glfwAxisY;
+    public final int glfwZButton;
+    public final boolean hasZButton;
 
-	public final int glfwAxisX;
-	public final int glfwAxisY;
+    private GlfwStickMapping(int glfwAxisX, int glfwAxisY, int glfwZButton,
+                             boolean hasZButton) {
+        this.glfwAxisX = glfwAxisX;
+        this.glfwAxisY = glfwAxisY;
+        this.glfwZButton = glfwZButton;
+        this.hasZButton = hasZButton;
+    }
 
-	public GlfwStickMapping(AnalogStick analog, int glfwAxisX,
-			int glfwAxisY) {
-		super(analog);
-		this.glfwAxisX = glfwAxisX;
-		this.glfwAxisY = glfwAxisY;
-	}
+    public GlfwStickMapping(int glfwAxisX, int glfwAxisY, int glfwZButton) {
+        this(glfwAxisX, glfwAxisY, glfwZButton, true);
+    }
+
+    public GlfwStickMapping(int glfwAxisX, int glfwAxisY) {
+        this(glfwAxisX, glfwAxisY, -1, false);
+    }
 
 }
