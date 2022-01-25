@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.adapter;
+package com.whirvis.kibasan.glfw;
 
 import com.whirvis.kibasan.AnalogStick;
 import com.whirvis.kibasan.AnalogTrigger;

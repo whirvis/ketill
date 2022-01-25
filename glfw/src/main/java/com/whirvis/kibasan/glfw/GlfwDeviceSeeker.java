@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.seeker;
+package com.whirvis.kibasan.glfw;
 
 import com.whirvis.kibasan.DeviceSeeker;
 import com.whirvis.kibasan.InputDevice;

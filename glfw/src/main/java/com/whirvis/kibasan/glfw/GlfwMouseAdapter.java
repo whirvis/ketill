@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.adapter;
+package com.whirvis.kibasan.glfw;
 
 import com.whirvis.kibasan.Button1b;
 import com.whirvis.kibasan.FeatureAdapter;

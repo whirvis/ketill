@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.adapter;
+package com.whirvis.kibasan.glfw;
 
 import com.whirvis.kibasan.MappedFeatureRegistry;
 import com.whirvis.kibasan.nx.NxProController;

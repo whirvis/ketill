@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.adapter;
+package com.whirvis.kibasan.glfw;
 
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.InputDevice;

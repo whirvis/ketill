@@ -1,4 +1,4 @@
-package com.whirvis.kibasan.glfw.adapter;
+package com.whirvis.kibasan.glfw;
 
 public class GlfwStickMapping {
 

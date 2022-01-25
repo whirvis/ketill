@@ -21,7 +21,7 @@ public interface DeviceGuids {
      */
     default @Nullable Iterable<String> getGuids(@NotNull String id,
                                                 @NotNull OperatingSystem os) {
-        return this.getGuids(id, os.id);
+        return this.getGuids(id, os.systemId);
     }
 
 }
