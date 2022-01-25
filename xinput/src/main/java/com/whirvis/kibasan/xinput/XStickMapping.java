@@ -1,19 +1,23 @@
 package com.whirvis.kibasan.xinput;
 
 import com.github.strikerx3.jxinput.enums.XInputAxis;
-import com.whirvis.controller.AnalogMapping;
-import com.whirvis.controller.AnalogStick;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class XStickMapping extends AnalogMapping<AnalogStick> {
+import java.lang.reflect.Field;
 
-	public final XInputAxis xAxis;
-	public final XInputAxis yAxis;
+public class XStickMapping {
 
-	public XStickMapping(AnalogStick analog, XInputAxis xAxis,
-			XInputAxis yAxis) {
-		super(analog);
-		this.xAxis = xAxis;
-		this.yAxis = yAxis;
-	}
+    public final @NotNull XInputAxis xAxis;
+    public final @NotNull XInputAxis yAxis;
+    public final @Nullable Field zButtonField;
+
+    public XStickMapping(@NotNull XInputAxis xAxis,
+                         @NotNull XInputAxis yAxis,
+                         @Nullable Field zButtonField) {
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
+        this.zButtonField = zButtonField;
+    }
 
 }

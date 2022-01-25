@@ -13,16 +13,14 @@ repositories {
 
 dependencies {
     implementation project(':api')
-
+    implementation project(':devices:features')
     implementation project(':devices:controller')
     implementation project(':devices:xbox')
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.11.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.11.1'
-
+    implementation 'org.joml:joml:1.10.2'
     implementation 'com.github.strikerx3:jxinput:1.0.0'
 
-    implementation 'org.joml:joml:1.10.0'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

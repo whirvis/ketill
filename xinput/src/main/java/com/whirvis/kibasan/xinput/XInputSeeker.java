@@ -7,46 +7,47 @@ import com.github.strikerx3.jxinput.natives.XInputConstants;
 import com.whirvis.kibasan.DeviceSeeker;
 import com.whirvis.kibasan.xbox.XboxController;
 
-public class XInputSeeker extends DeviceSeeker {
+public final class XInputSeeker extends DeviceSeeker<XboxController> {
 
-	private final XboxController[] controllers;
-	private boolean xinput14;
+    private final XboxController[] controllers;
+    private final boolean xinput14;
 
-	public XInputSeeker() {
-		super(XboxController.class);
-		this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];
-		this.xinput14 = XInputDevice14.isAvailable();
-	}
+    public XInputSeeker() {
+        this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];
+        this.xinput14 = XInputDevice14.isAvailable();
+    }
 
-	private XInputDevice getDevice(int playerNum)
-			throws XInputNotLoadedException {
-		if (xinput14) {
-			log.info("Using XInput 1.4");
-			return XInputDevice14.getDeviceFor(playerNum);
-		} else {
-			return XInputDevice.getDeviceFor(playerNum);
-		}
-	}
+    /* @formatter:off */
+    private XInputDevice getDevice(int playerNum)
+            throws XInputNotLoadedException {
+        if (xinput14) {
+            return XInputDevice14.getDeviceFor(playerNum);
+        } else {
+            return XInputDevice.getDeviceFor(playerNum);
+        }
+    }
+    /* @formatter:on */
 
-	@Override
-	protected void seek() throws XInputNotLoadedException {
-		for (int i = 0; i < controllers.length; i++) {
-			XboxController controller = controllers[i];
-			if (controller != null) {
-				if (!controller.isConnected()) {
-					this.unregister(controller);
-					this.controllers[i] = null;
-				}
-				continue;
-			}
 
-			XInputDevice device = this.getDevice(i);
-			if (device.isConnected()) {
-				XboxAdapter adapter = new XboxAdapter(device);
-				this.controllers[i] = new XboxController(adapter);
-				this.register(controllers[i]);
-			}
-		}
-	}
+    @Override
+    public void seekImpl() throws XInputNotLoadedException {
+        for (int i = 0; i < controllers.length; i++) {
+            XboxController controller = this.controllers[i];
+            if (controller != null) {
+                if (!controller.isConnected()) {
+                    this.forgetDevice(controller);
+                    this.controllers[i] = null;
+                }
+                continue;
+            }
+
+            XInputDevice device = this.getDevice(i);
+            if (device.isConnected()) {
+                XInputAdapter adapter = new XInputAdapter(device);
+                this.controllers[i] = new XboxController(adapter);
+                this.discoverDevice(controllers[i]);
+            }
+        }
+    }
 
 }
