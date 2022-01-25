@@ -29,28 +29,64 @@ public abstract class InputDevice implements FeatureRegistry {
     public final @NotNull String id;
     private final DeviceAdapter<InputDevice> adapter;
     private final MappedFeatureRegistry registry;
+    private boolean initializedAdapter;
 
     /**
-     * @param id      the device ID.
-     * @param adapter the device adapter.
+     * @param id             the device ID.
+     * @param adapter        the device adapter.
+     * @param registerFields {@code true} if the constructor should call
+     *                       {@link #registerFields()}. If {@code false},
+     *                       the extending class must call it if it desires
+     *                       the functionality of {@link FeaturePresent}.
+     * @param initAdapter    {@code true} if the constructor should call
+     *                       {@link #initAdapter()}. If {@code false}, the
+     *                       extending class <b>must</b> call it.
      */
     @SuppressWarnings("unchecked")
-    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter) {
+    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
+                       boolean registerFields, boolean initAdapter) {
         this.id = id;
         this.adapter = (DeviceAdapter<InputDevice>) adapter;
         this.registry = new MappedFeatureRegistry(this);
 
-        Class<?> clazz = this.getClass();
-        for (Field field : ReflectionUtils.getAllFields(clazz)) {
-            this.registerFeatureField(field);
+        if (registerFields) {
+            this.registerFields();
         }
 
-        /*  */
-        this.adapter.initAdapter(this, registry);
+        if (initAdapter) {
+            this.initAdapter();
+        }
+    }
+
+    /**
+     * This is a shorthand for the base constructor with the argument for
+     * {@code registerFields} and {@code initAdapter} being {@code true}.
+     *
+     * @param id      the device ID.
+     * @param adapter the device adapter.
+     */
+    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter) {
+        this(id, adapter, true, true);
+    }
+
+    @MustBeInvokedByOverriders
+    protected void initAdapter() {
+        if (initializedAdapter) {
+            throw new IllegalStateException("adapter already initialized");
+        }
+        adapter.initAdapter(this, registry);
+        this.initializedAdapter = true;
+    }
+
+    protected void registerFields() {
+        Class<?> clazz = this.getClass();
+        for (Field field : ReflectionUtils.getAllFields(clazz)) {
+            this.registerField(field);
+        }
     }
 
     /* @formatter:off */
-    private void registerFeatureField(@NotNull Field field) {
+    private void registerField(@NotNull Field field) {
         if (!field.isAnnotationPresent(FeaturePresent.class)) {
             return;
         }
@@ -103,7 +139,7 @@ public abstract class InputDevice implements FeatureRegistry {
      * {@inheritDoc}
      * <p/>
      * <b>Note:</b> This method can be called before {@code InputDevice} is
-     * finished constructing by the {@link #registerFeatureField(Field)}
+     * finished constructing by the {@link #registerField(Field)}
      * method. As such, extending classes should take care to write code
      * around this fact if they override this method.
      */

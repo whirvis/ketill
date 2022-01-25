@@ -18,6 +18,8 @@ import java.util.Map;
  */
 public abstract class Controller extends InputDevice {
 
+    private final @NotNull Map<RumbleMotor, Vibration1f> rumbleMotors;
+
     /**
      * The left and right analog sticks of the controller.<br>
      * These may not be present, and as such may be {@code null}.
@@ -30,19 +32,55 @@ public abstract class Controller extends InputDevice {
      */
     public final @Nullable Trigger1fc lt, rt;
 
-    /*
-     * Due to some specificities with how InputDevice is constructed, this
-     * field is initialized only when first required. If it were initialized
-     * in this class's constructor, it would not be initialized in time for
-     * device features registered via the @FeaturePresent annotation.
+    /**
+     * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
+     * {@code lt}, or {@code rt} are not {@code null}, they will be
+     * registered automatically during construction (assuming they are not
+     * already registered via the {@link FeaturePresent} annotation.)
+     *
+     * @param id             the controller ID.
+     * @param adapter        the controller adapter.
+     * @param ls             the left analog stick, may be {@code null}.
+     * @param rs             the right analog stick, may be {@code null}.
+     * @param lt             the left analog trigger, may be {@code null}.
+     * @param rt             the right analog trigger, may be {@code null}.
+     * @param registerFields {@code true} if the constructor should call
+     *                       {@link #registerFields()}. If {@code false},
+     *                       the extending class must call it if it desires
+     *                       the functionality of {@link FeaturePresent}.
+     * @param initAdapter    {@code true} if the constructor should call
+     *                       {@link #initAdapter()}. If {@code false}, the
+     *                       extending class <b>must</b> call it.
      */
-    private @Nullable Map<RumbleMotor, Vibration1f> rumbleMotors;
+    public Controller(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
+                      @Nullable AnalogStick ls, @Nullable AnalogStick rs,
+                      @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt,
+                      boolean registerFields, boolean initAdapter) {
+        super(id, adapter, false, false);
+        this.rumbleMotors = new HashMap<>();
+
+        if (registerFields) {
+            this.registerFields();
+        }
+
+        this.ls = this.registerAndGetState(ls);
+        this.rs = this.registerAndGetState(rs);
+        this.lt = this.registerAndGetState(lt);
+        this.rt = this.registerAndGetState(rt);
+
+        if (initAdapter) {
+            this.initAdapter();
+        }
+    }
 
     /**
      * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
      * {@code lt}, or {@code rt} are not {@code null}, they will be
      * registered automatically during construction (assuming they are not
      * already registered via the {@link FeaturePresent} annotation.)
+     * <p/>
+     * This is a shorthand for the base constructor with the argument for
+     * {@code registerFields} and {@code initAdapter} being {@code true}.
      *
      * @param id      the controller ID.
      * @param adapter the controller adapter.
@@ -50,18 +88,11 @@ public abstract class Controller extends InputDevice {
      * @param rs      the right analog stick, may be {@code null}.
      * @param lt      the left analog trigger, may be {@code null}.
      * @param rt      the right analog trigger, may be {@code null}.
-     * @throws NullPointerException if {@code id} or {@code adapter} are
-     *                              {@code null}.
      */
     public Controller(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
                       @Nullable AnalogStick ls, @Nullable AnalogStick rs,
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt) {
-        super(id, adapter);
-
-        this.ls = this.registerAndGetState(ls);
-        this.rs = this.registerAndGetState(rs);
-        this.lt = this.registerAndGetState(lt);
-        this.rt = this.registerAndGetState(rt);
+        this(id, adapter, ls, rs, lt, rt, true, true);
     }
 
     /**
@@ -95,11 +126,10 @@ public abstract class Controller extends InputDevice {
             registerFeature(@NotNull F feature) {
         RegisteredFeature<F, S> registered = super.registerFeature(feature);
         if (feature instanceof RumbleMotor) {
-            if (rumbleMotors == null) {
-                this.rumbleMotors = new HashMap<>();
-            }
-            rumbleMotors.put((RumbleMotor) feature,
+            synchronized (rumbleMotors) {
+                rumbleMotors.put((RumbleMotor) feature,
                         (Vibration1f) this.getState(feature));
+            }
         }
         return registered;
     }
@@ -108,8 +138,10 @@ public abstract class Controller extends InputDevice {
     @Override
     public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
         super.unregisterFeature(feature);
-        if (feature instanceof RumbleMotor && rumbleMotors != null) {
-            rumbleMotors.remove(feature);
+        if (feature instanceof RumbleMotor) {
+            synchronized (rumbleMotors) {
+                rumbleMotors.remove(feature);
+            }
         }
     }
 
@@ -121,12 +153,11 @@ public abstract class Controller extends InputDevice {
      * @param force the vibration force to set each motor to.
      */
     public void rumble(float force) {
-        if (rumbleMotors == null) {
-            return;
-        }
         float capped = Math.min(Math.max(force, 0.0F), 1.0F);
-        for (Vibration1f vibration : rumbleMotors.values()) {
-            vibration.force = capped;
+        synchronized (rumbleMotors) {
+            for (Vibration1f vibration : rumbleMotors.values()) {
+                vibration.force = capped;
+            }
         }
     }
 
