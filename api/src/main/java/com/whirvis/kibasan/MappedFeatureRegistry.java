@@ -59,7 +59,29 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * Maps a feature to a state updater. Each time {@link #updateFeatures()}
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
-     * </p>
+     * <p/>
+     * This method is a shorthand for
+     * {@link #mapFeature(DeviceFeature, Object, StateUpdater)}, with the
+     * argument for {@code params} being {@code feature}.
+     *
+     * @param feature the feature to map.
+     * @param updater the method to call when updating the state.
+     * @param <F>     the device feature type.
+     * @param <S>     the state container type.
+     */
+    /* @formatter:off */
+    public final <F extends DeviceFeature<S>, S> void
+            mapFeature(@NotNull F feature,
+                       @NotNull StateUpdater<S, F> updater) {
+        this.mapFeature(feature, feature, updater);
+    }
+    /* @formatter:on */
+
+    /**
+     * Maps a feature to a state updater. Each time {@link #updateFeatures()}
+     * is called, every feature with a mapping will have their state updated
+     * by their assigned state updater (assuming they have one.)
+     * <p/>
      * This method is a shorthand for
      * {@link #mapFeature(DeviceFeature, Object, StateUpdater)}, which
      * passes {@code params} as {@code null} and converts {@code updater}
@@ -71,7 +93,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * @param <S>     the state container type.
      */
     /* @formatter:off */
-    public <F extends DeviceFeature<S>, S> void
+    public final <F extends DeviceFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater.NoParams<S> updater) {
         this.mapFeature(feature, null,
