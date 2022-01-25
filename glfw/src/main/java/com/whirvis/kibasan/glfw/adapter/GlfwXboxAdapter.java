@@ -18,6 +18,12 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
 
     protected static final int AXIS_LT = 4, AXIS_RT = 5;
 
+    public static @NotNull XboxController wrangle(long ptr_glfwWindow,
+                                                  int glfwJoystick) {
+        return new XboxController(new GlfwXboxAdapter(ptr_glfwWindow,
+                glfwJoystick));
+    }
+
     public GlfwXboxAdapter(long ptr_glfwWindow, int glfwJoystick) {
         super(ptr_glfwWindow, glfwJoystick);
     }

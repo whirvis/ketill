@@ -11,6 +11,12 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
 
     protected static final int AXIS_LT = 3, AXIS_RT = 4;
 
+    public static @NotNull Ps4Controller wrangle(long ptr_glfwWindow,
+                                                 int glfwJoystick) {
+        return new Ps4Controller(new GlfwPs4Adapter(ptr_glfwWindow,
+                glfwJoystick));
+    }
+
     public GlfwPs4Adapter(long ptr_glfwWindow, int glfwJoystick) {
         super(ptr_glfwWindow, glfwJoystick);
     }

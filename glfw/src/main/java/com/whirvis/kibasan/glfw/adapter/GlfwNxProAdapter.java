@@ -21,6 +21,12 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         return (pos - min - mid) / mid;
     }
 
+    public static @NotNull NxProController wrangle(long ptr_glfwWindow,
+                                                   int glfwJoystick) {
+        return new NxProController(new GlfwNxProAdapter(ptr_glfwWindow,
+                glfwJoystick));
+    }
+
     public GlfwNxProAdapter(long ptr_glfwWindow, int glfwJoystick) {
         super(ptr_glfwWindow, glfwJoystick);
     }

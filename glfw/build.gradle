@@ -2,6 +2,9 @@ plugins {
     id 'java'
 }
 
+project.ext.lwjglVersion = "3.3.0"
+project.ext.lwjglNatives = "natives-windows"
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -17,10 +20,16 @@ dependencies {
     implementation project(':devices:psx')
     implementation project(':devices:nx')
 
-    implementation 'org.lwjgl:lwjgl-glfw:3.3.0'
+    implementation 'org.joml:joml:1.10.2'
     implementation 'com.google.code.gson:gson:2.8.9'
 
-    implementation 'org.joml:joml:1.10.2'
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-glfw"
+
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
 
     compileOnly 'org.jetbrains:annotations:22.0.0'
 }
