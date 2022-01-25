@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 public abstract class DeviceSeeker<I extends InputDevice> {
 
     private final Set<I> devices;
-    private final Set<SeekerListener<I>> listeners;
+    private final Set<SeekerListener<? super I>> listeners;
     public final @NotNull Set<I> discoveredDevices; /* read only view */
 
     public DeviceSeeker() {
@@ -39,21 +39,21 @@ public abstract class DeviceSeeker<I extends InputDevice> {
         this.discoveredDevices = Collections.unmodifiableSet(devices);
     }
 
-    public void addListener(@NotNull SeekerListener<I> listener) {
+    public void addListener(@NotNull SeekerListener<? super I> listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
-    public void removeListener(@NotNull SeekerListener<I> listener) {
+    public void removeListener(@NotNull SeekerListener<? super I> listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
     }
 
-    private void sendCallback(@NotNull Consumer<SeekerListener<I>> event) {
+    private void sendCallback(@NotNull Consumer<SeekerListener<? super I>> event) {
         synchronized (listeners) {
-            for (SeekerListener<I> listener : listeners) {
+            for (SeekerListener<? super I> listener : listeners) {
                 event.accept(listener);
             }
         }
