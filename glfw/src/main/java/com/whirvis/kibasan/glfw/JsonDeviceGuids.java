@@ -122,8 +122,8 @@ public class JsonDeviceGuids implements DeviceGuids {
     private Map<String, Map<String, Set<String>>> guids;
 
     @Override
-    public @Nullable Set<String> getGuids(@NotNull String id,
-                                          @NotNull String os) {
+    public @Nullable Set<@NotNull String> getGuids(@NotNull String id,
+                                                   @NotNull String os) {
         Map<String, Set<String>> osGuids = guids.get(id);
         if (osGuids != null && !osGuids.isEmpty()) {
             return Collections.unmodifiableSet(osGuids.get(os));

@@ -11,7 +11,8 @@ public interface DeviceGuids {
      * @return the GUIDs for device with {@code id} when running on {@code os},
      * {@code null} if no such set of GUIDs exists.
      */
-    @Nullable Iterable<String> getGuids(@NotNull String id, @NotNull String os);
+    @Nullable Iterable<@NotNull String> getGuids(@NotNull String id,
+                                                 @NotNull String os);
 
     /**
      * @param id the input device ID.
@@ -19,9 +20,11 @@ public interface DeviceGuids {
      * @return the GUIDs for device with {@code id} when running on {@code os},
      * {@code null} if no such set of GUIDs exists.
      */
-    default @Nullable Iterable<String> getGuids(@NotNull String id,
-                                                @NotNull OperatingSystem os) {
+    /* @formatter:off */
+    default @Nullable Iterable<@NotNull String>
+            getGuids(@NotNull String id, @NotNull OperatingSystem os) {
         return this.getGuids(id, os.systemId);
     }
+    /* @formatter:on */
 
 }
