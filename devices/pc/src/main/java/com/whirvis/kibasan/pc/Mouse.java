@@ -1,7 +1,7 @@
 package com.whirvis.kibasan.pc;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.Button1bc;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
 import com.whirvis.kibasan.InputDevice;
@@ -52,8 +52,8 @@ public class Mouse extends InputDevice {
             cursor = this.getState(FEATURE_CURSOR);
     /* @formatter:on */
 
-    public Mouse(@NotNull DeviceAdapter<Mouse> adapter) {
-        super("mouse", adapter);
+    public Mouse(@NotNull AdapterSupplier<Mouse> adapterSupplier) {
+        super("mouse", adapterSupplier);
     }
 
 }

@@ -1,9 +1,9 @@
 package com.whirvis.kibasan.psx;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +38,8 @@ public class Ps5Controller extends PsxController {
             mute = this.getState(BUTTON_MUTE);
     /* @formatter:on */
 
-    public Ps5Controller(@NotNull DeviceAdapter<Ps5Controller> adapter) {
-        super("ps5", adapter, TRIGGER_LT, TRIGGER_RT);
+    public Ps5Controller(@NotNull AdapterSupplier<Ps5Controller> adapterSupplier) {
+        super("ps5", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }
 
 }

@@ -1,17 +1,17 @@
 package com.whirvis.kibasan.gc;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogStick;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.Controller;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.RumbleMotor;
-import com.whirvis.kibasan.Trigger1fc;
-import com.whirvis.kibasan.Vibration1f;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
+import com.whirvis.kibasan.RumbleMotor;
+import com.whirvis.kibasan.Trigger1fc;
+import com.whirvis.kibasan.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3fc;
 
@@ -82,8 +82,9 @@ public class GcController extends Controller {
             rumble = this.getState(MOTOR_RUMBLE);
     /* @formatter:on */
 
-    public GcController(@NotNull DeviceAdapter<GcController> adapter) {
-        super("gc", adapter, STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
+    public GcController(@NotNull AdapterSupplier<GcController> adapterSupplier) {
+        super("gc", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
+                TRIGGER_RT);
     }
 
 }

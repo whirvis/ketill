@@ -1,13 +1,13 @@
 package com.whirvis.kibasan.psx;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.RumbleMotor;
-import com.whirvis.kibasan.Vibration1f;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
+import com.whirvis.kibasan.RumbleMotor;
+import com.whirvis.kibasan.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
@@ -64,8 +64,8 @@ public class Ps4Controller extends PsxController {
             lightbar = this.getState(FEATURE_LIGHTBAR);
     /* @formatter:on */
 
-    public Ps4Controller(@NotNull DeviceAdapter<Ps4Controller> adapter) {
-        super("ps4", adapter, TRIGGER_LT, TRIGGER_RT);
+    public Ps4Controller(@NotNull AdapterSupplier<Ps4Controller> adapterSupplier) {
+        super("ps4", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }
 
     /**

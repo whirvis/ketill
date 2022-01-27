@@ -1,11 +1,11 @@
 package com.whirvis.kibasan.psx;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogStick;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.Controller;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
@@ -61,10 +61,10 @@ public abstract class PsxController extends Controller {
     /* @formatter:on */
 
     public PsxController(@NotNull String id,
-                         @NotNull DeviceAdapter<?> adapter,
+                         @NotNull AdapterSupplier<?> adapterSupplier,
                          @Nullable AnalogTrigger lt,
                          @Nullable AnalogTrigger rt) {
-        super(id, adapter, STICK_LS, STICK_RS, lt, rt);
+        super(id, adapterSupplier, STICK_LS, STICK_RS, lt, rt);
     }
 
 }

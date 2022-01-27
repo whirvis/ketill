@@ -1,11 +1,11 @@
 package com.whirvis.kibasan.nx;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogStick;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.Controller;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
@@ -76,8 +76,9 @@ public class NxProController extends Controller {
             left = this.getState(BUTTON_LEFT);
     /* @formatter:on */
 
-    public NxProController(@NotNull DeviceAdapter<NxProController> adapter) {
-        super("nx_pro", adapter, STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
+    public NxProController(@NotNull AdapterSupplier<NxProController> adapterSupplier) {
+        super("nx_pro", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
+                TRIGGER_RT);
     }
 
 }

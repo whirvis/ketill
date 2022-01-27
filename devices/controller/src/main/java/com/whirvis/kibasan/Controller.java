@@ -38,25 +38,26 @@ public abstract class Controller extends InputDevice {
      * registered automatically during construction (assuming they are not
      * already registered via the {@link FeaturePresent} annotation.)
      *
-     * @param id             the controller ID.
-     * @param adapter        the controller adapter.
-     * @param ls             the left analog stick, may be {@code null}.
-     * @param rs             the right analog stick, may be {@code null}.
-     * @param lt             the left analog trigger, may be {@code null}.
-     * @param rt             the right analog trigger, may be {@code null}.
-     * @param registerFields {@code true} if the constructor should call
-     *                       {@link #registerFields()}. If {@code false},
-     *                       the extending class must call it if it desires
-     *                       the functionality of {@link FeaturePresent}.
-     * @param initAdapter    {@code true} if the constructor should call
-     *                       {@link #initAdapter()}. If {@code false}, the
-     *                       extending class <b>must</b> call it.
+     * @param id              the controller ID.
+     * @param adapterSupplier the controller adapter supplier.
+     * @param ls              the left analog stick, may be {@code null}.
+     * @param rs              the right analog stick, may be {@code null}.
+     * @param lt              the left analog trigger, may be {@code null}.
+     * @param rt              the right analog trigger, may be {@code null}.
+     * @param registerFields  {@code true} if the constructor should call
+     *                        {@link #registerFields()}. If {@code false},
+     *                        the extending class must call it if it desires
+     *                        the functionality of {@link FeaturePresent}.
+     * @param initAdapter     {@code true} if the constructor should call
+     *                        {@link #initAdapter()}. If {@code false}, the
+     *                        extending class <b>must</b> call it.
      */
-    public Controller(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
+    public Controller(@NotNull String id,
+                      @NotNull AdapterSupplier<?> adapterSupplier,
                       @Nullable AnalogStick ls, @Nullable AnalogStick rs,
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt,
                       boolean registerFields, boolean initAdapter) {
-        super(id, adapter, false, false);
+        super(id, adapterSupplier, false, false);
         this.rumbleMotors = new HashMap<>();
 
         if (registerFields) {
@@ -82,17 +83,18 @@ public abstract class Controller extends InputDevice {
      * This is a shorthand for the base constructor with the argument for
      * {@code registerFields} and {@code initAdapter} being {@code true}.
      *
-     * @param id      the controller ID.
-     * @param adapter the controller adapter.
-     * @param ls      the left analog stick, may be {@code null}.
-     * @param rs      the right analog stick, may be {@code null}.
-     * @param lt      the left analog trigger, may be {@code null}.
-     * @param rt      the right analog trigger, may be {@code null}.
+     * @param id              the controller ID.
+     * @param adapterSupplier the controller adapter supplier.
+     * @param ls              the left analog stick, may be {@code null}.
+     * @param rs              the right analog stick, may be {@code null}.
+     * @param lt              the left analog trigger, may be {@code null}.
+     * @param rt              the right analog trigger, may be {@code null}.
      */
-    public Controller(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
+    public Controller(@NotNull String id,
+                      @NotNull AdapterSupplier<?> adapterSupplier,
                       @Nullable AnalogStick ls, @Nullable AnalogStick rs,
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt) {
-        this(id, adapter, ls, rs, lt, rt, true, true);
+        this(id, adapterSupplier, ls, rs, lt, rt, true, true);
     }
 
     /**

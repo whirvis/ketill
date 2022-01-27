@@ -1,5 +1,6 @@
 package com.whirvis.kibasan.pc;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
@@ -265,8 +266,8 @@ public class Keyboard extends InputDevice {
             menu = this.getState(KEY_MENU);
     /* @formatter:on */
 
-    public Keyboard(@NotNull DeviceAdapter<Keyboard> adapter) {
-        super("keyboard", adapter);
+    public Keyboard(@NotNull AdapterSupplier<Keyboard> adapterSupplier) {
+        super("keyboard", adapterSupplier);
     }
 
 }

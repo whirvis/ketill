@@ -1,13 +1,13 @@
 package com.whirvis.kibasan.psx;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.DeviceButton;
-import com.whirvis.kibasan.RumbleMotor;
-import com.whirvis.kibasan.Vibration1f;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.FeaturePresent;
 import com.whirvis.kibasan.FeatureState;
+import com.whirvis.kibasan.RumbleMotor;
+import com.whirvis.kibasan.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,8 +46,8 @@ public class Ps3Controller extends PsxController {
             rumbleWeak = this.getState(MOTOR_WEAK);
     /* @formatter:on */
 
-    public Ps3Controller(@NotNull DeviceAdapter<Ps3Controller> adapter) {
-        super("ps3", adapter, TRIGGER_LT, TRIGGER_RT);
+    public Ps3Controller(@NotNull AdapterSupplier<Ps3Controller> adapterSupplier) {
+        super("ps3", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }
 
 }

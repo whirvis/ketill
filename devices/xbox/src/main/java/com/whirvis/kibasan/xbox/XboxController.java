@@ -1,10 +1,10 @@
 package com.whirvis.kibasan.xbox;
 
+import com.whirvis.kibasan.AdapterSupplier;
 import com.whirvis.kibasan.AnalogStick;
 import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1bc;
 import com.whirvis.kibasan.Controller;
-import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.DeviceButton;
 import com.whirvis.kibasan.Direction;
 import com.whirvis.kibasan.FeaturePresent;
@@ -76,8 +76,9 @@ public class XboxController extends Controller {
             rumbleFine = this.getState(MOTOR_FINE);
     /* @formatter:on */
 
-    public XboxController(@NotNull DeviceAdapter<XboxController> adapter) {
-        super("xbox", adapter, STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
+    public XboxController(@NotNull AdapterSupplier<XboxController> adapterSupplier) {
+        super("xbox", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
+                TRIGGER_RT);
     }
 
 }
