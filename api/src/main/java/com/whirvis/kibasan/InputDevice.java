@@ -30,27 +30,35 @@ import java.util.Set;
 public abstract class InputDevice implements FeatureRegistry {
 
     public final @NotNull String id;
-    private final DeviceAdapter<InputDevice> adapter;
     private final MappedFeatureRegistry registry;
+    private final DeviceAdapter<InputDevice> adapter;
     private boolean initializedAdapter;
 
     /**
-     * @param id             the device ID.
-     * @param adapter        the device adapter.
-     * @param registerFields {@code true} if the constructor should call
-     *                       {@link #registerFields()}. If {@code false},
-     *                       the extending class must call it if it desires
-     *                       the functionality of {@link FeaturePresent}.
-     * @param initAdapter    {@code true} if the constructor should call
-     *                       {@link #initAdapter()}. If {@code false}, the
-     *                       extending class <b>must</b> call it.
+     * @param id              the device ID.
+     * @param adapterSupplier the device adapter supplier.
+     * @param registerFields  {@code true} if the constructor should call
+     *                        {@link #registerFields()}. If {@code false},
+     *                        the extending class must call it if it desires
+     *                        the functionality of {@link FeaturePresent}.
+     * @param initAdapter     {@code true} if the constructor should call
+     *                        {@link #initAdapter()}. If {@code false}, the
+     *                        extending class <b>must</b> call it.
      */
     @SuppressWarnings("unchecked")
-    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter,
+    public InputDevice(@NotNull String id,
+                       @NotNull AdapterSupplier<?> adapterSupplier,
                        boolean registerFields, boolean initAdapter) {
         this.id = id;
-        this.adapter = (DeviceAdapter<InputDevice>) adapter;
         this.registry = new MappedFeatureRegistry(this);
+
+        /*
+         * While this is an unchecked cast, the template requires that the
+         * type extend InputDevice. As such, this cast is safe to perform.
+         */
+        AdapterSupplier<InputDevice> castedSupplier =
+                (AdapterSupplier<InputDevice>) adapterSupplier;
+        this.adapter = castedSupplier.get(this, registry);
 
         if (registerFields) {
             this.registerFields();
@@ -65,11 +73,12 @@ public abstract class InputDevice implements FeatureRegistry {
      * This is a shorthand for the base constructor with the argument for
      * {@code registerFields} and {@code initAdapter} being {@code true}.
      *
-     * @param id      the device ID.
-     * @param adapter the device adapter.
+     * @param id              the device ID.
+     * @param adapterSupplier the device adapter supplier.
      */
-    public InputDevice(@NotNull String id, @NotNull DeviceAdapter<?> adapter) {
-        this(id, adapter, true, true);
+    public InputDevice(@NotNull String id,
+                       @NotNull AdapterSupplier<?> adapterSupplier) {
+        this(id, adapterSupplier, true, true);
     }
 
     @MustBeInvokedByOverriders
@@ -77,7 +86,7 @@ public abstract class InputDevice implements FeatureRegistry {
         if (initializedAdapter) {
             throw new IllegalStateException("adapter already initialized");
         }
-        adapter.initAdapter(this, registry);
+        adapter.initAdapter();
         this.initializedAdapter = true;
     }
 
@@ -164,7 +173,7 @@ public abstract class InputDevice implements FeatureRegistry {
     }
 
     public boolean isConnected() {
-        return adapter.isDeviceConnected(this);
+        return adapter.isDeviceConnected();
     }
 
     /**
@@ -176,7 +185,7 @@ public abstract class InputDevice implements FeatureRegistry {
      */
     @MustBeInvokedByOverriders
     public void poll() {
-        adapter.pollDevice(this);
+        adapter.pollDevice();
         registry.updateFeatures();
     }
 
