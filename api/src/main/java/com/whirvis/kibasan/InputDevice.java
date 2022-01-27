@@ -6,6 +6,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A device which can send and receive input data.
@@ -80,7 +83,11 @@ public abstract class InputDevice implements FeatureRegistry {
 
     protected void registerFields() {
         Class<?> clazz = this.getClass();
-        for (Field field : ReflectionUtils.getAllFields(clazz)) {
+        Set<Field> fields = new HashSet<>();
+        Collections.addAll(fields, clazz.getDeclaredFields());
+        Collections.addAll(fields, clazz.getFields());
+
+        for (Field field : fields) {
             this.registerField(field);
         }
     }
