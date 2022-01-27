@@ -10,8 +10,9 @@ repositories {
 dependencies {
     implementation project(':api')
     implementation project(':hid-usb:api')
+    implementation project(':devices:features')
     implementation project(':devices:controller')
-    implementation project(':devices:gamecube')
+    implementation project(':devices:gc')
 
     implementation 'org.joml:joml:1.10.0'
 
@@ -20,6 +21,7 @@ dependencies {
     implementation 'org.usb4java:usb4java-javax:1.3.0'
     implementation 'org.hid4java:hid4java:0.7.0'
     implementation 'net.java.dev.jna:jna:5.9.0'
+    implementation 'org.jetbrains:annotations:20.1.0'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

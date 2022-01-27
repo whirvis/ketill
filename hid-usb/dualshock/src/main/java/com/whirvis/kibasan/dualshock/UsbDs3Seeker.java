@@ -7,7 +7,7 @@ import org.usb4java.DeviceHandle;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UsbDs3Seeker extends UsbDeviceSeeker {
+public class UsbDs3Seeker extends UsbDeviceSeeker<Ps3Controller> {
 
 	private static final int VENDOR_ID = 0x54C;
 	private static final int PRODUCT_ID = 0x268;
@@ -15,7 +15,6 @@ public class UsbDs3Seeker extends UsbDeviceSeeker {
 	private final Map<DeviceHandle, Ps3Controller> controllers;
 
 	public UsbDs3Seeker() {
-		super(Ps3Controller.class);
 		this.controllers = new HashMap<>();
 		this.seekDevice(VENDOR_ID, PRODUCT_ID);
 	}
@@ -25,14 +24,14 @@ public class UsbDs3Seeker extends UsbDeviceSeeker {
 		Ps3Controller controller =
 				new Ps3Controller(new Ds3UsbAdapter(handle));
 		controllers.put(handle, controller);
-		this.register(controller);
+		this.discoverDevice(controller);
 	}
 
 	@Override
 	protected void onDetach(DeviceHandle handle) {
 		Ps3Controller controller = controllers.remove(handle);
 		if (controller != null) {
-			this.unregister(controller);
+			this.forgetDevice(controller);
 		}
 	}
 

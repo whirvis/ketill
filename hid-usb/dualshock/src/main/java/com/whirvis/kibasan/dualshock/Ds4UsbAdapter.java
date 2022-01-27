@@ -1,96 +1,83 @@
 package com.whirvis.kibasan.dualshock;
 
-import com.whirvis.kibasan.AdapterMapping;
+import com.whirvis.kibasan.MappedFeatureRegistry;
 import com.whirvis.kibasan.psx.Ps4Controller;
 import org.hid4java.HidDevice;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+
+import static com.whirvis.kibasan.psx.Ps4Controller.*;
 
 public class Ds4UsbAdapter extends Ds4HidAdapter {
 
-	private static final byte INPUT_ID = (byte) 0x01;
-	private static final byte OUTPUT_ID = (byte) 0x05;
+    /* @formatter:off */
+    private static final byte
+            INPUT_ID      = (byte) 0x01,
+            OUTPUT_ID     = (byte) 0x05;
 
-	private static final int INPUT_LEN = 78;
-	private static final int OUTPUT_LEN = 74;
+    private static final int
+            INPUT_LENGTH  = 78,
+            OUTPUT_LENGTH = 74;
 
-	private static final byte[] OUTPUT_HEADER = new byte[] {
-			(byte) 0xF7, /* enable all features */
-			(byte) 0x04 /* unknown */
-	};
+    private static final byte[]
+            OUTPUT_HEADER = new byte[] {
+                    (byte) 0xF7, /* enable all features */
+                    (byte) 0x04 /* unknown */
+            };
+    /* @formatter:on */
 
-	/* @formatter: off */
-	@AdapterMapping
-	public static final Ds4DpadMapping
-			UP = new Ds4DpadMapping(Ps4Controller.UP,
-					5, DPAD_PATTERNS_UP),
-			DOWN = new Ds4DpadMapping(Ps4Controller.DOWN,
-					5, DPAD_PATTERNS_DOWN),
-			LEFT = new Ds4DpadMapping(Ps4Controller.LEFT,
-					5, DPAD_PATTERNS_LEFT), 
-			RIGHT = new Ds4DpadMapping(Ps4Controller.RIGHT,
-					5, DPAD_PATTERNS_RIGHT);
-	
-	@AdapterMapping
-	public static final Ds4ButtonMapping
-			SQUARE = new Ds4ButtonMapping(Ps4Controller.SQUARE, 5, 4),
-			CROSS = new Ds4ButtonMapping(Ps4Controller.CROSS, 5, 5),
-			CIRCLE = new Ds4ButtonMapping(Ps4Controller.CIRCLE, 5, 6),
-			TRIANGLE = new Ds4ButtonMapping(Ps4Controller.TRIANGLE, 5, 7),
-			L1 = new Ds4ButtonMapping(Ps4Controller.L1, 6, 0),
-			R1 = new Ds4ButtonMapping(Ps4Controller.R1, 6, 1),
-			L2 = new Ds4ButtonMapping(Ps4Controller.L2, 6, 2),
-			R2 = new Ds4ButtonMapping(Ps4Controller.R2, 6, 3),
-			SHARE = new Ds4ButtonMapping(Ps4Controller.SHARE, 6, 4),
-			OPTIONS = new Ds4ButtonMapping(Ps4Controller.OPTIONS, 6, 5),
-			THUMB_L = new Ds4ButtonMapping(Ps4Controller.THUMB_L, 6, 6),
-			THUMB_R = new Ds4ButtonMapping(Ps4Controller.THUMB_R, 6, 7),
-			PS = new Ds4ButtonMapping(Ps4Controller.PS, 7, 0),
-			TPAD = new Ds4ButtonMapping(Ps4Controller.TPAD, 7, 1);
-	
-	@AdapterMapping
-	public static final Ds4StickMapping
-			LS = new Ds4StickMapping(Ps4Controller.LS, 1, 2),
-			RS = new Ds4StickMapping(Ps4Controller.RS, 3, 4);
-			
-	@AdapterMapping
-	public static final Ds4TriggerMapping
-			LT = new Ds4TriggerMapping(Ps4Controller.LT, 8),
-			RT = new Ds4TriggerMapping(Ps4Controller.RT, 9);
-	
-	@AdapterMapping
-	public static final Ds4RumbleMapping
-			RUMBLE_WEAK = new Ds4RumbleMapping(Ps4Controller.RUMBLE_WEAK, 3),
-			RUMBLE_STRONG = new Ds4RumbleMapping(Ps4Controller.RUMBLE_STRONG, 4);
-	
-	@AdapterMapping
-	public static final Ds4LightbarMapping
-			LIGHTBAR = new Ds4LightbarMapping(Ps4Controller.LIGHTBAR, 5);
-	/* @formatter: on */
+    public Ds4UsbAdapter(HidDevice hid) {
+        super(hid, INPUT_ID, OUTPUT_ID);
+    }
 
-	public Ds4UsbAdapter(HidDevice hid) {
-		super(hid, INPUT_ID, OUTPUT_ID);
-	}
+    @Override
+    protected void initAdapter(@NotNull Ps4Controller device,
+                               @NotNull MappedFeatureRegistry registry) {
+        this.mapDpad(registry, BUTTON_UP, 5, DPAD_PATTERNS_UP);
+        this.mapDpad(registry, BUTTON_DOWN, 5, DPAD_PATTERNS_DOWN);
+        this.mapDpad(registry, BUTTON_LEFT, 5, DPAD_PATTERNS_LEFT);
+        this.mapDpad(registry, BUTTON_RIGHT, 5, DPAD_PATTERNS_RIGHT);
 
-	@Override
-	protected byte[] generateInputReport() {
-		int offset = 0;
-		byte[] report = new byte[INPUT_LEN];
+        this.mapButton(registry, BUTTON_SQUARE, 5, 4);
+        this.mapButton(registry, BUTTON_CROSS, 5, 5);
+        this.mapButton(registry, BUTTON_CIRCLE, 5, 6);
+        this.mapButton(registry, BUTTON_TRIANGLE, 5, 7);
+        this.mapButton(registry, BUTTON_L1, 6, 0);
+        this.mapButton(registry, BUTTON_R1, 6, 1);
+        this.mapButton(registry, BUTTON_L2, 6, 2);
+        this.mapButton(registry, BUTTON_R2, 6, 3);
+        this.mapButton(registry, BUTTON_SHARE, 6, 4);
+        this.mapButton(registry, BUTTON_OPTIONS, 6, 5);
+        this.mapButton(registry, BUTTON_L_THUMB, 6, 6);
+        this.mapButton(registry, BUTTON_R_THUMB, 6, 7);
+        this.mapButton(registry, BUTTON_PS, 7, 0);
+        this.mapButton(registry, BUTTON_TPAD, 7, 1);
 
-		report[offset++] = INPUT_ID;
-		offset = populateInputReport(report, offset);
+        this.mapStick(registry, STICK_LS, 1, 2, 6, 6);
+        this.mapStick(registry, STICK_RS, 3, 4, 6, 7);
 
-		return report;
-	}
+        this.mapTrigger(registry, TRIGGER_LT, 8);
+        this.mapTrigger(registry, TRIGGER_RT, 9);
 
-	@Override
-	protected byte[] generateOutputReport() {
-		int offset = 0;
-		byte[] report = new byte[OUTPUT_LEN];
+        this.mapMotor(registry, MOTOR_WEAK, 3);
+        this.mapMotor(registry, MOTOR_STRONG, 4);
 
-		for (int i = 0; i < OUTPUT_HEADER.length; i++) {
-			report[offset++] = OUTPUT_HEADER[i];
-		}
+        this.mapLightbar(registry, FEATURE_LIGHTBAR, 5);
+    }
 
-		return report;
-	}
+    @Override
+    protected byte[] generateInputReport() {
+        int offset = 0;
+        byte[] report = new byte[INPUT_LENGTH];
+        report[offset++] = INPUT_ID;
+        populateInputReport(report, offset);
+        return report;
+    }
+
+    @Override
+    protected byte[] generateOutputReport() {
+        return Arrays.copyOf(OUTPUT_HEADER, OUTPUT_LENGTH);
+    }
 
 }

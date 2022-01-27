@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public abstract class HidDeviceSeeker extends DeviceSeeker
-		implements HidServicesListener {
+public abstract class HidDeviceSeeker<I extends InputDevice>
+		extends DeviceSeeker<I> implements HidServicesListener {
 
 	private static String getSerialStr(HidDevice device) {
 		String serial = device.getSerialNumber();
@@ -36,14 +36,11 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	private Exception hidException;
 
 	/**
-	 * @param type
-	 *            the input device type.
 	 * @throws NullPointerException
 	 *             if {@code type} is {@code null}.
 	 * @see #seekDevice(int, int)
 	 */
-	public HidDeviceSeeker(Class<? extends InputDevice> type) {
-		super(type);
+	public HidDeviceSeeker() {
 
 		this.descs = new HashSet<>();
 		this.devices = new HashSet<>();
@@ -88,7 +85,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		}
 		descs.add(new DeviceDesc(vendorId, productId));
 		String idStr = DeviceDesc.getStr(vendorId, productId);
-		log.debug("Seeking devices with ID " + idStr);
+		// log.debug("Seeking devices with ID " + idStr);
 	}
 
 	/**
@@ -118,7 +115,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		}
 
 		String idStr = DeviceDesc.getStr(vendorId, productId);
-		log.debug("Dropped " + count + " devices with ID " + idStr);
+		// log.debug("Dropped " + count + " devices with ID " + idStr);
 	}
 
 	protected abstract void onConnect(HidDevice device);
@@ -134,7 +131,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		devices.add(device);
 
 		String serialStr = getSerialStr(device);
-		log.trace("Device with " + serialStr + " connected");
+		// log.trace("Device with " + serialStr + " connected");
 	}
 
 	protected abstract void onDisconnect(HidDevice device);
@@ -149,7 +146,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		devices.remove(device);
 
 		String serialStr = getSerialStr(device);
-		log.trace("Device with " + serialStr + " disconnected");
+		// log.trace("Device with " + serialStr + " disconnected");
 	}
 	
 	protected abstract void onTrouble(HidDevice device, Throwable cause);
@@ -164,8 +161,8 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		this.disconnect(device);
 
 		String serialStr = getSerialStr(device);
-		log.error("Permanently disconnected device " + serialStr
-				+ " due to unhandled issue", cause);
+		//log.error("Permanently disconnected device " + serialStr
+		//		+ " due to unhandled issue", cause);
 	}
 
 	@Override
@@ -221,7 +218,18 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 * @see #seekDevice(int, int)
 	 */
 	@Override
-	protected void seek() throws Exception {
+	protected void seekImpl() throws Exception {
+		Iterator<HidDevice> devicesI = devices.iterator();
+		while (devicesI.hasNext()) {
+			HidDevice device = devicesI.next();
+			try {
+				this.poll(device);
+			} catch (Exception e) {
+				devicesI.remove();
+				this.markTroubled(device, e);
+			}
+		}
+
 		if (descs.isEmpty()) {
 			throw new InputException("no HID devices specified");
 		} else if (hidException != null) {
@@ -231,7 +239,7 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 		if (!startedServices) {
 			services.start();
 			this.startedServices = true;
-			log.debug("Started HID services");
+			//log.debug("Started HID services");
 		}
 	}
 
@@ -247,21 +255,5 @@ public abstract class HidDeviceSeeker extends DeviceSeeker
 	 *             if an error occurs.
 	 */
 	protected abstract void poll(HidDevice device) throws Exception;
-
-	@Override
-	public void poll() {
-		super.poll();
-
-		Iterator<HidDevice> devicesI = devices.iterator();
-		while (devicesI.hasNext()) {
-			HidDevice device = devicesI.next();
-			try {
-				this.poll(device);
-			} catch (Exception e) {
-				devicesI.remove();
-				this.markTroubled(device, e);
-			}
-		}
-	}
 
 }

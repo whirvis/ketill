@@ -1,18 +1,18 @@
 package com.whirvis.kibasan.dualshock;
 
-import com.whirvis.controller.AnalogMapping;
-import com.whirvis.controller.AnalogStick;
-
-public class Ds4StickMapping
-		extends AnalogMapping<AnalogStick> {
+public class Ds4StickMapping {
 
 	public final int byteOffsetX;
 	public final int byteOffsetY;
+	public final int thumbByteOffset;
+	public final int thumbBitOffset;
 	
-	public Ds4StickMapping(AnalogStick stick, int byteOffsetX, int byteOffsetY) {
-		super(stick);
+	public Ds4StickMapping(int byteOffsetX, int byteOffsetY,
+						   int thumbByteOffset, int thumbBitOffset) {
 		this.byteOffsetX = byteOffsetX;
 		this.byteOffsetY = byteOffsetY;
+		this.thumbByteOffset = thumbByteOffset;
+		this.thumbBitOffset = thumbBitOffset;
 	}
 
 }

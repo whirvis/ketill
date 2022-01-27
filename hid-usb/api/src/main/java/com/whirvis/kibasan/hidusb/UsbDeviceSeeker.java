@@ -7,7 +7,8 @@ import org.usb4java.*;
 
 import java.util.*;
 
-public abstract class UsbDeviceSeeker extends DeviceSeeker {
+public abstract class UsbDeviceSeeker<I extends InputDevice>
+		extends DeviceSeeker<I> {
 
 	private static final long SEARCH_RATE = 1000L;
 	private static boolean initializedLibUsb = false;
@@ -77,15 +78,10 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 	/**
 	 * After initial setup, this constructor will initialize LibUsb if it has
 	 * not been initialized already.
-	 * 
-	 * @param type
-	 *            the input device type.
-	 * @throws NullPointerException
-	 *             if {@code type} is {@code null}.
+	 *
 	 * @see #seekDevice(int, int)
 	 */
-	public UsbDeviceSeeker(Class<? extends InputDevice> type) {
-		super(type);
+	public UsbDeviceSeeker() {
 
 		this.descs = new HashSet<>();
 		this.handles = new HashMap<>();
@@ -131,7 +127,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 		}
 		descs.add(new DeviceDesc(vendorId, productId));
 		String idStr = DeviceDesc.getStr(vendorId, productId);
-		log.debug("Seeking devices with ID " + idStr);
+		// log.debug("Seeking devices with ID " + idStr);
 	}
 
 	/**
@@ -162,7 +158,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 		}
 
 		String idStr = DeviceDesc.getStr(vendorId, productId);
-		log.debug("Dropped " + count + " devices with ID " + idStr);
+		// log.debug("Dropped " + count + " devices with ID " + idStr);
 	}
 
 	protected abstract void onAttach(DeviceHandle handle);
@@ -189,7 +185,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 
 		this.onAttach(handle);
 		String serialStr = getSerialStr(handle);
-		log.trace("Device with " + serialStr + " attached");
+		// log.trace("Device with " + serialStr + " attached");
 	}
 
 	protected abstract void onDetach(DeviceHandle handle);
@@ -199,7 +195,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 
 		this.onDetach(handle);
 		String serialStr = getSerialStr(handle);
-		log.trace("Device with " + serialStr + " detached");
+		// log.trace("Device with " + serialStr + " detached");
 
 		/*
 		 * Now that the device is no longer being used by this seeker, its
@@ -228,8 +224,8 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 		 */
 		String serialStr = getSerialStr(handle);
 		this.detach(handle);
-		log.error("Detached device with serial number " + serialStr
-				+ " permanently due to unhandled issue", cause);
+		//log.error("Detached device with serial number " + serialStr
+		//		+ " permanently due to unhandled issue", cause);
 	}
 
 	private void searchDevices() {
@@ -270,7 +266,7 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 	 * @see #seekDevice(int, int)
 	 */
 	@Override
-	protected void seek() {
+	protected void seekImpl() {
 		if (descs.isEmpty()) {
 			throw new InputException("no USB devices specified");
 		}
@@ -280,22 +276,6 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 			this.searchDevices();
 			this.lastSearch = currentTime;
 		}
-	}
-
-	/**
-	 * This method is called for each USB device that is currently registered to
-	 * this seeker. If an exception is thrown, the seeker will mark the USB
-	 * device to be "troubled", and automatically disconnect it. Afterwards, it
-	 * will not be reconnected.
-	 *
-	 * @throws Exception
-	 *             if an error occurs.
-	 */
-	protected abstract void poll(DeviceHandle handle) throws Exception;
-
-	@Override
-	public void poll() {
-		super.poll();
 
 		Iterator<Device> devicesI = handles.keySet().iterator();
 		while (devicesI.hasNext()) {
@@ -309,5 +289,16 @@ public abstract class UsbDeviceSeeker extends DeviceSeeker {
 			}
 		}
 	}
+
+	/**
+	 * This method is called for each USB device that is currently registered to
+	 * this seeker. If an exception is thrown, the seeker will mark the USB
+	 * device to be "troubled", and automatically disconnect it. Afterwards, it
+	 * will not be reconnected.
+	 *
+	 * @throws Exception
+	 *             if an error occurs.
+	 */
+	protected abstract void poll(DeviceHandle handle) throws Exception;
 
 }
