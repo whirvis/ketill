@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -42,12 +43,14 @@ public abstract class DeviceSeeker<I extends InputDevice> {
     }
 
     public void addListener(@NotNull SeekerListener<? super I> listener) {
+        Objects.requireNonNull(listener, "listener");
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
     public void removeListener(@NotNull SeekerListener<? super I> listener) {
+        Objects.requireNonNull(listener, "listener");
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -63,6 +66,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
 
     @MustBeInvokedByOverriders
     protected void discoverDevice(@NotNull I device) {
+        Objects.requireNonNull(device, "device");
         if (devices.contains(device)) {
             return;
         }
@@ -72,6 +76,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
 
     @MustBeInvokedByOverriders
     protected void forgetDevice(@NotNull I device) {
+        Objects.requireNonNull(device, "device");
         if (!devices.contains(device)) {
             return;
         }

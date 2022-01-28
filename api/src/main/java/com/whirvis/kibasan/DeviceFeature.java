@@ -2,6 +2,7 @@ package com.whirvis.kibasan;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -22,11 +23,14 @@ public abstract class DeviceFeature<S> {
     /**
      * @param id           the feature ID.
      * @param initialState a supplier for the feature's initial state.
+     * @throws NullPointerException if {@code id} or {@code initialState} are
+     *                              {@code null}.
      */
     public DeviceFeature(@NotNull String id,
                          @NotNull Supplier<S> initialState) {
-        this.id = id;
-        this.initialState = initialState;
+        this.id = Objects.requireNonNull(id, "id");
+        this.initialState = Objects.requireNonNull(initialState,
+                "initialState");
     }
 
 }

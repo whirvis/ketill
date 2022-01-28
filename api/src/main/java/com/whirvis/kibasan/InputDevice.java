@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -44,18 +45,21 @@ public abstract class InputDevice implements FeatureRegistry {
      * @param initAdapter     {@code true} if the constructor should call
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
+     * @throws NullPointerException if {@code id} or {@code adapterSupplier}
+     *                              are {@code null}.
      */
     @SuppressWarnings("unchecked")
     public InputDevice(@NotNull String id,
                        @NotNull AdapterSupplier<?> adapterSupplier,
                        boolean registerFields, boolean initAdapter) {
-        this.id = id;
+        this.id = Objects.requireNonNull(id, "id");
         this.registry = new MappedFeatureRegistry(this);
 
         /*
          * While this is an unchecked cast, the template requires that the
          * type extend InputDevice. As such, this cast is safe to perform.
          */
+        Objects.requireNonNull(adapterSupplier, "adapterSupplier");
         AdapterSupplier<InputDevice> castedSupplier =
                 (AdapterSupplier<InputDevice>) adapterSupplier;
         this.adapter = castedSupplier.get(this, registry);
@@ -75,6 +79,8 @@ public abstract class InputDevice implements FeatureRegistry {
      *
      * @param id              the device ID.
      * @param adapterSupplier the device adapter supplier.
+     * @throws NullPointerException if {@code id} or {@code adapterSupplier}
+     *                              are {@code null}.
      */
     public InputDevice(@NotNull String id,
                        @NotNull AdapterSupplier<?> adapterSupplier) {
@@ -157,7 +163,7 @@ public abstract class InputDevice implements FeatureRegistry {
      * <b>Note:</b> This method can be called before {@code InputDevice} is
      * finished constructing by the {@link #registerField(Field)}
      * method. As such, extending classes should take care to write code
-     * around this fact if they override this method.
+     * around this fact if they override this method. TODO
      */
     /* @formatter:off */
     @Override
