@@ -163,9 +163,7 @@ public abstract class InputDevice implements FeatureRegistry {
      * {@inheritDoc}
      * <p/>
      * <b>Note:</b> This method can be called before {@code InputDevice} is
-     * finished constructing by the {@link #registerField(Field)}
-     * method. As such, extending classes should take care to write code
-     * around this fact if they override this method. TODO
+     * finished constructing by the {@link #registerField(Field)} method.
      */
     /* @formatter:off */
     @Override
