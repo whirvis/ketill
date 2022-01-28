@@ -8,8 +8,7 @@ import org.joml.Vector3f;
 
 import static com.whirvis.kibasan.psx.PsxController.*;
 
-public abstract class GlfwPsxAdapter<I extends PsxController>
-        extends GlfwJoystickAdapter<I> {
+public abstract class GlfwPsxAdapter<I extends PsxController> extends GlfwJoystickAdapter<I> {
 
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
@@ -17,27 +16,28 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
             RS_MAPPING = new GlfwStickMapping(2, 5, 9);
     /* @formatter:on */
 
-    public GlfwPsxAdapter(long ptr_glfwWindow, int glfwJoystick) {
-        super(ptr_glfwWindow, glfwJoystick);
+    public GlfwPsxAdapter(@NotNull I controller,
+                          @NotNull MappedFeatureRegistry registry,
+                          long ptr_glfwWindow, int glfwJoystick) {
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
     @MustBeInvokedByOverriders
-    protected void initAdapter(@NotNull I controller,
-                               @NotNull MappedFeatureRegistry registry) {
-        this.mapButton(registry, BUTTON_SQUARE, 0);
-        this.mapButton(registry, BUTTON_CROSS, 1);
-        this.mapButton(registry, BUTTON_CIRCLE, 2);
-        this.mapButton(registry, BUTTON_TRIANGLE, 3);
-        this.mapButton(registry, BUTTON_L1, 4);
-        this.mapButton(registry, BUTTON_R1, 5);
-        this.mapButton(registry, BUTTON_L2, 6);
-        this.mapButton(registry, BUTTON_R2, 7);
-        this.mapButton(registry, BUTTON_L_THUMB, 8);
-        this.mapButton(registry, BUTTON_R_THUMB, 9);
+    protected void initAdapter() {
+        this.mapButton(BUTTON_SQUARE, 0);
+        this.mapButton(BUTTON_CROSS, 1);
+        this.mapButton(BUTTON_CIRCLE, 2);
+        this.mapButton(BUTTON_TRIANGLE, 3);
+        this.mapButton(BUTTON_L1, 4);
+        this.mapButton(BUTTON_R1, 5);
+        this.mapButton(BUTTON_L2, 6);
+        this.mapButton(BUTTON_R2, 7);
+        this.mapButton(BUTTON_L_THUMB, 8);
+        this.mapButton(BUTTON_R_THUMB, 9);
 
-        this.mapStick(registry, STICK_LS, LS_MAPPING);
-        this.mapStick(registry, STICK_RS, RS_MAPPING);
+        this.mapStick(STICK_LS, LS_MAPPING);
+        this.mapStick(STICK_RS, RS_MAPPING);
     }
 
     @Override

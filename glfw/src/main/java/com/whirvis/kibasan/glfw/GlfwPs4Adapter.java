@@ -13,30 +13,31 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
 
     public static @NotNull Ps4Controller wrangle(long ptr_glfwWindow,
                                                  int glfwJoystick) {
-        return new Ps4Controller(new GlfwPs4Adapter(ptr_glfwWindow,
-                glfwJoystick));
+        return new Ps4Controller((c, r) -> new GlfwPs4Adapter(c, r,
+                ptr_glfwWindow, glfwJoystick));
     }
 
-    public GlfwPs4Adapter(long ptr_glfwWindow, int glfwJoystick) {
-        super(ptr_glfwWindow, glfwJoystick);
+    public GlfwPs4Adapter(@NotNull Ps4Controller controller,
+                          @NotNull MappedFeatureRegistry registry,
+                          long ptr_glfwWindow, int glfwJoystick) {
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
-    protected void initAdapter(@NotNull Ps4Controller controller,
-                               @NotNull MappedFeatureRegistry registry) {
-        super.initAdapter(controller, registry);
+    protected void initAdapter() {
+        super.initAdapter();
 
-        this.mapButton(registry, BUTTON_SHARE, 8);
-        this.mapButton(registry, BUTTON_OPTIONS, 9);
-        this.mapButton(registry, BUTTON_PS, 12);
-        this.mapButton(registry, BUTTON_TPAD, 13);
-        this.mapButton(registry, BUTTON_UP, 14);
-        this.mapButton(registry, BUTTON_RIGHT, 15);
-        this.mapButton(registry, BUTTON_DOWN, 16);
-        this.mapButton(registry, BUTTON_LEFT, 17);
+        this.mapButton(BUTTON_SHARE, 8);
+        this.mapButton(BUTTON_OPTIONS, 9);
+        this.mapButton(BUTTON_PS, 12);
+        this.mapButton(BUTTON_TPAD, 13);
+        this.mapButton(BUTTON_UP, 14);
+        this.mapButton(BUTTON_RIGHT, 15);
+        this.mapButton(BUTTON_DOWN, 16);
+        this.mapButton(BUTTON_LEFT, 17);
 
-        this.mapTrigger(registry, TRIGGER_LT, AXIS_LT);
-        this.mapTrigger(registry, TRIGGER_RT, AXIS_RT);
+        this.mapTrigger(TRIGGER_LT, AXIS_LT);
+        this.mapTrigger(TRIGGER_RT, AXIS_RT);
     }
 
     @Override

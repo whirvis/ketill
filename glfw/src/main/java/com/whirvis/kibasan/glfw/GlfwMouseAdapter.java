@@ -18,29 +18,29 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     protected final double[] yPos;
     protected boolean wasVisible;
 
-    public GlfwMouseAdapter(long ptr_glfwWindow) {
-        super(ptr_glfwWindow);
+    public GlfwMouseAdapter(@NotNull Mouse mouse,
+                            @NotNull MappedFeatureRegistry registry,
+                            long ptr_glfwWindow) {
+        super(mouse, registry, ptr_glfwWindow);
         this.xPos = new double[1];
         this.yPos = new double[1];
         this.wasVisible = true; /* visible by default */
     }
 
-    protected void mapButton(@NotNull MappedFeatureRegistry registry,
-                             @NotNull MouseButton button, int glfwButton) {
+    protected void mapButton(@NotNull MouseButton button, int glfwButton) {
         registry.mapFeature(button, glfwButton, this::updateButton);
     }
 
     @Override
-    public void initAdapter(@NotNull Mouse mouse,
-                            @NotNull MappedFeatureRegistry registry) {
-        this.mapButton(registry, BUTTON_M1, GLFW_MOUSE_BUTTON_1);
-        this.mapButton(registry, BUTTON_M2, GLFW_MOUSE_BUTTON_2);
-        this.mapButton(registry, BUTTON_M3, GLFW_MOUSE_BUTTON_3);
-        this.mapButton(registry, BUTTON_M4, GLFW_MOUSE_BUTTON_4);
-        this.mapButton(registry, BUTTON_M5, GLFW_MOUSE_BUTTON_5);
-        this.mapButton(registry, BUTTON_M6, GLFW_MOUSE_BUTTON_6);
-        this.mapButton(registry, BUTTON_M7, GLFW_MOUSE_BUTTON_7);
-        this.mapButton(registry, BUTTON_M8, GLFW_MOUSE_BUTTON_8);
+    public void initAdapter() {
+        this.mapButton(BUTTON_M1, GLFW_MOUSE_BUTTON_1);
+        this.mapButton(BUTTON_M2, GLFW_MOUSE_BUTTON_2);
+        this.mapButton(BUTTON_M3, GLFW_MOUSE_BUTTON_3);
+        this.mapButton(BUTTON_M4, GLFW_MOUSE_BUTTON_4);
+        this.mapButton(BUTTON_M5, GLFW_MOUSE_BUTTON_5);
+        this.mapButton(BUTTON_M6, GLFW_MOUSE_BUTTON_6);
+        this.mapButton(BUTTON_M7, GLFW_MOUSE_BUTTON_7);
+        this.mapButton(BUTTON_M8, GLFW_MOUSE_BUTTON_8);
         registry.mapFeature(FEATURE_CURSOR, this::updateCursor);
     }
 
@@ -72,12 +72,12 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @Override
-    protected void pollDevice(@NotNull Mouse device) {
+    protected void pollDevice() {
         glfwGetCursorPos(ptr_glfwWindow, xPos, yPos);
     }
 
     @Override
-    protected boolean isDeviceConnected(@NotNull Mouse mouse) {
+    protected boolean isDeviceConnected() {
         return true; /* mouse is always connected */
     }
 

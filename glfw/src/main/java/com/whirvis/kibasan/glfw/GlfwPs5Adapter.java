@@ -13,31 +13,32 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
 
     public static @NotNull Ps5Controller wrangle(long ptr_glfwWindow,
                                                  int glfwJoystick) {
-        return new Ps5Controller(new GlfwPs5Adapter(ptr_glfwWindow,
-                glfwJoystick));
+        return new Ps5Controller((c, r) -> new GlfwPs5Adapter(c, r,
+                ptr_glfwWindow, glfwJoystick));
     }
 
-    public GlfwPs5Adapter(long ptr_glfwWindow, int glfwJoystick) {
-        super(ptr_glfwWindow, glfwJoystick);
+    public GlfwPs5Adapter(@NotNull Ps5Controller controller,
+                          @NotNull MappedFeatureRegistry registry,
+                          long ptr_glfwWindow, int glfwJoystick) {
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
-    protected void initAdapter(@NotNull Ps5Controller controller,
-                               @NotNull MappedFeatureRegistry registry) {
-        super.initAdapter(controller, registry);
+    protected void initAdapter() {
+        super.initAdapter();
 
-        this.mapButton(registry, BUTTON_SHARE, 8);
-        this.mapButton(registry, BUTTON_OPTIONS, 9);
-        this.mapButton(registry, BUTTON_PS, 12);
-        this.mapButton(registry, BUTTON_TPAD, 13);
-        this.mapButton(registry, BUTTON_MUTE, 14);
-        this.mapButton(registry, BUTTON_UP, 15);
-        this.mapButton(registry, BUTTON_RIGHT, 16);
-        this.mapButton(registry, BUTTON_DOWN, 17);
-        this.mapButton(registry, BUTTON_LEFT, 18);
+        this.mapButton(BUTTON_SHARE, 8);
+        this.mapButton(BUTTON_OPTIONS, 9);
+        this.mapButton(BUTTON_PS, 12);
+        this.mapButton(BUTTON_TPAD, 13);
+        this.mapButton(BUTTON_MUTE, 14);
+        this.mapButton(BUTTON_UP, 15);
+        this.mapButton(BUTTON_RIGHT, 16);
+        this.mapButton(BUTTON_DOWN, 17);
+        this.mapButton(BUTTON_LEFT, 18);
 
-        this.mapTrigger(registry, TRIGGER_LT, AXIS_LT);
-        this.mapTrigger(registry, TRIGGER_RT, AXIS_RT);
+        this.mapTrigger(TRIGGER_LT, AXIS_LT);
+        this.mapTrigger(TRIGGER_RT, AXIS_RT);
     }
 
     @Override

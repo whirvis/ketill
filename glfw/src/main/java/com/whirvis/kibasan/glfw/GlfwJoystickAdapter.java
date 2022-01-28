@@ -23,24 +23,23 @@ public abstract class GlfwJoystickAdapter<I extends InputDevice>
     protected FloatBuffer axes;
     protected ByteBuffer buttons;
 
-    public GlfwJoystickAdapter(long ptr_glfwWindow, int glfwJoystick) {
-        super(ptr_glfwWindow);
+    public GlfwJoystickAdapter(@NotNull I device,
+                               @NotNull MappedFeatureRegistry registry,
+                               long ptr_glfwWindow, int glfwJoystick) {
+        super(device, registry, ptr_glfwWindow);
         this.glfwJoystick = glfwJoystick;
     }
 
-    protected void mapButton(@NotNull MappedFeatureRegistry registry,
-                             @NotNull DeviceButton button, int glfwButton) {
+    protected void mapButton(@NotNull DeviceButton button, int glfwButton) {
         registry.mapFeature(button, glfwButton, this::updateButton);
     }
 
-    protected void mapStick(@NotNull MappedFeatureRegistry registry,
-                            @NotNull AnalogStick stick,
+    protected void mapStick(@NotNull AnalogStick stick,
                             @NotNull GlfwStickMapping mapping) {
         registry.mapFeature(stick, mapping, this::updateStick);
     }
 
-    protected void mapTrigger(@NotNull MappedFeatureRegistry registry,
-                              @NotNull AnalogTrigger trigger, int glfwAxis) {
+    protected void mapTrigger(@NotNull AnalogTrigger trigger, int glfwAxis) {
         registry.mapFeature(trigger, glfwAxis, this::updateTrigger);
     }
 
@@ -72,13 +71,13 @@ public abstract class GlfwJoystickAdapter<I extends InputDevice>
     }
 
     @Override
-    protected void pollDevice(@NotNull I device) {
+    protected void pollDevice() {
         this.axes = glfwGetJoystickAxes(glfwJoystick);
         this.buttons = glfwGetJoystickButtons(glfwJoystick);
     }
 
     @Override
-    protected boolean isDeviceConnected(@NotNull I device) {
+    protected boolean isDeviceConnected() {
         return glfwJoystickPresent(glfwJoystick);
     }
 

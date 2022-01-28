@@ -23,40 +23,41 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
 
     public static @NotNull NxProController wrangle(long ptr_glfwWindow,
                                                    int glfwJoystick) {
-        return new NxProController(new GlfwNxProAdapter(ptr_glfwWindow,
-                glfwJoystick));
+        return new NxProController((c, r) -> new GlfwNxProAdapter(c, r,
+                ptr_glfwWindow, glfwJoystick));
     }
 
-    public GlfwNxProAdapter(long ptr_glfwWindow, int glfwJoystick) {
-        super(ptr_glfwWindow, glfwJoystick);
+    public GlfwNxProAdapter(@NotNull NxProController controller,
+                            @NotNull MappedFeatureRegistry registry,
+                            long ptr_glfwWindow, int glfwJoystick) {
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
-    protected void initAdapter(@NotNull NxProController device,
-                               @NotNull MappedFeatureRegistry registry) {
-        this.mapButton(registry, BUTTON_B, 0);
-        this.mapButton(registry, BUTTON_A, 1);
-        this.mapButton(registry, BUTTON_Y, 2);
-        this.mapButton(registry, BUTTON_X, 3);
-        this.mapButton(registry, BUTTON_L, 4);
-        this.mapButton(registry, BUTTON_R, 5);
-        this.mapButton(registry, BUTTON_ZL, 6);
-        this.mapButton(registry, BUTTON_ZR, 7);
-        this.mapButton(registry, BUTTON_MINUS, 8);
-        this.mapButton(registry, BUTTON_PLUS, 9);
-        this.mapButton(registry, BUTTON_L_THUMB, 10);
-        this.mapButton(registry, BUTTON_R_THUMB, 11);
-        this.mapButton(registry, BUTTON_HOME, 12);
-        this.mapButton(registry, BUTTON_SCREENSHOT, 13);
-        this.mapButton(registry, BUTTON_BUMPER, 14);
-        this.mapButton(registry, BUTTON_Z_BUMPER, 15);
-        this.mapButton(registry, BUTTON_UP, 16);
-        this.mapButton(registry, BUTTON_RIGHT, 17);
-        this.mapButton(registry, BUTTON_DOWN, 18);
-        this.mapButton(registry, BUTTON_LEFT, 19);
+    protected void initAdapter() {
+        this.mapButton(BUTTON_B, 0);
+        this.mapButton(BUTTON_A, 1);
+        this.mapButton(BUTTON_Y, 2);
+        this.mapButton(BUTTON_X, 3);
+        this.mapButton(BUTTON_L, 4);
+        this.mapButton(BUTTON_R, 5);
+        this.mapButton(BUTTON_ZL, 6);
+        this.mapButton(BUTTON_ZR, 7);
+        this.mapButton(BUTTON_MINUS, 8);
+        this.mapButton(BUTTON_PLUS, 9);
+        this.mapButton(BUTTON_L_THUMB, 10);
+        this.mapButton(BUTTON_R_THUMB, 11);
+        this.mapButton(BUTTON_HOME, 12);
+        this.mapButton(BUTTON_SCREENSHOT, 13);
+        this.mapButton(BUTTON_BUMPER, 14);
+        this.mapButton(BUTTON_Z_BUMPER, 15);
+        this.mapButton(BUTTON_UP, 16);
+        this.mapButton(BUTTON_RIGHT, 17);
+        this.mapButton(BUTTON_DOWN, 18);
+        this.mapButton(BUTTON_LEFT, 19);
 
-        this.mapStick(registry, STICK_LS, LS_MAPPING);
-        this.mapStick(registry, STICK_RS, RS_MAPPING);
+        this.mapStick(STICK_LS, LS_MAPPING);
+        this.mapStick(STICK_RS, RS_MAPPING);
     }
 
     @Override
