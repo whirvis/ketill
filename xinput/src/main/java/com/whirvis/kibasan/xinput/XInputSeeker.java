@@ -28,7 +28,6 @@ public final class XInputSeeker extends DeviceSeeker<XboxController> {
     }
     /* @formatter:on */
 
-
     @Override
     public void seekImpl() throws XInputNotLoadedException {
         for (int i = 0; i < controllers.length; i++) {
@@ -43,8 +42,9 @@ public final class XInputSeeker extends DeviceSeeker<XboxController> {
 
             XInputDevice device = this.getDevice(i);
             if (device.isConnected()) {
-                XInputAdapter adapter = new XInputAdapter(device);
-                this.controllers[i] = new XboxController(adapter);
+                this.controllers[i] =
+                        new XboxController((c, r) -> new XInputAdapter(c, r,
+                                device));
                 this.discoverDevice(controllers[i]);
             }
         }

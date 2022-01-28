@@ -10,6 +10,7 @@ import com.whirvis.kibasan.AnalogTrigger;
 import com.whirvis.kibasan.Button1b;
 import com.whirvis.kibasan.DeviceAdapter;
 import com.whirvis.kibasan.DeviceButton;
+import com.whirvis.kibasan.FeatureAdapter;
 import com.whirvis.kibasan.InputException;
 import com.whirvis.kibasan.MappedFeatureRegistry;
 import com.whirvis.kibasan.RumbleMotor;
@@ -35,7 +36,10 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
     private int rumbleCoarse;
     private int rumbleFine;
 
-    public XInputAdapter(@NotNull XInputDevice xDevice) {
+    public XInputAdapter(@NotNull XboxController controller,
+                         @NotNull MappedFeatureRegistry registry,
+                         @NotNull XInputDevice xDevice) {
+        super(controller, registry);
         this.xDevice = xDevice;
     }
 
@@ -66,15 +70,13 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
         }
     }
 
-    private void mapXButton(@NotNull MappedFeatureRegistry registry,
-                            @NotNull DeviceButton button,
+    private void mapXButton(@NotNull DeviceButton button,
                             @NotNull String buttonFieldName) {
         Field field = this.getButtonField(buttonFieldName);
         registry.mapFeature(button, field, this::updateButton);
     }
 
-    private void mapXStick(@NotNull MappedFeatureRegistry registry,
-                           @NotNull AnalogStick stick,
+    private void mapXStick(@NotNull AnalogStick stick,
                            @NotNull XInputAxis xAxis,
                            @NotNull XInputAxis yAxis,
                            @Nullable String zButtonFieldName) {
@@ -83,51 +85,50 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
         registry.mapFeature(stick, m, this::updateStick);
     }
 
-    private void mapXTrigger(@NotNull MappedFeatureRegistry registry,
-                             @NotNull AnalogTrigger trigger,
+    private void mapXTrigger(@NotNull AnalogTrigger trigger,
                              @NotNull XInputAxis axis) {
         registry.mapFeature(trigger, axis, this::updateTrigger);
     }
 
-    private void mapXMotor(@NotNull MappedFeatureRegistry registry,
-                           @NotNull RumbleMotor motor) {
+    private void mapXMotor(@NotNull RumbleMotor motor) {
         registry.mapFeature(motor, this::updateMotor);
     }
 
     @Override
-    public void initAdapter(@NotNull XboxController controller,
-                            @NotNull MappedFeatureRegistry registry) {
-        this.mapXButton(registry, BUTTON_A, "a");
-        this.mapXButton(registry, BUTTON_B, "b");
-        this.mapXButton(registry, BUTTON_X, "x");
-        this.mapXButton(registry, BUTTON_Y, "y");
-        this.mapXButton(registry, BUTTON_LB, "lShoulder");
-        this.mapXButton(registry, BUTTON_RB, "rShoulder");
-        this.mapXButton(registry, BUTTON_GUIDE, "guide");
-        this.mapXButton(registry, BUTTON_START, "start");
-        this.mapXButton(registry, BUTTON_L_THUMB, "lThumb");
-        this.mapXButton(registry, BUTTON_R_THUMB, "rThumb");
-        this.mapXButton(registry, BUTTON_UP, "up");
-        this.mapXButton(registry, BUTTON_RIGHT, "right");
-        this.mapXButton(registry, BUTTON_DOWN, "down");
-        this.mapXButton(registry, BUTTON_LEFT, "left");
+    public void initAdapter() {
+        this.mapXButton(BUTTON_A, "a");
+        this.mapXButton(BUTTON_B, "b");
+        this.mapXButton(BUTTON_X, "x");
+        this.mapXButton(BUTTON_Y, "y");
+        this.mapXButton(BUTTON_LB, "lShoulder");
+        this.mapXButton(BUTTON_RB, "rShoulder");
+        this.mapXButton(BUTTON_GUIDE, "guide");
+        this.mapXButton(BUTTON_START, "start");
+        this.mapXButton(BUTTON_L_THUMB, "lThumb");
+        this.mapXButton(BUTTON_R_THUMB, "rThumb");
+        this.mapXButton(BUTTON_UP, "up");
+        this.mapXButton(BUTTON_RIGHT, "right");
+        this.mapXButton(BUTTON_DOWN, "down");
+        this.mapXButton(BUTTON_LEFT, "left");
 
-        this.mapXStick(registry, STICK_LS, XInputAxis.LEFT_THUMBSTICK_X,
+        this.mapXStick(STICK_LS, XInputAxis.LEFT_THUMBSTICK_X,
                 XInputAxis.LEFT_THUMBSTICK_Y, "lThumb");
-        this.mapXStick(registry, STICK_RS, XInputAxis.RIGHT_THUMBSTICK_X,
+        this.mapXStick(STICK_RS, XInputAxis.RIGHT_THUMBSTICK_X,
                 XInputAxis.RIGHT_THUMBSTICK_Y, "rThumb");
 
-        this.mapXTrigger(registry, TRIGGER_LT, XInputAxis.LEFT_TRIGGER);
-        this.mapXTrigger(registry, TRIGGER_RT, XInputAxis.RIGHT_TRIGGER);
+        this.mapXTrigger(TRIGGER_LT, XInputAxis.LEFT_TRIGGER);
+        this.mapXTrigger(TRIGGER_RT, XInputAxis.RIGHT_TRIGGER);
 
-        this.mapXMotor(registry, MOTOR_COARSE);
-        this.mapXMotor(registry, MOTOR_FINE);
+        this.mapXMotor(MOTOR_COARSE);
+        this.mapXMotor(MOTOR_FINE);
     }
 
+    @FeatureAdapter
     private void updateButton(@NotNull Button1b button, @NotNull Field field) {
         button.pressed = this.isPressed(field);
     }
 
+    @FeatureAdapter
     private void updateStick(@NotNull Vector3f stick,
                              @NotNull XStickMapping mapping) {
         stick.x = axes.get(mapping.xAxis);
@@ -135,11 +136,13 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
         stick.z = this.isPressed(mapping.zButtonField) ? -1.0F : 0.0F;
     }
 
+    @FeatureAdapter
     private void updateTrigger(@NotNull Trigger1f trigger,
                                @NotNull XInputAxis axis) {
         trigger.force = axes.get(axis);
     }
 
+    @FeatureAdapter
     private void updateMotor(Vibration1f vibration, RumbleMotor motor) {
         /*
          * The X-input API will throw an exception if it receives a motor force
@@ -164,7 +167,7 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
     }
 
     @Override
-    protected void pollDevice(@NotNull XboxController controller) {
+    protected void pollDevice() {
         xDevice.poll();
         XInputComponents comps = xDevice.getComponents();
         this.axes = comps.getAxes();
@@ -172,7 +175,7 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
     }
 
     @Override
-    protected boolean isDeviceConnected(@NotNull XboxController controller) {
+    protected boolean isDeviceConnected() {
         return xDevice.isConnected();
     }
 
