@@ -7,12 +7,12 @@ import com.github.strikerx3.jxinput.natives.XInputConstants;
 import com.whirvis.kibasan.DeviceSeeker;
 import com.whirvis.kibasan.xbox.XboxController;
 
-public final class XInputSeeker extends DeviceSeeker<XboxController> {
+public final class XboxSeeker extends DeviceSeeker<XboxController> {
 
     private final XboxController[] controllers;
     private final boolean xinput14;
 
-    public XInputSeeker() {
+    public XboxSeeker() {
         this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];
         this.xinput14 = XInputDevice14.isAvailable();
     }
@@ -46,6 +46,16 @@ public final class XInputSeeker extends DeviceSeeker<XboxController> {
                         new XboxController((c, r) -> new XboxAdapter(c, r,
                                 device));
                 this.discoverDevice(controllers[i]);
+            } else {
+                /*
+                 * The device must always be polled, even when it is not
+                 * considered connecting. If this is not done, controllers
+                 * connected after the program is started will not be seen
+                 * by the seeker! However, once it has been discovered, the
+                 * responsibilities of polling the device are handed off to
+                 * the controller's respective adapter.
+                 */
+                device.poll();
             }
         }
     }
