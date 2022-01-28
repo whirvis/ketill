@@ -43,7 +43,7 @@ public final class XInputSeeker extends DeviceSeeker<XboxController> {
             XInputDevice device = this.getDevice(i);
             if (device.isConnected()) {
                 this.controllers[i] =
-                        new XboxController((c, r) -> new XInputAdapter(c, r,
+                        new XboxController((c, r) -> new XboxAdapter(c, r,
                                 device));
                 this.discoverDevice(controllers[i]);
             }
