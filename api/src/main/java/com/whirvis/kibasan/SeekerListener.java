@@ -7,18 +7,22 @@ public interface SeekerListener<I extends InputDevice> {
     /**
      * Called when an input device has been discovered.
      *
-     * @param seeker the seeker which discovered {@code device}.
-     * @param device the device that was discovered.
+     * @param seeker     the seeker which discovered {@code device}.
+     * @param discovered the device that was discovered.
      */
-    void onDiscoverDevice(@NotNull DeviceSeeker<?> seeker, @NotNull I device);
+    void onDiscoverDevice(@NotNull DeviceSeeker<?> seeker,
+                          @NotNull I discovered);
 
     /**
      * Called when an input device has been forgotten.
      *
-     * @param seeker the seeker which forgot {@code device}.
-     * @param device the device that was forgotten.
+     * @param seeker    the seeker which forgot {@code device}.
+     * @param forgotten the device that was forgotten.
      */
-    void onForgetDevice(@NotNull DeviceSeeker<?> seeker, @NotNull I device);
+    /* @formatter:off */
+    void onForgetDevice(@NotNull DeviceSeeker<?> seeker,
+                        @NotNull I forgotten);
+    /* @formatter:on */
 
     /**
      * Called when a seeker error has occurred.
