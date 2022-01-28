@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * and a way to enable extra features, such as rumble or gyroscopes.
  *
  * @param <I> the input device type.
+ * @see AdapterSupplier
  * @see DeviceSeeker
  */
 public abstract class DeviceAdapter<I extends InputDevice> {
@@ -16,6 +17,10 @@ public abstract class DeviceAdapter<I extends InputDevice> {
     protected final @NotNull I device;
     protected final @NotNull MappedFeatureRegistry registry;
 
+    /**
+     * @param device   the device which owns this adapter.
+     * @param registry the device's mapped feature registry.
+     */
     public DeviceAdapter(@NotNull I device,
                          @NotNull MappedFeatureRegistry registry) {
         this.device = device;
