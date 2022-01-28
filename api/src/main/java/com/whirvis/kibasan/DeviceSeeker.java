@@ -3,8 +3,10 @@ package com.whirvis.kibasan;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -29,14 +31,14 @@ import java.util.function.Consumer;
  */
 public abstract class DeviceSeeker<I extends InputDevice> {
 
-    private final Set<I> devices;
+    private final List<I> devices;
     private final Set<SeekerListener<? super I>> listeners;
-    public final @NotNull Set<I> discoveredDevices; /* read only view */
+    public final @NotNull List<I> discoveredDevices; /* read only view */
 
     public DeviceSeeker() {
-        this.devices = new HashSet<>();
+        this.devices = new ArrayList<>();
         this.listeners = new HashSet<>();
-        this.discoveredDevices = Collections.unmodifiableSet(devices);
+        this.discoveredDevices = Collections.unmodifiableList(devices);
     }
 
     public void addListener(@NotNull SeekerListener<? super I> listener) {
