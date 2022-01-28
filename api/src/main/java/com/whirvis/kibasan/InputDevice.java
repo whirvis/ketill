@@ -46,7 +46,8 @@ public abstract class InputDevice implements FeatureRegistry {
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
      * @throws NullPointerException if {@code id} or {@code adapterSupplier}
-     *                              are {@code null}.
+     *                              are {@code null}; if the adapter supplied
+     *                              by {@code adapterSupplier} is {@code null}.
      */
     @SuppressWarnings("unchecked")
     public InputDevice(@NotNull String id,
@@ -63,6 +64,7 @@ public abstract class InputDevice implements FeatureRegistry {
         AdapterSupplier<InputDevice> castedSupplier =
                 (AdapterSupplier<InputDevice>) adapterSupplier;
         this.adapter = castedSupplier.get(this, registry);
+        Objects.requireNonNull(adapter, "supplied adapter is null");
 
         if (registerFields) {
             this.registerFields();
