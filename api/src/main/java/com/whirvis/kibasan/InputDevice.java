@@ -197,7 +197,7 @@ public abstract class InputDevice implements FeatureRegistry {
      * @see #isConnected()
      */
     @MustBeInvokedByOverriders
-    public void poll() {
+    public synchronized void poll() {
         adapter.pollDevice();
         registry.updateFeatures();
     }
