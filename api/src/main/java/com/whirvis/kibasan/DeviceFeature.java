@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public abstract class DeviceFeature<S> {
 
     public final @NotNull String id;
-    public final @NotNull Supplier<S> initialState;
+    public final @NotNull Supplier<@NotNull S> initialState;
 
     /**
      * @param id           the feature ID.
@@ -27,7 +27,7 @@ public abstract class DeviceFeature<S> {
      *                              {@code null}.
      */
     public DeviceFeature(@NotNull String id,
-                         @NotNull Supplier<S> initialState) {
+                         @NotNull Supplier<@NotNull S> initialState) {
         this.id = Objects.requireNonNull(id, "id");
         this.initialState = Objects.requireNonNull(initialState,
                 "initialState");
