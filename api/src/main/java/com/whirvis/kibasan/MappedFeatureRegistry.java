@@ -3,6 +3,8 @@ package com.whirvis.kibasan;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -154,6 +156,14 @@ public class MappedFeatureRegistry implements FeatureRegistry {
         Objects.requireNonNull(feature, "feature");
         return features.containsKey(feature);
     }
+
+    /* @formatter:off */
+    @Override
+    public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
+            getFeatures() {
+        return Collections.unmodifiableCollection(features.values());
+    }
+    /* @formatter:on */
 
     /* @formatter:off */
     @Override

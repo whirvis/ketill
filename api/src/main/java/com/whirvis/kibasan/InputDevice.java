@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -157,6 +158,15 @@ public abstract class InputDevice implements FeatureRegistry {
     public boolean isRegistered(@NotNull DeviceFeature<?> feature) {
         return registry.isRegistered(feature);
     }
+
+
+    /* @formatter:off */
+    @Override
+    public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
+            getFeatures() {
+        return registry.getFeatures();
+    }
+    /* @formatter:on */
 
     /* @formatter:off */
     @Override

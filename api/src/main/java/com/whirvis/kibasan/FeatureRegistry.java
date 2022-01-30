@@ -3,6 +3,8 @@ package com.whirvis.kibasan;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 public interface FeatureRegistry {
 
     /**
@@ -12,6 +14,11 @@ public interface FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     boolean isRegistered(@NotNull DeviceFeature<?> feature);
+
+    /**
+     * @return all registered features.
+     */
+    @NotNull Collection<@NotNull RegisteredFeature<?, ?>> getFeatures();
 
     /**
      * @param feature the feature whose registration to fetch.
