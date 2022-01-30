@@ -34,6 +34,7 @@ public abstract class InputDevice implements FeatureRegistry {
     private final MappedFeatureRegistry registry;
     private final DeviceAdapter<InputDevice> adapter;
     private boolean initializedAdapter;
+    private boolean registeredFields;
 
     /**
      * @param id              the device ID.
@@ -99,6 +100,10 @@ public abstract class InputDevice implements FeatureRegistry {
     }
 
     protected void registerFields() {
+        if (registeredFields) {
+            throw new IllegalStateException("fields already registered");
+        }
+
         Class<?> clazz = this.getClass();
         Set<Field> fields = new HashSet<>();
         Collections.addAll(fields, clazz.getDeclaredFields());
@@ -107,6 +112,8 @@ public abstract class InputDevice implements FeatureRegistry {
         for (Field field : fields) {
             this.registerField(field);
         }
+
+        this.registeredFields = true;
     }
 
     /* @formatter:off */
