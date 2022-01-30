@@ -100,7 +100,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
      *
      * @throws InputException if an error occurs while seeking.
      */
-    public final void seek() {
+    public final synchronized void seek() {
         try {
             this.seekImpl();
         } catch (Throwable cause) {
