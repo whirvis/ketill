@@ -34,6 +34,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
 
     private final List<I> devices;
     private final Set<SeekerListener<? super I>> listeners;
+    private boolean sendingCallback;
     public final @NotNull List<I> discoveredDevices; /* read only view */
 
     public DeviceSeeker() {
@@ -42,26 +43,54 @@ public abstract class DeviceSeeker<I extends InputDevice> {
         this.discoveredDevices = Collections.unmodifiableList(devices);
     }
 
+    /**
+     * Adds a listener to this device seeker.
+     *
+     * @param listener the listener to add.
+     * @throws NullPointerException  if {@code listener} is {@code null}.
+     * @throws IllegalStateException if this device seeker is currently
+     *                               sending a callback.
+     */
     public void addListener(@NotNull SeekerListener<? super I> listener) {
         Objects.requireNonNull(listener, "listener");
+        this.checkNotSendingCallback();
         synchronized (listeners) {
             listeners.add(listener);
         }
     }
 
+
+    /**
+     * Removes a listener from this device seeker.
+     *
+     * @param listener the listener to remove.
+     * @throws NullPointerException  if {@code listener} is {@code null}.
+     * @throws IllegalStateException if this device seeker is currently
+     *                               sending a callback.
+     */
     public void removeListener(@NotNull SeekerListener<? super I> listener) {
         Objects.requireNonNull(listener, "listener");
+        this.checkNotSendingCallback();
         synchronized (listeners) {
             listeners.remove(listener);
         }
     }
 
+    private void checkNotSendingCallback() {
+        if (sendingCallback) {
+            throw new IllegalStateException("currently sending callback");
+        }
+    }
+
     private void sendCallback(@NotNull Consumer<SeekerListener<? super I>> event) {
+        this.checkNotSendingCallback();
+        this.sendingCallback = true;
         synchronized (listeners) {
             for (SeekerListener<? super I> listener : listeners) {
                 event.accept(listener);
             }
         }
+        this.sendingCallback = false;
     }
 
     @MustBeInvokedByOverriders
