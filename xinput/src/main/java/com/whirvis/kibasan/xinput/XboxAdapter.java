@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 
 import static com.whirvis.kibasan.xbox.XboxController.*;
 
-public final class XInputAdapter extends DeviceAdapter<XboxController> {
+public final class XboxAdapter extends DeviceAdapter<XboxController> {
 
     private static final int RUMBLE_MIN = 0x0000;
     private static final int RUMBLE_MAX = 0xFFFF;
@@ -36,9 +36,9 @@ public final class XInputAdapter extends DeviceAdapter<XboxController> {
     private int rumbleCoarse;
     private int rumbleFine;
 
-    public XInputAdapter(@NotNull XboxController controller,
-                         @NotNull MappedFeatureRegistry registry,
-                         @NotNull XInputDevice xDevice) {
+    public XboxAdapter(@NotNull XboxController controller,
+                       @NotNull MappedFeatureRegistry registry,
+                       @NotNull XInputDevice xDevice) {
         super(controller, registry);
         this.xDevice = xDevice;
     }
