@@ -11,6 +11,10 @@ repositories {
     }
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     implementation project(':api')
     implementation project(':devices:features')
@@ -19,8 +23,10 @@ dependencies {
 
     implementation 'org.joml:joml:1.10.2'
     implementation 'com.github.strikerx3:jxinput:1.0.0'
+    implementation 'org.jetbrains:annotations:22.0.0'
 
-    compileOnly 'org.jetbrains:annotations:22.0.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8
