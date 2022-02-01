@@ -3,9 +3,9 @@ package com.whirvis.kibasan;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A feature that has been registered to an {@link InputDevice}. This
- * container exists to group together the information necessary to fetch and
- * update the state of a device feature.
+ * A feature that's registered to an {@link InputDevice}. This container
+ * exists to group together the information necessary to fetch and update
+ * the state of a device feature.
  * <p/>
  * For optimal performance, it is best to cache the state of a device feature
  * to a field for later retrieval. The state of a device feature can be fetched
