@@ -143,19 +143,20 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateMotor(Vibration1f vibration, RumbleMotor motor) {
+    private void updateMotor(@NotNull Vibration1f vibration,
+                             @NotNull RumbleMotor motor) {
         /*
-         * The X-input API will throw an exception if it receives a motor force
-         * that is out of its valid bounds. Clamping the force will prevent this
-         * from occurring.
+         * The X-input API will throw an exception if it receives a motor
+         * force that is out of its valid bounds. Clamping the force will
+         * prevent this from occurring.
          */
         int force = (int) (RUMBLE_MAX * vibration.force);
         force = Math.min(Math.max(force, RUMBLE_MIN), RUMBLE_MAX);
 
         /*
-         * A comparison is made here to ensure that a vibration force update is
-         * only sent when necessary. It would be horrendous for performance to
-         * send these signals every update call.
+         * A comparison is made here to ensure that a vibration force update
+         * is only sent when necessary. It would lower performance if these
+         * signals were sent every update call.
          */
         if (motor == MOTOR_COARSE && rumbleCoarse != force) {
             this.rumbleCoarse = force;
@@ -165,6 +166,7 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
             xDevice.setVibration(rumbleCoarse, rumbleFine);
         }
     }
+
 
     @Override
     protected void pollDevice() {
