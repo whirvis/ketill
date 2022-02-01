@@ -23,14 +23,20 @@ public abstract class DeviceFeature<S> {
     /**
      * @param id           the feature ID.
      * @param initialState a supplier for the feature's initial state.
-     * @throws NullPointerException if {@code id} or {@code initialState} are
-     *                              {@code null}.
+     * @throws NullPointerException if {@code id}, {@code initialState} or
+     *                              the value that {@code initialState}
+     *                              supplies is {@code null}.
      */
     public DeviceFeature(@NotNull String id,
                          @NotNull Supplier<@NotNull S> initialState) {
         this.id = Objects.requireNonNull(id, "id");
         this.initialState = Objects.requireNonNull(initialState,
                 "initialState");
+
+        /* @formatter:off */
+        Objects.requireNonNull(initialState.get(),
+                "supplied initial state is null");
+        /* @formatter:on */
     }
 
 }
