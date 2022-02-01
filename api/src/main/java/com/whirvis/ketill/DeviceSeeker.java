@@ -2,13 +2,12 @@ package com.whirvis.ketill;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -27,69 +26,64 @@ import java.util.function.Consumer;
  * to perform a scan once every application update.
  *
  * @param <I> the input device type.
- * @see #addListener(SeekerListener)
+ * @see #onDiscoverDevice(Consumer)
+ * @see #onForgetDevice(Consumer)
+ * @see #onError(Consumer)
  * @see DeviceAdapter
  */
 public abstract class DeviceSeeker<I extends InputDevice> {
 
-    private final List<I> devices;
-    private final Set<SeekerListener<? super I>> listeners;
-    private boolean sendingCallback;
+    private final @NotNull List<I> devices;
     public final @NotNull List<I> discoveredDevices; /* read only view */
+
+    private @Nullable Consumer<? super I> discoverDeviceCallback;
+    private @Nullable Consumer<? super I> forgetDeviceCallback;
+    private @Nullable Consumer<Throwable> errorCallback;
 
     public DeviceSeeker() {
         this.devices = new ArrayList<>();
-        this.listeners = new HashSet<>();
         this.discoveredDevices = Collections.unmodifiableList(devices);
     }
 
     /**
-     * Adds a listener to this device seeker.
+     * Sets the callback for what will happen when this seeker has discovered
+     * a device. If this callback was set <i>after</i> one or more devices
+     * have been discovered, it will not be called for them. They will have
+     * to be retrieved via {@link #discoveredDevices}.
      *
-     * @param listener the listener to add.
-     * @throws NullPointerException  if {@code listener} is {@code null}.
-     * @throws IllegalStateException if this device seeker is currently
-     *                               sending a callback.
+     * @param callback the code to execute when a device is discovered. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
      */
-    public void addListener(@NotNull SeekerListener<? super I> listener) {
-        Objects.requireNonNull(listener, "listener");
-        this.checkNotSendingCallback();
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
+    public void onDiscoverDevice(@Nullable Consumer<? super I> callback) {
+        this.discoverDeviceCallback = callback;
     }
 
     /**
-     * Removes a listener from this device seeker.
+     * Sets the callback for what will happen when this seeker has forgotten
+     * a device. If this callback was set <i>after</i> one or more devices
+     * have been forgotten, it will not be called for them. Current devices
+     * will have to be retrieved via {@link #discoveredDevices}.
      *
-     * @param listener the listener to remove.
-     * @throws NullPointerException  if {@code listener} is {@code null}.
-     * @throws IllegalStateException if this device seeker is currently
-     *                               sending a callback.
+     * @param callback the code to execute when a device is forgotten. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
      */
-    public void removeListener(@NotNull SeekerListener<? super I> listener) {
-        Objects.requireNonNull(listener, "listener");
-        this.checkNotSendingCallback();
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
+    public void onForgetDevice(@Nullable Consumer<? super I> callback) {
+        this.forgetDeviceCallback = callback;
     }
 
-    private void checkNotSendingCallback() {
-        if (sendingCallback) {
-            throw new IllegalStateException("currently sending callback");
-        }
-    }
-
-    private void sendCallback(@NotNull Consumer<SeekerListener<? super I>> event) {
-        this.checkNotSendingCallback();
-        this.sendingCallback = true;
-        synchronized (listeners) {
-            for (SeekerListener<? super I> listener : listeners) {
-                event.accept(listener);
-            }
-        }
-        this.sendingCallback = false;
+    /**
+     * Sets the callback for what will happen when an error occurs in
+     * {@link #seek()}. By default, a wrapping {@code InputException}
+     * will be constructed for the original error and thrown.
+     *
+     * @param callback the code to execute when a device is forgotten. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in a wrapping {@code InputException} being thrown.
+     */
+    public void onError(@Nullable Consumer<Throwable> callback) {
+        this.errorCallback = callback;
     }
 
     @MustBeInvokedByOverriders
@@ -99,7 +93,9 @@ public abstract class DeviceSeeker<I extends InputDevice> {
             return;
         }
         devices.add(device);
-        this.sendCallback(l -> l.onDiscoverDevice(this, device));
+        if (discoverDeviceCallback != null) {
+            discoverDeviceCallback.accept(device);
+        }
     }
 
     @MustBeInvokedByOverriders
@@ -109,7 +105,9 @@ public abstract class DeviceSeeker<I extends InputDevice> {
             return;
         }
         devices.remove(device);
-        this.sendCallback(l -> l.onForgetDevice(this, device));
+        if (forgetDeviceCallback != null) {
+            forgetDeviceCallback.accept(device);
+        }
     }
 
     /**
@@ -126,13 +124,18 @@ public abstract class DeviceSeeker<I extends InputDevice> {
      * For continuous scanning, this method must be called periodically once
      * every application update.
      *
-     * @throws InputException if an error occurs while seeking.
+     * @throws InputException if an error occurs and no callback has
+     *                        been set via {@link #onError(Consumer)}.
      */
     public final synchronized void seek() {
         try {
             this.seekImpl();
         } catch (Throwable cause) {
-            this.sendCallback(l -> l.onError(this, cause));
+            if (errorCallback != null) {
+                errorCallback.accept(cause);
+            } else {
+                throw new InputException("error in DeviceSeeker", cause);
+            }
         }
     }
 
