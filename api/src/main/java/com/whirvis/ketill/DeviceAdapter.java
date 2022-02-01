@@ -2,6 +2,8 @@ package com.whirvis.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * Device adapters map data from a source (such as GLFW or X-Input) to an
  * {@link InputDevice}. This allows the same input device to be used with
@@ -23,8 +25,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
      */
     public DeviceAdapter(@NotNull I device,
                          @NotNull MappedFeatureRegistry registry) {
-        this.device = device;
-        this.registry = registry;
+        this.device = Objects.requireNonNull(device, "device");
+        this.registry = Objects.requireNonNull(registry, "registry");
     }
 
     /**
