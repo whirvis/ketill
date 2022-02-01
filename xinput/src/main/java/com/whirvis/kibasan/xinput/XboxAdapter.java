@@ -142,6 +142,11 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
         trigger.force = axes.get(axis);
     }
 
+    /*
+     * XInputDevice.setVibration() is not thread safe. If it is called
+     * by two different threads concurrently, an error could be thrown.
+     * This is prevented by making this method synchronized.
+     */
     @FeatureAdapter
     private void updateMotor(@NotNull Vibration1f vibration,
                              @NotNull RumbleMotor motor) {
@@ -160,17 +165,24 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
          */
         if (motor == MOTOR_COARSE && rumbleCoarse != force) {
             this.rumbleCoarse = force;
-            xDevice.setVibration(rumbleCoarse, rumbleFine);
+            synchronized (xDevice) {
+                xDevice.setVibration(rumbleCoarse, rumbleFine);
+            }
         } else if (motor == MOTOR_FINE && rumbleFine != force) {
             this.rumbleFine = force;
-            xDevice.setVibration(rumbleCoarse, rumbleFine);
+            synchronized (xDevice) {
+                xDevice.setVibration(rumbleCoarse, rumbleFine);
+            }
         }
     }
 
 
     @Override
     protected void pollDevice() {
-        xDevice.poll();
+        synchronized (xDevice) {
+            xDevice.poll();
+        }
+
         XInputComponents comps = xDevice.getComponents();
         this.axes = comps.getAxes();
         this.buttons = comps.getButtons();

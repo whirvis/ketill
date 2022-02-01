@@ -17,6 +17,16 @@ public final class XboxSeeker extends DeviceSeeker<XboxController> {
         this.xinput14 = XInputDevice14.isAvailable();
     }
 
+    /**
+     * <b>Note:</b> Any methods which are designated by the XInput API as not
+     * being thread safe <i>must</i> be wrapped in a {@code synchronized} code
+     * block. <u>If this is not done, any multithreading will likely result in
+     * a JVM crash.</u>
+     *
+     * @param playerNum the player number.
+     * @return the device for the specified player.
+     * @throws XInputNotLoadedException if XInput failed to load.
+     */
     /* @formatter:off */
     private XInputDevice getDevice(int playerNum)
             throws XInputNotLoadedException {
@@ -40,22 +50,23 @@ public final class XboxSeeker extends DeviceSeeker<XboxController> {
                 continue;
             }
 
-            XInputDevice device = this.getDevice(i);
-            if (device.isConnected()) {
+            XInputDevice xDevice = this.getDevice(i);
+            if (xDevice.isConnected()) {
                 this.controllers[i] =
                         new XboxController((c, r) -> new XboxAdapter(c, r,
-                                device));
+                                xDevice));
                 this.discoverDevice(controllers[i]);
             } else {
                 /*
                  * The device must always be polled, even when it is not
-                 * considered connecting. If this is not done, controllers
+                 * considered connected. If this is not done, controllers
                  * connected after the program is started will not be seen
-                 * by the seeker! However, once it has been discovered, the
-                 * responsibilities of polling the device are handed off to
-                 * the controller's respective adapter.
+                 * by the seeker! Once discovered, the responsibilities of
+                 * polling the device are handed off to the adapter.
                  */
-                device.poll();
+                synchronized (xDevice) {
+                    xDevice.poll();
+                }
             }
         }
     }
