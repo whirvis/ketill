@@ -23,7 +23,7 @@ public interface DeviceGuids {
     /* @formatter:off */
     default @Nullable Iterable<@NotNull String>
             getGuids(@NotNull String id, @NotNull OperatingSystem os) {
-        return this.getGuids(id, os.systemId);
+        return this.getGuids(id, os.id);
     }
     /* @formatter:on */
 
