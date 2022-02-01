@@ -59,7 +59,6 @@ public abstract class DeviceSeeker<I extends InputDevice> {
         }
     }
 
-
     /**
      * Removes a listener from this device seeker.
      *
