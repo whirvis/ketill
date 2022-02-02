@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A device which can send and receive input data.
@@ -36,6 +37,12 @@ public abstract class InputDevice implements FeatureRegistry {
     private final DeviceAdapter<InputDevice> adapter;
     private boolean initializedAdapter;
     private boolean registeredFields;
+    private boolean connected;
+
+    private @Nullable Consumer<DeviceFeature<?>> registerFeatureCallback;
+    private @Nullable Consumer<DeviceFeature<?>> unregisterFeatureCallback;
+    private @Nullable Runnable connectCallback;
+    private @Nullable Runnable disconnectCallback;
 
     /**
      * @param id              the device ID.
@@ -159,7 +166,6 @@ public abstract class InputDevice implements FeatureRegistry {
         return registry.isRegistered(feature);
     }
 
-
     /* @formatter:off */
     @Override
     public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
@@ -186,17 +192,88 @@ public abstract class InputDevice implements FeatureRegistry {
     @Override
     public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
-        return registry.registerFeature(feature);
+        RegisteredFeature<F, S> registeredFeature =
+                registry.registerFeature(feature);
+        if (registerFeatureCallback != null) {
+            registerFeatureCallback.accept(feature);
+        }
+        return registeredFeature;
     }
     /* @formatter:on */
 
     @Override
     public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
         registry.unregisterFeature(feature);
+        if (unregisterFeatureCallback != null) {
+            unregisterFeatureCallback.accept(feature);
+        }
     }
 
+    /**
+     * Sets the callback for when a feature is registered. If this callback
+     * was set <i>after</i> one or more features have been registered, it
+     * will not be called for them. Current features will have to be fetched
+     * via {@link #getFeatures()}.
+     *
+     * @param callback the code to execute when a feature is registered. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
+     * @see #registerFeature(DeviceFeature)
+     */
+    public void onRegisterFeature(@Nullable Consumer<DeviceFeature<?>> callback) {
+        this.registerFeatureCallback = callback;
+    }
+
+    /**
+     * Sets the callback for when a feature is unregistered. If this callback
+     * was set <i>after</i> one or more features have been unregistered, it
+     * will not be called for them. Current features will have to be fetched
+     * via {@link #getFeatures()}.
+     *
+     * @param callback the code to execute when a feature is unregistered. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
+     * @see #unregisterFeature(DeviceFeature)
+     */
+    public void onUnregisterFeature(@Nullable Consumer<DeviceFeature<?>> callback) {
+        this.unregisterFeatureCallback = callback;
+    }
+
+    /**
+     * Sets the callback for when this device connects. If this callback was
+     * set <i>after</i> the device has connected, it will not be called.
+     *
+     * @param callback the code to execute when this device connects. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
+     * @see #isConnected()
+     */
+    public void onConnect(@Nullable Runnable callback) {
+        this.connectCallback = callback;
+    }
+
+    /**
+     * Sets the callback for when this device disconnects. If this callback
+     * was set <i>after</i> the device has disconnected, it will not be called.
+     *
+     * @param callback the code to execute when this device disconnects. A
+     *                 value of {@code null} is permitted, and will result
+     *                 in nothing being executed.
+     * @see #isConnected()
+     */
+    public void onDisconnect(@Nullable Runnable callback) {
+        this.disconnectCallback = callback;
+    }
+
+    /**
+     * For this method to return up-to-date values, this device
+     * must first be updated via {@link #poll()} beforehand.
+     *
+     * @return {@code true} if this device is currently connected,
+     * {@code false} otherwise.
+     */
     public boolean isConnected() {
-        return adapter.isDeviceConnected();
+        return this.connected;
     }
 
     /**
@@ -210,6 +287,14 @@ public abstract class InputDevice implements FeatureRegistry {
     public synchronized void poll() {
         adapter.pollDevice();
         registry.updateFeatures();
+
+        boolean wasConnected = this.connected;
+        this.connected = adapter.isDeviceConnected();
+        if (connected && !wasConnected && connectCallback != null) {
+            connectCallback.run();
+        } else if (!connected && wasConnected && disconnectCallback != null) {
+            disconnectCallback.run();
+        }
     }
 
 }
