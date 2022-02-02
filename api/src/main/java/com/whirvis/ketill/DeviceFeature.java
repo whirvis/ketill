@@ -23,17 +23,24 @@ public abstract class DeviceFeature<S> {
     /**
      * @param id           the feature ID.
      * @param initialState a supplier for the feature's initial state.
-     * @throws NullPointerException if {@code id}, {@code initialState} or
-     *                              the value that {@code initialState}
-     *                              supplies is {@code null}.
+     * @throws NullPointerException     if {@code id}, {@code initialState} or
+     *                                  the value that {@code initialState}
+     *                                  supplies is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public DeviceFeature(@NotNull String id,
                          @NotNull Supplier<@NotNull S> initialState) {
         this.id = Objects.requireNonNull(id, "id");
-        this.initialState = Objects.requireNonNull(initialState,
-                "initialState");
+        if (id.isEmpty()) {
+            throw new IllegalArgumentException("id cannot be empty");
+        } else if (!id.matches("\\S+")) {
+            throw new IllegalArgumentException("id cannot contain whitespace");
+        }
 
         /* @formatter:off */
+        this.initialState = Objects.requireNonNull(initialState,
+                "initialState");
         Objects.requireNonNull(initialState.get(),
                 "supplied initial state is null");
         /* @formatter:on */
