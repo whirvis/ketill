@@ -46,43 +46,43 @@ public abstract class DeviceSeeker<I extends InputDevice> {
     }
 
     /**
-     * Sets the callback for what will happen when this seeker has discovered
-     * a device. If this callback was set <i>after</i> one or more devices
-     * have been discovered, it will not be called for them. They will have
-     * to be retrieved via {@link #discoveredDevices}.
+     * Sets the callback for when this seeker has discovered a device. If this
+     * callback was set <i>after</i> one or more devices have been discovered,
+     * it will not be called for them. Current devices will have to be
+     * retrieved via {@link #discoveredDevices}.
      *
      * @param callback the code to execute when a device is discovered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      */
-    public void onDiscoverDevice(@Nullable Consumer<? super I> callback) {
+    public final void onDiscoverDevice(@Nullable Consumer<? super I> callback) {
         this.discoverDeviceCallback = callback;
     }
 
     /**
-     * Sets the callback for what will happen when this seeker has forgotten
-     * a device. If this callback was set <i>after</i> one or more devices
-     * have been forgotten, it will not be called for them. Current devices
-     * will have to be retrieved via {@link #discoveredDevices}.
+     * Sets the callback for when this seeker has forgotten a device. If this
+     * callback was set <i>after</i> one or more devices have been forgotten,
+     * it will not be called for them. Current devices will have to be
+     * retrieved via {@link #discoveredDevices}.
      *
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      */
-    public void onForgetDevice(@Nullable Consumer<? super I> callback) {
+    public final void onForgetDevice(@Nullable Consumer<? super I> callback) {
         this.forgetDeviceCallback = callback;
     }
 
     /**
-     * Sets the callback for what will happen when an error occurs in
-     * {@link #seek()}. By default, a wrapping {@code InputException}
-     * will be constructed for the original error and thrown.
+     * Sets the callback for when an error occurs in {@link #seek()}. By
+     * default, a wrapping {@code InputException} will be constructed for
+     * the original error and thrown.
      *
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
      *                 in a wrapping {@code InputException} being thrown.
      */
-    public void onError(@Nullable Consumer<Throwable> callback) {
+    public final void onError(@Nullable Consumer<Throwable> callback) {
         this.errorCallback = callback;
     }
 
