@@ -1,6 +1,4 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
 group = 'com.whirvis'
 version = '0.0.1-SNAPSHOT'

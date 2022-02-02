@@ -1,6 +1,4 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
 repositories {
     mavenCentral()
@@ -9,12 +7,12 @@ repositories {
 
 dependencies {
     implementation project(':api')
-    implementation project(':devices:features')
     implementation project(':devices:controller')
-
-    implementation 'org.joml:joml:1.10.2'
+    implementation project(':devices:features')
 
     compileOnly 'org.jetbrains:annotations:22.0.0'
+
+    implementation 'org.joml:joml:1.10.2'
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_1_8

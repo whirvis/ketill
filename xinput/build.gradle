@@ -1,29 +1,23 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
 repositories {
     mavenCentral()
     mavenLocal()
-
     maven {
         url = uri('https://jitpack.io')
     }
 }
 
-test {
-    useJUnitPlatform()
-}
-
 dependencies {
     implementation project(':api')
-    implementation project(':devices:features')
     implementation project(':devices:controller')
+    implementation project(':devices:features')
     implementation project(':devices:xbox')
 
-    implementation 'org.joml:joml:1.10.2'
+    compileOnly 'org.jetbrains:annotations:22.0.0'
+
     implementation 'com.github.strikerx3:jxinput:1.0.0'
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.joml:joml:1.10.2'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'

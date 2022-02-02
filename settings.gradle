@@ -2,16 +2,18 @@ rootProject.name = 'ketill'
 
 include 'api'
 
-include 'devices:features', 'devices:pc'
-
 include 'devices:controller'
-include 'devices:psx', 'devices:xbox'
-include 'devices:nx', 'devices:gc'
+include 'devices:features'
+include 'devices:gc'
+include 'devices:nx'
+include 'devices:pc'
+include 'devices:psx'
+include 'devices:xbox'
 
 include 'glfw'
-include 'xinput'
 
 include 'hid-usb:api'
 include 'hid-usb:dualshock'
 include 'hid-usb:gamecube'
 
+include 'xinput'
