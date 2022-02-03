@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * @param <S> the state container type.
  * @see InputDevice#registerFeature(DeviceFeature)
  */
-public abstract class DeviceFeature<S> {
+public class DeviceFeature<S> {
 
     public final @NotNull String id;
     public final @NotNull Supplier<@NotNull S> initialState;
