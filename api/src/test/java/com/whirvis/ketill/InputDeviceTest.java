@@ -122,7 +122,7 @@ class InputDeviceTest {
          * The getFeatures() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        assertEquals(device.getFeatures(),
+        assertIterableEquals(device.getFeatures(),
                 adapter.registry.getFeatures());
     }
 
