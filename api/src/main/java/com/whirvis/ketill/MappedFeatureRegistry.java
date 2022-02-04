@@ -19,11 +19,27 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     private final InputDevice device;
     private final Map<DeviceFeature<?>, RegisteredFeature<?, ?>> features;
     private final Map<DeviceFeature<?>, MappedFeature<?, ?, ?>> mappings;
+    private final Collection<RegisteredFeature<?, ?>> featuresView;
 
     protected MappedFeatureRegistry(@NotNull InputDevice device) {
         this.device = device;
         this.features = new HashMap<>();
         this.mappings = new HashMap<>();
+
+        /*
+         * This single instance of an unmodifiable collection is used to
+         * satisfy a test in InputDeviceTest. The test posits that both
+         * getRegistered() in InputDevice and MappedFeatureRegistry will
+         * return an equal value (as getRegistered() in InputDevice is a
+         * shorthand for getRegistered() in MappedFeatureRegistry.)
+         *
+         * However, unmodifiable collections do not implement the equals()
+         * method (as would be expected.) As such, the assertion that the
+         * two values are equal fail (as two difference instances of the
+         * same value are returned.)
+         */
+        this.featuresView =
+                Collections.unmodifiableCollection(features.values());
     }
 
     /**
@@ -161,7 +177,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     @Override
     public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
             getFeatures() {
-        return Collections.unmodifiableCollection(features.values());
+        return this.featuresView;
     }
     /* @formatter:on */
 

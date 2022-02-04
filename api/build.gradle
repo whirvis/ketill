@@ -5,6 +5,10 @@ repositories {
     mavenLocal()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
     compileOnly 'org.jetbrains:annotations:22.0.0'
 
