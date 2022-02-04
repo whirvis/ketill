@@ -2,6 +2,7 @@ package com.whirvis.ketill;
 
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public class InputException extends RuntimeException {
 
     private static final long serialVersionUID = 2296743015689493731L;
@@ -20,7 +21,6 @@ public class InputException extends RuntimeException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    @SuppressWarnings("unused")
     public InputException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
@@ -32,7 +32,6 @@ public class InputException extends RuntimeException {
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    @SuppressWarnings("unused")
     public InputException(@Nullable String message) {
         super(message);
     }
@@ -48,7 +47,6 @@ public class InputException extends RuntimeException {
      *              value is permitted, and indicates that the cause is
      *              nonexistent or unknown.
      */
-    @SuppressWarnings("unused")
     public InputException(@Nullable Throwable cause) {
         super(cause);
     }
@@ -56,7 +54,6 @@ public class InputException extends RuntimeException {
     /**
      * Constructs a new {@code InputException} with no detail message.
      */
-    @SuppressWarnings("unused")
     public InputException() {
         super();
     }
