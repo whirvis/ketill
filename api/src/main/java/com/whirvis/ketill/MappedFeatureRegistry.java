@@ -137,12 +137,14 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      */
     public boolean unmapFeature(@NotNull DeviceFeature<?> feature) {
         Objects.requireNonNull(feature, "feature");
-        if (!features.containsKey(feature)) {
+        if (!mappings.containsKey(feature)) {
             return false;
         }
         Object removed = mappings.remove(feature);
         RegisteredFeature<?, ?> registered = features.get(feature);
-        registered.updater = RegisteredFeature.NO_UPDATER;
+        if (registered != null) {
+            registered.updater = RegisteredFeature.NO_UPDATER;
+        }
         return removed != null;
     }
 
