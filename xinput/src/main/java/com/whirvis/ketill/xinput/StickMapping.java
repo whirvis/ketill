@@ -6,15 +6,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 
-public class XStickMapping {
+public class StickMapping {
 
     public final @NotNull XInputAxis xAxis;
     public final @NotNull XInputAxis yAxis;
     public final @Nullable Field zButtonField;
 
-    public XStickMapping(@NotNull XInputAxis xAxis,
-                         @NotNull XInputAxis yAxis,
-                         @Nullable Field zButtonField) {
+    public StickMapping(@NotNull XInputAxis xAxis,
+                        @NotNull XInputAxis yAxis,
+                        @Nullable Field zButtonField) {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.zButtonField = zButtonField;

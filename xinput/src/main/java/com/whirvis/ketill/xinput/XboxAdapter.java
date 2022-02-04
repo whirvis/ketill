@@ -81,7 +81,7 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
                            @NotNull XInputAxis yAxis,
                            @Nullable String zButtonFieldName) {
         Field zButtonField = this.getButtonField(zButtonFieldName);
-        XStickMapping m = new XStickMapping(xAxis, yAxis, zButtonField);
+        StickMapping m = new StickMapping(xAxis, yAxis, zButtonField);
         registry.mapFeature(stick, m, this::updateStick);
     }
 
@@ -130,7 +130,7 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
 
     @FeatureAdapter
     private void updateStick(@NotNull Vector3f stick,
-                             @NotNull XStickMapping mapping) {
+                             @NotNull StickMapping mapping) {
         stick.x = axes.get(mapping.xAxis);
         stick.y = axes.get(mapping.yAxis);
         stick.z = this.isPressed(mapping.zButtonField) ? -1.0F : 0.0F;
