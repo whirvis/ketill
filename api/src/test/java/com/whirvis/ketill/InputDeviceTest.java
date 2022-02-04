@@ -24,10 +24,10 @@ class InputDeviceTest {
          */
         assertThrows(NullPointerException.class,
                 () -> new MockInputDevice(null, MockDeviceAdapter::new));
-        assertThrows(NullPointerException.class,
-                () -> new MockInputDevice("mock", null));
-        assertThrows(NullPointerException.class,
-                () -> new MockInputDevice("mock", (d, r) -> null));
+        assertThrows(NullPointerException.class, () -> new MockInputDevice(
+                "mock", null));
+        assertThrows(NullPointerException.class, () -> new MockInputDevice(
+                "mock", (d, r) -> null));
 
         /*
          * It makes no sense for the input device's ID to be blank.
@@ -50,8 +50,8 @@ class InputDeviceTest {
          * This is to allow special extending classes (like Controller in
          * the "devices" module) to finish some extra setup.
          */
-        MockInputDevice device = new MockInputDevice("mock",
-                adapterSupplier, false, false);
+        MockInputDevice device = new MockInputDevice("mock", adapterSupplier,
+                false, false);
         assertFalse(device.isRegistered(MockInputDevice.FEATURE));
         assertFalse(adapter.get().isInitialized());
     }
@@ -81,8 +81,7 @@ class InputDeviceTest {
          * IllegalStateException being thrown. Initializing the adapter
          * twice makes no sense, and would lead to bugs.
          */
-        assertThrows(IllegalStateException.class,
-                () -> device.initAdapter());
+        assertThrows(IllegalStateException.class, () -> device.initAdapter());
     }
 
     @Test
@@ -107,8 +106,8 @@ class InputDeviceTest {
          * It makes no sense for a feature field annotated with the
          * @FeaturePresent annotation to be private (as it would not
          * be accessible to the outside world.) Furthermore, if the
-         * field is not assignable from the DeviceFeature class, then
-         * it is not even a device feature in the first place.
+         * field is not assignable from DeviceFeature, then it cannot
+         * be registered as a device feature.
          */
         assertThrows(InputException.class,
                 MockInputDevice.WithPrivateFeature::new);
@@ -164,7 +163,7 @@ class InputDeviceTest {
         /*
          * It makes no sense to register a null feature or a feature which
          * has already been registered. As such, assume these were mistakes
-         * on the side of the user and throw an exception.
+         * by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> device.registerFeature(null));
@@ -186,7 +185,7 @@ class InputDeviceTest {
         /*
          * It makes no sense to unregister a null feature or a feature which
          * has already been unregistered. As such, assume these were mistakes
-         * on the side of the user and throw an exception.
+         * by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> device.unregisterFeature(null));
