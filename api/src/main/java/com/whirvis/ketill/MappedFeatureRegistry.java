@@ -16,13 +16,11 @@ import java.util.Objects;
  */
 public class MappedFeatureRegistry implements FeatureRegistry {
 
-    private final InputDevice device;
     private final Map<DeviceFeature<?>, RegisteredFeature<?, ?>> features;
     private final Map<DeviceFeature<?>, MappedFeature<?, ?, ?>> mappings;
     private final Collection<RegisteredFeature<?, ?>> featuresView;
 
-    protected MappedFeatureRegistry(@NotNull InputDevice device) {
-        this.device = device;
+    protected MappedFeatureRegistry() {
         this.features = new HashMap<>();
         this.mappings = new HashMap<>();
 
@@ -200,8 +198,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
             throw new IllegalStateException("feature already registered");
         }
 
-        RegisteredFeature<F, S> registered =
-                new RegisteredFeature<>(device, feature);
+        RegisteredFeature<F, S> registered = new RegisteredFeature<>(feature);
         features.put(feature, registered);
         this.updateMapping(feature);
 

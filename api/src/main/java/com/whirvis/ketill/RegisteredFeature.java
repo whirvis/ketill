@@ -25,14 +25,11 @@ public class RegisteredFeature<F extends DeviceFeature<S>, S> {
         /* nothing to update */
     };
 
-    public final @NotNull InputDevice device;
     public final @NotNull F feature;
     public final @NotNull S state;
     protected @NotNull Runnable updater;
 
-    protected RegisteredFeature(@NotNull InputDevice device,
-                                @NotNull F feature) {
-        this.device = device;
+    protected RegisteredFeature(@NotNull F feature) {
         this.feature = feature;
         this.state = feature.initialState.get();
         this.updater = NO_UPDATER;

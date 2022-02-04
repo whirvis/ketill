@@ -73,7 +73,7 @@ public abstract class InputDevice implements FeatureRegistry {
             throw new IllegalArgumentException("id cannot contain whitespace");
         }
 
-        this.registry = new MappedFeatureRegistry(this);
+        this.registry = new MappedFeatureRegistry();
 
         /*
          * While this is an unchecked cast, the template requires that the
