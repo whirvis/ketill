@@ -7,7 +7,7 @@ class MockInputDevice extends InputDevice {
 
         @FeaturePresent
         private static final MockDeviceFeature
-                FEATURE = new MockDeviceFeature("feature");
+                FEATURE = new MockDeviceFeature();
 
     }
 
@@ -15,13 +15,14 @@ class MockInputDevice extends InputDevice {
     static class WithUnassignableFeature extends MockInputDevice {
 
         @FeaturePresent
-        public static final String FEATURE = "feature";
+        public static final String
+                FEATURE = "feature";
 
     }
 
     @FeaturePresent
-    public static final DeviceFeature<String>
-            FEATURE = new DeviceFeature<>("feature", String::new);
+    public static final MockDeviceFeature
+            FEATURE = new MockDeviceFeature();
 
     MockInputDevice(String id,
                     AdapterSupplier<MockInputDevice> adapterSupplier,

@@ -20,7 +20,7 @@ class InputDeviceTest {
         /*
          * The device must be identifiable and have an adapter to poll for
          * input information. As such, null IDs, null adapter suppliers, and
-         * null values supplied by the adapter supplier are illegal.
+         * null values given by the adapter supplier are illegal.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockInputDevice(null, MockDeviceAdapter::new));
@@ -28,6 +28,15 @@ class InputDeviceTest {
                 () -> new MockInputDevice("mock", null));
         assertThrows(NullPointerException.class,
                 () -> new MockInputDevice("mock", (d, r) -> null));
+
+        /*
+         * It makes no sense for the input device's ID to be blank.
+         * Furthermore, any whitespace in an ID is illegal.
+         */
+        assertThrows(IllegalArgumentException.class,
+                () -> new MockInputDevice("", MockDeviceAdapter::new));
+        assertThrows(IllegalArgumentException.class,
+                () -> new MockInputDevice("\t", MockDeviceAdapter::new));
 
         AtomicReference<MockDeviceAdapter> adapter = new AtomicReference<>();
         AdapterSupplier<MockInputDevice> adapterSupplier = (d, r) -> {
@@ -99,8 +108,7 @@ class InputDeviceTest {
          * @FeaturePresent annotation to be private (as it would not
          * be accessible to the outside world.) Furthermore, if the
          * field is not assignable from the DeviceFeature class, then
-         * it is not even a device feature in the first place. As such,
-         * assume these were mistakes on the side of the user.
+         * it is not even a device feature in the first place.
          */
         assertThrows(InputException.class,
                 MockInputDevice.WithPrivateFeature::new);
@@ -130,7 +138,7 @@ class InputDeviceTest {
 
     @Test
     void isRegistered() {
-        MockDeviceFeature feature = new MockDeviceFeature("feature");
+        MockDeviceFeature feature = new MockDeviceFeature();
 
         /*
          * The isRegistered() method is an accessor to getFeatures() in
@@ -145,7 +153,7 @@ class InputDeviceTest {
 
     @Test
     void registerFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature("feature");
+        MockDeviceFeature feature = new MockDeviceFeature();
         AtomicBoolean registered = new AtomicBoolean();
         device.onRegisterFeature((f) -> registered.set(f == feature));
 
@@ -166,7 +174,7 @@ class InputDeviceTest {
 
     @Test
     void unregisterFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature("feature");
+        MockDeviceFeature feature = new MockDeviceFeature();
         AtomicBoolean unregistered = new AtomicBoolean();
         device.onUnregisterFeature((f) -> unregistered.set(f == feature));
         device.registerFeature(feature); /* something to unregister */

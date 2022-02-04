@@ -54,15 +54,25 @@ public abstract class InputDevice implements FeatureRegistry {
      * @param initAdapter     {@code true} if the constructor should call
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
-     * @throws NullPointerException if {@code id} or {@code adapterSupplier}
-     *                              are {@code null}; if the adapter supplied
-     *                              by {@code adapterSupplier} is {@code null}.
+     * @throws NullPointerException     if {@code id} or
+     *                                  {@code adapterSupplier}
+     *                                  are {@code null}; if the adapter
+     *                                  given by {@code adapterSupplier}
+     *                                  is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     @SuppressWarnings("unchecked")
     public InputDevice(@NotNull String id,
                        @NotNull AdapterSupplier<?> adapterSupplier,
                        boolean registerFields, boolean initAdapter) {
         this.id = Objects.requireNonNull(id, "id");
+        if (id.isEmpty()) {
+            throw new IllegalArgumentException("id cannot be empty");
+        } else if (!id.matches("\\S+")) {
+            throw new IllegalArgumentException("id cannot contain whitespace");
+        }
+
         this.registry = new MappedFeatureRegistry(this);
 
         /*
@@ -90,8 +100,11 @@ public abstract class InputDevice implements FeatureRegistry {
      *
      * @param id              the device ID.
      * @param adapterSupplier the device adapter supplier.
-     * @throws NullPointerException if {@code id} or {@code adapterSupplier}
-     *                              are {@code null}.
+     * @throws NullPointerException     if {@code id} or
+     *                                  {@code adapterSupplier}
+     *                                  are {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public InputDevice(@NotNull String id,
                        @NotNull AdapterSupplier<?> adapterSupplier) {
