@@ -9,7 +9,6 @@ public enum Direction {
      * {@link #RIGHT}.
      */
     /* @formatter:off */
-    @SuppressWarnings("unused")
     public static final Direction
             NORTH = UP, SOUTH = DOWN,
             WEST = LEFT, EAST = RIGHT;
