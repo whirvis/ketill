@@ -165,11 +165,24 @@ public abstract class InputDevice implements FeatureRegistry {
         try {
             boolean statik = Modifier.isStatic(mods);
             Object obj = field.get(statik ? null : this);
-            this.registerFeature((DeviceFeature<?>) obj);
+            DeviceFeature<?> feature = (DeviceFeature<?>) obj;
+
+            /*
+             * There is a chance that this feature was registered before
+             * registerField() was called for this field. While this is a
+             * slim possibility, it would be infuriating to debug. As such,
+             * perform this check before making the call to register.
+             */
+            if(!this.isRegistered(feature)) {
+                this.registerFeature(feature);
+            }
         } catch (IllegalAccessException e) {
-            throw new InputException("failure to access"
-                    + " @" + FeaturePresent.class.getSimpleName()
-                    + " annotated field", e);
+            /*
+             * The field is verified to be public before it is accessed by
+             * this method. As such, this exception should never occur. If
+             * it does, something has likely gone wrong in the JVM.
+             */
+            throw new InputException("this is a bug", e);
         }
     }
     /* @formatter:on */
