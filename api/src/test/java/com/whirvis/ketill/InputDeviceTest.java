@@ -161,6 +161,12 @@ class InputDeviceTest {
         assertTrue(device.isRegistered(feature));
 
         /*
+         * A null value is allowed when setting a callback. This should
+         * have the effect of removing the callback from the device.
+         */
+        assertDoesNotThrow(() -> device.onRegisterFeature(null));
+
+        /*
          * It makes no sense to register a null feature or a feature which
          * has already been registered. As such, assume these were mistakes
          * by the user and throw an exception.
@@ -181,6 +187,12 @@ class InputDeviceTest {
         device.unregisterFeature(feature);
         assertTrue(unregistered.get());
         assertFalse(device.isRegistered(feature));
+
+        /*
+         * A null value is allowed when setting a callback. This should
+         * have the effect of removing the callback from the device.
+         */
+        assertDoesNotThrow(() -> device.onUnregisterFeature(null));
 
         /*
          * It makes no sense to unregister a null feature or a feature which
@@ -214,6 +226,13 @@ class InputDeviceTest {
         device.poll();
         assertFalse(connected.get());
         assertFalse(device.isConnected());
+
+        /*
+         * A null value is allowed when setting a callback. This should
+         * have the effect of removing the callback from the device.
+         */
+        assertDoesNotThrow(() -> device.onConnect(null));
+        assertDoesNotThrow(() -> device.onDisconnect(null));
     }
 
 }

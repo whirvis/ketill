@@ -71,6 +71,15 @@ class MappedFeatureRegistryTest {
         assertTrue(updated.get());
 
         /*
+         * A null value is allowed for the parameters when mapping a feature.
+         * While not recommended (StateUpdater.NoParams should be used in
+         * this scenario), it is still not illegal. As such, no exception
+         * should be thrown here.
+         */
+        assertDoesNotThrow(() -> registry.mapFeature(feature, null, (f, s) -> {
+        }));
+
+        /*
          * It makes no sense to map a null feature or map a feature to a
          * null updater. As such, assume these were mistakes by the user
          * and throw an exception.
