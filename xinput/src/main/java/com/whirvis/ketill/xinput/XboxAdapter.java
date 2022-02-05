@@ -142,11 +142,6 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
         trigger.force = axes.get(axis);
     }
 
-    /*
-     * XInputDevice.setVibration() is not thread safe. If it is called
-     * by two different threads concurrently, an error could be thrown.
-     * This is prevented by making this method synchronized.
-     */
     @FeatureAdapter
     private void updateMotor(@NotNull Vibration1f vibration,
                              @NotNull RumbleMotor motor) {
@@ -155,7 +150,7 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
          * force that is out of its valid bounds. Clamping the force will
          * prevent this from occurring.
          */
-        int force = (int) (RUMBLE_MAX * vibration.force);
+        int force = (int) Math.ceil(RUMBLE_MAX * vibration.force);
         force = Math.min(Math.max(force, RUMBLE_MIN), RUMBLE_MAX);
 
         /*
