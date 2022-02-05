@@ -51,12 +51,8 @@ public final class XboxSeeker extends DeviceSeeker<XboxController> {
             }
 
             XInputDevice xDevice = this.getDevice(i);
-            if (xDevice.isConnected()) {
-                this.controllers[i] =
-                        new XboxController((c, r) -> new XboxAdapter(c, r,
-                                xDevice));
-                this.discoverDevice(controllers[i]);
-            } else {
+
+            if (!xDevice.isConnected()) {
                 /*
                  * The device must always be polled, even when it is not
                  * considered connected. If this is not done, controllers
@@ -67,6 +63,13 @@ public final class XboxSeeker extends DeviceSeeker<XboxController> {
                 synchronized (xDevice) {
                     xDevice.poll();
                 }
+            }
+
+            if (xDevice.isConnected()) {
+                this.controllers[i] =
+                        new XboxController((c, r) -> new XboxAdapter(c, r,
+                                xDevice));
+                this.discoverDevice(controllers[i]);
             }
         }
     }
