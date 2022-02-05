@@ -2,19 +2,19 @@ package com.whirvis.ketill;
 
 class MockInputDevice extends InputDevice {
 
-    @SuppressWarnings("unused")
     static class WithPrivateFeature extends MockInputDevice {
 
         @FeaturePresent
+        @SuppressWarnings("unused")
         private static final MockDeviceFeature
                 FEATURE = new MockDeviceFeature();
 
     }
 
-    @SuppressWarnings("unused")
     static class WithUnassignableFeature extends MockInputDevice {
 
         @FeaturePresent
+        @SuppressWarnings("unused")
         public static final String
                 FEATURE = "feature";
 
@@ -35,7 +35,7 @@ class MockInputDevice extends InputDevice {
         super(id, adapterSupplier);
     }
 
-    private MockInputDevice() {
+    MockInputDevice() {
         this("mock", MockDeviceAdapter::new);
     }
 
