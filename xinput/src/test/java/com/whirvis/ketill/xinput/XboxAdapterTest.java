@@ -36,10 +36,10 @@ class XboxAdapterTest {
         this.xAxes = mock(XInputAxes.class);
         this.xButtons = mock(XInputButtons.class);
 
-        XInputComponents xInputComponents = mock(XInputComponents.class);
-        when(xDevice.getComponents()).thenReturn(xInputComponents);
-        when(xInputComponents.getButtons()).thenReturn(xButtons);
-        when(xInputComponents.getAxes()).thenReturn(xAxes);
+        XInputComponents xComponents = mock(XInputComponents.class);
+        when(xDevice.getComponents()).thenReturn(xComponents);
+        when(xComponents.getButtons()).thenReturn(xButtons);
+        when(xComponents.getAxes()).thenReturn(xAxes);
         when(xAxes.get(any())).thenReturn(0.0F);
 
         this.controller = new XboxController(((d, r) -> {
