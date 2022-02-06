@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
-public class AnalogStick extends DeviceFeature<Vector3f> {
+public class AnalogStick extends IoFeature<Vector3f> {
 
     private static final float STICK_PRESS = 2.0F / 3.0F;
 
@@ -27,7 +27,7 @@ public class AnalogStick extends DeviceFeature<Vector3f> {
             case RIGHT:
                 return pos.x() >= STICK_PRESS;
         }
-        throw new InputException("unknown direction");
+        throw new KetillException("unknown direction");
     }
 
     public final @Nullable DeviceButton zButton;

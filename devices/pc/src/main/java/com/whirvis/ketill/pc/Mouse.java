@@ -4,10 +4,10 @@ import com.whirvis.ketill.AdapterSupplier;
 import com.whirvis.ketill.Button1bc;
 import com.whirvis.ketill.FeaturePresent;
 import com.whirvis.ketill.FeatureState;
-import com.whirvis.ketill.InputDevice;
+import com.whirvis.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
 
-public class Mouse extends InputDevice {
+public class Mouse extends IoDevice {
 
     /* @formatter:off */
     @FeaturePresent

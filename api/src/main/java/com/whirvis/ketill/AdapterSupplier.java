@@ -3,14 +3,13 @@ package com.whirvis.ketill;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A supplier of a {@link DeviceAdapter}, used by {@link InputDevice} during
- * construction. This allows for the device adapter to be initialized by the
- * input device.
+ * A supplier of an {@link IoDeviceAdapter}, used by {@link IoDevice} during
+ * construction. This allows for the adapter to be initialized by the device.
  *
- * @param <I> the input device type.
+ * @param <I> the I/O device type.
  */
 @FunctionalInterface
-public interface AdapterSupplier<I extends InputDevice> {
+public interface AdapterSupplier<I extends IoDevice> {
 
     /**
      * Gets a device adapter.
@@ -19,7 +18,7 @@ public interface AdapterSupplier<I extends InputDevice> {
      * @param registry the device's mapped feature registry.
      * @return the device adapter.
      */
-    @NotNull DeviceAdapter<I> get(@NotNull I device,
-                                  @NotNull MappedFeatureRegistry registry);
+    @NotNull IoDeviceAdapter<I> get(@NotNull I device,
+                                    @NotNull MappedFeatureRegistry registry);
 
 }

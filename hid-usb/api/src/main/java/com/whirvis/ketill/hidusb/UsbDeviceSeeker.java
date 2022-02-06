@@ -1,14 +1,14 @@
 package com.whirvis.ketill.hidusb;
 
-import com.whirvis.ketill.DeviceSeeker;
-import com.whirvis.ketill.InputDevice;
-import com.whirvis.ketill.InputException;
+import com.whirvis.ketill.IoDeviceSeeker;
+import com.whirvis.ketill.IoDevice;
+import com.whirvis.ketill.KetillException;
 import org.usb4java.*;
 
 import java.util.*;
 
-public abstract class UsbDeviceSeeker<I extends InputDevice>
-		extends DeviceSeeker<I> {
+public abstract class UsbDeviceSeeker<I extends IoDevice>
+		extends IoDeviceSeeker<I> {
 
 	private static final long SEARCH_RATE = 1000L;
 	private static boolean initializedLibUsb = false;
@@ -261,14 +261,14 @@ public abstract class UsbDeviceSeeker<I extends InputDevice>
 	}
 
 	/**
-	 * @throws InputException
+	 * @throws KetillException
 	 *             if no targeted USB devices were specified.
 	 * @see #seekDevice(int, int)
 	 */
 	@Override
 	protected void seekImpl() {
 		if (descs.isEmpty()) {
-			throw new InputException("no USB devices specified");
+			throw new KetillException("no USB devices specified");
 		}
 
 		long currentTime = System.currentTimeMillis();

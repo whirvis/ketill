@@ -1,8 +1,8 @@
 package com.whirvis.ketill.hidusb;
 
-import com.whirvis.ketill.DeviceSeeker;
-import com.whirvis.ketill.InputDevice;
-import com.whirvis.ketill.InputException;
+import com.whirvis.ketill.IoDeviceSeeker;
+import com.whirvis.ketill.IoDevice;
+import com.whirvis.ketill.KetillException;
 import org.hid4java.*;
 import org.hid4java.event.HidServicesEvent;
 
@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public abstract class HidDeviceSeeker<I extends InputDevice>
-		extends DeviceSeeker<I> implements HidServicesListener {
+public abstract class HidDeviceSeeker<I extends IoDevice>
+		extends IoDeviceSeeker<I> implements HidServicesListener {
 
 	private static String getSerialStr(HidDevice device) {
 		String serial = device.getSerialNumber();
@@ -211,7 +211,7 @@ public abstract class HidDeviceSeeker<I extends InputDevice>
 	}
 
 	/**
-	 * @throws InputException
+	 * @throws KetillException
 	 *             if no targeted HID devices were specified.
 	 * @throws Exception
 	 *             if an HID error has occurred.
@@ -231,7 +231,7 @@ public abstract class HidDeviceSeeker<I extends InputDevice>
 		}
 
 		if (descs.isEmpty()) {
-			throw new InputException("no HID devices specified");
+			throw new KetillException("no HID devices specified");
 		} else if (hidException != null) {
 			throw hidException;
 		}

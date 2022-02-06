@@ -1,12 +1,12 @@
 package com.whirvis.ketill.glfw;
 
-import com.whirvis.ketill.DeviceAdapter;
-import com.whirvis.ketill.InputDevice;
+import com.whirvis.ketill.IoDeviceAdapter;
+import com.whirvis.ketill.IoDevice;
 import com.whirvis.ketill.MappedFeatureRegistry;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class GlfwDeviceAdapter<I extends InputDevice>
-        extends DeviceAdapter<I> {
+public abstract class GlfwDeviceAdapter<I extends IoDevice>
+        extends IoDeviceAdapter<I> {
 
     protected final long ptr_glfwWindow;
 

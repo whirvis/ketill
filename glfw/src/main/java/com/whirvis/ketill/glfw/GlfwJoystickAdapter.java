@@ -5,7 +5,7 @@ import com.whirvis.ketill.AnalogTrigger;
 import com.whirvis.ketill.Button1b;
 import com.whirvis.ketill.DeviceButton;
 import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.InputDevice;
+import com.whirvis.ketill.IoDevice;
 import com.whirvis.ketill.MappedFeatureRegistry;
 import com.whirvis.ketill.Trigger1f;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.nio.FloatBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class GlfwJoystickAdapter<I extends InputDevice>
+public abstract class GlfwJoystickAdapter<I extends IoDevice>
         extends GlfwDeviceAdapter<I> {
 
     protected final int glfwJoystick;

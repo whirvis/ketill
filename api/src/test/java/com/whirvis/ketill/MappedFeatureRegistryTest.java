@@ -31,7 +31,7 @@ class MappedFeatureRegistryTest {
 
     @Test
     void mapFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         AtomicBoolean updated = new AtomicBoolean();
 
         /* feature must be registered for updates */
@@ -94,7 +94,7 @@ class MappedFeatureRegistryTest {
     @Test
     void unmapFeature() {
         AtomicBoolean updated = new AtomicBoolean();
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
 
         /* feature must be registered for updates */
         RegisteredFeature<?, ?> registeredFeature =
@@ -141,7 +141,7 @@ class MappedFeatureRegistryTest {
 
     @Test
     void getRegistered() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         assertNull(registry.getRegistered(feature));
 
         /*
@@ -163,7 +163,7 @@ class MappedFeatureRegistryTest {
 
     @Test
     void getState() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
 
         /*
          * It makes no sense to retrieve the state of a null feature or the
@@ -186,7 +186,7 @@ class MappedFeatureRegistryTest {
     @Test
     void registerFeature() {
         /* it is convient to test isRegistered() here */
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         assertFalse(registry.isRegistered(feature));
         RegisteredFeature<?, ?> registeredFeature =
                 registry.registerFeature(feature);
@@ -216,7 +216,7 @@ class MappedFeatureRegistryTest {
 
     @Test
     void unregisterFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         registry.registerFeature(feature); /* required to unregister */
 
         registry.unregisterFeature(feature);

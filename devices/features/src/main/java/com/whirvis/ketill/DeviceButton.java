@@ -3,7 +3,7 @@ package com.whirvis.ketill;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DeviceButton extends DeviceFeature<Button1b> {
+public class DeviceButton extends IoFeature<Button1b> {
 
     public final @Nullable Direction direction;
 

@@ -14,33 +14,33 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * A device which can send and receive input data.
+ * A device which can send and receive I/O data.
  * <p/>
- * Examples of input devices include, but are not limited to: keyboards, mice,
- * XBOX controllers, etc. By design, an input device supports no features by
+ * Examples of I/O devices include, but are not limited to: keyboards, mice,
+ * XBOX controllers, etc. By design, an I/O device supports no features by
  * default. Rather, an extending class must provide them. The responsibility
  * of providing support for a feature is designed to the device adapter.
  * <p/>
- * <b>Note:</b> For input data to stay up-to-date, the input device must be
- * polled periodically via the {@link #poll()} method. It is recommended to
+ * <b>Note:</b> For data to stay up-to-date, the device must be polled
+ * periodically via the {@link #poll()} method. It is recommended to
  * poll the device once every application update.
  *
- * @see DeviceSeeker
- * @see DeviceAdapter
- * @see DeviceFeature
+ * @see IoDeviceSeeker
+ * @see IoDeviceAdapter
+ * @see IoFeature
  * @see FeaturePresent
  */
-public abstract class InputDevice implements FeatureRegistry {
+public abstract class IoDevice implements FeatureRegistry {
 
     public final @NotNull String id;
     private final MappedFeatureRegistry registry;
-    private final DeviceAdapter<InputDevice> adapter;
+    private final IoDeviceAdapter<IoDevice> adapter;
     private boolean initializedAdapter;
     private boolean registeredFields;
     private boolean connected;
 
-    private @Nullable Consumer<DeviceFeature<?>> registerFeatureCallback;
-    private @Nullable Consumer<DeviceFeature<?>> unregisterFeatureCallback;
+    private @Nullable Consumer<IoFeature<?>> registerFeatureCallback;
+    private @Nullable Consumer<IoFeature<?>> unregisterFeatureCallback;
     private @Nullable Runnable connectCallback;
     private @Nullable Runnable disconnectCallback;
 
@@ -63,9 +63,9 @@ public abstract class InputDevice implements FeatureRegistry {
      *                                  whitespace.
      */
     @SuppressWarnings("unchecked")
-    public InputDevice(@NotNull String id,
-                       @NotNull AdapterSupplier<?> adapterSupplier,
-                       boolean registerFields, boolean initAdapter) {
+    public IoDevice(@NotNull String id,
+                    @NotNull AdapterSupplier<?> adapterSupplier,
+                    boolean registerFields, boolean initAdapter) {
         this.id = Objects.requireNonNull(id, "id");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
@@ -77,11 +77,11 @@ public abstract class InputDevice implements FeatureRegistry {
 
         /*
          * While this is an unchecked cast, the template requires that the
-         * type extend InputDevice. As such, this cast is safe to perform.
+         * type extend IoDevice. As such, this cast is safe to perform.
          */
         Objects.requireNonNull(adapterSupplier, "adapterSupplier");
-        AdapterSupplier<InputDevice> castedSupplier =
-                (AdapterSupplier<InputDevice>) adapterSupplier;
+        AdapterSupplier<IoDevice> castedSupplier =
+                (AdapterSupplier<IoDevice>) adapterSupplier;
         this.adapter = castedSupplier.get(this, registry);
         Objects.requireNonNull(adapter, "supplied adapter is null");
 
@@ -106,8 +106,8 @@ public abstract class InputDevice implements FeatureRegistry {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public InputDevice(@NotNull String id,
-                       @NotNull AdapterSupplier<?> adapterSupplier) {
+    public IoDevice(@NotNull String id,
+                    @NotNull AdapterSupplier<?> adapterSupplier) {
         this(id, adapterSupplier, true, true);
     }
 
@@ -148,8 +148,8 @@ public abstract class InputDevice implements FeatureRegistry {
                 + "\" in class " + this.getClass().getName();
 
         Class<?> type = field.getType();
-        if (!DeviceFeature.class.isAssignableFrom(type)) {
-            throw new InputException(fieldDesc + " must be assignable"
+        if (!IoFeature.class.isAssignableFrom(type)) {
+            throw new KetillException(fieldDesc + " must be assignable"
                     + " from " + this.getClass().getName());
         }
 
@@ -159,13 +159,13 @@ public abstract class InputDevice implements FeatureRegistry {
          */
         int mods = field.getModifiers();
         if (!Modifier.isPublic(mods)) {
-            throw new InputException(fieldDesc + " must be public");
+            throw new KetillException(fieldDesc + " must be public");
         }
 
         try {
             boolean statik = Modifier.isStatic(mods);
             Object obj = field.get(statik ? null : this);
-            DeviceFeature<?> feature = (DeviceFeature<?>) obj;
+            IoFeature<?> feature = (IoFeature<?>) obj;
 
             /*
              * There is a chance that this feature was registered before
@@ -182,13 +182,13 @@ public abstract class InputDevice implements FeatureRegistry {
              * this method. As such, this exception should never occur. If
              * it does, something has likely gone wrong in the JVM.
              */
-            throw new InputException("this is a bug", e);
+            throw new KetillException("this is a bug", e);
         }
     }
     /* @formatter:on */
 
     @Override
-    public boolean isRegistered(@NotNull DeviceFeature<?> feature) {
+    public boolean isRegistered(@NotNull IoFeature<?> feature) {
         return registry.isRegistered(feature);
     }
 
@@ -203,7 +203,7 @@ public abstract class InputDevice implements FeatureRegistry {
     /* @formatter:off */
     @Override
     public <S> @Nullable RegisteredFeature<?, S>
-            getRegistered(@NotNull DeviceFeature<S> feature) {
+            getRegistered(@NotNull IoFeature<S> feature) {
         return registry.getRegistered(feature);
     }
     /* @formatter:on */
@@ -211,12 +211,12 @@ public abstract class InputDevice implements FeatureRegistry {
     /**
      * {@inheritDoc}
      * <p/>
-     * <b>Note:</b> This method can be called before {@code InputDevice} is
+     * <b>Note:</b> This method can be called before {@code IoDevice} is
      * finished constructing by the {@link #registerField(Field)} method.
      */
     /* @formatter:off */
     @Override
-    public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
         RegisteredFeature<F, S> registeredFeature =
                 registry.registerFeature(feature);
@@ -228,7 +228,7 @@ public abstract class InputDevice implements FeatureRegistry {
     /* @formatter:on */
 
     @Override
-    public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
+    public void unregisterFeature(@NotNull IoFeature<?> feature) {
         registry.unregisterFeature(feature);
         if (unregisterFeatureCallback != null) {
             unregisterFeatureCallback.accept(feature);
@@ -244,9 +244,9 @@ public abstract class InputDevice implements FeatureRegistry {
      * @param callback the code to execute when a feature is registered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
-     * @see #registerFeature(DeviceFeature)
+     * @see #registerFeature(IoFeature)
      */
-    public void onRegisterFeature(@Nullable Consumer<DeviceFeature<?>> callback) {
+    public void onRegisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
         this.registerFeatureCallback = callback;
     }
 
@@ -259,9 +259,9 @@ public abstract class InputDevice implements FeatureRegistry {
      * @param callback the code to execute when a feature is unregistered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
-     * @see #unregisterFeature(DeviceFeature)
+     * @see #unregisterFeature(IoFeature)
      */
-    public void onUnregisterFeature(@Nullable Consumer<DeviceFeature<?>> callback) {
+    public void onUnregisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
         this.unregisterFeatureCallback = callback;
     }
 
@@ -303,9 +303,9 @@ public abstract class InputDevice implements FeatureRegistry {
     }
 
     /**
-     * Performs a <i>single</i> query of input information from the device
-     * adapter and updates all features registered to the input device. It
-     * is recommended to call this method once every application update.
+     * Performs a <i>single</i> query from the device adapter and updates all
+     * features registered to the I/O device. It is recommended to call this
+     * method once every application update.
      *
      * @see #isConnected()
      */

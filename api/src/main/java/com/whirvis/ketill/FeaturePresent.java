@@ -7,12 +7,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, signals to {@link InputDevice} that a field should be
- * registered as a device feature during instantiation. These fields must be
- * {@code public} and their type assignable from {@link DeviceFeature}. They
+ * When present, signals to {@link IoDevice} that a field should be
+ * registered as an I/O feature during instantiation. These fields must be
+ * {@code public} and their type assignable from {@link IoFeature}. They
  * may be either instance or static.
  *
- * @see InputDevice#registerFeature(DeviceFeature)
+ * @see IoDevice#registerFeature(IoFeature)
  */
 @Documented
 @Target(ElementType.FIELD)

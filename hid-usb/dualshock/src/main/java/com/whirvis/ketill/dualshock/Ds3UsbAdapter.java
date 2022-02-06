@@ -2,7 +2,7 @@ package com.whirvis.ketill.dualshock;
 
 import com.whirvis.ketill.AnalogTrigger;
 import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.DeviceAdapter;
+import com.whirvis.ketill.IoDeviceAdapter;
 import com.whirvis.ketill.DeviceButton;
 import com.whirvis.ketill.FeatureAdapter;
 import com.whirvis.ketill.MappedFeatureRegistry;
@@ -24,7 +24,7 @@ import static com.whirvis.ketill.psx.Ps3Controller.*;
 /**
  * An adapter which maps input for a DualShock 3 USB input device.
  */
-public class Ds3UsbAdapter extends DeviceAdapter<Ps3Controller> implements TransferCallback {
+public class Ds3UsbAdapter extends IoDeviceAdapter<Ps3Controller> implements TransferCallback {
 
     /* @formatter:off */
     private static final byte

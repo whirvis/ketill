@@ -8,15 +8,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A controller which and can send receive input data. Examples of controllers
+ * A controller which and can send receive I/O data. Examples of controllers
  * include, but are not limited to: XBOX controllers, PlayStation controllers,
  * Nintendo Switch controllers, etc.
  * <p/>
- * <b>Note:</b> For input data to stay up-to-date, the controller must be
- * polled periodically via the {@link #poll()} method. It is recommended
- * to poll the controller once every application update.
+ * <b>Note:</b> For data to stay up-to-date, the controller must be polled
+ * periodically via the {@link #poll()} method. It is recommended to poll
+ * the controller once every application update.
  */
-public abstract class Controller extends InputDevice {
+public abstract class Controller extends IoDevice {
 
     private final @NotNull Map<RumbleMotor, Vibration1f> rumbleMotors;
 
@@ -106,12 +106,12 @@ public abstract class Controller extends InputDevice {
      * @param feature the feature whose state to fetch, and to register if
      *                not already registered to this controller.
      * @param <S>     the state container type.
-     * @return the state as returned by {@link #getState(DeviceFeature)},
+     * @return the state as returned by {@link #getState(IoFeature)},
      * {@code null} if {@code feature} is {@code null}.
      */
     /* @formatter:off */
     private <S> @Nullable S
-            registerAndGetState(@Nullable DeviceFeature<S> feature) {
+            registerAndGetState(@Nullable IoFeature<S> feature) {
         if (feature == null) {
             return null;
         }
@@ -124,7 +124,7 @@ public abstract class Controller extends InputDevice {
 
     /* @formatter:off */
     @Override
-    public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
         RegisteredFeature<F, S> registered = super.registerFeature(feature);
         if (feature instanceof RumbleMotor) {
@@ -138,7 +138,7 @@ public abstract class Controller extends InputDevice {
     /* @formatter:on */
 
     @Override
-    public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
+    public void unregisterFeature(@NotNull IoFeature<?> feature) {
         super.unregisterFeature(feature);
         if (feature instanceof RumbleMotor) {
             synchronized (rumbleMotors) {

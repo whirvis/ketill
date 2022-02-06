@@ -6,16 +6,16 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
- * Device features provide a definition of a capability present on an
- * {@link InputDevice}. Some examples would be a button, an analog stick, a
+ * I/O features provide a definition of a capability present on an
+ * {@link IoDevice}. Some examples would be a button, an analog stick, a
  * rumble motor, or an LED indicator. Depending on the feature, their state
  * can be either read-only (e.g., button state) or read-write (e.g., rumble
  * motor vibration).
  *
  * @param <S> the state container type.
- * @see InputDevice#registerFeature(DeviceFeature)
+ * @see IoDevice#registerFeature(IoFeature)
  */
-public class DeviceFeature<S> {
+public class IoFeature<S> {
 
     public final @NotNull String id;
     public final @NotNull Supplier<@NotNull S> initialState;
@@ -29,8 +29,8 @@ public class DeviceFeature<S> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public DeviceFeature(@NotNull String id,
-                         @NotNull Supplier<@NotNull S> initialState) {
+    public IoFeature(@NotNull String id,
+                     @NotNull Supplier<@NotNull S> initialState) {
         this.id = Objects.requireNonNull(id, "id");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");

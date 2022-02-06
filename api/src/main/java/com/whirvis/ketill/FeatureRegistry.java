@@ -13,7 +13,7 @@ public interface FeatureRegistry {
      * otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    boolean isRegistered(@NotNull DeviceFeature<?> feature);
+    boolean isRegistered(@NotNull IoFeature<?> feature);
 
     /**
      * @return all registered features.
@@ -28,7 +28,7 @@ public interface FeatureRegistry {
      */
     /* @formatter:off */
     <S> @Nullable RegisteredFeature<?, S>
-            getRegistered(@NotNull DeviceFeature<S> feature);
+            getRegistered(@NotNull IoFeature<S> feature);
     /* @formatter:on */
 
     /**
@@ -38,7 +38,7 @@ public interface FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
-    default <S> @NotNull S getState(@NotNull DeviceFeature<S> feature) {
+    default <S> @NotNull S getState(@NotNull IoFeature<S> feature) {
         RegisteredFeature<?, S> registered = this.getRegistered(feature);
         if (registered == null) {
             throw new IllegalStateException("no such feature");
@@ -55,7 +55,7 @@ public interface FeatureRegistry {
      * @throws IllegalStateException if {@code feature} is already registered.
      */
     /* @formatter:off */
-    <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature);
     /* @formatter:on */
 
@@ -64,6 +64,6 @@ public interface FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
-    void unregisterFeature(@NotNull DeviceFeature<?> feature);
+    void unregisterFeature(@NotNull IoFeature<?> feature);
 
 }

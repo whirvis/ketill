@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <S> the state container type.
  * @param <P> the mapping parameters type.
- * @see MappedFeatureRegistry#mapFeature(DeviceFeature, Object, StateUpdater)
+ * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
  */
 @FunctionalInterface
 public interface StateUpdater<S, P> {
@@ -17,7 +17,7 @@ public interface StateUpdater<S, P> {
      * A {@link StateUpdater} which takes in no parameters.
      *
      * @param <S> the state container type.
-     * @see MappedFeatureRegistry#mapFeature(DeviceFeature, NoParams)
+     * @see MappedFeatureRegistry#mapFeature(IoFeature, NoParams)
      */
     @FunctionalInterface
     interface NoParams<S> {

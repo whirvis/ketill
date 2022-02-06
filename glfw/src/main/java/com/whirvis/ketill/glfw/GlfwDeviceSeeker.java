@@ -1,10 +1,10 @@
 package com.whirvis.ketill.glfw;
 
-import com.whirvis.ketill.DeviceSeeker;
-import com.whirvis.ketill.InputDevice;
+import com.whirvis.ketill.IoDeviceSeeker;
+import com.whirvis.ketill.IoDevice;
 
-public abstract class GlfwDeviceSeeker<I extends InputDevice>
-        extends DeviceSeeker<I> {
+public abstract class GlfwDeviceSeeker<I extends IoDevice>
+        extends IoDeviceSeeker<I> {
 
     protected final long ptr_glfwWindow;
 

@@ -8,10 +8,10 @@ import com.github.strikerx3.jxinput.enums.XInputAxis;
 import com.whirvis.ketill.AnalogStick;
 import com.whirvis.ketill.AnalogTrigger;
 import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.DeviceAdapter;
+import com.whirvis.ketill.IoDeviceAdapter;
 import com.whirvis.ketill.DeviceButton;
 import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.InputException;
+import com.whirvis.ketill.KetillException;
 import com.whirvis.ketill.MappedFeatureRegistry;
 import com.whirvis.ketill.RumbleMotor;
 import com.whirvis.ketill.Trigger1f;
@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 
 import static com.whirvis.ketill.xbox.XboxController.*;
 
-public final class XboxAdapter extends DeviceAdapter<XboxController> {
+public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
 
     private static final int RUMBLE_MIN = 0x0000;
     private static final int RUMBLE_MAX = 0xFFFF;
@@ -50,7 +50,7 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
         try {
             return field.getBoolean(buttons);
         } catch (IllegalAccessException e) {
-            throw new InputException(e);
+            throw new KetillException(e);
         }
     }
 
@@ -63,10 +63,10 @@ public final class XboxAdapter extends DeviceAdapter<XboxController> {
             return XInputButtons.class.getField(fieldName);
         } catch (NoSuchFieldException e) {
             String msg = "no such button " + fieldName;
-            throw new InputException(msg, e);
+            throw new KetillException(msg, e);
         } catch (SecurityException e) {
             String msg = "field " + fieldName + " not accessible";
-            throw new InputException(msg, e);
+            throw new KetillException(msg, e);
         }
     }
 

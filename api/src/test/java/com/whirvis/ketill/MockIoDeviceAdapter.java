@@ -1,16 +1,14 @@
 package com.whirvis.ketill;
 
-class MockDeviceAdapter extends DeviceAdapter<MockInputDevice> {
+class MockIoDeviceAdapter extends IoDeviceAdapter<MockIoDevice> {
 
-    final MappedFeatureRegistry registry;
     boolean shouldBeConnected;
     private boolean initialized;
     private boolean connected;
 
-    MockDeviceAdapter(MockInputDevice device,
-                             MappedFeatureRegistry registry) {
+    MockIoDeviceAdapter(MockIoDevice device,
+                        MappedFeatureRegistry registry) {
         super(device, registry);
-        this.registry = registry;
     }
 
     boolean isInitialized() {

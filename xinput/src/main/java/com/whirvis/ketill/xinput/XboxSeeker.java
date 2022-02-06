@@ -4,10 +4,10 @@ import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
-import com.whirvis.ketill.DeviceSeeker;
+import com.whirvis.ketill.IoDeviceSeeker;
 import com.whirvis.ketill.xbox.XboxController;
 
-public final class XboxSeeker extends DeviceSeeker<XboxController> {
+public final class XboxSeeker extends IoDeviceSeeker<XboxController> {
 
     private final XboxController[] controllers;
     private final boolean xinput14;

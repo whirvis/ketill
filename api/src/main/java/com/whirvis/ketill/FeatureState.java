@@ -8,12 +8,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, indicates a field contains the state of a device feature.
+ * When present, indicates a field contains the state of an I/O feature.
  * Its value is not set automatically, and must be initialized manually. By
  * convention, the field name should match the ID of the device feature whose
  * state it contains. However, this is not a requirement.
  *
- * @see InputDevice#getState(DeviceFeature)
+ * @see IoDevice#getState(IoFeature)
  */
 @Documented
 @Target(ElementType.FIELD)

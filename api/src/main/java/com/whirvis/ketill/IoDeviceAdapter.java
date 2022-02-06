@@ -6,15 +6,15 @@ import java.util.Objects;
 
 /**
  * Device adapters map data from a source (such as GLFW or X-Input) to an
- * {@link InputDevice}. This allows the same input device to be used with
- * different implementations. As such, device adapters provide portability
- * and a way to enable extra features, such as rumble or gyroscopes.
+ * {@link IoDevice}. This allows the same device to be used with different
+ * implementations. This provides portability and a way to enable extra
+ * features, such as rumble or gyroscopes.
  *
- * @param <I> the input device type.
+ * @param <I> the I/O device type.
  * @see AdapterSupplier
- * @see DeviceSeeker
+ * @see IoDeviceSeeker
  */
-public abstract class DeviceAdapter<I extends InputDevice> {
+public abstract class IoDeviceAdapter<I extends IoDevice> {
 
     protected final @NotNull I device;
     protected final @NotNull MappedFeatureRegistry registry;
@@ -23,8 +23,8 @@ public abstract class DeviceAdapter<I extends InputDevice> {
      * @param device   the device which owns this adapter.
      * @param registry the device's mapped feature registry.
      */
-    public DeviceAdapter(@NotNull I device,
-                         @NotNull MappedFeatureRegistry registry) {
+    public IoDeviceAdapter(@NotNull I device,
+                           @NotNull MappedFeatureRegistry registry) {
         this.device = Objects.requireNonNull(device, "device");
         this.registry = Objects.requireNonNull(registry, "registry");
     }
@@ -32,17 +32,17 @@ public abstract class DeviceAdapter<I extends InputDevice> {
     /**
      * Called by {@code device} at the end of construction. This is where
      * most, if not all, adapter setup should take place. The registry should
-     * be used to map input device features. Take note that {@code device}
-     * and {@code registry} are accessible fields to the extending class.
+     * be used give mappings to I/O features. Take note that {@code device}
+     * and {@code registry} are fields accessible to the extending class.
      *
-     * @see MappedFeatureRegistry#mapFeature(DeviceFeature, Object, StateUpdater)
+     * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
      */
     protected abstract void initAdapter();
 
     /**
      * Called by {@code device} when it is polled. This should update the
      * information necessary for mappings to check the current state of their
-     * assigned device features.
+     * assigned features.
      */
     protected abstract void pollDevice();
 

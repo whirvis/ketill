@@ -11,27 +11,27 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * The purpose of a device seeker is to scan for input devices currently
+ * The purpose of an I/O device seeker is to scan for I/O devices currently
  * connected to the system. When such device is detected, the appropriate
- * {@code InputDevice} instance and adapter will be created. Devices must
- * be polled manually after creation using {@link InputDevice#poll()}. They
- * can be retrieved from {@link #discoveredDevices}.
+ * {@code IoDevice} instance and adapter will be created. Devices must be
+ * polled manually after creation using {@link IoDevice#poll()}. They can
+ * be retrieved from {@link #discoveredDevices}.
  * <p/>
- * Implementations should call {@link #discoverDevice(InputDevice)} when a
- * device is discovered and {@link #forgetDevice(InputDevice)} when a device
+ * Implementations should call {@link #discoverDevice(IoDevice)} when a
+ * device is discovered and {@link #forgetDevice(IoDevice)} when a device
  * is forgotten.
  * <p/>
- * <b>Note:</b> For a device seeker to work as expected, it must be told to
- * perform device scans periodically via {@link #seek()}. It is recommended
- * to perform a scan once every application update.
+ * <b>Note:</b> For a I/O device seeker to work as expected, scans must be
+ * performed periodically via {@link #seek()}. It is recommended to perform
+ * a scan once every application update.
  *
- * @param <I> the input device type.
+ * @param <I> the I/O device type.
  * @see #onDiscoverDevice(Consumer)
  * @see #onForgetDevice(Consumer)
  * @see #onError(Consumer)
- * @see DeviceAdapter
+ * @see IoDeviceAdapter
  */
-public abstract class DeviceSeeker<I extends InputDevice> {
+public abstract class IoDeviceSeeker<I extends IoDevice> {
 
     private final @NotNull List<I> devices;
     public final @NotNull List<I> discoveredDevices; /* read only view */
@@ -40,7 +40,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
     private @Nullable Consumer<? super I> forgetDeviceCallback;
     private @Nullable Consumer<Throwable> errorCallback;
 
-    public DeviceSeeker() {
+    public IoDeviceSeeker() {
         this.devices = new ArrayList<>();
         this.discoveredDevices = Collections.unmodifiableList(devices);
     }
@@ -75,12 +75,12 @@ public abstract class DeviceSeeker<I extends InputDevice> {
 
     /**
      * Sets the callback for when an error occurs in {@link #seek()}. By
-     * default, a wrapping {@code InputException} will be constructed for
+     * default, a wrapping {@code KetillException} will be constructed for
      * the original error and thrown.
      *
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
-     *                 in a wrapping {@code InputException} being thrown.
+     *                 in a wrapping {@code KetillException} being thrown.
      */
     public final void onError(@Nullable Consumer<Throwable> callback) {
         this.errorCallback = callback;
@@ -113,7 +113,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
     /**
      * Called by {@link #seek()}, this method can throw any exception without
      * needing to catch it. When an exception is thrown, {@link #seek()} will
-     * wrap it into a {@link InputException} and throw it to the caller.
+     * wrap it into a {@link KetillException} and throw it to the caller.
      *
      * @throws Exception if an error occurs.
      */
@@ -124,7 +124,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
      * For continuous scanning, this method must be called periodically once
      * every application update.
      *
-     * @throws InputException if an error occurs and no callback has
+     * @throws KetillException if an error occurs and no callback has
      *                        been set via {@link #onError(Consumer)}.
      */
     public final synchronized void seek() {
@@ -134,7 +134,7 @@ public abstract class DeviceSeeker<I extends InputDevice> {
             if (errorCallback != null) {
                 errorCallback.accept(cause);
             } else {
-                throw new InputException("error in DeviceSeeker", cause);
+                throw new KetillException("error in DeviceSeeker", cause);
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.whirvis.ketill.gc;
 
 import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.DeviceAdapter;
+import com.whirvis.ketill.IoDeviceAdapter;
 import com.whirvis.ketill.DeviceButton;
 import com.whirvis.ketill.FeatureAdapter;
 import com.whirvis.ketill.MappedFeatureRegistry;
@@ -18,7 +18,7 @@ import static com.whirvis.ketill.gc.GcController.*;
  *
  * @see GcUsbDevice
  */
-public class GcUsbAdapter extends DeviceAdapter<GcController> {
+public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
 
     /* @formatter:off */
     public static final GcStickMapping

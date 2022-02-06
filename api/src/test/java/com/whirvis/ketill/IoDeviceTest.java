@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
-class InputDeviceTest {
+class IoDeviceTest {
 
-    MockInputDevice device;
-    MockDeviceAdapter adapter;
+    MockIoDevice device;
+    MockIoDeviceAdapter adapter;
 
     @BeforeAll
     static void __init__() {
@@ -23,10 +23,10 @@ class InputDeviceTest {
          * null values given by the adapter supplier are illegal.
          */
         assertThrows(NullPointerException.class,
-                () -> new MockInputDevice(null, MockDeviceAdapter::new));
-        assertThrows(NullPointerException.class, () -> new MockInputDevice(
+                () -> new MockIoDevice(null, MockIoDeviceAdapter::new));
+        assertThrows(NullPointerException.class, () -> new MockIoDevice(
                 "mock", null));
-        assertThrows(NullPointerException.class, () -> new MockInputDevice(
+        assertThrows(NullPointerException.class, () -> new MockIoDevice(
                 "mock", (d, r) -> null));
 
         /*
@@ -34,13 +34,13 @@ class InputDeviceTest {
          * Furthermore, any whitespace in an ID is illegal.
          */
         assertThrows(IllegalArgumentException.class,
-                () -> new MockInputDevice("", MockDeviceAdapter::new));
+                () -> new MockIoDevice("", MockIoDeviceAdapter::new));
         assertThrows(IllegalArgumentException.class,
-                () -> new MockInputDevice("\t", MockDeviceAdapter::new));
+                () -> new MockIoDevice("\t", MockIoDeviceAdapter::new));
 
-        AtomicReference<MockDeviceAdapter> adapter = new AtomicReference<>();
-        AdapterSupplier<MockInputDevice> adapterSupplier = (d, r) -> {
-            adapter.set(new MockDeviceAdapter(d, r));
+        AtomicReference<MockIoDeviceAdapter> adapter = new AtomicReference<>();
+        AdapterSupplier<MockIoDevice> adapterSupplier = (d, r) -> {
+            adapter.set(new MockIoDeviceAdapter(d, r));
             return adapter.get();
         };
 
@@ -50,21 +50,21 @@ class InputDeviceTest {
          * This is to allow special extending classes (like Controller in
          * the "devices" module) to finish some extra setup.
          */
-        MockInputDevice device = new MockInputDevice("mock", adapterSupplier,
+        MockIoDevice device = new MockIoDevice("mock", adapterSupplier,
                 false, false);
-        assertFalse(device.isRegistered(MockInputDevice.FEATURE));
+        assertFalse(device.isRegistered(MockIoDevice.FEATURE));
         assertFalse(adapter.get().isInitialized());
     }
 
     @BeforeEach
     void setup() {
-        AtomicReference<MockDeviceAdapter> adapter = new AtomicReference<>();
-        AdapterSupplier<MockInputDevice> adapterSupplier = (d, r) -> {
-            adapter.set(new MockDeviceAdapter(d, r));
+        AtomicReference<MockIoDeviceAdapter> adapter = new AtomicReference<>();
+        AdapterSupplier<MockIoDevice> adapterSupplier = (d, r) -> {
+            adapter.set(new MockIoDeviceAdapter(d, r));
             return adapter.get();
         };
 
-        this.device = new MockInputDevice("mock", adapterSupplier);
+        this.device = new MockIoDevice("mock", adapterSupplier);
         this.adapter = adapter.get();
     }
 
@@ -81,7 +81,7 @@ class InputDeviceTest {
          * IllegalStateException being thrown. Initializing the adapter
          * twice makes no sense, and would lead to bugs.
          */
-        assertThrows(IllegalStateException.class, () -> device.initAdapter());
+        assertThrows(IllegalStateException.class, device::initAdapter);
     }
 
     @Test
@@ -92,15 +92,14 @@ class InputDeviceTest {
          * field which is present in the MockInputDevice class and is
          * annotated with @FeaturePresent.
          */
-        assertTrue(device.isRegistered(MockInputDevice.FEATURE));
+        assertTrue(device.isRegistered(MockIoDevice.FEATURE));
 
         /*
          * Attempting to call registerFields() again should result in an
          * IllegalStateException being thrown. All fields marked with the
          * @FeaturePresent annotation have already been combed over.
          */
-        assertThrows(IllegalStateException.class,
-                () -> device.registerFields());
+        assertThrows(IllegalStateException.class, device::registerFields);
 
         /*
          * It makes no sense for a feature field annotated with the
@@ -109,10 +108,10 @@ class InputDeviceTest {
          * field is not assignable from DeviceFeature, then it cannot
          * be registered as a device feature.
          */
-        assertThrows(InputException.class,
-                MockInputDevice.WithPrivateFeature::new);
-        assertThrows(InputException.class,
-                MockInputDevice.WithUnassignableFeature::new);
+        assertThrows(KetillException.class,
+                MockIoDevice.WithPrivateFeature::new);
+        assertThrows(KetillException.class,
+                MockIoDevice.WithUnassignableFeature::new);
     }
 
     @Test
@@ -131,13 +130,13 @@ class InputDeviceTest {
          * The getRegistered() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        assertEquals(device.getRegistered(MockInputDevice.FEATURE),
-                adapter.registry.getRegistered(MockInputDevice.FEATURE));
+        assertEquals(device.getRegistered(MockIoDevice.FEATURE),
+                adapter.registry.getRegistered(MockIoDevice.FEATURE));
     }
 
     @Test
     void isRegistered() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
 
         /*
          * The isRegistered() method is an accessor to getFeatures() in
@@ -152,7 +151,7 @@ class InputDeviceTest {
 
     @Test
     void registerFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         AtomicBoolean registered = new AtomicBoolean();
         device.onRegisterFeature((f) -> registered.set(f == feature));
 
@@ -179,7 +178,7 @@ class InputDeviceTest {
 
     @Test
     void unregisterFeature() {
-        MockDeviceFeature feature = new MockDeviceFeature();
+        MockIoFeature feature = new MockIoFeature();
         AtomicBoolean unregistered = new AtomicBoolean();
         device.onUnregisterFeature((f) -> unregistered.set(f == feature));
         device.registerFeature(feature); /* something to unregister */

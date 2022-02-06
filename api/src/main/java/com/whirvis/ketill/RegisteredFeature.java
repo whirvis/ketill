@@ -3,19 +3,19 @@ package com.whirvis.ketill;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A feature that's registered to an {@link InputDevice}. This container
+ * A feature that's registered to an {@link IoDevice}. This container
  * exists to group together the information necessary to fetch and update
  * the state of a device feature.
  * <p/>
  * For optimal performance, it is best to cache the state of a device feature
  * to a field for later retrieval. The state of a device feature can be fetched
- * via {@link InputDevice#getState(DeviceFeature)}.
+ * via {@link IoDevice#getState(IoFeature)}.
  *
- * @param <F> the device feature type.
+ * @param <F> the I/O feature type.
  * @param <S> the state container type.
  * @see FeatureState
  */
-public class RegisteredFeature<F extends DeviceFeature<S>, S> {
+public class RegisteredFeature<F extends IoFeature<S>, S> {
 
     /**
      * This should be used when a feature has no updater. Its purpose to

@@ -10,14 +10,14 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A special feature registry which supports mapping device features.
+ * A special feature registry which supports mapping I/O features.
  *
- * @see #mapFeature(DeviceFeature, Object, StateUpdater)
+ * @see #mapFeature(IoFeature, Object, StateUpdater)
  */
 public class MappedFeatureRegistry implements FeatureRegistry {
 
-    private final Map<DeviceFeature<?>, RegisteredFeature<?, ?>> features;
-    private final Map<DeviceFeature<?>, MappedFeature<?, ?, ?>> mappings;
+    private final Map<IoFeature<?>, RegisteredFeature<?, ?>> features;
+    private final Map<IoFeature<?>, MappedFeature<?, ?, ?>> mappings;
 
     protected MappedFeatureRegistry() {
         this.features = new HashMap<>();
@@ -30,7 +30,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * {@code false} otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    public boolean hasMapping(@NotNull DeviceFeature<?> feature) {
+    public boolean hasMapping(@NotNull IoFeature<?> feature) {
         Objects.requireNonNull(feature, "feature");
         return mappings.containsKey(feature);
     }
@@ -45,14 +45,14 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      *                feature and adapter, this could be something like a
      *                button ID or a file path.
      * @param updater the method to call when updating the state.
-     * @param <F>     the device feature type.
+     * @param <F>     the I/O feature type.
      * @param <S>     the state container type.
      * @param <P>     the mapping parameters type.@throws
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      */
     /* @formatter:off */
-    public <F extends DeviceFeature<S>, S, P> void
+    public <F extends IoFeature<S>, S, P> void
             mapFeature(@NotNull F feature, @Nullable P params,
                        @NotNull StateUpdater<S, P> updater) {
         Objects.requireNonNull(feature, "feature");
@@ -68,18 +68,18 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * by their assigned state updater (assuming they have one.)
      * <p/>
      * This method is a shorthand for
-     * {@link #mapFeature(DeviceFeature, Object, StateUpdater)}, with the
+     * {@link #mapFeature(IoFeature, Object, StateUpdater)}, with the
      * argument for {@code params} being {@code feature}.
      *
      * @param feature the feature to map.
      * @param updater the method to call when updating the state.
-     * @param <F>     the device feature type.
+     * @param <F>     the I/O feature type.
      * @param <S>     the state container type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      */
     /* @formatter:off */
-    public final <F extends DeviceFeature<S>, S> void
+    public final <F extends IoFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater<S, F> updater) {
         this.mapFeature(feature, feature, updater);
@@ -92,19 +92,19 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * by their assigned state updater (assuming they have one.)
      * <p/>
      * This method is a shorthand for
-     * {@link #mapFeature(DeviceFeature, Object, StateUpdater)}, which
+     * {@link #mapFeature(IoFeature, Object, StateUpdater)}, which
      * passes {@code params} as {@code null} and converts {@code updater}
      * to an instance of {@link StateUpdater}.
      *
      * @param feature the feature to map.
      * @param updater the method to call when updating the state.
-     * @param <F>     the device feature type.
+     * @param <F>     the I/O feature type.
      * @param <S>     the state container type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      */
     /* @formatter:off */
-    public final <F extends DeviceFeature<S>, S> void
+    public final <F extends IoFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater.NoParams<S> updater) {
         Objects.requireNonNull(updater, "updater");
@@ -119,7 +119,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * {@code false} otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    public boolean unmapFeature(@NotNull DeviceFeature<?> feature) {
+    public boolean unmapFeature(@NotNull IoFeature<?> feature) {
         Objects.requireNonNull(feature, "feature");
         if (!mappings.containsKey(feature)) {
             return false;
@@ -135,7 +135,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:off */
     @SuppressWarnings("unchecked")
     private <R extends RegisteredFeature<?, ?>> void
-            updateMapping(@NotNull DeviceFeature<?> feature) {
+            updateMapping(@NotNull IoFeature<?> feature) {
         R registered = (R) features.get(feature);
         if (registered == null) {
             return;
@@ -152,7 +152,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     @Override
-    public boolean isRegistered(@NotNull DeviceFeature<?> feature) {
+    public boolean isRegistered(@NotNull IoFeature<?> feature) {
         Objects.requireNonNull(feature, "feature");
         return features.containsKey(feature);
     }
@@ -169,7 +169,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     @Override
     @SuppressWarnings("unchecked")
     public <S> @Nullable RegisteredFeature<?, S>
-            getRegistered(@NotNull DeviceFeature<S> feature) {
+            getRegistered(@NotNull IoFeature<S> feature) {
         Objects.requireNonNull(feature, "feature");
         return (RegisteredFeature<?, S>) features.get(feature);
     }
@@ -177,7 +177,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
 
     /* @formatter:off */
     @Override
-    public <F extends DeviceFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature");
         if (this.isRegistered(feature)) {
@@ -193,7 +193,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     @Override
-    public void unregisterFeature(@NotNull DeviceFeature<?> feature) {
+    public void unregisterFeature(@NotNull IoFeature<?> feature) {
         Objects.requireNonNull(feature, "feature");
         if (!this.isRegistered(feature)) {
             throw new IllegalStateException("feature not registered");

@@ -1,6 +1,6 @@
 package com.whirvis.ketill;
 
-class MockDeviceSeeker extends DeviceSeeker<MockInputDevice> {
+class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
 
     boolean errorOnSeek;
     private boolean seeked;
@@ -12,7 +12,7 @@ class MockDeviceSeeker extends DeviceSeeker<MockInputDevice> {
     @Override
     protected void seekImpl() throws Exception {
         if (errorOnSeek) {
-            throw new InputException();
+            throw new KetillException();
         }
         this.seeked = true;
     }

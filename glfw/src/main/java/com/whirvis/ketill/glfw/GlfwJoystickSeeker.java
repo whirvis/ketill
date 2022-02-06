@@ -1,6 +1,6 @@
 package com.whirvis.ketill.glfw;
 
-import com.whirvis.ketill.InputDevice;
+import com.whirvis.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class GlfwJoystickSeeker<I extends InputDevice>
+public class GlfwJoystickSeeker<I extends IoDevice>
         extends GlfwDeviceSeeker<I> {
 
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;

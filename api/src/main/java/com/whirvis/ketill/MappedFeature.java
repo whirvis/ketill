@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A {@link DeviceFeature} that has been designated a mapping in a
+ * An {@link IoFeature} that has been designated a mapping in a
  * {@link MappedFeatureRegistry}.
  *
  * @param <R> the registered feature type.

@@ -3,10 +3,10 @@ package com.whirvis.ketill.dualshock;
 import com.whirvis.ketill.AnalogStick;
 import com.whirvis.ketill.AnalogTrigger;
 import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.DeviceAdapter;
+import com.whirvis.ketill.IoDeviceAdapter;
 import com.whirvis.ketill.DeviceButton;
 import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.InputException;
+import com.whirvis.ketill.KetillException;
 import com.whirvis.ketill.MappedFeatureRegistry;
 import com.whirvis.ketill.RumbleMotor;
 import com.whirvis.ketill.Trigger1f;
@@ -23,7 +23,7 @@ import java.util.zip.CRC32;
 /**
  * An adapter which maps input for a DualShock 4 HID input device.
  */
-public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
+public abstract class Ds4HidAdapter extends IoDeviceAdapter<Ps4Controller> {
 
     private static final long POKE_AWAIT = 4000L;
     private static final byte[] NO_CRC_HEADER = new byte[0];
@@ -108,13 +108,13 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
      *                       before writing the output report ID. This is
      *                       not always necessary, however a {@code null}
      *                       value is not permitted (use an empty array.)
-     * @throws InputException if {@code hid} is not open.
+     * @throws KetillException if {@code hid} is not open.
      */
     public Ds4HidAdapter(@NotNull HidDevice hid, byte inputReportId,
                          byte outputReportId, @NotNull byte[] crcHeader) {
         this.hid = hid;
         if (!hid.isOpen()) {
-            throw new InputException("HID device not open");
+            throw new KetillException("HID device not open");
         }
 
         this.inputReportId = inputReportId;
@@ -133,7 +133,7 @@ public abstract class Ds4HidAdapter extends DeviceAdapter<Ps4Controller> {
      * @param hid            the HID device.
      * @param inputReportId  the input report ID.
      * @param outputReportId the output report ID.
-     * @throws InputException if {@code hid} is not open and could not
+     * @throws KetillException if {@code hid} is not open and could not
      *                        be opened.
      */
     public Ds4HidAdapter(@NotNull HidDevice hid, byte inputReportId,

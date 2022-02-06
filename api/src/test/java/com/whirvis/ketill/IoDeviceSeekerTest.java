@@ -8,13 +8,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
-class DeviceSeekerTest {
+class IoDeviceSeekerTest {
 
-    MockDeviceSeeker seeker;
+    MockIoDeviceSeeker seeker;
 
     @BeforeEach
     void setup() {
-        this.seeker = new MockDeviceSeeker();
+        this.seeker = new MockIoDeviceSeeker();
     }
 
     @Test
@@ -30,7 +30,7 @@ class DeviceSeekerTest {
     @Test
     void discoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
-        MockInputDevice device = new MockInputDevice();
+        MockIoDevice device = new MockIoDevice();
 
         seeker.onDiscoverDevice((d) -> discovered.set(d == device));
         seeker.discoverDevice(device);
@@ -62,7 +62,7 @@ class DeviceSeekerTest {
     @Test
     void forgetDevice() {
         AtomicBoolean forgotten = new AtomicBoolean();
-        MockInputDevice device = new MockInputDevice();
+        MockIoDevice device = new MockIoDevice();
         seeker.discoverDevice(device); /* required to forget */
 
         seeker.onForgetDevice((d) -> forgotten.set(d == device));
@@ -110,10 +110,10 @@ class DeviceSeekerTest {
 
         /*
          * When no error callback is set, a device seeker is obligated to
-         * warp the exception it encounters and throw it back. This is to
+         * wrap the exception it encounters and throw it back. This is to
          * ensure errors do not occur silently.
          */
-        assertThrows(InputException.class, () -> seeker.seek());
+        assertThrows(KetillException.class, seeker::seek);
 
         /*
          * Once an error callback is set, the device seeker must not throw
@@ -122,7 +122,7 @@ class DeviceSeekerTest {
          */
         AtomicBoolean caughtError = new AtomicBoolean();
         seeker.onError(e -> caughtError.set(true));
-        assertDoesNotThrow(() -> seeker.seek());
+        assertDoesNotThrow(seeker::seek);
         assertTrue(caughtError.get());
 
         /*
