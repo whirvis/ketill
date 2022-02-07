@@ -2,7 +2,7 @@
   <a href="#"><img src="https://user-images.githubusercontent.com/5157755/152665520-7b8b9077-c37b-46d7-9aef-a32cfeb8457b.png"></a>
 </p>
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![License](https://img.shields.io/github/license/whirvex/stdio-commons)](https://choosealicense.com/licenses/mit/)
 [![Java version](https://img.shields.io/badge/version-8-orange?style=flat&logo=java)](#)
 [![Repo size](https://img.shields.io/github/repo-size/whirvis/ketill)](#)
