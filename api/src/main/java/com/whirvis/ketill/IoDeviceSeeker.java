@@ -16,11 +16,11 @@ import java.util.function.Consumer;
  * {@code IoDevice} instance and adapter will be created. Devices must be
  * polled manually after creation using {@link IoDevice#poll()}. They can
  * be retrieved from {@link #discoveredDevices}.
- * <p/>
+ * <p>
  * Implementations should call {@link #discoverDevice(IoDevice)} when a
  * device is discovered and {@link #forgetDevice(IoDevice)} when a device
  * is forgotten.
- * <p/>
+ * <p>
  * <b>Note:</b> For a I/O device seeker to work as expected, scans must be
  * performed periodically via {@link #seek()}. It is recommended to perform
  * a scan once every application update.

@@ -69,7 +69,7 @@ public class JsonDeviceGuids implements DeviceGuids {
 
     /**
      * Loads the device GUIDs from a JSON file in the classpath.
-     * <p/>
+     * <p>
      * This method is a shorthand for {@link #load(InputStream)}, with the
      * argument for {@code in} being the URL of {@code path} opened as an input
      * stream using {@link URL#openStream()}.
@@ -89,7 +89,7 @@ public class JsonDeviceGuids implements DeviceGuids {
 
     /**
      * Loads the device GUIDs from a JSON file.
-     * <p/>
+     * <p>
      * This method is a shorthand for {@link #load(InputStream)}, with the
      * argument for {@code in} being {@code new FileInputStream(file)}.
      *
@@ -104,7 +104,7 @@ public class JsonDeviceGuids implements DeviceGuids {
 
     /**
      * Loads the device GUIDs from a JSON file.
-     * <p/>
+     * <p>
      * This method is a shorthand for {@link #loadFile(File)}, with the
      * argument for {@code file} being {@code new File(path)}.
      *

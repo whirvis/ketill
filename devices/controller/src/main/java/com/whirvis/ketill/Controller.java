@@ -11,7 +11,7 @@ import java.util.Map;
  * A controller which and can send receive I/O data. Examples of controllers
  * include, but are not limited to: XBOX controllers, PlayStation controllers,
  * Nintendo Switch controllers, etc.
- * <p/>
+ * <p>
  * <b>Note:</b> For data to stay up-to-date, the controller must be polled
  * periodically via the {@link #poll()} method. It is recommended to poll
  * the controller once every application update.
@@ -79,7 +79,7 @@ public abstract class Controller extends IoDevice {
      * {@code lt}, or {@code rt} are not {@code null}, they will be
      * registered automatically during construction (assuming they are not
      * already registered via the {@link FeaturePresent} annotation.)
-     * <p/>
+     * <p>
      * This is a shorthand for the base constructor with the argument for
      * {@code registerFields} and {@code initAdapter} being {@code true}.
      *

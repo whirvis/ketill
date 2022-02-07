@@ -89,7 +89,7 @@ public class Ps4Controller extends PsxController {
     /**
      * To prevent unexpected behavior, the intensity of each color channel
      * is capped between a value of {@code 0.0F} and {@code 1.0F}.
-     * <p/>
+     * <p>
      * This method is a shorthand for
      * {@link #setLightbarColor(float, float, float, float)}, with the
      * argument for {@code alpha} being set to {@code 1.0F}.

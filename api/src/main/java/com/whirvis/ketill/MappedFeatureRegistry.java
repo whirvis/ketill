@@ -66,7 +66,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * Maps a feature to a state updater. Each time {@link #updateFeatures()}
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
-     * <p/>
+     * <p>
      * This method is a shorthand for
      * {@link #mapFeature(IoFeature, Object, StateUpdater)}, with the
      * argument for {@code params} being {@code feature}.
@@ -90,7 +90,7 @@ public class MappedFeatureRegistry implements FeatureRegistry {
      * Maps a feature to a state updater. Each time {@link #updateFeatures()}
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
-     * <p/>
+     * <p>
      * This method is a shorthand for
      * {@link #mapFeature(IoFeature, Object, StateUpdater)}, which
      * passes {@code params} as {@code null} and converts {@code updater}

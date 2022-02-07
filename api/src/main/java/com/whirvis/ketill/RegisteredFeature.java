@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * A feature that's registered to an {@link IoDevice}. This container
  * exists to group together the information necessary to fetch and update
  * the state of a device feature.
- * <p/>
+ * <p>
  * For optimal performance, it is best to cache the state of a device feature
  * to a field for later retrieval. The state of a device feature can be fetched
  * via {@link IoDevice#getState(IoFeature)}.

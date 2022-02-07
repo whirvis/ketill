@@ -56,7 +56,7 @@ public class OperatingSystem {
      * Creates a new OS descriptor and registers it. The returned value is
      * the descriptor. This value should be cached somewhere for later use,
      * so it can be reused without need for {@link #getById(String)}.
-     * <p/>
+     * <p>
      * In order for {@link #getCurrent()}} to return this descriptor in
      * a search, this descriptor must be assigned one or more masks via
      * {@link #addMask(String)}.

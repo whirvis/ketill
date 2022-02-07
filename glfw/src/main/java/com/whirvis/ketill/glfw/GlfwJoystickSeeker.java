@@ -59,7 +59,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * is detected, its GUID will be checked to see if the seeker should
      * register it. When a joystick should be registered, {@code wrangler}
      * will be invoked to create the device, so it can be discovered.
-     * <p/>
+     * <p>
      * This method is a shorthand for
      * {@link #seekGuid(String, GlfwJoystickWrangler)}, with each element of
      * {@code guids} being passed as the argument for {@code guid}.
@@ -114,7 +114,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * All currently registered joysticks with a matching GUID will be
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
-     * <p/>
+     * <p>
      * This method is a shorthand for {@link #dropGuids(Collection)}, with
      * {@code toDrop} being passed as a collection via
      * {@link Collections#singletonList(Object)}.

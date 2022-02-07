@@ -15,12 +15,12 @@ import java.util.function.Consumer;
 
 /**
  * A device which can send and receive I/O data.
- * <p/>
+ * <p>
  * Examples of I/O devices include, but are not limited to: keyboards, mice,
  * XBOX controllers, etc. By design, an I/O device supports no features by
  * default. Rather, an extending class must provide them. The responsibility
  * of providing support for a feature is designed to the device adapter.
- * <p/>
+ * <p>
  * <b>Note:</b> For data to stay up-to-date, the device must be polled
  * periodically via the {@link #poll()} method. It is recommended to
  * poll the device once every application update.
@@ -210,7 +210,7 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * <b>Note:</b> This method can be called before {@code IoDevice} is
      * finished constructing by the {@link #registerField(Field)} method.
      */
