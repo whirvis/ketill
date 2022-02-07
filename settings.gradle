@@ -12,8 +12,10 @@ include 'devices:xbox'
 
 include 'glfw'
 
-include 'hid-usb:api'
-include 'hid-usb:dualshock'
-include 'hid-usb:gamecube'
+/*
+ * include 'hid-usb:api'
+ * include 'hid-usb:dualshock'
+ * include 'hid-usb:gamecube'
+ */
 
 include 'xinput'
