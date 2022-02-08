@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="#"><img src="https://user-images.githubusercontent.com/5157755/153051741-39f3846f-f7cc-4be4-ad0e-09fbf6fb8488.png" alt=""></a>
+  <a href="#"><img src="https://user-images.githubusercontent.com/5157755/153051741-39f3846f-f7cc-4be4-ad0e-09fbf6fb8488.png" alt="ASCII art displaying KETILL"></a>
 </p>
 
 <p align="center">
