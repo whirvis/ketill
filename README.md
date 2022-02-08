@@ -1,11 +1,6 @@
-```
-██╗  ██╗███████╗████████╗██╗██╗     ██╗     
-██║ ██╔╝██╔════╝╚══██╔══╝██║██║     ██║     
-█████╔╝ █████╗     ██║   ██║██║     ██║     
-██╔═██╗ ██╔══╝     ██║   ██║██║     ██║      
-██║  ██╗███████╗   ██║   ██║███████╗███████╗
-╚═╝  ╚═╝╚══════╝   ╚═╝   ╚═╝╚══════╝╚══════╝ 
-```
+<p align="center">
+  <a href="#"><img src="https://user-images.githubusercontent.com/5157755/153051741-39f3846f-f7cc-4be4-ad0e-09fbf6fb8488.png" alt=""></a>
+</p>
 
 <p align="center">
   <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant 2.1"></a>
