@@ -35,11 +35,11 @@ so delighted by how clean the build scripts were that I decided to use it for my
 By design, the definition of an `IoDevice` is kept separate from the code which implements it. The implementation of a device is provided by an
 `IoDeviceAdapter`. Keeping the definition and implementation separate provides the following primary benefits:
 
-1. The code for defining a device is (usually) small.
-2. Said definitions rarely require logic, just a statement of features.
-3. Device definitions requires little or no unit testing when properly written.
-4. The same device can be implemented with different adapters, enabling features as desired.
-5. Cross platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XboxAdapter` on Windows.)
+  1. The code for defining a device is (usually) small.
+  2. Said definitions rarely require logic, just a statement of features.
+  3. Device definitions requires little or no unit testing when properly written.
+  4. The same device can be implemented with different adapters, enabling features as desired.
+  5. Cross platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XboxAdapter` on Windows.)
 
 Ketill also provides a litany of built-in definitions and implementations. The goal of these built-in devices and adapters is to reduce the time
 required to get device I/O up and running. They also serve as examples for those who wish to create their own devices and/or adapters.
@@ -61,7 +61,24 @@ This section is a work in progress.
 
 # 🛠️ Building
 
-This section is a work in progress.
+If you don't want to build Ketill yourself, pre-built JARs can be found on [Jenkins](https://jenkins.ketill.io:8080). However, in certain
+situations, building the project yourself may be necessary (e.g., if Jenkins is down.) Building Ketill is simple, and can be done following
+the instructions below:
+
+  1. Install [Git](https://git-scm.com/) if not done so already.
+  2. Install the JDK. Builds of the OpenJDK can be found [here](https://adoptium.net/).
+  4. Open a terminal of your choice and run the following commands:
+
+```bash
+git clone https://github.com/whirvis/ketill.git
+cd ketill
+./gradlew build
+```
+
+After Gradle is finished running, JARs for each module will be available in their respective folder `<module>/build/libs/`. Currently, JARs
+are generated *without* their dependencies. Issue [#8](https://github.com/whirvis/ketill/issues/8) addresses this. Furthermore, to ongoing
+issue [#17](https://github.com/whirvis/ketill/issues/22), building on non-Windows systems is currently broken. If you find that your build
+is failing, replace `./gradlew build` with `./gradlew build -x :xinput:test`.
 
 # ⚗️ Examples
 
