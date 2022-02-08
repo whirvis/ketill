@@ -18,13 +18,13 @@
 
 #
 
-### Summary
+### 🔖 Summary
 
 Ketill provides dynamic device I/O for Java. Created from code originally written for the [Ardenus Engine](https://github.com/whirvis/ardenus-engine),
 it is intended for use in [game development](https://youtu.be/zCmMuOXr-Nk). However, other use cases are supported. Ketill provides an avenue to
 provide universal definitions for I/O devices (such as Keyboards, Mice, XBOX controllers, etc.) while keeping implementation details separate.
 
-### History
+### 📓 History
 
 Ketill began development in the Fall Semester of 2021 at University. While working on a revision of the Ardenus Engine, I decided that I wanted to
 create a new input system from the ground up (as the original was clunky.) At the time, Ketill was simply the `input` package of the engine. Later,
@@ -36,7 +36,7 @@ modules, I found them to be a nuisance. For the time though, I tolerated them as
 However, after tinkering with [PaperMC](https://papermc.io/) for the first time, I was properly introduced to [Gradle](https://gradle.org/). I was
 so delighted by how clean the build scripts were that I decided to use it for my future projects. Thus, the switch from Maven to Gradle was made.
 
-# 🎮 Why use Ketill?
+# 👾 Why use Ketill?
 By design, the definition of an `IoDevice` is kept separate from the code which implements it. The implementation of a device is provided by an
 `IoDeviceAdapter`. Keeping the definition and implementation separate provides the following primary benefits:
 
