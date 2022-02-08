@@ -93,7 +93,7 @@ This section is a work in progress.
 
 <p align="center">
   <a href="https://twitter.com/whirvis/"><img src="https://img.shields.io/twitter/follow/whirvis?style=flat&logo=twitter&color=%2300acee&label=%40whirvis" alt="Twitter"></a>
-  <a href="https://reddit.com/u/whirvis/"><img src="https://img.shields.io/reddit/user-karma/combined/whirvis?style=flat&logo=reddit&color=%23FF5700&label=u%2Fwhirvis"></a>
+  <a href="https://reddit.com/u/whirvis/"><img src="https://img.shields.io/reddit/user-karma/combined/whirvis?style=flat&logo=reddit&color=%23FF5700&label=u%2Fwhirvis" alt="Reddit"></a>
   <a href="https://youtube.com/c/whirvis/"><img src="https://img.shields.io/youtube/channel/subscribers/UC9wxFSON2eQRSxE2OUznP8w?style=flat&logo=youtube&logoColor=red&label=Whirvis" alt="YouTube"></a>
   <a href="https://www.twitch.tv/whirvis/"><img src="https://img.shields.io/twitch/status/whirvis?style=flat&logo=twitch&color=%23815fc0&label=Whirvis" alt="Twitch"></a>
   <a href="https://discord.gg/ShVPZBY6kY"><img src="https://img.shields.io/discord/681551864902320156?logo=Discord&color=%235865F2&label=Whirvex Software" alt="Discord"></a>
