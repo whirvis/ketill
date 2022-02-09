@@ -72,7 +72,8 @@ the instructions below:
 ```bash
 git clone https://github.com/whirvis/ketill.git
 cd ketill
-./gradlew build
+# chmod +x ./gradlew
+./gradlew build # -x :xinput:test
 ```
 
 After Gradle is finished running, JARs for each module will be available in their respective folder `<module>/build/libs/`. Currently, JARs
