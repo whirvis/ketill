@@ -72,14 +72,14 @@ the instructions below:
 ```bash
 git clone https://github.com/whirvis/ketill.git
 cd ketill
-# chmod +x ./gradlew
-./gradlew build # -x :xinput:test
+chmod +x ./gradlew # unix only
+./gradlew build
 ```
 
 After Gradle is finished running, JARs for each module will be available in their respective folder `<module>/build/libs/`. Currently, JARs
-are generated *without* their dependencies. Issue [#8](https://github.com/whirvis/ketill/issues/8) addresses this. Furthermore, to ongoing
+are generated *without* their dependencies. Issue [#8](https://github.com/whirvis/ketill/issues/8) addresses this. **Note:** Due to ongoing
 issue [#17](https://github.com/whirvis/ketill/issues/22), building on non-Windows systems is currently broken. If you find that your build
-is failing, replace `./gradlew build` with `./gradlew build -x :xinput:test`.
+is failing, replace `./gradlew build` with `./gradlew build -x :xinput:test`. If it still fails, God help you.
 
 # ⚗️ Examples
 
