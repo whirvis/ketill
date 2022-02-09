@@ -6,7 +6,7 @@
   <a href="CODE_OF_CONDUCT.md"><img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant 2.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/whirvis/ketill" alt="MIT License"></a>
   <a href="https://www.oracle.com/java/technologies/java8.html"><img src="https://img.shields.io/badge/version-8-orange?style=flat&logo=java" alt="Java 8"></a>
-  <a href="#"><img src="https://img.shields.io/github/repo-size/whirvis/ketill" alt=""></a>
+  <a href="#"><img src="https://img.shields.io/github/repo-size/whirvis/ketill" alt="" style="pointer-events: none;"></a>
   <a href="https://www.codacy.com/gh/Whirvis/ketill/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whirvis/ketill&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/2be5a01acd504e9d8b5067ccfe4c79c4" alt="Code Quality"></a>
   <a href="http://jenkins.ketill.io:8080/job/ketill/"><img src="http://jenkins.ketill.io:8080/buildStatus/icon?job=ketill" alt="Jenkins"></a>
 </p>
