@@ -2,20 +2,5 @@ rootProject.name = 'ketill'
 
 include 'api'
 
-include 'devices:controller'
-include 'devices:features'
-include 'devices:gc'
-include 'devices:nx'
-include 'devices:pc'
-include 'devices:psx'
-include 'devices:xbox'
-
-include 'glfw'
-
-/*
- * include 'hid-usb:api'
- * include 'hid-usb:dualshock'
- * include 'hid-usb:gamecube'
- */
-
-include 'xinput'
+apply from: 'devices/settings.gradle'
+apply from: 'adapters/settings.gradle'

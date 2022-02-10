@@ -1,0 +1,47 @@
+subprojects {
+    apply plugin: 'java-library'
+
+    group 'io.ketill'
+    version '1.0.0'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    dependencies {
+        compileOnly 'org.jetbrains:annotations:22.0.0'
+
+        implementation 'org.joml:joml:1.10.2'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+        testImplementation 'org.mockito:mockito-inline:4.3.1'
+        testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    archivesBaseName = "${rootProject.name}-${project.name}"
+
+    /*
+     * Some modules in this project are blank modules. That being, they are
+     * simply folders which act as container for real modules. By default,
+     * Gradle will output JARs for these blank modules. The closures below
+     * disable this undesirable behavior.
+     */
+    def blankModules = ["adapters", "devices"]
+    tasks.jar.onlyIf { !blankModules.contains(project.name) }
+    tasks.sourcesJar.onlyIf { !blankModules.contains(project.name) }
+    tasks.javadocJar.onlyIf { !blankModules.contains(project.name) }
+}

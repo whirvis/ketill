@@ -1,7 +1,6 @@
 package io.ketill.pc;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.Button1bc;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
@@ -28,7 +27,7 @@ public class Mouse extends IoDevice {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull Click1bc
             m1 = this.getState(BUTTON_M1),
             m2 = this.getState(BUTTON_M2),
             m3 = this.getState(BUTTON_M3),
@@ -42,7 +41,7 @@ public class Mouse extends IoDevice {
      * Aliases for {@link #m1}, {@link #m2}, and {@link #m3}.
      */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull Click1bc
             left = m1,
             right = m2,
             middle = m3;

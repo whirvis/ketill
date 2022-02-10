@@ -1,13 +1,13 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.AnalogTrigger;
-import io.ketill.Button1bc;
-import io.ketill.DeviceButton;
+import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.Button1bc;
+import io.ketill.controller.DeviceButton;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
-import io.ketill.RumbleMotor;
-import io.ketill.Vibration1f;
+import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;

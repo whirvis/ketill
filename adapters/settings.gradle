@@ -1,0 +1,13 @@
+include ':adapters:glfw-api'
+include ':adapters:glfw-nx'
+include ':adapters:glfw-pc'
+include ':adapters:glfw-psx'
+include ':adapters:glfw-xbox'
+
+/*
+ * include ':adapters:hid-usb-api'
+ * include ':adapters:hid-usb-gc'
+ * include ':adapters:hid-usb-psx'
+ */
+
+include ':adapters:xinput'

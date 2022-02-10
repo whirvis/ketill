@@ -46,14 +46,11 @@ required to get device I/O up and running. They also serve as examples for those
 
 The following is a list of modules included with Ketill:
 
-| Module    | Description                                                        |
-| --------- | ------------------------------------------------------------------ |
-| `api`     | The base API for Ketill.                                           |
-| `devices` | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
-| `glfw`    | Keyboard, mouse, and joystick support via GLFW.                    |
-| `xinput`  | XBOX controller support via X-input.                               |
-
-**Note:** Modules present in the repository but not listed above are not ready for use.
+| Module     | Description                                                        |
+|------------|--------------------------------------------------------------------|
+| `api`      | The base API for Ketill.                                           |
+| `devices`  | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
+| `adapters` | Provided implementations using GLFW, X-input, etc.                 |
 
 # 🔗 Dependencies
 

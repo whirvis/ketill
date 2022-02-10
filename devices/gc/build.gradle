@@ -1,19 +1,5 @@
-apply plugin: 'java'
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
+apply plugin: 'java-library'
 
 dependencies {
-    implementation project(':api')
-    implementation project(':devices:controller')
-    implementation project(':devices:features')
-
-    compileOnly 'org.jetbrains:annotations:22.0.0'
-
-    implementation 'org.joml:joml:1.10.2'
+    api project(':devices:controller')
 }
-
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.targetCompatibility = JavaVersion.VERSION_1_8

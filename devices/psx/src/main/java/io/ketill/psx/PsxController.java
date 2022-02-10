@@ -1,11 +1,11 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.AnalogStick;
-import io.ketill.AnalogTrigger;
-import io.ketill.Button1bc;
-import io.ketill.Controller;
-import io.ketill.DeviceButton;
+import io.ketill.controller.AnalogStick;
+import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.Button1bc;
+import io.ketill.controller.Controller;
+import io.ketill.controller.DeviceButton;
 import io.ketill.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;

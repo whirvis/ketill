@@ -1,7 +1,6 @@
 package io.ketill.pc;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.Button1bc;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
@@ -139,7 +138,7 @@ public class Keyboard extends IoDevice {
 
     /* @formatter:off */
     @FeatureState /* printable keys */
-    public final @NotNull Button1bc
+    public final @NotNull Key1bc
             space = this.getState(KEY_SPACE),
             apostrophe = this.getState(KEY_APOSTROPHE),
             comma = this.getState(KEY_COMMA),
@@ -192,7 +191,7 @@ public class Keyboard extends IoDevice {
             world2 = this.getState(KEY_WORLD_2);
     
     @FeatureState /* method keys */
-    public final @NotNull Button1bc
+    public final @NotNull Key1bc
             escape = this.getState(KEY_ESCAPE),
             enter = this.getState(KEY_ENTER),
             tab = this.getState(KEY_TAB),
