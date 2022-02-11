@@ -1,6 +1,7 @@
 package com.whirvis.ketill.gc;
 
 import com.whirvis.ketill.hidusb.UsbDeviceSeeker;
+import io.ketill.gc.GcController;
 import org.usb4java.DeviceHandle;
 
 import java.util.HashMap;

@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
 dependencies {
-    api project(':hid-usb:api')
+    api project(':adapters:hid-usb-api')
     api project(':devices:gc')
 }

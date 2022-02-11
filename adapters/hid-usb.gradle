@@ -1,3 +1,0 @@
-ext.isHidUsbProject = { Project project ->
-    return project.name.toLowerCase().startsWith("hid-usb")
-}

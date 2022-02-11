@@ -1,6 +1,0 @@
-include ':devices:controller'
-include ':devices:gc'
-include ':devices:nx'
-include ':devices:pc'
-include ':devices:psx'
-include ':devices:xbox'

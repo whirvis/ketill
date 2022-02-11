@@ -1,18 +1,11 @@
 package com.whirvis.ketill.dualshock;
 
-import com.whirvis.ketill.AnalogStick;
-import com.whirvis.ketill.AnalogTrigger;
-import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.IoDeviceAdapter;
-import com.whirvis.ketill.DeviceButton;
-import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.KetillException;
-import com.whirvis.ketill.MappedFeatureRegistry;
-import com.whirvis.ketill.RumbleMotor;
-import com.whirvis.ketill.Trigger1f;
-import com.whirvis.ketill.Vibration1f;
-import com.whirvis.ketill.psx.Lightbar;
-import com.whirvis.ketill.psx.Ps4Controller;
+import io.ketill.FeatureAdapter;
+import io.ketill.IoDeviceAdapter;
+import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.*;
+import io.ketill.psx.Lightbar;
+import io.ketill.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;

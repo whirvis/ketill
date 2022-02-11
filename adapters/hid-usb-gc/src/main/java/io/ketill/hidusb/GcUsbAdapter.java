@@ -1,17 +1,18 @@
 package com.whirvis.ketill.gc;
 
-import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.IoDeviceAdapter;
-import com.whirvis.ketill.DeviceButton;
-import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.MappedFeatureRegistry;
-import com.whirvis.ketill.Trigger1f;
-import com.whirvis.ketill.Vibration1f;
+import io.ketill.FeatureAdapter;
+import io.ketill.IoDeviceAdapter;
+import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.Button1b;
+import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Trigger1f;
+import io.ketill.controller.Vibration1f;
+import io.ketill.gc.GcController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import static com.whirvis.ketill.gc.GcController.*;
+import static io.ketill.gc.GcController.*;
 
 /**
  * A USB GameCube adapter for a Nintendo GameCube controller.

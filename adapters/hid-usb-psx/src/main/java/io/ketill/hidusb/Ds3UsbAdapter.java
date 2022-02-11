@@ -1,14 +1,14 @@
-package com.whirvis.ketill.dualshock;
+package io.ketill.dualshock;
 
-import com.whirvis.ketill.AnalogTrigger;
-import com.whirvis.ketill.Button1b;
-import com.whirvis.ketill.IoDeviceAdapter;
-import com.whirvis.ketill.DeviceButton;
-import com.whirvis.ketill.FeatureAdapter;
-import com.whirvis.ketill.MappedFeatureRegistry;
-import com.whirvis.ketill.Trigger1f;
-import com.whirvis.ketill.Vibration1f;
-import com.whirvis.ketill.psx.Ps3Controller;
+import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.Button1b;
+import io.ketill.IoDeviceAdapter;
+import io.ketill.controller.DeviceButton;
+import io.ketill.FeatureAdapter;
+import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.Trigger1f;
+import io.ketill.controller.Vibration1f;
+import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.DeviceHandle;
 import org.usb4java.LibUsb;
@@ -19,7 +19,7 @@ import org.usb4java.TransferCallback;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
-import static com.whirvis.ketill.psx.Ps3Controller.*;
+import static io.ketill.psx.Ps3Controller.*;
 
 /**
  * An adapter which maps input for a DualShock 3 USB input device.

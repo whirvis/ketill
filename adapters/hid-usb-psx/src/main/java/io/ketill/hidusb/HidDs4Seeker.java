@@ -1,8 +1,9 @@
 package com.whirvis.ketill.dualshock;
 
 import com.whirvis.ketill.hidusb.HidDeviceSeeker;
-import com.whirvis.ketill.psx.Ps4Controller;
+import io.ketill.psx.Ps4Controller;
 import org.hid4java.HidDevice;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +22,17 @@ public class HidDs4Seeker extends HidDeviceSeeker<Ps4Controller> {
 
     }
 
-    private static final int VENDOR_ID = 0x54C;
-    private static final int PRODUCT_ID = 0x5C4;
+    public interface AmbiguityCallback {
+
+        void fuck(boolean ambiguous);
+
+    }
+
+    /* @formatter:off */
+    private static final int
+            VENDOR_ID  = 0x054C,
+            PRODUCT_ID = 0x05C4;
+    /* @formatter:on */
 
     /**
      * It was opted to use the hash codes here, as they look prettier in code
@@ -39,13 +49,14 @@ public class HidDs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      */
     /* @formatter:off */
     private static final int
-                HID_USB_ID = 0x7C6790AE,
-                HID_BT_ID  = 0xE32CF9F0;
+            HID_USB_ID = 0x7C6790AE,
+            HID_BT_ID  = 0xE32CF9F0;
     /* @formatter:on */
 
     private final boolean allowUsb, allowBt;
     private final Map<HidDevice, Ds4Info> ds4s;
     private boolean wasAmbiguous;
+    private @Nullable AmbiguityCallback onAmbiguity;
 
     /**
      * If both USB and Bluetooth controllers are allowed, there is a
@@ -83,6 +94,10 @@ public class HidDs4Seeker extends HidDeviceSeeker<Ps4Controller> {
         this(true, true);
     }
 
+    public void onAmbiguityChange(@Nullable AmbiguityCallback callback) {
+        this.onAmbiguity = callback;
+    }
+
     private void checkAmbiguity() {
         boolean hasUsb = false, hasBt = false;
         for (Ds4Info info : ds4s.values()) {
@@ -101,13 +116,17 @@ public class HidDs4Seeker extends HidDeviceSeeker<Ps4Controller> {
          * physical device. As such, the best course of action is to send an
          * event, notifying listeners of the ambiguity.
          */
-        /* TODO: callbacks */
         boolean ambiguous = hasUsb && hasBt;
         if (!wasAmbiguous && ambiguous) {
-            //log.warn("USB and BT PS4 controllers connected, "
-            //		+ "physical devices are ambiguous");
+            if (onAmbiguity != null) {
+                onAmbiguity.fuck(true);
+            }
+            this.wasAmbiguous = true;
         } else if (wasAmbiguous && !ambiguous) {
-            //log.info("PS4 controllers are no longer ambiguous");
+            if (onAmbiguity != null) {
+                onAmbiguity.fuck(false);
+            }
+            this.wasAmbiguous = false;
         }
     }
 

@@ -1,8 +1,8 @@
 package com.whirvis.ketill.hidusb;
 
-import com.whirvis.ketill.IoDeviceSeeker;
-import com.whirvis.ketill.IoDevice;
-import com.whirvis.ketill.KetillException;
+import io.ketill.IoDevice;
+import io.ketill.IoDeviceSeeker;
+import io.ketill.KetillException;
 import org.usb4java.*;
 
 import java.util.*;
