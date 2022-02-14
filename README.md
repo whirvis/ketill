@@ -8,7 +8,7 @@
   <a href="https://www.oracle.com/java/technologies/java8.html"><img src="https://img.shields.io/badge/version-8-orange?style=flat&logo=java" alt="Java 8"></a>
   <a href="#void"><img src="https://img.shields.io/github/repo-size/whirvis/ketill" alt=""></a>
   <a href="https://www.codacy.com/gh/Whirvis/ketill/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whirvis/ketill&amp;utm_campaign=Badge_Grade"><img src="https://app.codacy.com/project/badge/Grade/2be5a01acd504e9d8b5067ccfe4c79c4" alt="Code Quality"></a>
-  <a href="http://jenkins.ketill.io:8080/job/ketill/"><img src="http://jenkins.ketill.io:8080/buildStatus/icon?job=ketill" alt="Jenkins"></a>
+  <a href="http://jenkins.ketill.io/job/ketill/"><img src="http://jenkins.ketill.io/buildStatus/icon?job=ketill" alt="Jenkins"></a>
 </p>
 
 #
