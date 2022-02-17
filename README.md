@@ -73,9 +73,6 @@ chmod +x ./gradlew # unix only
 ./gradlew build
 ```
 
-**Note:** Due to ongoing  issue [#17](https://github.com/whirvis/ketill/issues/22), building on non-Windows systems is currently broken.
-If you find that your build is failing, replace `./gradlew build` with `./gradlew build -x :xinput:test`. If it still fails, God help you.
-
 # ⚗️ Examples
 
 This section is a work in progress.
