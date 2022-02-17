@@ -33,6 +33,7 @@ import java.util.function.Consumer;
 public abstract class IoDevice implements FeatureRegistry {
 
     public final @NotNull String id;
+
     private final MappedFeatureRegistry registry;
     private final IoDeviceAdapter<IoDevice> adapter;
     private boolean initializedAdapter;
@@ -186,6 +187,24 @@ public abstract class IoDevice implements FeatureRegistry {
         }
     }
     /* @formatter:on */
+
+    /**
+     * Returns if this device, with its adapter provided at construction,
+     * supports the specified device. A device is considered supported if
+     * it currently has a mapping assigned by its adapter.
+     * <p>
+     * When a feature is not supported, any reads will return its initial
+     * state (or the last value before being unmapped.) If the state of a
+     * feature is writable, any writes will effectively be a no-op.
+     *
+     * @param feature the feature to check.
+     * @return {@code true} if {@code feature} is supported, {@code false}
+     * otherwise.
+     * @throws NullPointerException if {@code feature} is {@code null}.
+     */
+    public boolean isFeatureSupported(@NotNull IoFeature<?> feature) {
+        return registry.hasMapping(feature);
+    }
 
     @Override
     public boolean isRegistered(@NotNull IoFeature<?> feature) {
