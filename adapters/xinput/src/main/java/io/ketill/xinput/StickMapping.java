@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 
 @MappingType
-public final class StickMapping {
+final class StickMapping {
 
     final @NotNull XInputAxis xAxis;
     final @NotNull XInputAxis yAxis;

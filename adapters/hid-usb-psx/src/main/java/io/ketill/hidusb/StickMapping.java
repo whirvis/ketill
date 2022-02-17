@@ -3,7 +3,7 @@ package io.ketill.hidusb;
 import io.ketill.MappingType;
 
 @MappingType
-public final class StickMapping {
+final class StickMapping {
 
     public final int byteOffsetX;
     public final int byteOffsetY;
