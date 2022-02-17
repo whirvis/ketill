@@ -5,6 +5,8 @@ import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,10 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
+@EnabledOnOs(OS.WINDOWS)
 @ExtendWith(MockitoExtension.class)
-class XboxSeekerTest {
+class XInputXboxSeekerTest {
 
-    XboxSeeker seeker;
+    XInputXboxSeeker seeker;
 
     @BeforeEach
     void setup() {
@@ -31,7 +34,7 @@ class XboxSeekerTest {
         try (MockedStatic<XInputDevice14> x14 =
                      mockStatic(XInputDevice14.class)) {
             x14.when(XInputDevice14::isAvailable).thenReturn(false);
-            this.seeker = new XboxSeeker();
+            this.seeker = new XInputXboxSeeker();
         }
     }
 

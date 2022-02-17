@@ -7,12 +7,17 @@ import com.github.strikerx3.jxinput.natives.XInputConstants;
 import io.ketill.IoDeviceSeeker;
 import io.ketill.xbox.XboxController;
 
-public final class XboxSeeker extends IoDeviceSeeker<XboxController> {
+public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
 
     private final XboxController[] controllers;
     private final boolean xinput14;
 
-    public XboxSeeker() {
+    /**
+     * @throws XInputException if X-input is not available.
+     * @see XInputStatus#isAvailable()
+     */
+    public XInputXboxSeeker() {
+        XInputStatus.requireAvailable();
         this.controllers = new XboxController[XInputConstants.MAX_PLAYERS];
         this.xinput14 = XInputDevice14.isAvailable();
     }
@@ -67,8 +72,8 @@ public final class XboxSeeker extends IoDeviceSeeker<XboxController> {
 
             if (xDevice.isConnected()) {
                 this.controllers[i] =
-                        new XboxController((c, r) -> new XboxAdapter(c, r,
-                                xDevice));
+                        new XboxController((c, r) -> new XInputXboxAdapter(c,
+                                r, xDevice));
                 this.discoverDevice(controllers[i]);
             }
         }

@@ -10,6 +10,8 @@ import io.ketill.RegisteredFeature;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -19,8 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
+@EnabledOnOs(OS.WINDOWS)
 @ExtendWith(MockitoExtension.class)
-class XboxAdapterTest {
+class XInputXboxAdapterTest {
 
     XInputDevice xDevice;
     XInputAxes xAxes;
@@ -28,7 +31,7 @@ class XboxAdapterTest {
 
     XboxController controller;
     MappedFeatureRegistry registry;
-    XboxAdapter adapter;
+    XInputXboxAdapter adapter;
 
     @BeforeEach
     void setup() {
@@ -44,7 +47,7 @@ class XboxAdapterTest {
 
         this.controller = new XboxController(((d, r) -> {
             this.registry = r;
-            this.adapter = new XboxAdapter(d, r, xDevice);
+            this.adapter = new XInputXboxAdapter(d, r, xDevice);
             return adapter;
         }));
     }

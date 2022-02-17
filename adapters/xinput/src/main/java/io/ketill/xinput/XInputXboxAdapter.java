@@ -27,7 +27,7 @@ import java.util.Objects;
 
 import static io.ketill.xbox.XboxController.*;
 
-public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
+public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
 
     private static final int RUMBLE_MIN = 0x0000;
     private static final int RUMBLE_MAX = 0xFFFF;
@@ -44,11 +44,14 @@ public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
      * @param xDevice    the X-input device.
      * @throws NullPointerException if {@code controller}, {@code registry},
      *                              or {@code xDevice} are {@code null}.
+     * @throws XInputException      if X-input is not available.
+     * @see XInputStatus#isAvailable()
      */
-    public XboxAdapter(@NotNull XboxController controller,
-                       @NotNull MappedFeatureRegistry registry,
-                       @NotNull XInputDevice xDevice) {
+    public XInputXboxAdapter(@NotNull XboxController controller,
+                             @NotNull MappedFeatureRegistry registry,
+                             @NotNull XInputDevice xDevice) {
         super(controller, registry);
+        XInputStatus.requireAvailable();
         this.xDevice = Objects.requireNonNull(xDevice, "xDevice");
     }
 
