@@ -14,12 +14,12 @@ import java.util.Objects;
  *
  * @see #mapFeature(IoFeature, Object, StateUpdater)
  */
-public class MappedFeatureRegistry implements FeatureRegistry {
+public final class MappedFeatureRegistry implements FeatureRegistry {
 
     private final Map<IoFeature<?>, RegisteredFeature<?, ?>> features;
     private final Map<IoFeature<?>, MappedFeature<?, ?, ?>> mappings;
 
-    protected MappedFeatureRegistry() {
+    MappedFeatureRegistry() {
         this.features = new HashMap<>();
         this.mappings = new HashMap<>();
     }

@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <S> the state container type.
  * @see FeatureState
  */
-public class RegisteredFeature<F extends IoFeature<S>, S> {
+public final class RegisteredFeature<F extends IoFeature<S>, S> {
 
     /**
      * This should be used when a feature has no updater. Its purpose to
@@ -27,9 +27,9 @@ public class RegisteredFeature<F extends IoFeature<S>, S> {
 
     public final @NotNull F feature;
     public final @NotNull S state;
-    protected @NotNull Runnable updater;
+    @NotNull Runnable updater;
 
-    protected RegisteredFeature(@NotNull F feature) {
+    RegisteredFeature(@NotNull F feature) {
         this.feature = feature;
         this.state = feature.initialState.get();
         this.updater = NO_UPDATER;
