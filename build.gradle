@@ -41,7 +41,9 @@ subprojects {
      * disable this undesirable behavior.
      */
     def blankModules = ["adapters", "devices"]
-    tasks.jar.onlyIf { !blankModules.contains(project.name) }
-    tasks.sourcesJar.onlyIf { !blankModules.contains(project.name) }
-    tasks.javadocJar.onlyIf { !blankModules.contains(project.name) }
+    if(blankModules.contains(project.name)) {
+        tasks.jar.enabled = false;
+        tasks.sourcesJar.enabled = false;
+        tasks.javadocJar.enabled = false;
+    }
 }

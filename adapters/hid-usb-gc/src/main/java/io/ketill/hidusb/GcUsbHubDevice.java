@@ -1,4 +1,4 @@
-package com.whirvis.ketill.gc;
+package io.ketill.hidusb;
 
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.Device;
@@ -9,21 +9,15 @@ import org.usb4java.LibUsbException;
 import org.usb4java.Transfer;
 import org.usb4java.TransferCallback;
 
+import java.io.Closeable;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * An implementation of the official GameCube USB adapter for the Wii U and
- * Nintendo Switch. This communicates with the adapter and provides all the
- * input data necessary for a {@link GcUsbAdapter} to function.
- *
- * @see #isAdapter(Device)
- * @see #getAdapters()
- */
-public class GcUsbDevice implements TransferCallback {
+public class GcUsbHubDevice implements TransferCallback, Closeable {
 
     /* @formatter:off */
     public static final short
@@ -49,63 +43,40 @@ public class GcUsbDevice implements TransferCallback {
             DATA_LENGTH      = 37;
     /* @formatter:on */
 
-    /**
-     * @param device the USB device to check.
-     * @return {@code true} if {@code device} is a GameCube USB adapter,
-     * {@code false} otherwise.
-     */
-    public static boolean isAdapter(@NotNull Device device) {
+    protected static boolean isAdapter(@NotNull Device device) {
         DeviceDescriptor desc = new DeviceDescriptor();
         LibUsb.getDeviceDescriptor(device, desc);
         return desc.idVendor() == VENDOR_ID && desc.idProduct() == PRODUCT_ID;
     }
 
-    /**
-     * @param handle the handle of the USB device to check.
-     * @return {@code true} if {@code handle} is for a GameCube USB adapter
-     * device, {@code false} otherwise.
-     */
-    public static boolean isAdapter(@NotNull DeviceHandle handle) {
+    protected static boolean isAdapter(@NotNull DeviceHandle handle) {
         return isAdapter(LibUsb.getDevice(handle));
     }
 
     private final DeviceHandle handle;
     private boolean initialized;
 
-    private final GcUsbAdapter[] adapters;
-    private final List<GcUsbAdapter> adapterList;
     private boolean requestedSlots;
     private final byte[][] slots;
     private final ByteBuffer rumble;
 
-    /**
-     * @param handle the GameCube USB adapter device.
-     */
-    public GcUsbDevice(@NotNull DeviceHandle handle) {
+    private final List<LibUsbGcAdapterSupplier> adapterSuppliers;
+
+    protected GcUsbHubDevice(@NotNull DeviceHandle handle) {
         this.handle = handle;
-        if (!isAdapter(handle)) {
-            throw new IllegalArgumentException("not a USB GameCube adapter");
-        }
 
-        /*
-         * This is cached into an unmodifiable list to prevent many calls
-         * to getAdapters() from creating many collections on the heap if
-         * called numerous times.
-         */
-        this.adapters = new GcUsbAdapter[4];
-        for (int i = 0; i < adapters.length; i++) {
-            this.adapters[i] = new GcUsbAdapter(this, i);
-        }
-        this.adapterList =
-                Collections.unmodifiableList(Arrays.asList(adapters));
-
-        this.slots = new byte[adapters.length][9];
-        this.rumble = ByteBuffer.allocateDirect(1 + adapters.length);
+        this.slots = new byte[4][9];
+        this.rumble = ByteBuffer.allocateDirect(1 + slots.length);
         rumble.put(RUMBLE_ID);
+
+        this.adapterSuppliers = new ArrayList<>();
+        for(int i = 0; i < slots.length; i++) {
+            adapterSuppliers.add(new LibUsbGcAdapterSupplier(this, i));
+        }
     }
 
-    public List<GcUsbAdapter> getAdapters() {
-        return this.adapterList;
+    public List<LibUsbGcAdapterSupplier> getAdapterSuppliers() {
+        return Collections.unmodifiableList(adapterSuppliers);
     }
 
     protected byte[] getSlotData(int slot) {
@@ -136,26 +107,23 @@ public class GcUsbDevice implements TransferCallback {
 
     private void handlePacket(ByteBuffer packet) {
         byte id = packet.get();
-        if (id == DATA_ID) {
-            for (byte[] slot : slots) {
-                for (int j = 0; j < slot.length; j++) {
-                    slot[j] = packet.get();
-                }
-            }
-
-            for (GcUsbAdapter adapter : adapters) {
-                adapter.poll();
-            }
-            this.requestedSlots = false;
+        if (id != DATA_ID) {
+            return;
         }
+        for (byte[] slot : slots) {
+            for (int j = 0; j < slot.length; j++) {
+                slot[j] = packet.get();
+            }
+        }
+        this.requestedSlots = false;
     }
 
     private void updateRumble() {
         boolean submit = false;
 
-        for (int i = 0; i < adapters.length; i++) {
+        for (int i = 0; i < slots.length; i++) {
             int offset = i + 1; /* account for rumble ID */
-            boolean rumbling = adapters[i].isRumbling();
+            boolean rumbling = false;//adapters[i].isRumbling();
             byte state = (rumbling ? RUMBLE_START : RUMBLE_STOP);
             if (rumble.get(offset) != state) {
                 rumble.put(offset, state);
@@ -189,24 +157,26 @@ public class GcUsbDevice implements TransferCallback {
         LibUsb.freeTransfer(transfer);
     }
 
-    /**
-     * Polling the adapter is necessary for retrieving up-to-date input
-     * information. If this is not done, it is possible a mix of both up to
-     * date
-     * and out of date input data will be returned. It is recommended to call
-     * this method once every update.
-     *
-     * @throws LibUsbException if an error in LibUSB occurs.
-     */
+    public boolean isSlotConnected(int port) {
+        /*
+         * The first byte is the current controller type. This will be used to
+         * determine if the controller is connected, and regardless of whether
+         * it self-reports to be wireless. Wireless controllers are usually
+         * Wavebird controllers. However, there is no guarantee for this.
+         */
+        int type = (slots[port][0] & 0xFF) >> 4;
+        return type > 0;
+    }
+
     public void poll() {
         if (!initialized) {
             this.initAdapter();
         }
 
         /*
-         * The USB device code makes use of asynchronous IO. As such, it must
-         * ask LibUsb to handle the events manually. If this is not done, no
-         * data will come in for transfers!
+         * The USB device code makes use of asynchronous IO. As such, it
+         * must ask LibUsb to handle the events manually. If this is not
+         * done, no data will come in for transfers!
          */
         int result = LibUsb.handleEventsTimeout(null, 0);
         if (result != LibUsb.SUCCESS) {
@@ -214,10 +184,10 @@ public class GcUsbDevice implements TransferCallback {
         }
 
         /*
-         * The requestedSlots boolean is used to prevent needless transfers to
-         * through the USB pipe (in hopes of increasing performance.) It is set
-         * to true when data has been requested. When slot data has arrived, the
-         * handler will set requestedSlots to false again.
+         * The requestedSlots boolean is used to prevent needless transfers
+         * to through the USB pipe (in hopes of increasing performance.) It
+         * is set to true when data has been requested. When slot data has
+         * arrived, the handler will set requestedSlots to false again.
          */
         if (!requestedSlots) {
             Transfer transfer = LibUsb.allocTransfer();
@@ -229,24 +199,24 @@ public class GcUsbDevice implements TransferCallback {
             if (result != LibUsb.SUCCESS) {
                 throw new LibUsbException(result);
             }
-
             this.requestedSlots = true;
         }
 
         this.updateRumble();
     }
 
-    public void shutdown() {
+    @Override
+    public void close() {
         if (!initialized) {
             throw new IllegalStateException("not initialized");
         }
 
-        /* zero out all slot data to prevent false positives */
+        /* zero out slot data to prevent false positives */
         for (byte[] slot : slots) {
             Arrays.fill(slot, (byte) 0x00);
         }
 
-        /* tell controllers to stop rumbling if possible */
+        /* attempt stop rumbling if possible */
         try {
             this.updateRumble();
         } catch (Exception e) {

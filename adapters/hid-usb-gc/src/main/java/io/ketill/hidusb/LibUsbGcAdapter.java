@@ -1,4 +1,4 @@
-package com.whirvis.ketill.gc;
+package io.ketill.hidusb;
 
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDeviceAdapter;
@@ -17,18 +17,18 @@ import static io.ketill.gc.GcController.*;
 /**
  * A USB GameCube adapter for a Nintendo GameCube controller.
  *
- * @see GcUsbDevice
+ * @see GcUsbHubDevice
  */
-public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
+public class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
 
     /* @formatter:off */
-    public static final GcStickMapping
-            MAPPING_LS = new GcStickMapping(0, 1, 34, 230, 30, 232),
-            MAPPING_RS = new GcStickMapping(2, 3, 48, 226, 30, 218);
+    public static final StickMapping
+            MAPPING_LS = new StickMapping(0, 1, 34, 230, 30, 232),
+            MAPPING_RS = new StickMapping(2, 3, 48, 226, 30, 218);
 
-    public static final GcTriggerMapping
-            MAPPING_LT = new GcTriggerMapping(4, 42, 186),
-            MAPPING_RT = new GcTriggerMapping(5, 42, 186);
+    public static final TriggerMapping
+            MAPPING_LT = new TriggerMapping(4, 42, 186),
+            MAPPING_RT = new TriggerMapping(5, 42, 186);
     /* @formatter: on */
 
     private static final int BUTTON_COUNT = 12;
@@ -36,7 +36,7 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
 
     private @Nullable GcController controller;
 
-    private final GcUsbDevice device;
+    private final GcUsbHubDevice device;
     private final int slot;
     private int type;
     private final boolean[] buttons;
@@ -47,7 +47,11 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
      * @param device the USB adapter this controller belongs to.
      * @param slot   the controller slot.
      */
-    protected GcUsbAdapter(@NotNull GcUsbDevice device, int slot) {
+    protected LibUsbGcAdapter(@NotNull GcController controller,
+                           @NotNull MappedFeatureRegistry registry,
+                           @NotNull GcUsbHubDevice device, int slot) {
+        super(controller, registry);
+
         this.device = device;
         this.slot = slot;
         this.buttons = new boolean[BUTTON_COUNT];
@@ -72,34 +76,32 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
         return (pos - min - mid) / mid;
     }
 
-    public boolean isPortConnected() {
+    @Override
+    public boolean isDeviceConnected() {
         return this.type > 0;
     }
 
-    @Override
-    public boolean isDeviceConnected(@NotNull GcController controller) {
-        return this.isPortConnected();
-    }
-
     @FeatureAdapter
-    public void updateButton(Button1b button, int gcButton) {
+    public void updateButton(@NotNull Button1b button, int gcButton) {
         button.pressed = this.buttons[gcButton];
     }
 
     @FeatureAdapter
-    public void updateStick(Vector3f stick, GcStickMapping mapping) {
+    public void updateStick(@NotNull Vector3f stick,
+                            @NotNull StickMapping mapping) {
         stick.x = this.getNormal(mapping.gcAxisX, mapping.xMin, mapping.xMax);
         stick.y = this.getNormal(mapping.gcAxisY, mapping.yMin, mapping.yMax);
     }
 
     @FeatureAdapter
-    public void updateTrigger(Trigger1f trigger, GcTriggerMapping mapping) {
+    public void updateTrigger(@NotNull Trigger1f trigger,
+                              @NotNull TriggerMapping mapping) {
         float pos = this.getNormal(mapping.gcAxis, mapping.min, mapping.max);
         trigger.force = (pos + 1.0F) / 2.0F;
     }
 
     @FeatureAdapter
-    public void updateRumble(Vibration1f motor) {
+    public void updateRumble(@NotNull Vibration1f motor) {
         this.rumbling = motor.force > 0;
     }
 
@@ -113,7 +115,7 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
          * the controller should still be rumbling. Checking if the controller
          * is connected is an easy to tell if it should stop rumbling.
          */
-        return this.isDeviceConnected(controller) && this.rumbling;
+        return this.isDeviceConnected() && this.rumbling;
     }
 
     private void mapButton(@NotNull MappedFeatureRegistry registry,
@@ -122,10 +124,7 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @Override
-    protected void initAdapter(@NotNull GcController controller,
-                               @NotNull MappedFeatureRegistry registry) {
-        this.controller = controller;
-
+    protected void initAdapter() {
         this.mapButton(registry, BUTTON_A, 0);
         this.mapButton(registry, BUTTON_B, 1);
         this.mapButton(registry, BUTTON_X, 2);
@@ -150,7 +149,7 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @Override
-    public void pollDevice(@NotNull GcController c) {
+    public void pollDevice() {
         byte[] data = device.getSlotData(slot);
         int offset = 0;
 
@@ -181,12 +180,6 @@ public class GcUsbAdapter extends IoDeviceAdapter<GcController> {
          */
         for (int i = 0; i < analogs.length; i++) {
             this.analogs[i] = data[offset++] & 0xFF;
-        }
-    }
-
-    public void poll() {
-        if(controller != null) {
-            this.pollDevice(controller);
         }
     }
 

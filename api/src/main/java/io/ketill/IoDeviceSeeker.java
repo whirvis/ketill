@@ -4,10 +4,10 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -41,7 +41,18 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
     private @Nullable Consumer<Throwable> errorCallback;
 
     public IoDeviceSeeker() {
-        this.devices = new ArrayList<>();
+        /*
+         * Its possible devices will be modified while being iterated
+         * over (e.g., a device is discovered or forgotten.) Using a
+         * traditional ArrayList, this would result in an exception.
+         *
+         * Modifying a CopyOnWriteArrayList has quite some overhead.
+         * However, this list in particular is modified only when a
+         * device is discovered or forgotten. This (usually) occurs
+         * only a few times throughout the lifetime of the program.
+         * As such, the overhead is negligible.
+         */
+        this.devices = new CopyOnWriteArrayList<>();
         this.discoveredDevices = Collections.unmodifiableList(devices);
     }
 
@@ -125,7 +136,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
      * every application update.
      *
      * @throws KetillException if an error occurs and no callback has
-     *                        been set via {@link #onError(Consumer)}.
+     *                         been set via {@link #onError(Consumer)}.
      */
     public final synchronized void seek() {
         try {

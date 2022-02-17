@@ -1,8 +1,6 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 
 dependencies {
     api project(':adapters:hid-usb-api')
     api project(':devices:psx')
-
-    implementation 'com.github.tjake:crc32ex:0.1.2'
 }

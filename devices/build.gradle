@@ -4,6 +4,4 @@ subprojects {
     dependencies {
         api project(':api')
     }
-
-    archivesBaseName = "${rootProject.name}-${this.name}-${project.name}"
 }

@@ -1,16 +1,19 @@
-package com.whirvis.ketill.dualshock;
+package io.ketill.hidusb;
 
-public class Ds4DpadMapping {
+import io.ketill.MappingType;
 
-    public final int byteOffset;
-    public final int[] patterns;
+@MappingType
+final class DpadMapping {
 
-    public Ds4DpadMapping(int byteOffset, int... patterns) {
+    final int byteOffset;
+    final int[] patterns;
+
+    DpadMapping(int byteOffset, int... patterns) {
         this.byteOffset = byteOffset;
         this.patterns = patterns;
     }
 
-    public boolean hasPattern(int bits) {
+    boolean hasPattern(int bits) {
         for (int pattern : patterns) {
             if (pattern == bits) {
                 return true;
