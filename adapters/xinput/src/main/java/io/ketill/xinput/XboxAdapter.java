@@ -5,14 +5,15 @@ import com.github.strikerx3.jxinput.XInputButtons;
 import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
+import io.ketill.FeatureAdapter;
+import io.ketill.IoDeviceAdapter;
+import io.ketill.KetillException;
+import io.ketill.MappedFeatureRegistry;
+import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1b;
-import io.ketill.IoDeviceAdapter;
 import io.ketill.controller.DeviceButton;
-import io.ketill.FeatureAdapter;
-import io.ketill.KetillException;
-import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.Trigger1f;
 import io.ketill.controller.Vibration1f;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 import static io.ketill.xbox.XboxController.*;
 
@@ -36,11 +38,18 @@ public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
     private int rumbleCoarse;
     private int rumbleFine;
 
+    /**
+     * @param controller the controller which owns this adapter.
+     * @param registry   the controller's mapped feature registry.
+     * @param xDevice    the X-input device.
+     * @throws NullPointerException if {@code controller}, {@code registry},
+     *                              or {@code xDevice} are {@code null}.
+     */
     public XboxAdapter(@NotNull XboxController controller,
                        @NotNull MappedFeatureRegistry registry,
                        @NotNull XInputDevice xDevice) {
         super(controller, registry);
-        this.xDevice = xDevice;
+        this.xDevice = Objects.requireNonNull(xDevice, "xDevice");
     }
 
     private boolean isPressed(@Nullable Field field) {
@@ -70,12 +79,14 @@ public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
         }
     }
 
+    @MappingMethod
     private void mapXButton(@NotNull DeviceButton button,
                             @NotNull String buttonFieldName) {
         Field field = this.getButtonField(buttonFieldName);
         registry.mapFeature(button, field, this::updateButton);
     }
 
+    @MappingMethod
     private void mapXStick(@NotNull AnalogStick stick,
                            @NotNull XInputAxis xAxis,
                            @NotNull XInputAxis yAxis,
@@ -85,11 +96,13 @@ public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
         registry.mapFeature(stick, m, this::updateStick);
     }
 
+    @MappingMethod
     private void mapXTrigger(@NotNull AnalogTrigger trigger,
                              @NotNull XInputAxis axis) {
         registry.mapFeature(trigger, axis, this::updateTrigger);
     }
 
+    @MappingMethod
     private void mapXMotor(@NotNull RumbleMotor motor) {
         registry.mapFeature(motor, this::updateMotor);
     }
@@ -171,13 +184,11 @@ public final class XboxAdapter extends IoDeviceAdapter<XboxController> {
         }
     }
 
-
     @Override
     protected void pollDevice() {
         synchronized (xDevice) {
             xDevice.poll();
         }
-
         XInputComponents comps = xDevice.getComponents();
         this.axes = comps.getAxes();
         this.buttons = comps.getButtons();
