@@ -41,7 +41,7 @@ public final class LibUsbPs3Seeker extends LibUsbDeviceSeeker<Ps3Controller> {
     @Override
     protected void onAttach(@NotNull DeviceHandle handle) {
         Ps3Controller controller = new Ps3Controller((c, r) ->
-                new LibUsbPs3Adapter(c, r, handle));
+                new LibUsbPs3Adapter(c, r, usbContext, handle));
         sessions.put(handle, controller);
         this.discoverDevice(controller);
     }

@@ -11,6 +11,8 @@ import io.ketill.controller.Trigger1f;
 import io.ketill.controller.Vibration1f;
 import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.usb4java.Context;
 import org.usb4java.DeviceHandle;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
@@ -62,6 +64,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         return wrapped;
     }
 
+    private final Context usbContext;
     private final DeviceHandle usbHandle;
     private final ByteBuffer hidReport;
     private ByteBuffer input;
@@ -75,14 +78,17 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
     /**
      * @param controller the controller which owns this adapter.
      * @param registry   the controller's mapped feature registry.
+     * @param usbContext the LibUSB context, may be {@code null}.
      * @param usbHandle  the USB handle.
      * @throws NullPointerException if {@code controller}, {@code registry},
      *                              or {@code usbHandle} are {@code} null.
      */
     public LibUsbPs3Adapter(@NotNull Ps3Controller controller,
                             @NotNull MappedFeatureRegistry registry,
+                            @Nullable Context usbContext,
                             @NotNull DeviceHandle usbHandle) {
         super(controller, registry);
+        this.usbContext = usbContext;
         this.usbHandle = Objects.requireNonNull(usbHandle, "usbHandle");
         this.hidReport = wrapDirectBuffer(HID_REPORT);
         this.input = ByteBuffer.allocateDirect(INPUT_SIZE);
@@ -211,11 +217,11 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         }
 
         /*
-         * The USB device code makes use of asynchronous IO. As
-         * such, it must ask LibUsb to handle the events manually.
-         * If this is not done, no data transfers will come in!
+         * This adapter utilizes asynchronous IO. As a result, it
+         * must ask LibUsb to handle the events manually. If this
+         * is not done, no data will come in from the transfers!
          */
-        int result = LibUsb.handleEventsTimeout(null, 0);
+        int result = LibUsb.handleEventsTimeout(usbContext, 0);
         if (result != LibUsb.SUCCESS) {
             throw new LibUsbException(result);
         }
