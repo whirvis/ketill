@@ -40,7 +40,8 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
 
     public static final int DEFAULT_SCAN_INTERVAL = 1000;
 
-    private final Context usbContext;
+    protected final @NotNull Context usbContext;
+
     private final List<DeviceInfo> seeking;
     private final List<Device> blacklisted;
     private final Map<Device, DeviceHandle> handles;
@@ -267,22 +268,24 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
     }
 
     /**
-     * Called when a USB device has been attached.
+     * Called when a USB device being sought after has been attached.
      * <p>
      * <b>Note:</b> Attached devices are <i>not</i> discovered.
      * They must be discovered using {@link #discoverDevice(IoDevice)}.
      *
      * @param handle the device handle.
+     * @see #seek(int, int)
      */
     protected abstract void onAttach(@NotNull DeviceHandle handle);
 
     /**
-     * Called when a USB device has been detached.
+     * Called when a previously attached USB device has been detached.
      * <p>
      * <b>Note:</b> Detached devices are <i>not</i> forgotten.
      * They must be forgotten using {@link #forgetDevice(IoDevice)}.
      *
      * @param handle the device handle.
+     * @see #blacklist(DeviceHandle)
      */
     protected abstract void onDetach(@NotNull DeviceHandle handle);
 

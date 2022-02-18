@@ -1,20 +1,23 @@
 package io.ketill.hidusb;
 
-public class StickMapping {
+import io.ketill.MappingType;
+import org.jetbrains.annotations.NotNull;
 
-    public final int gcAxisX;
-    public final int gcAxisY;
-    public final int xMin, xMax;
-    public final int yMin, yMax;
+@MappingType
+final class StickMapping {
 
-    public StickMapping(int gcAxisX, int gcAxisY, int xMin, int xMax,
-                        int yMin, int yMax) {
-        this.gcAxisX = gcAxisX;
-        this.gcAxisY = gcAxisY;
-        this.xMin = xMin;
-        this.xMax = xMax;
-        this.yMin = yMin;
-        this.yMax = yMax;
+    final AxisMapping xAxis;
+    final AxisMapping yAxis;
+
+    StickMapping(@NotNull AxisMapping xAxis, @NotNull AxisMapping yAxis) {
+        this.xAxis = xAxis;
+        this.yAxis = yAxis;
+    }
+
+    StickMapping(int gcAxisX, int gcAxisY, int xMin, int xMax, int yMin,
+                 int yMax) {
+        this(new AxisMapping(gcAxisX, xMin, xMax), new AxisMapping(gcAxisY,
+                yMin, yMax));
     }
 
 }

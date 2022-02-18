@@ -3,184 +3,130 @@ package io.ketill.hidusb;
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDeviceAdapter;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.MappingMethod;
+import io.ketill.controller.AnalogStick;
+import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1b;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.Trigger1f;
 import io.ketill.controller.Vibration1f;
 import io.ketill.gc.GcController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import static io.ketill.gc.GcController.*;
 
-/**
- * A USB GameCube adapter for a Nintendo GameCube controller.
- *
- * @see GcUsbHubDevice
- */
-public class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
+public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
 
     /* @formatter:off */
-    public static final StickMapping
+    private static final StickMapping
             MAPPING_LS = new StickMapping(0, 1, 34, 230, 30, 232),
             MAPPING_RS = new StickMapping(2, 3, 48, 226, 30, 218);
 
-    public static final TriggerMapping
-            MAPPING_LT = new TriggerMapping(4, 42, 186),
-            MAPPING_RT = new TriggerMapping(5, 42, 186);
-    /* @formatter: on */
+    private static final AxisMapping
+            MAPPING_LT = new AxisMapping(4, 42, 186),
+            MAPPING_RT = new AxisMapping(5, 42, 186);
+    /* @formatter:on */
 
-    private static final int BUTTON_COUNT = 12;
-    private static final int ANALOG_COUNT = 6;
+    private final GcWiiUSlotState slot;
 
-    private @Nullable GcController controller;
-
-    private final GcUsbHubDevice device;
-    private final int slot;
-    private int type;
-    private final boolean[] buttons;
-    private final int[] analogs;
-    private boolean rumbling;
-
-    /**
-     * @param device the USB adapter this controller belongs to.
-     * @param slot   the controller slot.
-     */
-    protected LibUsbGcAdapter(@NotNull GcController controller,
-                           @NotNull MappedFeatureRegistry registry,
-                           @NotNull GcUsbHubDevice device, int slot) {
+    LibUsbGcAdapter(@NotNull GcController controller,
+                    @NotNull MappedFeatureRegistry registry,
+                    @NotNull GcWiiUSlotState slot) {
         super(controller, registry);
-
-        this.device = device;
         this.slot = slot;
-        this.buttons = new boolean[BUTTON_COUNT];
-        this.analogs = new int[ANALOG_COUNT];
     }
 
-    private float getNormal(int gcAxis, int min, int max) {
-        int pos = analogs[gcAxis];
+    private float getNormalizedAxis(@NotNull AxisMapping mapping) {
+        int pos = slot.getAxis(mapping.gcAxis);
 
         /*
-         * It's not uncommon for an axis to go one or two points outside
-         * usual minimum or maximum values. Clamping them to will prevent
-         * return values outside the -1.0F to 1.0F range.
+         * It's not uncommon for an axis to go one or two points
+         * outside usual minimum or maximum values. Clamping them
+         * will prevent return values outside -1.0F to 1.0F.
          */
-        if (pos < min) {
-            pos = min;
-        } else if (pos > max) {
-            pos = max;
+        if (pos < mapping.min) {
+            pos = mapping.min;
+        } else if (pos > mapping.max) {
+            pos = mapping.max;
         }
 
-        float mid = (max - min) / 2.0F;
-        return (pos - min - mid) / mid;
+        float mid = (mapping.max - mapping.min) / 2.0F;
+        return (pos - mapping.min - mid) / mid;
     }
 
-    @Override
-    public boolean isDeviceConnected() {
-        return this.type > 0;
-    }
-
-    @FeatureAdapter
-    public void updateButton(@NotNull Button1b button, int gcButton) {
-        button.pressed = this.buttons[gcButton];
-    }
-
-    @FeatureAdapter
-    public void updateStick(@NotNull Vector3f stick,
-                            @NotNull StickMapping mapping) {
-        stick.x = this.getNormal(mapping.gcAxisX, mapping.xMin, mapping.xMax);
-        stick.y = this.getNormal(mapping.gcAxisY, mapping.yMin, mapping.yMax);
-    }
-
-    @FeatureAdapter
-    public void updateTrigger(@NotNull Trigger1f trigger,
-                              @NotNull TriggerMapping mapping) {
-        float pos = this.getNormal(mapping.gcAxis, mapping.min, mapping.max);
-        trigger.force = (pos + 1.0F) / 2.0F;
-    }
-
-    @FeatureAdapter
-    public void updateRumble(@NotNull Vibration1f motor) {
-        this.rumbling = motor.force > 0;
-    }
-
-    public boolean isRumbling() {
-        if(controller == null) {
-            return false;
-        }
-
-        /*
-         * It is possible that the program disconnects from the adapter while
-         * the controller should still be rumbling. Checking if the controller
-         * is connected is an easy to tell if it should stop rumbling.
-         */
-        return this.isDeviceConnected() && this.rumbling;
-    }
-
-    private void mapButton(@NotNull MappedFeatureRegistry registry,
-                           @NotNull DeviceButton button, int gcButton) {
+    @MappingMethod
+    private void mapButton(@NotNull DeviceButton button, int gcButton) {
         registry.mapFeature(button, gcButton, this::updateButton);
+    }
+
+    @MappingMethod
+    private void mapStick(@NotNull AnalogStick stick,
+                          @NotNull StickMapping mapping) {
+        registry.mapFeature(stick, mapping, this::updateStick);
+    }
+
+    @MappingMethod
+    private void mapTrigger(@NotNull AnalogTrigger trigger,
+                            @NotNull AxisMapping mapping) {
+        registry.mapFeature(trigger, mapping, this::updateTrigger);
     }
 
     @Override
     protected void initAdapter() {
-        this.mapButton(registry, BUTTON_A, 0);
-        this.mapButton(registry, BUTTON_B, 1);
-        this.mapButton(registry, BUTTON_X, 2);
-        this.mapButton(registry, BUTTON_Y, 3);
-        this.mapButton(registry, BUTTON_LEFT, 4);
-        this.mapButton(registry, BUTTON_RIGHT, 5);
-        this.mapButton(registry, BUTTON_DOWN, 6);
-        this.mapButton(registry, BUTTON_UP, 7);
-        this.mapButton(registry, BUTTON_START, 8);
-        this.mapButton(registry, BUTTON_Z, 9);
-        this.mapButton(registry, BUTTON_R, 10);
-        this.mapButton(registry, BUTTON_L, 11);
+        this.mapButton(BUTTON_A, 0);
+        this.mapButton(BUTTON_B, 1);
+        this.mapButton(BUTTON_X, 2);
+        this.mapButton(BUTTON_Y, 3);
+        this.mapButton(BUTTON_LEFT, 4);
+        this.mapButton(BUTTON_RIGHT, 5);
+        this.mapButton(BUTTON_DOWN, 6);
+        this.mapButton(BUTTON_UP, 7);
+        this.mapButton(BUTTON_START, 8);
+        this.mapButton(BUTTON_Z, 9);
+        this.mapButton(BUTTON_R, 10);
+        this.mapButton(BUTTON_L, 11);
 
-        registry.mapFeature(STICK_LS, MAPPING_LS, this::updateStick);
-        registry.mapFeature(STICK_RS, MAPPING_RS, this::updateStick);
+        this.mapStick(STICK_LS, MAPPING_LS);
+        this.mapStick(STICK_RS, MAPPING_RS);
 
-        registry.mapFeature(TRIGGER_LT, MAPPING_LT, this::updateTrigger);
-        registry.mapFeature(TRIGGER_RT, MAPPING_RT, this::updateTrigger);
+        this.mapTrigger(TRIGGER_LT, MAPPING_LT);
+        this.mapTrigger(TRIGGER_RT, MAPPING_RT);
 
-        registry.mapFeature(MOTOR_RUMBLE, this::updateRumble);
+        registry.mapFeature(MOTOR_RUMBLE, this::updateMotor);
+    }
 
+    @FeatureAdapter
+    private void updateButton(@NotNull Button1b button, int gcButton) {
+        button.pressed = slot.isPressed(gcButton);
+    }
+
+    @FeatureAdapter
+    private void updateStick(@NotNull Vector3f stick,
+                             @NotNull StickMapping mapping) {
+        stick.x = this.getNormalizedAxis(mapping.xAxis);
+        stick.y = this.getNormalizedAxis(mapping.yAxis);
+    }
+
+    @FeatureAdapter
+    private void updateTrigger(@NotNull Trigger1f trigger,
+                               @NotNull AxisMapping mapping) {
+        trigger.force = (this.getNormalizedAxis(mapping) + 1.0F) / 2.0F;
+    }
+
+    @FeatureAdapter
+    private void updateMotor(@NotNull Vibration1f vibration) {
+        slot.setRumbling(vibration.force > 0.0F);
     }
 
     @Override
-    public void pollDevice() {
-        byte[] data = device.getSlotData(slot);
-        int offset = 0;
+    protected void pollDevice() {
+        slot.update();
+    }
 
-        /*
-         * The first byte is the current controller type. This will be used to
-         * determine if the controller is connected, and regardless of whether
-         * it self-reports to be wireless. Wireless controllers are usually
-         * Wavebird controllers. However, there is no guarantee for this.
-         */
-        this.type = (data[offset++] & 0xFF) >> 4;
-
-        /*
-         * The next two bytes of the data payload are the button states. Each
-         * button state is stored in a single bit for the next two bytes. As
-         * such, bit shifting is required to determine if a button is pressed.
-         */
-        short buttonStates = 0;
-        buttonStates |= (data[offset++] & 0xFF);
-        buttonStates |= (data[offset++] & 0xFF) << 8;
-        for (int i = 0; i < buttons.length; i++) {
-            this.buttons[i] = (buttonStates & (1 << i)) != 0;
-        }
-
-        /*
-         * Each analog axis value is stored in a single byte. The amount of
-         * bytes that are read here is determined by the amount of axes there
-         * are on the controller. For the GameCube controller, it is six.
-         */
-        for (int i = 0; i < analogs.length; i++) {
-            this.analogs[i] = data[offset++] & 0xFF;
-        }
+    @Override
+    protected boolean isDeviceConnected() {
+        return slot.isConnected();
     }
 
 }
