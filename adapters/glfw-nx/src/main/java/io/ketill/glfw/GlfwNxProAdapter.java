@@ -1,6 +1,11 @@
 package io.ketill.glfw;
 
+import io.ketill.FeatureAdapter;
+import io.ketill.FeaturePresent;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.MappingMethod;
+import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.Trigger1f;
 import io.ketill.nx.NxProController;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -11,8 +16,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
 
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
-            LS_MAPPING = new GlfwStickMapping(0, 1, 10),
-            RS_MAPPING = new GlfwStickMapping(2, 3, 11);
+            MAPPING_LS = new GlfwStickMapping(0, 1, 10),
+            MAPPING_RS = new GlfwStickMapping(2, 3, 11);
     /* @formatter:on */
 
     protected static float normalize(float pos, float min, float max) {
@@ -31,6 +36,11 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
                             @NotNull MappedFeatureRegistry registry,
                             long ptr_glfwWindow, int glfwJoystick) {
         super(controller, registry, ptr_glfwWindow, glfwJoystick);
+    }
+
+    @MappingMethod
+    private void mapProTrigger(@NotNull AnalogTrigger trigger, int glfwButton) {
+        registry.mapFeature(trigger, glfwButton, this::updateProTrigger);
     }
 
     @Override
@@ -56,22 +66,34 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapButton(BUTTON_DOWN, 18);
         this.mapButton(BUTTON_LEFT, 19);
 
-        this.mapStick(STICK_LS, LS_MAPPING);
-        this.mapStick(STICK_RS, RS_MAPPING);
+        this.mapStick(STICK_LS, MAPPING_LS);
+        this.mapStick(STICK_RS, MAPPING_RS);
+
+        this.mapProTrigger(TRIGGER_LT, 4);
+        this.mapProTrigger(TRIGGER_RT, 5);
     }
 
     @Override
     protected void updateStick(@NotNull Vector3f stick,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(stick, mapping);
-        if (mapping == LS_MAPPING) {
+        if (mapping == MAPPING_LS) {
             stick.x = normalize(stick.x, -0.70F, 0.70F);
             stick.y = normalize(stick.y, -0.76F, 0.72F);
             stick.y *= -1.0F;
-        } else if (mapping == RS_MAPPING) {
+        } else if (mapping == MAPPING_RS) {
             stick.x = normalize(stick.x, -0.72F, 0.72F);
             stick.y = normalize(stick.y, -0.68F, 0.76F);
             stick.y *= -1.0F;
+        }
+    }
+
+    @FeatureAdapter
+    private void updateProTrigger(@NotNull Trigger1f trigger, int glfwButton) {
+        if (this.isPressed(glfwButton)) {
+            trigger.force = 1.0F;
+        } else {
+            trigger.force = 0.0F;
         }
     }
 
