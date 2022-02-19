@@ -311,14 +311,27 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * For this method to return up-to-date values, this device
-     * must first be updated via {@link #poll()} beforehand.
+     * <b>Note:</b> This method returns up-to-date values without the need to
+     * call {@link #poll()}.
      *
      * @return {@code true} if this device is currently connected,
      * {@code false} otherwise.
      */
     public boolean isConnected() {
-        return this.connected;
+        /*
+         * Before, this method returned the value of the "connected"
+         * field. This made poll() required for an up-to-date value.
+         * This in turn resulted a bug in device seekers which used
+         * isConnected() to check if a device should be forgotten.
+         *
+         * If a call to poll() wasn't made after a device was first
+         * discovered, before the next call to seek() was made, the
+         * seeker would immediately forget the device. Afterwards,
+         * the device would immediately be rediscovered (as it was
+         * never disconnected in the first place.) This would then
+         * occur repeatedly for each two calls to seek().
+         */
+        return adapter.isDeviceConnected();
     }
 
     /**
