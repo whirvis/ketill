@@ -32,11 +32,8 @@ public class OperatingSystem {
             WINDOWS = register(false,"windows", "Windows"),
             OSX = register(true, "osx", "Mac OSX"), 
             LINUX = register(true, "linux", "Linux"), 
-            SOLARIS = register(true, "solaris", "Solaris");
-
-    public static final @NotNull OperatingSystem
-            ANDROID = register(true, "android", "Android"), 
-            IOS = register(true, "ios", "IOS");
+            SOLARIS = register(true, "solaris", "Solaris"),
+            ANDROID = register(true, "android", "Android");
 
     private static @NotNull Supplier<String>
             nameSupplier = () -> System.getProperty("os.name");
