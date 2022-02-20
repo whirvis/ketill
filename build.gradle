@@ -28,7 +28,7 @@ subprojects {
     dependencies {
         compileOnly 'org.jetbrains:annotations:22.0.0'
 
-        implementation 'org.joml:joml:1.10.2'
+        api 'org.joml:joml:1.10.2'
 
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
