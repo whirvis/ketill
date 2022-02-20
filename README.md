@@ -39,7 +39,7 @@ By design, the definition of an `IoDevice` is kept separate from the code which 
   2. Said definitions rarely require logic, just a statement of features.
   3. Device definitions requires little or no unit testing when properly written.
   4. The same device can be implemented with different adapters, enabling features as desired.
-  5. Cross platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XboxAdapter` on Windows.)
+  5. Cross platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XInputXboxAdapter` on Windows.)
 
 Ketill also provides a litany of built-in definitions and implementations. The goal of these built-in devices and adapters is to reduce the time
 required to get device I/O up and running. They also serve as examples for those who wish to create their own devices and/or adapters.
