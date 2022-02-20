@@ -71,6 +71,9 @@ git clone https://github.com/whirvis/ketill.git
 cd ketill
 chmod +x ./gradlew # unix only
 ./gradlew build
+
+# install to local Maven repository if desired
+./gradlew publishToMavenLocal
 ```
 
 # ⚗️ Examples

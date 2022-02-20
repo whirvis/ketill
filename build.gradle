@@ -1,5 +1,6 @@
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
 
     group 'io.ketill'
     version '1.0.0'
