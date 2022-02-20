@@ -6,8 +6,7 @@ class MockIoDeviceAdapter extends IoDeviceAdapter<MockIoDevice> {
     private boolean initialized;
     private boolean connected;
 
-    MockIoDeviceAdapter(MockIoDevice device,
-                        MappedFeatureRegistry registry) {
+    MockIoDeviceAdapter(MockIoDevice device, MappedFeatureRegistry registry) {
         super(device, registry);
     }
 
@@ -17,6 +16,9 @@ class MockIoDeviceAdapter extends IoDeviceAdapter<MockIoDevice> {
 
     @Override
     protected void initAdapter() {
+        registry.mapFeature(MockIoDevice.FEATURE, (state, feature) -> {
+            /* nothing to update */
+        });
         this.initialized = true;
     }
 

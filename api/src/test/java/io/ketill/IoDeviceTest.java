@@ -22,21 +22,21 @@ class IoDeviceTest {
          * input information. As such, null IDs, null adapter suppliers, and
          * null values given by the adapter supplier are illegal.
          */
-        assertThrows(NullPointerException.class,
-                () -> new MockIoDevice(null, MockIoDeviceAdapter::new));
-        assertThrows(NullPointerException.class, () -> new MockIoDevice(
-                "mock", null));
-        assertThrows(NullPointerException.class, () -> new MockIoDevice(
-                "mock", (d, r) -> null));
+        assertThrows(NullPointerException.class, () -> new MockIoDevice(null,
+                MockIoDeviceAdapter::new));
+        assertThrows(NullPointerException.class, () -> new MockIoDevice("mock"
+                , null));
+        assertThrows(NullPointerException.class, () -> new MockIoDevice("mock"
+                , (d, r) -> null));
 
         /*
          * It makes no sense for the input device's ID to be blank.
          * Furthermore, any whitespace in an ID is illegal.
          */
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockIoDevice("", MockIoDeviceAdapter::new));
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockIoDevice("\t", MockIoDeviceAdapter::new));
+        assertThrows(IllegalArgumentException.class, () -> new MockIoDevice(
+                "", MockIoDeviceAdapter::new));
+        assertThrows(IllegalArgumentException.class, () -> new MockIoDevice(
+                "\t", MockIoDeviceAdapter::new));
 
         AtomicReference<MockIoDeviceAdapter> adapter = new AtomicReference<>();
         AdapterSupplier<MockIoDevice> adapterSupplier = (d, r) -> {
@@ -50,8 +50,8 @@ class IoDeviceTest {
          * This is to allow special extending classes (like Controller in
          * the "devices" module) to finish some extra setup.
          */
-        MockIoDevice device = new MockIoDevice("mock", adapterSupplier,
-                false, false);
+        MockIoDevice device = new MockIoDevice("mock", adapterSupplier, false
+                , false);
         assertFalse(device.isRegistered(MockIoDevice.FEATURE));
         assertFalse(adapter.get().isInitialized());
     }
@@ -112,6 +112,14 @@ class IoDeviceTest {
                 MockIoDevice.WithPrivateFeature::new);
         assertThrows(KetillException.class,
                 MockIoDevice.WithUnassignableFeature::new);
+    }
+
+    @Test
+    void isFeatureSupported() {
+        assertThrows(NullPointerException.class,
+                () -> device.isFeatureSupported(null));
+        assertTrue(device.isFeatureSupported(MockIoDevice.FEATURE));
+        assertFalse(device.isFeatureSupported(new MockIoFeature()));
     }
 
     @Test
