@@ -1,6 +1,8 @@
-package io.ketill.glfw;
+package io.ketill.glfw.psx;
 
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.glfw.GlfwJoystickAdapter;
+import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.psx.PsxController;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;

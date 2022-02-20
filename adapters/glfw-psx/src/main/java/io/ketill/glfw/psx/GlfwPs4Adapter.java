@@ -1,4 +1,4 @@
-package io.ketill.glfw;
+package io.ketill.glfw.psx;
 
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.Trigger1f;
