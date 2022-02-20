@@ -1,7 +1,8 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.gc;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.gc.GcController;
+import io.ketill.hidusb.LibUsbDeviceSeeker;
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.DeviceHandle;
 

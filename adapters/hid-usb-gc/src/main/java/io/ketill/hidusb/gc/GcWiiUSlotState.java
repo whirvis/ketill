@@ -1,4 +1,4 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.gc;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.gc.GcController;
