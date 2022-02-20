@@ -214,7 +214,7 @@ public class GlfwJoystickSeeker<I extends IoDevice> extends GlfwDeviceSeeker<I> 
 
     @Override
     @MustBeInvokedByOverriders
-    public void seekImpl() {
+    protected void seekImpl() {
         for (int i = 0; i < joysticks.length; i++) {
             I joystick = this.joysticks[i];
             if (joystick != null) {
