@@ -57,8 +57,7 @@ class XInputXboxSeekerTest {
              * functionality of its discovery to be tested.
              */
             XInputDevice xDevice = mock(XInputDevice.class);
-            OngoingStubbing<Boolean> whenIsConnected =
-                    when(xDevice.isConnected()).thenReturn(true);
+            when(xDevice.isConnected()).thenReturn(true);
             x.when(() -> XInputDevice.getDeviceFor(0)).thenReturn(xDevice);
 
             AtomicBoolean discovered = new AtomicBoolean();
@@ -75,7 +74,7 @@ class XInputXboxSeekerTest {
             int disconnectedCount = XInputConstants.MAX_PLAYERS - 1;
             verify(xDisconnected, times(disconnectedCount)).poll();
 
-            whenIsConnected.thenReturn(false);
+            when(xDevice.isConnected()).thenReturn(false);
             AtomicBoolean forgotten = new AtomicBoolean();
             seeker.onForgetDevice((d) -> forgotten.set(true));
             seeker.seek();
