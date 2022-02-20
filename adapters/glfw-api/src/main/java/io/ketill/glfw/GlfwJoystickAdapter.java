@@ -19,8 +19,7 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class GlfwJoystickAdapter<I extends IoDevice>
-        extends GlfwDeviceAdapter<I> {
+public abstract class GlfwJoystickAdapter<I extends IoDevice> extends GlfwDeviceAdapter<I> {
 
     protected final int glfwJoystick;
 
@@ -100,6 +99,14 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
     }
 
     /**
+     * @return the amount of GLFW buttons present on this joystick,
+     * {@code -1} if the adapter has not yet been polled.
+     */
+    protected final int getButtonCount() {
+        return buttons != null ? buttons.limit() : -1;
+    }
+
+    /**
      * @param glfwButton the ID of the GLFW button to check.
      * @return {@code true} if {@code glfwButton} is currently pressed,
      * {@code false} otherwise (or if it does not exist.)
@@ -112,6 +119,14 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
             return false;
         }
         return buttons.get(glfwButton) != 0;
+    }
+
+    /**
+     * @return the amount of GLFW axes present on this joystick,
+     * {@code -1} if the adapter has not yet been polled.
+     */
+    protected final int getAxisCount() {
+        return axes != null ? axes.limit() : -1;
     }
 
     /**
