@@ -272,6 +272,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     @MustBeInvokedByOverriders
     public void close() {
         super.close();
+        if(this.isClosed()) {
+            return;
+        }
 
         seeking.clear();
         blacklisted.clear();
