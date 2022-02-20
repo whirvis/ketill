@@ -1,7 +1,8 @@
-package io.ketill.glfw;
+package io.ketill.glfw.pc;
 
 import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.glfw.GlfwDeviceAdapter;
 import io.ketill.pc.Click1b;
 import io.ketill.pc.Cursor2f;
 import io.ketill.pc.Mouse;
