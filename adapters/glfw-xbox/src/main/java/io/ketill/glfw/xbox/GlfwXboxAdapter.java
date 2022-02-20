@@ -1,7 +1,9 @@
-package io.ketill.glfw;
+package io.ketill.glfw.xbox;
 
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.Trigger1f;
+import io.ketill.glfw.GlfwJoystickAdapter;
+import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.xbox.XboxController;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
