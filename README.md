@@ -52,10 +52,6 @@ The following is a list of modules included with Ketill:
 | `devices`  | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
 | `adapters` | Provided implementations using GLFW, X-input, etc.                 |
 
-# 🔗 Dependencies
-
-This section is a work in progress.
-
 # 🛠️ Building
 
 If you don't want to build Ketill yourself, pre-built JARs can be found on [Jenkins](https://jenkins.ketill.io:8080). However, in certain
