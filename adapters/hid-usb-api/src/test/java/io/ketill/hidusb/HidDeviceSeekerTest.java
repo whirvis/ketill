@@ -17,11 +17,6 @@ import static org.mockito.Mockito.*;
 
 class HidDeviceSeekerTest {
 
-    private HidDevice hidDevice;
-    private HidServicesEvent hidEvent;
-    private HidServices hidServices;
-    private MockHidDeviceSeeker seeker;
-
     @BeforeAll
     static void __init__() {
         /*
@@ -33,6 +28,11 @@ class HidDeviceSeekerTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new MockHidDeviceSeeker(0));
     }
+
+    private HidDevice hidDevice;
+    private HidServicesEvent hidEvent;
+    private HidServices hidServices;
+    private MockHidDeviceSeeker seeker;
 
     @BeforeEach
     void setup() {
