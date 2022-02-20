@@ -50,8 +50,8 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
         this.allowBt = allowBt;
         this.sessions = new HashMap<>();
 
-        this.seek(VENDOR_SONY, PRODUCT_DS4);
-        this.seek(VENDOR_SONY, PRODUCT_DS4_REV);
+        this.seekProduct(VENDOR_SONY, PRODUCT_DS4);
+        this.seekProduct(VENDOR_SONY, PRODUCT_DS4_REV);
     }
 
     /**
@@ -167,7 +167,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
     }
 
     @Override
-    protected void onConnect(@NotNull HidDevice device) {
+    protected void onDeviceConnect(@NotNull HidDevice device) {
         HidPs4Type type = HidPs4Type.fromPath(device.getPath());
 
         AdapterSupplier<Ps4Controller> adapterSupplier = null;
@@ -186,7 +186,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
     }
 
     @Override
-    protected void onDisconnect(@NotNull HidDevice device) {
+    protected void onDeviceDisconnect(@NotNull HidDevice device) {
         HidPs4Session session = sessions.remove(device);
         if (session != null) {
             this.forgetDevice(session.controller);

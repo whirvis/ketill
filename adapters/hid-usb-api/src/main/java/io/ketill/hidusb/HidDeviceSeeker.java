@@ -24,7 +24,7 @@ import java.util.Objects;
  * {@link LibUsbDeviceSeeker} should be used for those.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #seek(int, int)}. If this is
+ * told which devices to seek out via {@link #seekProduct(int, int)}. If this is
  * neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
@@ -87,7 +87,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      * @return {@code true} if this device seeker is seeking out HID devices
      * with {@code vendorId} and {@code productId}, {@code false} otherwise.
      */
-    public boolean isSeeking(int vendorId, int productId) {
+    public boolean isSeekingProduct(int vendorId, int productId) {
         for (DeviceInfo info : seeking) {
             if (info.vendorId == vendorId && info.productId == productId) {
                 return true;
@@ -96,8 +96,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         return false;
     }
 
-    private boolean isSeeking(@NotNull HidDevice device) {
-        return this.isSeeking(device.getVendorId(), device.getProductId());
+    private boolean isSeekingProduct(@NotNull HidDevice device) {
+        return this.isSeekingProduct(device.getVendorId(),
+                device.getProductId());
     }
 
     private boolean isProduct(@NotNull HidDevice device, int vendorId,
@@ -109,16 +110,16 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     /**
      * Indicates to the seeker it should seek out HID devices with the
      * specified vendor and product ID. When such a device is located,
-     * the {@link #onConnect(HidDevice)} callback will be executed.
+     * the {@link #onDeviceConnect(HidDevice)} callback will be executed.
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
      * @throws IllegalStateException if this HID device seeker has been
      *                               closed via {@link #close()}.
      */
-    protected void seek(int vendorId, int productId) {
+    protected void seekProduct(int vendorId, int productId) {
         this.requireOpen();
-        if (!this.isSeeking(vendorId, productId)) {
+        if (!this.isSeekingProduct(vendorId, productId)) {
             seeking.add(new DeviceInfo(vendorId, productId));
         }
     }
@@ -132,11 +133,11 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      * @param productId the product ID.
      * @throws IllegalStateException if this HID device seeker has been
      *                               closed via {@link #close()}.
-     * @see #onDisconnect(HidDevice)
+     * @see #onDeviceDisconnect(HidDevice)
      */
-    protected void drop(int vendorId, int productId) {
+    protected void dropProduct(int vendorId, int productId) {
         this.requireOpen();
-        if (!this.isSeeking(vendorId, productId)) {
+        if (!this.isSeekingProduct(vendorId, productId)) {
             return;
         }
 
@@ -162,7 +163,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      * @throws IllegalStateException if this HID device seeker has been
      *                               closed via {@link #close()}.
      */
-    protected void blacklist(@NotNull HidDevice device) {
+    protected void blacklistDevice(@NotNull HidDevice device) {
         Objects.requireNonNull(device, "device");
         this.requireOpen();
         if (!blacklisted.contains(device)) {
@@ -174,12 +175,12 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     private void connect(@NotNull HidDevice device) {
         device.setNonBlocking(true);
         devices.add(device);
-        this.onConnect(device);
+        this.onDeviceConnect(device);
     }
 
     private void disconnect(@NotNull HidDevice device) {
         devices.remove(device);
-        this.onDisconnect(device);
+        this.onDeviceDisconnect(device);
         device.close();
     }
 
@@ -194,7 +195,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
                 return; /* already connected or blacklisted */
             }
 
-            if (this.isSeeking(device) && device.open()) {
+            if (this.isSeekingProduct(device) && device.open()) {
                 this.connect(device);
             }
         } catch (Exception e) {
@@ -224,7 +225,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
             return;
         }
         try {
-            this.blacklist(event.getHidDevice());
+            this.blacklistDevice(event.getHidDevice());
         } catch (Exception e) {
             this.hidException = e;
         }
@@ -240,7 +241,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      *
      * @param device the HID device.
      */
-    protected abstract void onConnect(@NotNull HidDevice device);
+    protected abstract void onDeviceConnect(@NotNull HidDevice device);
 
     /**
      * Called when an HID device has been disconnected.
@@ -250,7 +251,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      *
      * @param device the HID device.
      */
-    protected abstract void onDisconnect(@NotNull HidDevice device);
+    protected abstract void onDeviceDisconnect(@NotNull HidDevice device);
 
     @Override
     @MustBeInvokedByOverriders
