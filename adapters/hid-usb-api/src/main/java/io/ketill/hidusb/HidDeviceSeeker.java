@@ -11,7 +11,6 @@ import org.hid4java.event.HidServicesEvent;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.Objects;
  * @param <I> the I/O device type.
  */
 public abstract class HidDeviceSeeker<I extends IoDevice>
-        extends IoDeviceSeeker<I> implements HidServicesListener, Closeable {
+        extends IoDeviceSeeker<I> implements HidServicesListener {
 
     public static final int DEFAULT_SCAN_INTERVAL = 1000;
 
@@ -114,8 +113,11 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
      */
     protected void seek(int vendorId, int productId) {
+        this.requireOpen();
         if (!this.isSeeking(vendorId, productId)) {
             seeking.add(new DeviceInfo(vendorId, productId));
         }
@@ -128,12 +130,18 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
      * @see #onDisconnect(HidDevice)
      */
     protected void drop(int vendorId, int productId) {
+        this.requireOpen();
         if (!this.isSeeking(vendorId, productId)) {
             return;
         }
+
+        seeking.removeIf(info -> info.vendorId == vendorId
+                && info.productId == productId);
 
         Iterator<HidDevice> devicesI = devices.iterator();
         while (devicesI.hasNext()) {
@@ -150,10 +158,13 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      * will be forcefully disconnected. Afterwards, it will not be reconnected.
      *
      * @param device the HID device to blacklist.
-     * @throws NullPointerException if {@code device} is {@code null}.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
      */
     protected void blacklist(@NotNull HidDevice device) {
         Objects.requireNonNull(device, "device");
+        this.requireOpen();
         if (!blacklisted.contains(device)) {
             blacklisted.add(device);
             this.disconnect(device);
@@ -174,6 +185,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
 
     @Override
     public final synchronized void hidDeviceAttached(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
         try {
             HidDevice device = event.getHidDevice();
             if (devices.contains(device) || blacklisted.contains(device)) {
@@ -190,7 +204,14 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
 
     @Override
     public final synchronized void hidDeviceDetached(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
         try {
+            HidDevice device = event.getHidDevice();
+            if (!devices.contains(device)) {
+                return; /* device not previously connected */
+            }
             this.disconnect(event.getHidDevice());
         } catch (Exception e) {
             this.hidException = e;
@@ -199,6 +220,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
 
     @Override
     public final synchronized void hidFailure(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
         try {
             this.blacklist(event.getHidDevice());
         } catch (Exception e) {
@@ -246,12 +270,18 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     @Override
     @MustBeInvokedByOverriders
     public void close() {
+        super.close();
+
+        seeking.clear();
+        blacklisted.clear();
+
         Iterator<HidDevice> devicesI = devices.iterator();
         while (devicesI.hasNext()) {
             HidDevice device = devicesI.next();
             device.close();
             devicesI.remove();
         }
+
         services.stop();
     }
 
