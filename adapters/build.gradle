@@ -31,6 +31,14 @@ static def isHidUsbProject(Project project) {
 subprojects {
     apply plugin: 'java-library'
 
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                artifactId "${parent.name}.${project.name}"
+            }
+        }
+    }
+
     dependencies {
         api project(':api')
 
