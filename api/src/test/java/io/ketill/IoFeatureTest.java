@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IoFeatureTest {
 
-    @Test /* use @BeforeAll if more tests are added */
+    @Test
     void __init__() {
         /*
          * The feature must be identifiable and have a supplier to create an

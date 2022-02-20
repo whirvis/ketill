@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class IoDeviceSeekerTest {
 
-    MockIoDeviceSeeker seeker;
+    private MockIoDeviceSeeker seeker;
 
     @BeforeEach
     void setup() {

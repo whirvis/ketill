@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class MappedFeatureRegistryTest {
 
-    MappedFeatureRegistry registry;
+    private MappedFeatureRegistry registry;
 
     @BeforeEach
     void setup() {

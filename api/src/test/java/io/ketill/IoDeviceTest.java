@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class IoDeviceTest {
 
-    MockIoDevice device;
-    MockIoDeviceAdapter adapter;
+    private MockIoDevice device;
+    private MockIoDeviceAdapter adapter;
 
     @BeforeAll
     static void __init__() {
