@@ -9,3 +9,19 @@ dependencies {
 
     implementation 'com.github.strikerx3:jxinput:1.0.0'
 }
+
+publishing {
+    publications {
+        /*
+         * JXInput is not on the Maven Central repository, meaning
+         * it will not be found when trying to include it from this
+         * dependency. Publishing it to the Maven Local repository
+         * here fixes that issue.
+         */
+        maven(MavenPublication) {
+            groupId 'com.github.strikerx3'
+            artifactId 'jxinput'
+            version '1.0.0'
+        }
+    }
+}
