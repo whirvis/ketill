@@ -8,9 +8,17 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+	publishing {
+		publications {
+            maven(MavenPublication) {
+                from components.java
+            }
+        }
+	}
+
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
     }
 
     test {
@@ -46,5 +54,7 @@ subprojects {
         tasks.jar.enabled = false;
         tasks.sourcesJar.enabled = false;
         tasks.javadocJar.enabled = false;
+		
+		tasks.publishMavenPublicationToMavenLocal.enabled = false;
     }
 }
