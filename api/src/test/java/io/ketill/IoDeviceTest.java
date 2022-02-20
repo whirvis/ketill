@@ -50,8 +50,8 @@ class IoDeviceTest {
          * This is to allow special extending classes (like Controller in
          * the "devices" module) to finish some extra setup.
          */
-        MockIoDevice device = new MockIoDevice("mock", adapterSupplier, false
-                , false);
+        MockIoDevice device = new MockIoDevice("mock", adapterSupplier,
+                false, false);
         assertFalse(device.isRegistered(MockIoDevice.FEATURE));
         assertFalse(adapter.get().isInitialized());
     }
@@ -120,6 +120,11 @@ class IoDeviceTest {
                 () -> device.isFeatureSupported(null));
         assertTrue(device.isFeatureSupported(MockIoDevice.FEATURE));
         assertFalse(device.isFeatureSupported(new MockIoFeature()));
+
+        assertThrows(NullPointerException.class,
+                () -> device.isFeatureSupported((Object) null));
+        assertTrue(device.isFeatureSupported(device.featureState));
+        assertFalse(device.isFeatureSupported(new Object()));
     }
 
     @Test

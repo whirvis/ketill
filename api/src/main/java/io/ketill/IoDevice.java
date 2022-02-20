@@ -190,8 +190,8 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * Returns if this device, with its adapter provided at construction,
-     * supports the specified device. A device is considered supported if
-     * it currently has a mapping assigned by its adapter.
+     * supports the specified feature. A feature is considered supported
+     * if it currently has a mapping assigned by its adapter.
      * <p>
      * When a feature is not supported, any reads will return its initial
      * state (or the last value before being unmapped.) If the state of a
@@ -201,9 +201,36 @@ public abstract class IoDevice implements FeatureRegistry {
      * @return {@code true} if {@code feature} is supported, {@code false}
      * otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
+     * @see #isFeatureSupported(Object)
      */
     public boolean isFeatureSupported(@NotNull IoFeature<?> feature) {
         return registry.hasMapping(feature);
+    }
+
+    /**
+     * Returns if this device, with its adapter provided at construction,
+     * supports the specified feature. A feature is considered supported
+     * if it currently has a mapping assigned by its adapter.
+     * <p>
+     * When a feature is not supported, any reads will return its initial
+     * state (or the last value before being unmapped.) If the state of a
+     * feature is writable, any writes will effectively be a no-op.
+     *
+     * @param featureState the state of the feature to check.
+     * @return {@code true} if the feature which instantiated
+     * {@code featureState} is supported, {@code false} otherwise.
+     * @throws NullPointerException if {@code featureState} is {@code null}.
+     * @see #getState(IoFeature)
+     * @see #isFeatureSupported(IoFeature)
+     */
+    public boolean isFeatureSupported(@NotNull Object featureState) {
+        Objects.requireNonNull(featureState, "featureState");
+        for (RegisteredFeature<?, ?> registered : registry.getFeatures()) {
+            if (registered.state == featureState) {
+                return this.isFeatureSupported(registered.feature);
+            }
+        }
+        return false;
     }
 
     @Override
