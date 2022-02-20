@@ -19,39 +19,36 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * A JSON container for device GUIDs.
+ * A JSON based container for the GUIDs of a device.
  * <p>
- * All GUIDs must be stored in a JSON object with the key {@code "guids"}. This
- * JSON object should contain JSON objects describing the GUIDs of input devices
- * on the supported operating systems. An example JSON file would be:
- *
+ * JSON containers must have a JSON object with the key {@code "guids"}.
+ * This object contains arrays of GUIDs, with their key being the ID of
+ * the corresponding operating system.
+ * <p>
+ * The following is an example of a JSON container:
  * <pre>
  * {
- * 	"guids": {
- * 		"xbox": {
- * 			"windows": [
- * 				"03000000ad1b000016f0000000000000",
- * 				"030000000d0f00006300000000000000",
- * 				"030000005e040000130b000000000000"
- * 			],
- * 			"osx": [
- * 				"030000005e0400008e02000000000000",
- * 				"030000005e040000130b000001050000",
- * 				"030000005e040000200b000011050000"
- * 			],
- * 			"linux": [
- * 				"030000005e0400008e02000010010000",
- * 				"030000005e0400000a0b000005040000",
- * 				"030000005e040000120b000001050000"
- * 			]
- *        }
- *    }
+ *  "guids": {
+ *    "windows": [
+ *      "03000000ad1b000016f0000000000000",
+ *      "030000000d0f00006300000000000000",
+ *      "030000005e040000130b000000000000"
+ *    ],
+ *    "linux": [
+ *      "030000005e0400008e02000010010000",
+ *      "030000005e0400000a0b000005040000",
+ *      "030000005e040000120b000001050000"
+ *    ],
+ *    "mac_osx": [
+ *      "030000005e0400008e02000000000000",
+ *      "030000005e040000130b000001050000",
+ *      "030000005e040000200b000011050000"
+ *    ]
+ *  }
  * }
  * </pre>
- *
- * @see #load(InputStream)
  */
-public class JsonDeviceGuids implements DeviceGuids {
+public class JsonDeviceGuids extends DeviceGuids {
 
     private static final Gson GSON = new GsonBuilder().create();
 
@@ -62,23 +59,26 @@ public class JsonDeviceGuids implements DeviceGuids {
      * @return the loaded device GUIDs.
      */
     public static @NotNull DeviceGuids load(@NotNull InputStream in) {
+        Objects.requireNonNull(in, "in");
         InputStreamReader isr = new InputStreamReader(in);
         JsonElement json = JsonParser.parseReader(isr);
         return GSON.fromJson(json, JsonDeviceGuids.class);
     }
 
     /**
-     * Loads the device GUIDs from a JSON file in the classpath.
+     * Loads device GUIDs from a JSON file in the classpath.
      * <p>
      * This method is a shorthand for {@link #load(InputStream)}, with the
-     * argument for {@code in} being the URL of {@code path} opened as an input
-     * stream using {@link URL#openStream()}.
+     * argument for {@code in} being the URL of {@code path} opened as an
+     * input stream using {@link URL#openStream()}.
      *
      * @param path the path of the resource to read from.
      * @return the loaded device GUIDs.
      * @throws IOException if an I/O error occurs.
      */
-    public static @NotNull DeviceGuids loadResource(String path) throws IOException {
+    /* @formatter:off */
+    public static @NotNull DeviceGuids
+            loadResource(@NotNull String path) throws IOException {
         Objects.requireNonNull(path, "path");
         URL url = DeviceGuids.class.getResource(path);
         if (url == null) {
@@ -86,49 +86,64 @@ public class JsonDeviceGuids implements DeviceGuids {
         }
         return load(url.openStream());
     }
+    /* @formatter:on */
 
     /**
-     * Loads the device GUIDs from a JSON file.
+     * Loads device GUIDs from a JSON file.
      * <p>
      * This method is a shorthand for {@link #load(InputStream)}, with the
      * argument for {@code in} being {@code new FileInputStream(file)}.
      *
      * @param file the file to read from.
      * @return the loaded device GUIDs.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException          if an I/O error occurs.
+     * @throws NullPointerException if {@code file} is {@code null}.
      */
-    public static @NotNull DeviceGuids loadFile(File file) throws IOException {
+    /* @formatter:off */
+    public static @NotNull DeviceGuids
+            loadFile(@NotNull File file) throws IOException {
         Objects.requireNonNull(file, "file");
         return load(new FileInputStream(file));
     }
+    /* @formatter:on */
 
     /**
-     * Loads the device GUIDs from a JSON file.
+     * Loads device GUIDs from a JSON file.
      * <p>
      * This method is a shorthand for {@link #loadFile(File)}, with the
      * argument for {@code file} being {@code new File(path)}.
      *
      * @param path the path of the file to read from.
      * @return the loaded device GUIDs.
-     * @throws IOException if an I/O error occurs.
+     * @throws IOException          if an I/O error occurs.
+     * @throws NullPointerException if {@code path} is {@code null}.
      */
-    public static @NotNull DeviceGuids loadFile(String path) throws IOException {
+    /* @formatter:off */
+    public static @NotNull DeviceGuids
+            loadFile(@NotNull String path) throws IOException {
         Objects.requireNonNull(path, "path");
         return loadFile(new File(path));
     }
+    /* @formatter:on */
 
     /* loaded by GSON */
     @SuppressWarnings("all")
-    private Map<String, Map<String, Set<String>>> guids;
+    private Map<String, Set<String>> guids;
 
+    private JsonDeviceGuids() {
+        /* require initialization via load() */
+    }
+
+    /* @formatter:off */
     @Override
-    public @Nullable Set<@NotNull String> getGuids(@NotNull String id,
-                                                   @NotNull String os) {
-        Map<String, Set<String>> osGuids = guids.get(id);
+    protected @Nullable Set<@NotNull String>
+            getGuidsImpl(@NotNull String systemId) {
+        Set<String> osGuids = guids.get(systemId);
         if (osGuids != null && !osGuids.isEmpty()) {
-            return Collections.unmodifiableSet(osGuids.get(os));
+            return Collections.unmodifiableSet(osGuids);
         }
         return null;
     }
+    /* @formatter: on */
 
 }
