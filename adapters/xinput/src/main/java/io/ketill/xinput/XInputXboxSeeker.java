@@ -44,7 +44,7 @@ public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
     /* @formatter:on */
 
     @Override
-    public void seekImpl() throws XInputNotLoadedException {
+    protected void seekImpl() throws XInputNotLoadedException {
         for (int i = 0; i < controllers.length; i++) {
             XboxController controller = this.controllers[i];
             if (controller != null) {
