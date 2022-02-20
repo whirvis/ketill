@@ -121,7 +121,7 @@ class IoDeviceSeekerTest {
          * callback of the error that has occurred and pass the exception.
          */
         AtomicBoolean caughtError = new AtomicBoolean();
-        seeker.onError(e -> caughtError.set(true));
+        seeker.onSeekError(e -> caughtError.set(true));
         assertDoesNotThrow(seeker::seek);
         assertTrue(caughtError.get());
 
@@ -129,7 +129,7 @@ class IoDeviceSeekerTest {
          * A null value is allowed when setting a callback. This should
          * have the effect of removing the callback from the seeker.
          */
-        assertDoesNotThrow(() -> seeker.onError(null));
+        assertDoesNotThrow(() -> seeker.onSeekError(null));
     }
 
     @Test
@@ -156,7 +156,8 @@ class IoDeviceSeekerTest {
                 () -> seeker.onDiscoverDevice(null));
         assertThrows(IllegalStateException.class,
                 () -> seeker.onForgetDevice(null));
-        assertThrows(IllegalStateException.class, () -> seeker.onError(null));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.onSeekError(null));
 
         /*
          * It would not make sense to discover a device, forget

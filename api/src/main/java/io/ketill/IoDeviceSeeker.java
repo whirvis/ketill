@@ -29,7 +29,7 @@ import java.util.function.Consumer;
  * @param <I> the I/O device type.
  * @see #onDiscoverDevice(Consumer)
  * @see #onForgetDevice(Consumer)
- * @see #onError(Consumer)
+ * @see #onSeekError(Consumer)
  * @see IoDeviceAdapter
  */
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
@@ -104,7 +104,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onError(@Nullable Consumer<Throwable> callback) {
+    public final void onSeekError(@Nullable Consumer<Throwable> callback) {
         this.requireOpen();
         this.errorCallback = callback;
     }
@@ -150,7 +150,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * every application update.
      *
      * @throws KetillException if an error occurs and no callback has
-     *                         been set via {@link #onError(Consumer)}.
+     *                         been set via {@link #onSeekError(Consumer)}.
      */
     public final synchronized void seek() {
         this.requireOpen();
