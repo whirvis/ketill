@@ -132,4 +132,49 @@ class IoDeviceSeekerTest {
         assertDoesNotThrow(() -> seeker.onError(null));
     }
 
+    @Test
+    void close() {
+        AtomicBoolean forgotten = new AtomicBoolean();
+        MockIoDevice device = new MockIoDevice();
+        seeker.discoverDevice(device); /* required to forget */
+
+        /*
+         * When a device seeker is closed, it is expected forget
+         * all previously discovered devices. This is because they
+         * will (usually) no longer be used.
+         */
+        seeker.onForgetDevice((d) -> forgotten.set(d == device));
+        seeker.close();
+        assertTrue(forgotten.get());
+
+        /*
+         * It would not make sense to set any callbacks after the
+         * device seeker has been closed. None of them will ever
+         * be executed.
+         */
+        assertThrows(IllegalStateException.class,
+                () -> seeker.onDiscoverDevice(null));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.onForgetDevice(null));
+        assertThrows(IllegalStateException.class, () -> seeker.onError(null));
+
+        /*
+         * It would not make sense to discover a device, forget
+         * a device, or perform a device scan after the device
+         * seeker has been closed.
+         */
+        assertThrows(IllegalStateException.class,
+                () -> seeker.discoverDevice(device));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.forgetDevice(device));
+        assertThrows(IllegalStateException.class, seeker::seek);
+
+        /*
+         * It is legal to call close on an I/O device seeker after
+         * it has originally been closed. This is to fall in line
+         * with the Closeable interface provided by Java.
+         */
+        assertDoesNotThrow(() -> seeker.close());
+    }
+
 }

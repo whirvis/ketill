@@ -4,6 +4,7 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +32,7 @@ import java.util.function.Consumer;
  * @see #onError(Consumer)
  * @see IoDeviceAdapter
  */
-public abstract class IoDeviceSeeker<I extends IoDevice> {
+public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     private final @NotNull List<I> devices;
     public final @NotNull List<I> discoveredDevices; /* read only view */
@@ -39,6 +40,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
     private @Nullable Consumer<? super I> discoverDeviceCallback;
     private @Nullable Consumer<? super I> forgetDeviceCallback;
     private @Nullable Consumer<Throwable> errorCallback;
+
+    private boolean closed;
 
     public IoDeviceSeeker() {
         /*
@@ -65,8 +68,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
      * @param callback the code to execute when a device is discovered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
      */
     public final void onDiscoverDevice(@Nullable Consumer<? super I> callback) {
+        this.requireOpen();
         this.discoverDeviceCallback = callback;
     }
 
@@ -79,8 +85,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
      */
     public final void onForgetDevice(@Nullable Consumer<? super I> callback) {
+        this.requireOpen();
         this.forgetDeviceCallback = callback;
     }
 
@@ -92,14 +101,18 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
      *                 in a wrapping {@code KetillException} being thrown.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
      */
     public final void onError(@Nullable Consumer<Throwable> callback) {
+        this.requireOpen();
         this.errorCallback = callback;
     }
 
     @MustBeInvokedByOverriders
     protected void discoverDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device");
+        this.requireOpen();
         if (devices.contains(device)) {
             return;
         }
@@ -112,6 +125,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
     @MustBeInvokedByOverriders
     protected void forgetDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device");
+        this.requireOpen();
         if (!devices.contains(device)) {
             return;
         }
@@ -139,6 +153,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
      *                         been set via {@link #onError(Consumer)}.
      */
     public final synchronized void seek() {
+        this.requireOpen();
         try {
             this.seekImpl();
         } catch (Throwable cause) {
@@ -148,6 +163,43 @@ public abstract class IoDeviceSeeker<I extends IoDevice> {
                 throw new KetillException("error in DeviceSeeker", cause);
             }
         }
+    }
+
+    /**
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     */
+    protected final void requireOpen() {
+        if (closed) {
+            throw new IllegalStateException("seeker closed");
+        }
+    }
+
+    public final boolean isClosed() {
+        return this.closed;
+    }
+
+    /**
+     * Closes this I/O device seeker and forgets any previously discovered
+     * devices. If the seeker is already closed then invoking this method
+     * has no effect.
+     */
+    @Override
+    @MustBeInvokedByOverriders
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
+
+        for (I discovered : devices) {
+            this.forgetDevice(discovered);
+        }
+
+        this.discoverDeviceCallback = null;
+        this.forgetDeviceCallback = null;
+        this.errorCallback = null;
+
+        this.closed = true;
     }
 
 }
