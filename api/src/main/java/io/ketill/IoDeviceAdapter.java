@@ -22,6 +22,8 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     /**
      * @param device   the device which owns this adapter.
      * @param registry the device's mapped feature registry.
+     * @throws NullPointerException if {@code device} or {@code registry}
+     *                              are {@code null}.
      */
     public IoDeviceAdapter(@NotNull I device,
                            @NotNull MappedFeatureRegistry registry) {
