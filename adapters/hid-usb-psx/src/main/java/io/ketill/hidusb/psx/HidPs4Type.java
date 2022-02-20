@@ -1,4 +1,4 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.psx;
 
 import org.jetbrains.annotations.NotNull;
 

@@ -1,4 +1,4 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.psx;
 
 import io.ketill.psx.Ps4Controller;
 import org.jetbrains.annotations.NotNull;

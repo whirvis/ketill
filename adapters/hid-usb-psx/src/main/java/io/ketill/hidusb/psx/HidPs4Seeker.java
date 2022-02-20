@@ -1,6 +1,7 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.psx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.hidusb.HidDeviceSeeker;
 import io.ketill.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 import org.jetbrains.annotations.NotNull;

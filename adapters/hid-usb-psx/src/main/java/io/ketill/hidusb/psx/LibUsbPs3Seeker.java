@@ -1,5 +1,6 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.psx;
 
+import io.ketill.hidusb.LibUsbDeviceSeeker;
 import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.DeviceHandle;

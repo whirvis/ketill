@@ -1,4 +1,4 @@
-package io.ketill.hidusb;
+package io.ketill.hidusb.psx;
 
 @FunctionalInterface
 public interface HidPs4AmbiguityCallback {
