@@ -261,7 +261,10 @@ class HidDeviceSeekerTest {
          * by the user and thrown an exception.
          */
         assertThrows(KetillException.class, () -> seeker.seek());
+
+        /* specify product to seek */
         seeker.seekProduct(0x00, 0x00);
+        assertDoesNotThrow(seeker::seek);
 
         /*
          * The first time the HID device seeker performs a device
@@ -269,7 +272,6 @@ class HidDeviceSeekerTest {
          * instantiation. This is required for it to be notified
          * when an HID device is attached or detached.
          */
-        seeker.seek();
         verify(hidServices).start();
     }
 
