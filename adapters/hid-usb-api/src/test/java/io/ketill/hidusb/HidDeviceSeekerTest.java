@@ -5,6 +5,7 @@ import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
 import org.hid4java.event.HidServicesEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -288,6 +289,11 @@ class HidDeviceSeekerTest {
         seeker.close();
         verify(hidDevice).close();
         verify(hidServices).stop();
+    }
+
+    @AfterEach
+    void shutdown() {
+        seeker.close();
     }
 
 }
