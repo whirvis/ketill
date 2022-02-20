@@ -1,4 +1,4 @@
-package io.ketill.glfw;
+package io.ketill.glfw.nx;
 
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.nx.NxRightJoyCon;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.nx.NxRightJoyCon.*;
 
-public class GlfwNxRightJoyConAdapter extends GlfwJoyConAdapter<NxRightJoyCon> {
+public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon> {
 
     /* @formatter:off */
     protected static final @NotNull JoyConStickMapping

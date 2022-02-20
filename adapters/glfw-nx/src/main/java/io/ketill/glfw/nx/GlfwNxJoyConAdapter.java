@@ -1,4 +1,4 @@
-package io.ketill.glfw;
+package io.ketill.glfw.nx;
 
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDevice;
@@ -7,15 +7,16 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Trigger1f;
+import io.ketill.glfw.GlfwJoystickAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-abstract class GlfwJoyConAdapter<I extends IoDevice>
+abstract class GlfwNxJoyConAdapter<I extends IoDevice>
         extends GlfwJoystickAdapter<I> {
 
-    GlfwJoyConAdapter(@NotNull I device,
-                      @NotNull MappedFeatureRegistry registry,
-                      long ptr_glfwWindow, int glfwJoystick) {
+    GlfwNxJoyConAdapter(@NotNull I device,
+                        @NotNull MappedFeatureRegistry registry,
+                        long ptr_glfwWindow, int glfwJoystick) {
         super(device, registry, ptr_glfwWindow, glfwJoystick);
     }
 

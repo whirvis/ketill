@@ -1,4 +1,4 @@
-package io.ketill.glfw;
+package io.ketill.glfw.nx;
 
 final class JoyConStickMapping {
 

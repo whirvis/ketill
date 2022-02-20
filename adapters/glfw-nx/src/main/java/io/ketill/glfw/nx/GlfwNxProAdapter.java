@@ -1,11 +1,12 @@
-package io.ketill.glfw;
+package io.ketill.glfw.nx;
 
 import io.ketill.FeatureAdapter;
-import io.ketill.FeaturePresent;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Trigger1f;
+import io.ketill.glfw.GlfwJoystickAdapter;
+import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.nx.NxProController;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
