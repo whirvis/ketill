@@ -27,7 +27,7 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
         this.allowMultiple = allowMultiple;
         this.wiiUAdapters = new HashMap<>();
         this.sessions = new HashMap<>();
-        this.seek(VENDOR_NINTENDO, PRODUCT_GC_WIIU_ADAPTER);
+        this.seekProduct(VENDOR_NINTENDO, PRODUCT_GC_WIIU_ADAPTER);
     }
 
     /**
@@ -39,7 +39,7 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
     }
 
     @Override
-    protected void onAttach(@NotNull DeviceHandle handle) {
+    protected void onDeviceAttach(@NotNull DeviceHandle handle) {
         if (wiiUAdapters.isEmpty() || allowMultiple) {
             GcWiiUAdapter adapter = new GcWiiUAdapter(usbContext, handle);
             wiiUAdapters.put(handle, adapter);
@@ -47,7 +47,7 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
     }
 
     @Override
-    protected void onDetach(@NotNull DeviceHandle device) {
+    protected void onDeviceDetach(@NotNull DeviceHandle device) {
         GcWiiUAdapter wiiUAdapter = wiiUAdapters.remove(device);
         if (wiiUAdapter == null) {
             return;

@@ -26,7 +26,7 @@ public final class LibUsbPs3Seeker extends LibUsbDeviceSeeker<Ps3Controller> {
     public LibUsbPs3Seeker(int scanIntervalMs) {
         super(scanIntervalMs);
         this.sessions = new HashMap<>();
-        this.seek(VENDOR_SONY, PRODUCT_DS3);
+        this.seekProduct(VENDOR_SONY, PRODUCT_DS3);
     }
 
     /**
@@ -40,7 +40,7 @@ public final class LibUsbPs3Seeker extends LibUsbDeviceSeeker<Ps3Controller> {
     }
 
     @Override
-    protected void onAttach(@NotNull DeviceHandle handle) {
+    protected void onDeviceAttach(@NotNull DeviceHandle handle) {
         Ps3Controller controller = new Ps3Controller((c, r) ->
                 new LibUsbPs3Adapter(c, r, usbContext, handle));
         sessions.put(handle, controller);
@@ -48,7 +48,7 @@ public final class LibUsbPs3Seeker extends LibUsbDeviceSeeker<Ps3Controller> {
     }
 
     @Override
-    protected void onDetach(@NotNull DeviceHandle handle) {
+    protected void onDeviceDetach(@NotNull DeviceHandle handle) {
         Ps3Controller controller = sessions.remove(handle);
         if (controller != null) {
             this.forgetDevice(controller);

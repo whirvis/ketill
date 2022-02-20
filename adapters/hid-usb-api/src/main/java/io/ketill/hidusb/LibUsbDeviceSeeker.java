@@ -12,7 +12,6 @@ import org.usb4java.DeviceList;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
-import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,13 +29,13 @@ import java.util.Objects;
  * to the HID protocol.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #seek(int, int)}. If this is
+ * told which devices to seek out via {@link #seekProduct(int, int)}. If this is
  * neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
  */
 public abstract class LibUsbDeviceSeeker<I extends IoDevice>
-        extends IoDeviceSeeker<I> implements Closeable {
+        extends IoDeviceSeeker<I> {
 
     public static final int DEFAULT_SCAN_INTERVAL = 1000;
 
@@ -88,7 +87,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      * @return {@code true} if this device seeker is seeking out USB devices
      * with {@code vendorId} and {@code productId}, {@code false} otherwise.
      */
-    public boolean isSeeking(int vendorId, int productId) {
+    public boolean isSeekingProduct(int vendorId, int productId) {
         for (DeviceInfo info : seeking) {
             if (info.vendorId == vendorId && info.productId == productId) {
                 return true;
@@ -97,13 +96,13 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
         return false;
     }
 
-    private boolean isSeeking(@NotNull Device device) {
+    private boolean isSeekingProduct(@NotNull Device device) {
         DeviceDescriptor desc = new DeviceDescriptor();
         int result = LibUsb.getDeviceDescriptor(device, desc);
         if (result != LibUsb.SUCCESS) {
             throw new LibUsbException(result);
         }
-        return this.isSeeking(desc.idVendor(), desc.idProduct());
+        return this.isSeekingProduct(desc.idVendor(), desc.idProduct());
     }
 
     private boolean isProduct(@NotNull Device device, int vendorId,
@@ -119,13 +118,13 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
     /**
      * Indicates to the seeker it should seek out USB devices with the
      * specified vendor and product ID. When such a device is located,
-     * the {@link #onAttach(DeviceHandle)} callback will be executed.
+     * the {@link #onDeviceAttach(DeviceHandle)} callback will be executed.
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
      */
-    protected void seek(int vendorId, int productId) {
-        if (!this.isSeeking(vendorId, productId)) {
+    protected void seekProduct(int vendorId, int productId) {
+        if (!this.isSeekingProduct(vendorId, productId)) {
             seeking.add(new DeviceInfo(vendorId, productId));
         }
     }
@@ -137,10 +136,10 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
-     * @see #onDetach(DeviceHandle)
+     * @see #onDeviceDetach(DeviceHandle)
      */
-    protected void drop(int vendorId, int productId) {
-        if (!this.isSeeking(vendorId, productId)) {
+    protected void dropProduct(int vendorId, int productId) {
+        if (!this.isSeekingProduct(vendorId, productId)) {
             return;
         }
 
@@ -165,7 +164,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      *                                  to a device handled by this device
      *                                  seeker's LibUSB context.
      */
-    protected void blacklist(@NotNull DeviceHandle handle) {
+    protected void blacklistDevice(@NotNull DeviceHandle handle) {
         Objects.requireNonNull(handle, "handle");
         Device device = LibUsb.getDevice(handle);
         if (device == null) {
@@ -194,7 +193,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
         LibUsb.refDevice(device);
 
         handles.put(device, handle);
-        this.onAttach(handle);
+        this.onDeviceAttach(handle);
     }
 
     private void detach(@NotNull DeviceHandle handle) {
@@ -207,7 +206,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
          * this is not done, a memory leak will soon follow.
          */
         try {
-            this.onDetach(handle);
+            this.onDeviceDetach(handle);
             LibUsb.unrefDevice(device);
         } catch (RuntimeException e) {
             LibUsb.unrefDevice(device);
@@ -235,7 +234,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
                 continue;
             }
 
-            if (this.isSeeking(device)) {
+            if (this.isSeekingProduct(device)) {
                 this.attach(device);
             } else {
                 /*
@@ -274,9 +273,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      * They must be discovered using {@link #discoverDevice(IoDevice)}.
      *
      * @param handle the device handle.
-     * @see #seek(int, int)
+     * @see #seekProduct(int, int)
      */
-    protected abstract void onAttach(@NotNull DeviceHandle handle);
+    protected abstract void onDeviceAttach(@NotNull DeviceHandle handle);
 
     /**
      * Called when a previously attached USB device has been detached.
@@ -285,9 +284,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      * They must be forgotten using {@link #forgetDevice(IoDevice)}.
      *
      * @param handle the device handle.
-     * @see #blacklist(DeviceHandle)
+     * @see #blacklistDevice(DeviceHandle)
      */
-    protected abstract void onDetach(@NotNull DeviceHandle handle);
+    protected abstract void onDeviceDetach(@NotNull DeviceHandle handle);
 
     @Override
     @MustBeInvokedByOverriders
@@ -306,12 +305,15 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
     @Override
     @MustBeInvokedByOverriders
     public void close() {
+        super.close();
+
         Iterator<DeviceHandle> handlesI = handles.values().iterator();
         while (handlesI.hasNext()) {
             DeviceHandle handle = handlesI.next();
             LibUsb.close(handle);
             handlesI.remove();
         }
+
         LibUsb.exit(usbContext);
     }
 
