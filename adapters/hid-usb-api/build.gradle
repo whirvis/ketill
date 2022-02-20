@@ -1,1 +1,3 @@
-/* I'm a little teapot! */
+dependencies {
+    testCompileOnly 'org.jetbrains:annotations:22.0.0'
+}
