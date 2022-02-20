@@ -54,9 +54,9 @@ The following is a list of modules included with Ketill:
 
 # 🛠️ Building
 
-If you don't want to build Ketill yourself, pre-built JARs can be found on [Jenkins](https://jenkins.ketill.io:8080). However, in certain
-situations, building the project yourself may be necessary (e.g., if Jenkins is down.) Building Ketill is simple, and can be done following
-the instructions below:
+If you don't want to build Ketill yourself, pre-built JARs can be found on [Jenkins](https://jenkins.ketill.io). However, in certain
+situations, building the project yourself may be necessary (e.g., if Jenkins is down.) Building Ketill is simple, and can be done
+following the instructions below:
 
   1. Install [Git](https://git-scm.com/) if not done so already.
   2. Install the JDK. Builds of the OpenJDK can be found [here](https://adoptium.net/).
