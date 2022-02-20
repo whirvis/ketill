@@ -143,9 +143,11 @@ class IoDeviceSeekerTest {
          * all previously discovered devices. This is because they
          * will (usually) no longer be used.
          */
+        assertFalse(seeker.isClosed());
         seeker.onForgetDevice((d) -> forgotten.set(d == device));
         seeker.close();
         assertTrue(forgotten.get());
+        assertTrue(seeker.isClosed());
 
         /*
          * It would not make sense to set any callbacks after the
