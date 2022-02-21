@@ -70,6 +70,27 @@ class HidDeviceSeekerTest {
     }
 
     @Test
+    void dropProduct() {
+        /* connect device for next test */
+        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        when(hidDevice.open()).thenReturn(true);
+        seeker.hidDeviceAttached(hidEvent);
+
+        /*
+         * If a device is dropped after it has connected, the seeker
+         * must disconnect it automatically. It would not make sense
+         * for a device that is no longer being sought for to linger
+         * after being dropped.
+         */
+        seeker.disconnectedDevice = false;
+        seeker.dropProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        assertTrue(seeker.disconnectedDevice);
+
+        assertFalse(seeker.isSeekingProduct(hidDevice.getVendorId(),
+                hidDevice.getProductId()));
+    }
+
+    @Test
     void blacklistDevice() {
         /* connect device for next test */
         seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
@@ -94,27 +115,6 @@ class HidDeviceSeekerTest {
         seeker.connectedDevice = false;
         seeker.hidDeviceAttached(hidEvent);
         assertFalse(seeker.connectedDevice);
-    }
-
-    @Test
-    void dropProduct() {
-        /* connect device for next test */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
-        when(hidDevice.open()).thenReturn(true);
-        seeker.hidDeviceAttached(hidEvent);
-
-        /*
-         * If a device is dropped after it has connected, the seeker
-         * must disconnect it automatically. It would not make sense
-         * for a device that is no longer being sought for to linger
-         * after being dropped.
-         */
-        seeker.disconnectedDevice = false;
-        seeker.dropProduct(hidDevice.getVendorId(), hidDevice.getProductId());
-        assertTrue(seeker.disconnectedDevice);
-
-        assertFalse(seeker.isSeekingProduct(hidDevice.getVendorId(),
-                hidDevice.getProductId()));
     }
 
     @Test
