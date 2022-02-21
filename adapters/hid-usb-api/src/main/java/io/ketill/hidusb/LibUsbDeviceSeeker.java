@@ -143,6 +143,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
             return;
         }
 
+        seeking.removeIf(info -> info.vendorId == vendorId
+                && info.productId == productId);
+
         Iterator<Device> devicesI = handles.keySet().iterator();
         while (devicesI.hasNext()) {
             Device device = devicesI.next();
