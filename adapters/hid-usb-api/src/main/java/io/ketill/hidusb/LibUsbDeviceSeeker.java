@@ -305,10 +305,11 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
     @Override
     @MustBeInvokedByOverriders
     public void close() {
-        super.close();
         if(this.isClosed()) {
             return;
         }
+
+        super.close();
 
         Iterator<DeviceHandle> handlesI = handles.values().iterator();
         while (handlesI.hasNext()) {
