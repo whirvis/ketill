@@ -1,5 +1,19 @@
 package io.ketill.hidusb.psx;
 
+/**
+ * A proprietary implementation of the CRC32 algorithm. This was introduced as
+ * the JDK's built in {@link java.util.zip.CRC32 CRC32} contains methods which
+ * are not introduced until JDK 9 (this module uses JDK 8.)
+ * <p>
+ * <b>Note:</b> While not a direct copy-paste, this was implemented from
+ * reference code written by Princeton University. The original file that
+ * was referenced can be found here:
+ * <a href="https://introcs.cs.princeton.edu/java/61data/CRC32.java.html">CRC32.java</a>
+ *
+ * @author Robert Sedgewick (rs@cs.princeton.edu)
+ * @author Kevin Wayne (wayne@cs.princeton.edu)
+ * @author Whirvis Ardenaur (whirvis@ketill.io)
+ */
 final class Crc32 {
 
     /* @formatter:off */
