@@ -98,9 +98,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * default, a wrapping {@code KetillException} will be constructed for
      * the original error and thrown.
      *
-     * @param callback the code to execute when a device is forgotten. A
-     *                 value of {@code null} is permitted, and will result
-     *                 in a wrapping {@code KetillException} being thrown.
+     * @param callback the code to execute when an error occurs. A value
+     *                 of {@code null} is permitted, and will result in a
+     *                 wrapping {@code KetillException} being thrown.
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
@@ -149,8 +149,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * For continuous scanning, this method must be called periodically once
      * every application update.
      *
-     * @throws KetillException if an error occurs and no callback has
-     *                         been set via {@link #onSeekError(Consumer)}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     * @throws KetillException       if an error occurs and no callback was
+     *                               set via {@link #onSeekError(Consumer)}.
      */
     public final synchronized void seek() {
         this.requireOpen();
