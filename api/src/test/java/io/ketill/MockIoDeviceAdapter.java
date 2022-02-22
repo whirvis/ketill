@@ -3,6 +3,7 @@ package io.ketill;
 class MockIoDeviceAdapter extends IoDeviceAdapter<MockIoDevice> {
 
     boolean shouldBeConnected;
+    boolean errorOnPoll;
     private boolean initialized;
     private boolean connected;
 
@@ -24,6 +25,9 @@ class MockIoDeviceAdapter extends IoDeviceAdapter<MockIoDevice> {
 
     @Override
     protected void pollDevice() {
+        if (errorOnPoll) {
+            throw new RuntimeException();
+        }
         this.connected = this.shouldBeConnected;
     }
 

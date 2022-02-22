@@ -247,4 +247,32 @@ class IoDeviceTest {
         assertDoesNotThrow(() -> device.onDisconnect(null));
     }
 
+    @Test
+    void pollError() {
+        adapter.errorOnPoll = true;
+
+        /*
+         * When no error callback is set, a device is obligated to wrap
+         * the exception it encounters and throw it back. This ensures
+         * errors do not occur silently.
+         */
+        assertThrows(KetillException.class, device::poll);
+
+        /*
+         * Once an error callback is set, the device must not throw the
+         * exception it encounters in seek(). Rather, it must notify the
+         * callback of the error that has occurred and pass the exception.
+         */
+        AtomicBoolean caughtError = new AtomicBoolean();
+        device.onPollError(e -> caughtError.set(true));
+        assertDoesNotThrow(device::poll);
+        assertTrue(caughtError.get());
+
+        /*
+         * A null value is allowed when setting a callback. This should
+         * have the effect of removing the callback from the device.
+         */
+        assertDoesNotThrow(() -> device.onPollError(null));
+    }
+
 }

@@ -42,6 +42,7 @@ public abstract class IoDevice implements FeatureRegistry {
 
     private @Nullable Consumer<IoFeature<?>> registerFeatureCallback;
     private @Nullable Consumer<IoFeature<?>> unregisterFeatureCallback;
+    private @Nullable Consumer<Throwable> errorCallback;
     private @Nullable Runnable connectCallback;
     private @Nullable Runnable disconnectCallback;
 
@@ -312,6 +313,19 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
+     * Sets the callback for when an error occurs in {@link #poll()}. By
+     * default, a wrapping {@code KetillException} will be constructed for
+     * the original error and thrown.
+     *
+     * @param callback the code to execute when an error occurs. A value
+     *                 of {@code null} is permitted, and will result in a
+     *                 wrapping {@code KetillException} being thrown.
+     */
+    public final void onPollError(@Nullable Consumer<Throwable> callback) {
+        this.errorCallback = callback;
+    }
+
+    /**
      * Sets the callback for when this device connects. If this callback was
      * set <i>after</i> the device has connected, it will not be called.
      *
@@ -370,7 +384,16 @@ public abstract class IoDevice implements FeatureRegistry {
      */
     @MustBeInvokedByOverriders
     public synchronized void poll() {
-        adapter.pollDevice();
+        try {
+            adapter.pollDevice();
+        } catch (Throwable cause) {
+            if (errorCallback != null) {
+                errorCallback.accept(cause);
+            } else {
+                throw new KetillException("error in IoDevice", cause);
+            }
+        }
+
         registry.updateFeatures();
 
         boolean wasConnected = this.connected;

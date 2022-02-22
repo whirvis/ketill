@@ -45,8 +45,14 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
      * Called by {@code device} when it is polled. This should update the
      * information necessary for mappings to check the current state of their
      * assigned features.
+     * <p>
+     * This method can throw any exception without needing to catch it.
+     * When an exception is thrown, {@link IoDevice#poll()} wrap it into
+     * a {@link KetillException} and throw it to the caller.
+     *
+     * @throws Exception if an error occurs.
      */
-    protected abstract void pollDevice();
+    protected abstract void pollDevice() throws Exception;
 
     /**
      * Called by {@code device} when its connection status is requested.
