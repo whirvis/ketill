@@ -292,7 +292,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #registerFeature(IoFeature)
      */
-    public void onRegisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
+    public final void onRegisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
         this.registerFeatureCallback = callback;
     }
 
@@ -307,7 +307,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #unregisterFeature(IoFeature)
      */
-    public void onUnregisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
+    public final void onUnregisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
         this.unregisterFeatureCallback = callback;
     }
 
@@ -320,7 +320,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public void onConnect(@Nullable Runnable callback) {
+    public final void onConnect(@Nullable Runnable callback) {
         this.connectCallback = callback;
     }
 
@@ -333,7 +333,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public void onDisconnect(@Nullable Runnable callback) {
+    public final void onDisconnect(@Nullable Runnable callback) {
         this.disconnectCallback = callback;
     }
 
