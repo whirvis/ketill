@@ -34,10 +34,10 @@ class LibUsbDeviceSeekerTest {
 
     @BeforeEach
     void setup() {
-        this.usbDevice = mock(LibUsbDevice.class);
+        Device device = mock(Device.class);
 
-        Device underlyingDevice = mock(Device.class);
-        when(usbDevice.getUsbDevice()).thenReturn(underlyingDevice);
+        this.usbDevice = mock(LibUsbDevice.class);
+        when(usbDevice.usbDevice()).thenReturn(device);
         when(usbDevice.getVendorId()).thenReturn(0x0308);
         when(usbDevice.getProductId()).thenReturn(0x0511);
 

@@ -196,8 +196,8 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     protected void blacklistDevice(@NotNull L device) {
         Objects.requireNonNull(device, "device");
         this.requireOpen();
-        if (!blacklisted.contains(device.usbDevice)) {
-            blacklisted.add(device.usbDevice);
+        if (!blacklisted.contains(device.usbDevice())) {
+            blacklisted.add(device.usbDevice());
             this.disconnect(device);
         }
     }
@@ -218,7 +218,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     protected void exemptDevice(@NotNull LibUsbDevice device) {
         Objects.requireNonNull(device, "device");
         this.requireOpen();
-        blacklisted.remove(device.usbDevice);
+        blacklisted.remove(device.usbDevice());
     }
 
     private void connect(@NotNull L device) {
@@ -263,7 +263,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
             return;
         }
 
-        if (blacklisted.contains(device.usbDevice)) {
+        if (blacklisted.contains(device.usbDevice())) {
             device.unref();
             return;
         }

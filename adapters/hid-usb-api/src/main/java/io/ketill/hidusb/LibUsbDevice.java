@@ -132,8 +132,8 @@ public class LibUsbDevice implements Closeable {
     }
     /* @formatter:on */
 
-    protected final @NotNull Context usbContext;
-    protected final @NotNull Device usbDevice;
+    private final @NotNull Context usbContext;
+    private final @NotNull Device usbDevice;
     private int refCount;
 
     protected final @NotNull DeviceDescriptor usbDescriptor;
@@ -166,7 +166,8 @@ public class LibUsbDevice implements Closeable {
      *                              getting the device descriptor.
      * @see #close()
      */
-    public LibUsbDevice(@NotNull Context context, @NotNull Device device, int refCount) {
+    public LibUsbDevice(@NotNull Context context, @NotNull Device device,
+                        int refCount) {
         this.usbContext = Objects.requireNonNull(context, "context");
         this.usbDevice = Objects.requireNonNull(device, "device");
         this.refCount = refCount;
@@ -211,6 +212,16 @@ public class LibUsbDevice implements Closeable {
      */
     public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
         this(context, device, 1);
+    }
+
+    /* getter for testing */
+    protected final @NotNull Context usbContext() {
+        return this.usbContext;
+    }
+
+    /* getter for testing */
+    protected final @NotNull Device usbDevice() {
+        return this.usbDevice;
     }
 
     /**
