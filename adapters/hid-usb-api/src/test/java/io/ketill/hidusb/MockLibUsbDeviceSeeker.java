@@ -2,29 +2,55 @@ package io.ketill.hidusb;
 
 import io.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
-import org.usb4java.DeviceHandle;
 
-public class MockLibUsbDeviceSeeker extends LibUsbDeviceSeeker<IoDevice> {
+class MockLibUsbDeviceSeeker
+        extends LibUsbDeviceSeeker<IoDevice, LibUsbDevice> {
 
-    boolean attachedDevice;
-    boolean detachedDevice;
+    boolean blacklistedDevice;
+    int deviceScanCount;
+    boolean errorOnDeviceConnect;
+    boolean errorOnDeviceDisconnect;
+    boolean connectedDevice;
+    boolean disconnectedDevice;
 
     MockLibUsbDeviceSeeker(int scanIntervalMs) {
-        super(scanIntervalMs);
+        super(scanIntervalMs, LibUsbDevice::new);
     }
 
     MockLibUsbDeviceSeeker() {
-        super();
+        super(LibUsbDevice::new);
+    }
+
+    void seekDeviceProduct(LibUsbDevice device) {
+        this.seekProduct(device.getVendorId(), device.getProductId());
     }
 
     @Override
-    protected void onDeviceAttach(@NotNull DeviceHandle device) {
-        this.attachedDevice = true;
+    protected void blacklistDevice(@NotNull LibUsbDevice device) {
+        super.blacklistDevice(device);
+        this.blacklistedDevice = true;
     }
 
     @Override
-    protected void onDeviceDetach(@NotNull DeviceHandle device) {
-        this.detachedDevice = true;
+    void scanDevices() {
+        super.scanDevices();
+        this.deviceScanCount++;
+    }
+
+    @Override
+    protected void onDeviceConnect(@NotNull LibUsbDevice device) {
+        if(errorOnDeviceConnect) {
+            throw new RuntimeException();
+        }
+        this.connectedDevice = true;
+    }
+
+    @Override
+    protected void onDeviceDisconnect(@NotNull LibUsbDevice device) {
+        if(errorOnDeviceDisconnect) {
+            throw new RuntimeException();
+        }
+        this.disconnectedDevice = true;
     }
 
 }
