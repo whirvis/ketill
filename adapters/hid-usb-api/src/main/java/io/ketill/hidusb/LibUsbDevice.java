@@ -20,7 +20,10 @@ import java.util.Objects;
  */
 public class LibUsbDevice implements Closeable {
 
-    static Context initContext() {
+    /**
+     * TODO: docs
+     */
+    public static Context initContext() {
         Context context = new Context();
         int result = LibUsb.init(context);
         if (result != LibUsb.SUCCESS) {
@@ -29,12 +32,18 @@ public class LibUsbDevice implements Closeable {
         return context;
     }
 
-    static void exitContext(Context context) {
+    /**
+     * TODO: docs
+     */
+    public static void exitContext(Context context) {
         LibUsb.exit(context);
     }
 
+    /**
+     * TODO: docs
+     */
     /* @formatter:off */
-    static <L extends LibUsbDevice> List<L>
+    public static <L extends LibUsbDevice> List<L>
             getConnected(Context context,
                          @NotNull LibUsbDeviceSupplier<L> deviceSupplier) {
         DeviceList devices = new DeviceList();
