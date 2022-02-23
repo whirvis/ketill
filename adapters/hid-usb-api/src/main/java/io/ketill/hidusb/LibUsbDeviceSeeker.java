@@ -18,9 +18,9 @@ import java.util.Objects;
  * <p>
  * While this device seeker can be used for any device connected via USB,
  * users should be aware {@link HidDeviceSeeker} exists. When a USB device
- * is conformant to the HID protocol, the HID device seeker should be used.
- * The LibUSB device seeker exists mainly for devices which do not conform
- * to the HID protocol.
+ * conforms to the HID protocol, the HID device seeker should be used. The
+ * LibUSB device seeker exists mainly for devices which do not conform to
+ * the HID protocol.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
  * told which devices to seek out via {@link #seekProduct(int, int)}. If
