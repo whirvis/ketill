@@ -172,6 +172,25 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         }
     }
 
+    /**
+     * Exempts a device from the blacklist. This can be used to allow a
+     * previously blacklisted device to connect again.
+     * <p>
+     * <b>Note:</b> This method <i>does not</i> prevent a device from being
+     * blacklisted again. To change the behavior of blacklisting, override
+     * {@link #blacklistDevice(HidDevice)}.
+     *
+     * @param device the HID device to exempt.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
+     */
+    protected void exemptDevice(@NotNull HidDevice device) {
+        Objects.requireNonNull(device, "device");
+        this.requireOpen();
+        blacklisted.remove(device);
+    }
+
     private void connect(@NotNull HidDevice device) {
         device.setNonBlocking(true);
         devices.add(device);

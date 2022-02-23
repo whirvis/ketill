@@ -107,7 +107,7 @@ class HidDeviceSeekerTest {
         assertTrue(seeker.disconnectedDevice);
 
         /*
-         * In the event a blacklisted HID device is attached, it
+         * In the event an attached HID device is blacklisted, it
          * should never be connected again. Devices are usually
          * blacklisted after they have caused some sort of issue,
          * usually by causing an exception to be thrown.
@@ -115,6 +115,23 @@ class HidDeviceSeekerTest {
         seeker.connectedDevice = false;
         seeker.hidDeviceAttached(hidEvent);
         assertFalse(seeker.connectedDevice);
+
+        /*
+         * In order to check that exemptDevice() is functioning
+         * properly, a device must first be blacklisted. So, it
+         * works out well to just test it here.
+         */
+        seeker.exemptDevice(hidDevice);
+
+        /*
+         * In the event a blacklisted device is exempted, that
+         * being removed from the blacklist, it should be able
+         * to connect once more. If a device cannot reconnect
+         * after being exempted, a promise has been broken.
+         */
+        seeker.connectedDevice = false;
+        seeker.hidDeviceAttached(hidEvent);
+        assertTrue(seeker.connectedDevice);
     }
 
     @Test
@@ -142,6 +159,9 @@ class HidDeviceSeekerTest {
         when(hidDevice.open()).thenReturn(false);
         seeker.hidDeviceAttached(hidEvent);
         assertFalse(seeker.connectedDevice);
+
+        /* exempt device for next test */
+        seeker.exemptDevice(hidDevice);
 
         /*
          * Now that the device is being sought after, and the HID
