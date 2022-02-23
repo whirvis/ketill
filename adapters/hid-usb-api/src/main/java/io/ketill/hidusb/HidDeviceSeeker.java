@@ -234,8 +234,12 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
                 return; /* already connected or blacklisted */
             }
 
-            if (this.isSeekingProduct(device) && device.open()) {
-                this.connect(device);
+            if (this.isSeekingProduct(device)) {
+                if (device.open()) {
+                    this.connect(device);
+                } else {
+                    this.blacklistDevice(device);
+                }
             }
         } catch (Exception e) {
             this.hidException = e;
