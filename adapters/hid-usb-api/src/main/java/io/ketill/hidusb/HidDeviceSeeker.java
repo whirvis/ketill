@@ -271,9 +271,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     }
 
     /**
-     * Called when an HID device has been connected. By default, I/O
-     * operations for the device are set to be non-blocking. This can
-     * be changed via {@link HidDevice#setNonBlocking(boolean)}.
+     * Called when an HID device being sought after has connected. By
+     * default, I/O operations for the device are set to be non-blocking.
+     * This can be changed via {@link HidDevice#setNonBlocking(boolean)}.
      * <p>
      * <b>Note:</b> Connected devices are <i>not</i> discovered.
      * They must be discovered using {@link #discoverDevice(IoDevice)}.
@@ -283,7 +283,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     protected abstract void onDeviceConnect(@NotNull HidDevice device);
 
     /**
-     * Called when an HID device has been disconnected.
+     * Called when a previously connected HID device has disconnected.
      * <p>
      * <b>Note:</b> Disconnected devices are <i>not</i> forgotten.
      * They must be forgotten using {@link #forgetDevice(IoDevice)}.
@@ -310,7 +310,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     @Override
     @MustBeInvokedByOverriders
     public void close() {
-        if(this.isClosed()) {
+        if (this.isClosed()) {
             return;
         }
 
