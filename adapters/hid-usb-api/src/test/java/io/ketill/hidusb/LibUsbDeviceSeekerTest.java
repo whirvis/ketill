@@ -22,11 +22,25 @@ class LibUsbDeviceSeekerTest {
                 () -> new MockLibUsbDeviceSeeker(0));
     }
 
+    private LibUsbDevice usbDevice;
     private MockLibUsbDeviceSeeker seeker;
 
     @BeforeEach
     void setup() {
+        this.usbDevice = mock(LibUsbDevice.class);
+
+        Device underlyingDevice = mock(Device.class);
+        when(usbDevice.getUsbDevice()).thenReturn(underlyingDevice);
+        when(usbDevice.getVendorId()).thenReturn(0x0308);
+        when(usbDevice.getProductId()).thenReturn(0x0511);
+
         this.seeker = new MockLibUsbDeviceSeeker();
+    }
+
+    @Test
+    void getScanIntervalMs() {
+        assertEquals(LibUsbDeviceSeeker.DEFAULT_SCAN_INTERVAL,
+                seeker.getScanIntervalMs());
     }
 
     @Test

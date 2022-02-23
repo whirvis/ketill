@@ -6,17 +6,11 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.Context;
 import org.usb4java.Device;
-import org.usb4java.DeviceDescriptor;
-import org.usb4java.DeviceHandle;
-import org.usb4java.DeviceList;
-import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,45 +23,60 @@ import java.util.Objects;
  * to the HID protocol.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #seekProduct(int, int)}. If this is
- * neglected, an {@code IllegalStateException} will be thrown.
+ * told which devices to seek out via {@link #seekProduct(int, int)}. If
+ * this is neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
+ * @param <L> the LibUSB device type. This can usually just be
+ *            {@link LibUsbDevice}. However, if additional features
+ *            of LibUSB must be implemented, extend that class and
+ *            use it as the template type here instead.
  */
-public abstract class LibUsbDeviceSeeker<I extends IoDevice>
-        extends IoDeviceSeeker<I> {
+public abstract class LibUsbDeviceSeeker<I extends IoDevice,
+        L extends LibUsbDevice> extends IoDeviceSeeker<I> {
 
     public static final int DEFAULT_SCAN_INTERVAL = 1000;
 
-    protected final @NotNull Context usbContext;
-
+    private final LibUsbDeviceSupplier<L> deviceSupplier;
+    private final Context usbContext;
+    private final List<L> connected;
     private final List<DeviceInfo> seeking;
     private final List<Device> blacklisted;
-    private final Map<Device, DeviceHandle> handles;
+    private final List<L> devices;
     private final int scanIntervalMs;
     private long lastScan;
 
     /**
      * @param scanIntervalMs the interval in milliseconds between USB
      *                       device enumeration scans.
+     * @param deviceSupplier the LibUSB device supplier. Usually, this can
+     *                       just be {@code LibUsbDevice::new}.
      * @throws IllegalArgumentException if {@code scanIntervalMs} is less
      *                                  than or equal to zero.
+     * @throws NullPointerException     if {@code deviceSupplier}
+     *                                  is {@code null}.
      * @throws LibUsbException          if LibUSB could not be initialized.
      */
-    public LibUsbDeviceSeeker(int scanIntervalMs) {
+    @SuppressWarnings("unchecked")
+    public LibUsbDeviceSeeker(int scanIntervalMs,
+                              @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
         if (scanIntervalMs <= 0) {
             throw new IllegalArgumentException("scanIntervalMs <= 0");
         }
 
-        this.usbContext = new Context();
-        int result = LibUsb.init(usbContext);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        /*
+         * While this is an unchecked cast, the template requires that the
+         * type extend LibUsbDevice. As such, this cast is safe to perform.
+         */
+        Objects.requireNonNull(deviceSupplier, "deviceSupplier");
+        this.deviceSupplier = (LibUsbDeviceSupplier<L>) deviceSupplier;
 
+        this.usbContext = LibUsbDevice.initContext();
+
+        this.connected = new ArrayList<>();
         this.seeking = new ArrayList<>();
         this.blacklisted = new ArrayList<>();
-        this.handles = new HashMap<>();
+        this.devices = new ArrayList<>();
         this.scanIntervalMs = scanIntervalMs;
     }
 
@@ -75,10 +84,19 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
      * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
      * {@code scanIntervalMs} being {@value #DEFAULT_SCAN_INTERVAL}.
      *
-     * @throws LibUsbException if LibUSB could not be initialized.
+     * @param deviceSupplier the LibUSB device supplier. Usually, this can
+     *                       just be {@code LibUsbDevice::new}.
+     * @throws NullPointerException if {@code deviceSupplier}
+     *                              is {@code null}.
+     * @throws LibUsbException      if LibUSB could not be initialized.
      */
-    public LibUsbDeviceSeeker() {
-        this(DEFAULT_SCAN_INTERVAL);
+    public LibUsbDeviceSeeker(@NotNull LibUsbDeviceSupplier<?
+            extends LibUsbDevice> deviceSupplier) {
+        this(DEFAULT_SCAN_INTERVAL, deviceSupplier);
+    }
+
+    public int getScanIntervalMs() {
+        return this.scanIntervalMs;
     }
 
     /**
@@ -146,33 +164,34 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
         seeking.removeIf(info -> info.vendorId == vendorId
                 && info.productId == productId);
 
-        Iterator<Device> devicesI = handles.keySet().iterator();
+        Iterator<L> devicesI = devices.iterator();
         while (devicesI.hasNext()) {
-            Device device = devicesI.next();
-            DeviceHandle handle = handles.get(device);
+            L device = devicesI.next();
             if (this.isProduct(device, vendorId, productId)) {
                 devicesI.remove();
-                this.detach(handle);
+                this.disconnect(device);
             }
         }
     }
 
     /**
      * Blacklists a device from this device seeker. When blacklisted, a device
-     * will be forcefully detached. Afterwards it will not be reattached.
+     * will be forcefully disconnected. Afterwards, it will not be reconnected.
      *
-     * @param handle the handle of the USB device to blacklist.
-     * @throws NullPointerException     if {@code handle} is {@code null}.
-     * @throws IllegalArgumentException if {@code handle} does not belong
-     *                                  to a device handled by this device
-     *                                  seeker's LibUSB context.
+     * @param device the LibUSB device to blacklist.
+     * @throws NullPointerException  if {@code handle} is {@code null}.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
      */
-    protected void blacklistDevice(@NotNull DeviceHandle handle) {
-        Objects.requireNonNull(handle, "handle");
-        Device device = LibUsb.getDevice(handle);
-        if (device == null) {
-            throw new IllegalArgumentException("no such device");
+    protected void blacklistDevice(@NotNull L device) {
+        Objects.requireNonNull(device, "device");
+        this.requireOpen();
+        Device usbDevice = device.getUsbDevice();
+        if (!blacklisted.contains(usbDevice)) {
+            blacklisted.add(usbDevice);
+            this.disconnect(device);
         }
+    }
 
         if (!blacklisted.contains(device)) {
             blacklisted.add(device);
@@ -180,116 +199,126 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
         }
     }
 
-    private void attach(@NotNull Device device) {
-        DeviceHandle handle = new DeviceHandle();
-        int result = LibUsb.open(device, handle);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+    private void connect(@NotNull L device) {
+        devices.add(device);
 
         /*
-         * Only increment the reference count for the device after it has
-         * been successfully opened. This will prevent a memory leak if a
-         * device fails to open. The reference count will subsequently be
-         * decreased when the device is detached.
-         */
-        LibUsb.refDevice(device);
-
-        handles.put(device, handle);
-        this.onDeviceAttach(handle);
-    }
-
-    private void detach(@NotNull DeviceHandle handle) {
-        Device device = LibUsb.getDevice(handle);
-        handles.remove(device);
-
-        /*
-         * Now that the device has been detached, its reference count must
-         * be decreased (as it was increased back when first attached.) If
-         * this is not done, a memory leak will soon follow.
+         * Only increment the reference count after the device
+         * has been successfully opened. This prevents a memory
+         * leak if the device fails to open. When the device is
+         * disconnected, its reference count will be decreased.
          */
         try {
-            this.onDeviceDetach(handle);
-            LibUsb.unrefDevice(device);
-        } catch (RuntimeException e) {
-            LibUsb.unrefDevice(device);
-            throw e;
+            this.onDeviceConnect(device);
+            device.ref();
+        } catch (Throwable cause) {
+            device.unref();
+            throw cause;
         }
     }
 
-    private void scanDevices() {
-        DeviceList devices = new DeviceList();
-        int result = LibUsb.getDeviceList(usbContext, devices);
-        if (result < 0) { /* result is device count */
-            throw new LibUsbException(result);
+    private void disconnect(@NotNull L device) {
+        devices.remove(device);
+
+        /*
+         * Surround onDeviceDisconnect() in a try catch block just
+         * in case it throws an exception. This ensures that the
+         * USB device is unreferenced even if the callback fails.
+         */
+        try {
+            this.onDeviceDisconnect(device);
+            device.unref();
+        } catch (Throwable cause) {
+            device.unref();
+            throw cause;
+        }
+    }
+
+    /* package-private for testing */
+    synchronized void usbDeviceAttached(@NotNull L device) {
+        if (devices.contains(device)) {
+            /* don't unref(), it's being used */
+            return;
         }
 
-        List<Device> connected = new ArrayList<>();
-        for (Device device : devices) {
-            connected.add(device);
-
-            if (handles.containsKey(device)) {
-                continue;
-            }
-
-            if (blacklisted.contains(device)) {
-                LibUsb.unrefDevice(device);
-                continue;
-            }
-
-            if (this.isSeekingProduct(device)) {
-                this.attach(device);
-            } else {
-                /*
-                 * Only unreference the device after determining it will
-                 * not be needed. When a device is found, attach() will
-                 * increase its reference count to keep it in memory.
-                 * Otherwise, free the device here.
-                 */
-                LibUsb.unrefDevice(device);
-            }
-        }
-
-        Iterator<DeviceHandle> handlesI = handles.values().iterator();
-        while (handlesI.hasNext()) {
-            DeviceHandle handle = handlesI.next();
-            Device device = LibUsb.getDevice(handle);
-            if (!connected.contains(device)) {
-                handlesI.remove();
-                this.detach(handle);
-            }
+        Device usbDevice = device.getUsbDevice();
+        if (blacklisted.contains(usbDevice)) {
+            device.unref();
+            return;
         }
 
         /*
-         * Now that the devices have been transferred to garbage collected
-         * memory, free the list handle (but keep the device handles.) The
-         * argument for the second parameter must be false. If set to true,
-         * the device handles will be erroneously freed.
+         * Only unreference the device after determining it will
+         * not be needed. When a device is found, attach() will
+         * increase its reference count to keep it in memory.
+         * Otherwise, free the device here.
          */
-        LibUsb.freeDeviceList(devices, false);
+        if (!this.isSeekingProduct(device)) {
+            device.unref();
+            return;
+        }
+
+        try {
+            device.open();
+        } catch (Throwable cause) {
+            device.unref();
+            this.blacklistDevice(device);
+            return;
+        }
+
+        this.connect(device);
+    }
+
+    /* package-private for testing */
+    synchronized void usbDeviceDetached(@NotNull L device) {
+        if (!devices.remove(device)) {
+            return; /* device not previously connected */
+        }
+        this.disconnect(device);
+    }
+
+    /* package-private for testing */
+    synchronized void scanDevices() {
+        List<L> scanned =
+                LibUsbDevice.getConnected(usbContext, deviceSupplier);
+
+        for (L device : scanned) {
+            if (!connected.contains(device)) {
+                this.usbDeviceAttached(device);
+                connected.add(device);
+            }
+        }
+
+        Iterator<L> devicesI = connected.iterator();
+        while (devicesI.hasNext()) {
+            L device = devicesI.next();
+            if (!scanned.contains(device)) {
+                devicesI.remove();
+                this.usbDeviceDetached(device);
+                connected.remove(device);
+            }
+        }
     }
 
     /**
-     * Called when a USB device being sought after has been attached.
+     * Called when a USB device being sought after has connected.
      * <p>
-     * <b>Note:</b> Attached devices are <i>not</i> discovered.
+     * <b>Note:</b> Connected devices are <i>not</i> discovered.
      * They must be discovered using {@link #discoverDevice(IoDevice)}.
      *
-     * @param handle the device handle.
-     * @see #seekProduct(int, int)
+     * @param device the LibUSB device.
      */
-    protected abstract void onDeviceAttach(@NotNull DeviceHandle handle);
+    protected abstract void onDeviceConnect(@NotNull L device);
 
     /**
-     * Called when a previously attached USB device has been detached.
+     * Called when a previously connected USB device has disconnected.
      * <p>
-     * <b>Note:</b> Detached devices are <i>not</i> forgotten.
+     * <b>Note:</b> Disconnected devices are <i>not</i> forgotten.
      * They must be forgotten using {@link #forgetDevice(IoDevice)}.
      *
-     * @param handle the device handle.
-     * @see #blacklistDevice(DeviceHandle)
+     * @param device the LibUSB device.
      */
-    protected abstract void onDeviceDetach(@NotNull DeviceHandle handle);
+    protected abstract void onDeviceDisconnect(@NotNull L device);
 
     @Override
     @MustBeInvokedByOverriders
@@ -308,20 +337,23 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice>
     @Override
     @MustBeInvokedByOverriders
     public void close() {
-        if(this.isClosed()) {
+        if (this.isClosed()) {
             return;
         }
 
+        seeking.clear();
+        blacklisted.clear();
+
         super.close();
 
-        Iterator<DeviceHandle> handlesI = handles.values().iterator();
-        while (handlesI.hasNext()) {
-            DeviceHandle handle = handlesI.next();
-            LibUsb.close(handle);
-            handlesI.remove();
+        Iterator<L> devicesI = devices.iterator();
+        while (devicesI.hasNext()) {
+            L device = devicesI.next();
+            device.close();
+            devicesI.remove();
         }
 
-        LibUsb.exit(usbContext);
+        LibUsbDevice.exitContext(usbContext);
     }
 
 }
