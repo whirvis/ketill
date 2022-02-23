@@ -193,10 +193,23 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         }
     }
 
-        if (!blacklisted.contains(device)) {
-            blacklisted.add(device);
-            this.detach(handle);
-        }
+    /**
+     * Exempts a device from the blacklist. This can be used to allow a
+     * previously blacklisted device to connect again.
+     * <p>
+     * <b>Note:</b> This method <i>does not</i> prevent a device from being
+     * blacklisted again. To change the behavior of blacklisting, override
+     * {@link #blacklistDevice(LibUsbDevice)}.
+     *
+     * @param device the LibUSB device to exempt.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this HID device seeker has been
+     *                               closed via {@link #close()}.
+     */
+    protected void exemptDevice(@NotNull LibUsbDevice device) {
+        Objects.requireNonNull(device, "device");
+        this.requireOpen();
+        blacklisted.remove(device.getUsbDevice());
     }
 
     private void connect(@NotNull L device) {
