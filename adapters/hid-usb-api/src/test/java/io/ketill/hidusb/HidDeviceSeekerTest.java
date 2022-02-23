@@ -56,6 +56,12 @@ class HidDeviceSeekerTest {
     }
 
     @Test
+    void getScanIntervalMs() {
+        assertEquals(HidDeviceSeeker.DEFAULT_SCAN_INTERVAL,
+                seeker.getScanIntervalMs());
+    }
+
+    @Test
     void seekProduct() {
         /* use two products for full coverage */
         int vendorId_0 = 0x1234, vendorId_1 = 0x89AB;

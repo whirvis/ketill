@@ -39,6 +39,8 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     private final List<HidDevice> devices;
     private boolean startedServices;
 
+    private final int scanIntervalMs;
+
     /*
      * Because the callback methods of HidServicesListener drop any
      * exceptions thrown into the void, all of their code is wrapped
@@ -64,6 +66,8 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         specs.setScanInterval(scanIntervalMs);
         specs.setPauseInterval(0);
 
+        this.scanIntervalMs = scanIntervalMs;
+
         this.services = HidManager.getHidServices(specs);
         services.addHidServicesListener(new HidDeviceListener(this));
 
@@ -78,6 +82,10 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      */
     public HidDeviceSeeker() {
         this(DEFAULT_SCAN_INTERVAL);
+    }
+
+    public int getScanIntervalMs() {
+        return this.scanIntervalMs;
     }
 
     /**
