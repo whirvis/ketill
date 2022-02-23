@@ -1,6 +1,6 @@
 rootProject.name = 'ketill'
 
-include 'api'
+include ':api'
 
 include ':devices:controller'
 include ':devices:gc'
