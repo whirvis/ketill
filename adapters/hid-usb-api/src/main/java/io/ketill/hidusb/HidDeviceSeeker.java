@@ -5,7 +5,6 @@ import io.ketill.IoDeviceSeeker;
 import org.hid4java.HidDevice;
 import org.hid4java.HidManager;
 import org.hid4java.HidServices;
-import org.hid4java.HidServicesListener;
 import org.hid4java.HidServicesSpecification;
 import org.hid4java.event.HidServicesEvent;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -24,13 +23,13 @@ import java.util.Objects;
  * {@link LibUsbDeviceSeeker} should be used for those.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #seekProduct(int, int)}. If this is
- * neglected, an {@code IllegalStateException} will be thrown.
+ * told which devices to seek out via {@link #seekProduct(int, int)}. If
+ * this is neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
  */
 public abstract class HidDeviceSeeker<I extends IoDevice>
-        extends IoDeviceSeeker<I> implements HidServicesListener {
+        extends IoDeviceSeeker<I> {
 
     public static final int DEFAULT_SCAN_INTERVAL = 1000;
 
@@ -66,7 +65,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         specs.setPauseInterval(0);
 
         this.services = HidManager.getHidServices(specs);
-        services.addHidServicesListener(this);
+        services.addHidServicesListener(new HidDeviceListener(this));
 
         this.seeking = new ArrayList<>();
         this.devices = new ArrayList<>();
@@ -203,8 +202,8 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         device.close();
     }
 
-    @Override
-    public final synchronized void hidDeviceAttached(HidServicesEvent event) {
+    /* package-private for testing */
+    synchronized void hidDeviceAttached(HidServicesEvent event) {
         if (this.isClosed()) {
             return;
         }
@@ -222,8 +221,8 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         }
     }
 
-    @Override
-    public final synchronized void hidDeviceDetached(HidServicesEvent event) {
+    /* package-private for testing */
+    synchronized void hidDeviceDetached(HidServicesEvent event) {
         if (this.isClosed()) {
             return;
         }
@@ -238,8 +237,8 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         }
     }
 
-    @Override
-    public final synchronized void hidFailure(HidServicesEvent event) {
+    /* package-private for testing */
+    synchronized void hidFailure(HidServicesEvent event) {
         if (this.isClosed()) {
             return;
         }
