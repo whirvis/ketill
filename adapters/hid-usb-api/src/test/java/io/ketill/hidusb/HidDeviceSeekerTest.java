@@ -64,8 +64,8 @@ class HidDeviceSeekerTest {
     @Test
     void seekProduct() {
         /* use two products for full coverage */
-        int vendorId_0 = 0x1234, vendorId_1 = 0x89AB;
-        int productId_0 = 0x4567, productId_1 = 0xCDEF;
+        int vendorId_0 = 0x1234, productId_0 = 0x4567;
+        int vendorId_1 = 0x89AB, productId_1 = 0xCDEF;
         assertFalse(seeker.isSeekingProduct(vendorId_0, productId_0));
         assertFalse(seeker.isSeekingProduct(vendorId_1, productId_1));
 
@@ -192,7 +192,7 @@ class HidDeviceSeekerTest {
          * hidDeviceAttached() to be thrown. If no devices are being
          * sought, an IllegalStateException will be thrown instead.
          */
-        seeker.seekProduct(0x00, 0x00);
+        seeker.seekProduct(0x0000, 0x0000);
 
         /*
          * When an exception is thrown, hidDeviceAttached() must
@@ -236,7 +236,7 @@ class HidDeviceSeekerTest {
          * hidDeviceDetached() to be thrown. If no devices are being
          * sought, an IllegalStateException will be thrown instead.
          */
-        seeker.seekProduct(0x00, 0x00);
+        seeker.seekProduct(0x0000, 0x0000);
 
         /*
          * When an exception is thrown, hidDeviceDetached() must
@@ -266,7 +266,7 @@ class HidDeviceSeekerTest {
          * hidFailure() to be thrown. If no devices are being sought
          * after, an IllegalStateException will be thrown instead.
          */
-        seeker.seekProduct(0x00, 0x00);
+        seeker.seekProduct(0x0000, 0x0000);
 
         /*
          * When an exception is thrown, hidFailure() must catch it
@@ -289,7 +289,7 @@ class HidDeviceSeekerTest {
         assertThrows(KetillException.class, () -> seeker.seek());
 
         /* specify product to seek */
-        seeker.seekProduct(0x00, 0x00);
+        seeker.seekProduct(0x0000, 0x0000);
         assertDoesNotThrow(seeker::seek);
 
         /*
