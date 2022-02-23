@@ -104,8 +104,12 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      * @param productId the product ID.
      * @return {@code true} if this device seeker is seeking out USB devices
      * with {@code vendorId} and {@code productId}, {@code false} otherwise.
+     * @throws IllegalArgumentException if {@code vendorId} or
+     *                                  {@code productId} are not within range
+     *                                  of {@code 0x0000} to {@code 0xFFFF}.
      */
     public boolean isSeekingProduct(int vendorId, int productId) {
+        DeviceInfo.requireValidId(vendorId, productId);
         for (DeviceInfo info : seeking) {
             if (info.vendorId == vendorId && info.productId == productId) {
                 return true;
@@ -114,34 +118,33 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         return false;
     }
 
-    private boolean isSeekingProduct(@NotNull Device device) {
-        DeviceDescriptor desc = new DeviceDescriptor();
-        int result = LibUsb.getDeviceDescriptor(device, desc);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
-        return this.isSeekingProduct(desc.idVendor(), desc.idProduct());
+    private boolean isSeekingProduct(@NotNull L device) {
+        return this.isSeekingProduct(device.getVendorId(),
+                device.getProductId());
     }
 
-    private boolean isProduct(@NotNull Device device, int vendorId,
-                              int productId) {
-        DeviceDescriptor desc = new DeviceDescriptor();
-        int result = LibUsb.getDeviceDescriptor(device, desc);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
-        return desc.idVendor() == vendorId && desc.idProduct() == productId;
+    private boolean isProduct(@NotNull L device, int vendorId, int productId) {
+        return device.getVendorId() == vendorId
+                && device.getProductId() == productId;
     }
 
     /**
      * Indicates to the seeker it should seek out USB devices with the
      * specified vendor and product ID. When such a device is located,
-     * the {@link #onDeviceAttach(DeviceHandle)} callback will be executed.
+     * the {@link #onDeviceConnect(LibUsbDevice)} callback will be executed.
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
+     * @throws IllegalArgumentException if {@code vendorId} or
+     *                                  {@code productId} are not within range
+     *                                  of {@code 0x0000} to {@code 0xFFFF}.
+     * @throws IllegalStateException    if this HID device seeker has been
+     *                                  closed via {@link #close()}.
+     * @see #onDeviceConnect(LibUsbDevice)
      */
     protected void seekProduct(int vendorId, int productId) {
+        DeviceInfo.requireValidId(vendorId, productId);
+        this.requireOpen();
         if (!this.isSeekingProduct(vendorId, productId)) {
             seeking.add(new DeviceInfo(vendorId, productId));
         }
@@ -149,14 +152,21 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
 
     /**
      * Indicates to the seeker it should no longer seek out USB devices with
-     * the specified vendor and product ID. All currently attached devices
-     * with the specified vendor and product ID will be detached.
+     * the specified vendor and product ID. All currently connected devices
+     * with the specified vendor and product ID will be disconnected.
      *
      * @param vendorId  the vendor ID.
      * @param productId the product ID.
-     * @see #onDeviceDetach(DeviceHandle)
+     * @throws IllegalArgumentException if {@code vendorId} or
+     *                                  {@code productId} are not within range
+     *                                  of {@code 0x0000} to {@code 0xFFFF}.
+     * @throws IllegalStateException    if this HID device seeker has been
+     *                                  closed via {@link #close()}.
+     * @see #onDeviceDisconnect(LibUsbDevice)
      */
     protected void dropProduct(int vendorId, int productId) {
+        DeviceInfo.requireValidId(vendorId, productId);
+        this.requireOpen();
         if (!this.isSeekingProduct(vendorId, productId)) {
             return;
         }
