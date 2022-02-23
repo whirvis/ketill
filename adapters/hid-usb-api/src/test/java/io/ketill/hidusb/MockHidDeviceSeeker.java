@@ -17,6 +17,10 @@ class MockHidDeviceSeeker extends HidDeviceSeeker<IoDevice> {
         super();
     }
 
+    void seekDeviceProduct(HidDevice device) {
+        this.seekProduct(device.getVendorId(), device.getProductId());
+    }
+
     @Override
     protected void onDeviceConnect(@NotNull HidDevice device) {
         this.connectedDevice = true;

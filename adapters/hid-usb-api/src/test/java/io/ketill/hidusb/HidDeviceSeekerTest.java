@@ -78,7 +78,7 @@ class HidDeviceSeekerTest {
     @Test
     void dropProduct() {
         /* connect device for next test */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
         seeker.hidDeviceAttached(hidEvent);
 
@@ -99,7 +99,7 @@ class HidDeviceSeekerTest {
     @Test
     void blacklistDevice() {
         /* connect device for next test */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
         seeker.hidDeviceAttached(hidEvent);
 
@@ -154,7 +154,7 @@ class HidDeviceSeekerTest {
         assertFalse(seeker.connectedDevice);
 
         /* begin seeking product for next tests */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        seeker.seekDeviceProduct(hidDevice);
 
         /*
          * If an HID device fails to open, the seeker should not
@@ -222,7 +222,7 @@ class HidDeviceSeekerTest {
         assertFalse(seeker.disconnectedDevice);
 
         /* attach device for next test */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
         seeker.hidDeviceAttached(hidEvent);
 
@@ -304,7 +304,7 @@ class HidDeviceSeekerTest {
     @Test
     void close() {
         /* connect device for next test */
-        seeker.seekProduct(hidDevice.getVendorId(), hidDevice.getProductId());
+        seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
         seeker.hidDeviceAttached(hidEvent);
 
