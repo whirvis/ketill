@@ -18,15 +18,4 @@ class AssertUtils {
         assertEquals(cause, caught);
     }
 
-    static void assertThrowsCause(Class<? extends Throwable> cause,
-                                  Executable executable) {
-        assertThrows(cause, () -> {
-            try {
-                executable.execute();
-            } catch (Throwable throwable) {
-                throw throwable.getCause();
-            }
-        });
-    }
-
 }
