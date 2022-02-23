@@ -15,6 +15,7 @@ import static io.ketill.hidusb.AssertUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("ConstantConditions")
 class HidDeviceSeekerTest {
 
     @BeforeAll
@@ -63,6 +64,14 @@ class HidDeviceSeekerTest {
 
     @Test
     void seekProduct() {
+        /*
+         * It makes no sense to seek a product with an invalid
+         * vendor ID or product ID. As such, assume this was a
+         * mistake by the user and throw an exception.
+         */
+        assertThrows(IllegalArgumentException.class,
+                () -> seeker.seekProduct(-1, -1));
+
         /* use two products for full coverage */
         int vendorId_0 = 0x1234, productId_0 = 0x4567;
         int vendorId_1 = 0x89AB, productId_1 = 0xCDEF;
@@ -77,6 +86,14 @@ class HidDeviceSeekerTest {
 
     @Test
     void dropProduct() {
+        /*
+         * It makes no sense to drop a product with an invalid
+         * vendor ID or product ID. As such, assume this was a
+         * mistake by the user and throw an exception.
+         */
+        assertThrows(IllegalArgumentException.class,
+                () -> seeker.dropProduct(-1, -1));
+
         /* connect device for next test */
         seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
@@ -98,6 +115,16 @@ class HidDeviceSeekerTest {
 
     @Test
     void blacklistDevice() {
+        /*
+         * It makes no sense to blacklist or exempt a null device.
+         * As such assume this was a mistake by the user and throw
+         * an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> seeker.blacklistDevice(null));
+        assertThrows(NullPointerException.class,
+                () -> seeker.exemptDevice(null));
+
         /* connect device for next test */
         seeker.seekDeviceProduct(hidDevice);
         when(hidDevice.open()).thenReturn(true);
@@ -317,6 +344,27 @@ class HidDeviceSeekerTest {
         seeker.close();
         verify(hidDevice).close();
         verify(hidServices).stop();
+
+        /*
+         * It would not make sense to being seeking for a product
+         * or to drop a product after the device seeker has been
+         * closed. As such, assume this was a mistake by the user
+         * and throw an exception.
+         */
+        assertThrows(IllegalStateException.class,
+                () -> seeker.seekProduct(0x0000, 0x0000));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.dropProduct(0x0000, 0x0000));
+
+        /*
+         * It would not make sense to blacklist or exempt a device
+         * after the device seeker has been closed. As such, assume
+         * this was a mistake by the user and throw an exception.
+         */
+        assertThrows(IllegalStateException.class,
+                () -> seeker.blacklistDevice(hidDevice));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.exemptDevice(hidDevice));
     }
 
     @AfterEach
