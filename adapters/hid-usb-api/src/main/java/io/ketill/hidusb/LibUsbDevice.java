@@ -23,8 +23,33 @@ import java.util.Objects;
  * missing LibUSB functionality.
  *
  * @see LibUsbDeviceSupplier
+ * @see #requireSuccess(LibUsbOperation)
  */
 public class LibUsbDevice implements Closeable {
+
+    protected interface LibUsbOperation {
+        int execute();
+    }
+
+    /**
+     * Requires that an operation return a value indicating a LibUSB
+     * operation was successful. Intended to reduce boilerplate when
+     * making calls to methods in the {@code LibUsb} class.
+     *
+     * @param operation the code to execute.
+     * @return the result of the operation, can be ignored.
+     * @throws NullPointerException if {@code operation} is {@code null}.
+     * @throws LibUsbException if an error code is returned.
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    protected static int requireSuccess(@NotNull LibUsbOperation operation) {
+        Objects.requireNonNull(operation, "operation");
+        int result = operation.execute();
+        if (result < LibUsb.SUCCESS) {
+            throw new LibUsbException(result);
+        }
+        return result;
+    }
 
     /**
      * Initializes a LibUSB context.
@@ -36,10 +61,7 @@ public class LibUsbDevice implements Closeable {
      */
     public static @NotNull Context initContext() {
         Context context = new Context();
-        int result = LibUsb.init(context);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        requireSuccess(() -> LibUsb.init(context));
         return context;
     }
 
@@ -67,9 +89,7 @@ public class LibUsbDevice implements Closeable {
      * Returns all USB devices currently connected to the system.
      * <p>
      * All devices returned in this list must be freed, otherwise a memory
-     * leak will occur. LibUSB devices can be freed by de-referencing them
-     * via {@link #unref()} until their reference count reaches zero. It
-     * is recommended to use {@link #close()} when finished with a LibUSB
+     * leak will occur. Use {@link #close()} when finished with a LibUSB
      * device, as it will ensure it is freed from memory.
      *
      * @param context        the context to operate on. A value of
@@ -92,24 +112,23 @@ public class LibUsbDevice implements Closeable {
         Objects.requireNonNull(deviceSupplier, "deviceSupplier");
 
         DeviceList devices = new DeviceList();
-        int result = LibUsb.getDeviceList(context, devices);
-        if (result < 0) { /* result is device count */
-            throw new LibUsbException(result);
-        }
+        requireSuccess(() -> LibUsb.getDeviceList(context, devices));
 
         List<L> connected = new ArrayList<>();
         for (Device device : devices) {
             L wrapped = deviceSupplier.get(context, device);
             Objects.requireNonNull(wrapped, "supplied device is null");
             connected.add(wrapped);
+            break;
         }
 
         /*
          * Now that the devices have been transferred to garbage
          * collected memory, free the list handle (but keep each
          * device handle.) The argument for the second parameter
-         * must be false. If set to true, the device handles will
-         * be erroneously freed.
+         * must be false. When true, it decreases the reference
+         * count by one. That would release them from memory too
+         * early in this situation.
          */
         LibUsb.freeDeviceList(devices, false);
 
@@ -134,7 +153,6 @@ public class LibUsbDevice implements Closeable {
 
     private final @NotNull Context usbContext;
     private final @NotNull Device usbDevice;
-    private int refCount;
 
     protected final @NotNull DeviceDescriptor usbDescriptor;
     private final int vendorId; /* follow getter pattern */
@@ -157,26 +175,19 @@ public class LibUsbDevice implements Closeable {
      *                 {@code null} is <i>not</i> permitted,
      *                 the default context is forbidden.
      * @param device   the USB device to perform I/O on.
-     * @param refCount the current reference count of {@code device}.
-     *                 <b>This must be accurate, or {@link #ref()} and
-     *                 {@link #unref()} will not function correctly</b>.
      * @throws NullPointerException if {@code context} or {@code device}
      *                              are {@code null}.
      * @throws LibUsbException      if an error code is returned when
      *                              getting the device descriptor.
      * @see #close()
      */
-    public LibUsbDevice(@NotNull Context context, @NotNull Device device,
-                        int refCount) {
+    public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
         this.usbContext = Objects.requireNonNull(context, "context");
         this.usbDevice = Objects.requireNonNull(device, "device");
-        this.refCount = refCount;
 
         this.usbDescriptor = new DeviceDescriptor();
-        int result = LibUsb.getDeviceDescriptor(device, usbDescriptor);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        requireSuccess(() -> LibUsb.getDeviceDescriptor(device,
+                usbDescriptor));
 
         /*
          * Vendor IDs and product IDs are unsigned shorts. However,
@@ -186,32 +197,6 @@ public class LibUsbDevice implements Closeable {
          */
         this.vendorId = usbDescriptor.idVendor() & 0xFFFF;
         this.productId = usbDescriptor.idProduct() & 0xFFFF;
-    }
-
-    /**
-     * Preferably, the construction of LibUSB devices should only be performed
-     * by {@link #getConnected(Context, LibUsbDeviceSupplier)}. If this
-     * <i>must</i> be used, responsibility is placed upon the caller to
-     * provide the correct arguments.
-     * <p>
-     * Children underlying USB context and USB device can be accessed via
-     * the internal {@code usbContext} and {@code usbDevice} fields. The
-     * device descriptor is also available via {@code usbDescriptor}.
-     *
-     * @param context the context to operate on. A value of
-     *                {@code null} is <i>not</i> permitted,
-     *                the default context is forbidden.
-     * @param device  the USB device to perform I/O on.
-     *                <b>The reference count of this device
-     *                is assumed to be equal to one.</b>
-     * @throws NullPointerException if {@code context} or {@code device}
-     *                              are {@code null}.
-     * @throws LibUsbException      if an error code is returned when
-     *                              getting the device descriptor.
-     * @see #close()
-     */
-    public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
-        this(context, device, 1);
     }
 
     /* getter for testing */
@@ -239,37 +224,8 @@ public class LibUsbDevice implements Closeable {
     }
 
     /**
-     * Increments the reference count of this device.
-     *
-     * @see #unref()
-     */
-    protected final void ref() {
-        this.requireOpen();
-        LibUsb.refDevice(usbDevice);
-        this.refCount++;
-    }
-
-    /**
-     * Decrements the reference count of this device.
-     * <p>
-     * If this decrement operation causes the internal reference count to
-     * reach zero, the underlying LibUSB device will be destroyed and
-     * {@link #close()} will be called automatically.
-     *
-     * @see #ref()
-     */
-    protected final void unref() {
-        this.requireOpen();
-        LibUsb.unrefDevice(usbDevice);
-        this.refCount--;
-        if (refCount <= 0) {
-            this.close();
-        }
-    }
-
-    /**
      * @return the USB device handle.
-     * @throws IllegalStateException if a call to {@link #open()} was not
+     * @throws IllegalStateException if a call to {@link #openHandle()} was not
      *                               made before calling this method.
      */
     protected final @NotNull DeviceHandle usbHandle() {
@@ -291,15 +247,13 @@ public class LibUsbDevice implements Closeable {
      * @throws LibUsbException if an error code is returned when opening
      *                         the device handle.
      */
-    protected final void open() {
+    protected final void openHandle() {
+        this.requireOpen();
         if (usbHandle != null) {
             return;
         }
         this.usbHandle = new DeviceHandle();
-        int result = LibUsb.open(usbDevice, usbHandle);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        requireSuccess(() -> LibUsb.open(usbDevice, usbHandle));
     }
 
     /**
@@ -308,8 +262,7 @@ public class LibUsbDevice implements Closeable {
      */
     protected final void requireOpen() {
         if (closed) {
-            String refCountStr = " (refCount: " + refCount + ")";
-            throw new IllegalStateException("device closed" + refCountStr);
+            throw new IllegalStateException("device closed");
         }
     }
 
@@ -319,8 +272,9 @@ public class LibUsbDevice implements Closeable {
 
     /**
      * Destroys the internal LibUSB device. If this device was opened via
-     * {@link #open()}, the internal LibUSB handle is also closed. If the
-     * device is already closed then invoking this method has no effect.
+     * {@link #openHandle()}, the internal LibUSB handle is also closed.
+     * If the device is already closed then invoking this method has no
+     * effect.
      */
     @Override
     @MustBeInvokedByOverriders
@@ -329,7 +283,7 @@ public class LibUsbDevice implements Closeable {
             return;
         }
 
-        this.refCount = 0;
+        LibUsb.unrefDevice(usbDevice);
 
         if (usbHandle != null) {
             LibUsb.close(usbHandle);

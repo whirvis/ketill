@@ -232,9 +232,8 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
          */
         try {
             this.onDeviceConnect(device);
-            device.ref();
         } catch (Throwable cause) {
-            device.unref();
+            device.close();
             throw cause;
         }
     }
@@ -249,9 +248,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
          */
         try {
             this.onDeviceDisconnect(device);
-            device.unref();
+            device.close();
         } catch (Throwable cause) {
-            device.unref();
+            device.close();
             throw cause;
         }
     }
@@ -264,7 +263,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         }
 
         if (blacklisted.contains(device.usbDevice())) {
-            device.unref();
+            device.close();
             return;
         }
 
@@ -275,14 +274,14 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
          * Otherwise, free the device here.
          */
         if (!this.isSeekingProduct(device)) {
-            device.unref();
+            device.close();
             return;
         }
 
         try {
-            device.open();
+            device.openHandle();
         } catch (Throwable cause) {
-            device.unref();
+            device.close();
             this.blacklistDevice(device);
             return;
         }

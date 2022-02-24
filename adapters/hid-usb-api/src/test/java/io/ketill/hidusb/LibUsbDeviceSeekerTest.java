@@ -163,7 +163,7 @@ class LibUsbDeviceSeekerTest {
          */
         seeker.connectedDevice = false;
         seeker.usbDeviceAttached(usbDevice);
-        verify(usbDevice).unref();
+        verify(usbDevice).close();
         assertFalse(seeker.connectedDevice);
 
         /* begin seeking product for next tests */
@@ -175,7 +175,7 @@ class LibUsbDeviceSeekerTest {
          * after. It would make no sense to call onAttach() as
          * the device cannot be communicated with.
          */
-        doThrow(new RuntimeException()).when(usbDevice).open();
+        doThrow(new RuntimeException()).when(usbDevice).openHandle();
         seeker.usbDeviceAttached(usbDevice);
         assertFalse(seeker.connectedDevice);
 
@@ -187,7 +187,7 @@ class LibUsbDeviceSeekerTest {
          * device successfully opens, the seeker must make a call
          * to onAttach().
          */
-        doNothing().when(usbDevice).open();
+        doNothing().when(usbDevice).openHandle();
         seeker.usbDeviceAttached(usbDevice);
         assertTrue(seeker.connectedDevice);
 
@@ -285,7 +285,7 @@ class LibUsbDeviceSeekerTest {
         seeker.errorOnDeviceConnect = true;
         assertThrows(RuntimeException.class,
                 () -> seeker.usbDeviceAttached(usbDevice));
-        verify(usbDevice).unref();
+        verify(usbDevice).close();
     }
 
     @Test
@@ -303,7 +303,7 @@ class LibUsbDeviceSeekerTest {
         seeker.errorOnDeviceDisconnect = true;
         assertThrows(RuntimeException.class,
                 () -> seeker.usbDeviceDetached(usbDevice));
-        verify(usbDevice).unref();
+        verify(usbDevice).close();
     }
 
     @Test
