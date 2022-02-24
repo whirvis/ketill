@@ -119,7 +119,6 @@ public class LibUsbDevice implements Closeable {
             L wrapped = deviceSupplier.get(context, device);
             Objects.requireNonNull(wrapped, "supplied device is null");
             connected.add(wrapped);
-            break;
         }
 
         /*
