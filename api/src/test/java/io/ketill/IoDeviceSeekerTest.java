@@ -173,11 +173,11 @@ class IoDeviceSeekerTest {
         assertThrows(IllegalStateException.class, seeker::seek);
 
         /*
-         * It is legal to call close on an I/O device seeker after
+         * It is legal to call close() on an I/O device seeker after
          * it has originally been closed. This is to fall in line
-         * with the Closeable interface provided by Java.
+         * with the Closeable interface as provided by Java.
          */
-        assertDoesNotThrow(() -> seeker.close());
+        assertDoesNotThrow(seeker::close);
     }
 
 }
