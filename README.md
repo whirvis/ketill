@@ -90,7 +90,7 @@ This section is a work in progress.
 
 - My friend [Surhou](https://t.co/gt2mqvXKaA), for creating the project logo (which is still in progress, the one above is a placeholder).
 - My Uncle, for introducing me to [Mockito](https://site.mockito.org/) when I was seeking advice for writing unit tests.
-- My colleagues at the University of Central Arkansas, for cheering me on through the two semesters that I wrote this.
+- My colleagues at university, for cheering me on through the two semesters that I wrote this.
 
 # 
 
