@@ -21,11 +21,14 @@ supply universal definitions for I/O devices (such as keyboards, mice, XBOX cont
 
 ### 📓 History
 
-Development on Ketill began in the fall of 2021. While working on a revision of the Ardenus Engine, I decided that I wanted to create a new input system from the ground up, since the original was clunky. At the time, Ketill was simply the `input` package of the engine. Later, as the package grew in size, I realized it could work as its own library. This would allow seamless integration with other projects.
+Development on Ketill began in the fall of 2021. While working on a revision of the Ardenus Engine, I decided that I wanted to create a new input system
+from the ground up, since the original was clunky. At the time, Ketill was simply the `input` package of the engine. Later, as the package grew in size,
+I realized it could work as its own library. This would allow seamless integration with other projects.
 
 After much refactoring, the `input` package was moved to a separate repository and was reborn as a [Maven](https://maven.apache.org/) project
-(like its ancestor). Following additional weeks of coding, the decision was made to split the now-monolothic library into modules. While Maven supports
-modules, they are a nuisance to work with, and a new solution had to be implemented soon. Some tinkering with [PaperMC](https://papermc.io/) proved inadequate for the project, and an introduction to [Gradle](https://gradle.org/) soon followed. The cleanliness of the build scripts was delightful, and the decision was made to use it for future projects.
+(like its ancestor). Following additional weeks of coding, the decision was made to split the now monolothic library into modules. While Maven
+supports modules, they are a nuisance to work with. However, while tinkering with [PaperMC](https://papermc.io/) one night, I was introduced to
+[Gradle](https://gradle.org/). The cleanliness of its build scripts was delightful, so the decision was made to use it for future projects.
 
 # 👾 Why use Ketill?
 By design, the definition of an `IoDevice` is kept separate from the code which implements it. The implementation of a device is provided by an
@@ -35,7 +38,7 @@ By design, the definition of an `IoDevice` is kept separate from the code which 
   2. Said definitions rarely require logic, just a statement of features.
   3. Device definitions requires little or no unit testing when properly written.
   4. The same device can be implemented with different adapters, enabling features as desired.
-  5. Cross-platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XInputXboxAdapter` on Windows)
+  5. Cross-platform support (e.g., using `GlfwXboxAdapter` on MacOS and `XInputXboxAdapter` on Windows).
 
 Ketill also provides a litany of built-in definitions and implementations. The goal of these built-in devices and adapters is to reduce the time
 required to get device I/O up and running. They also serve as examples for those who wish to create their own devices and/or adapters.
@@ -45,7 +48,7 @@ The following is a list of modules included with Ketill:
 | Module     | Description                                                        |
 |------------|--------------------------------------------------------------------|
 | `api`      | The base API for Ketill.                                           |
-| `devices`  | Provided definitions (`keyboard`, `mouse`, `XboxController`, etc.) |
+| `devices`  | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
 | `adapters` | Provided implementations using GLFW, X-input, etc.                 |
 
 # 🛠️ Building
@@ -87,7 +90,7 @@ This section is a work in progress.
 
 - My friend [Surhou](https://t.co/gt2mqvXKaA), for creating the project logo (which is still in progress, the one above is a placeholder).
 - My Uncle, for introducing me to [Mockito](https://site.mockito.org/) when I was seeking advice for writing unit tests.
-- My colleagues at the University of Central Arkansas, for cheering me on through the two semesters that I wrote this, even though no one has any clue what is going on.
+- My colleagues at the University of Central Arkansas, for cheering me on through the two semesters that I wrote this.
 
 # 
 
