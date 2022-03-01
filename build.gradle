@@ -30,6 +30,7 @@ subprojects {
 
         api 'org.joml:joml:1.10.2'
 
+        testCompileOnly 'org.jetbrains:annotations:22.0.0'
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
         testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
         testImplementation 'org.mockito:mockito-inline:4.3.1'
@@ -44,17 +45,17 @@ subprojects {
     archivesBaseName = "${rootProject.name}-${project.name}"
 
     /*
-     * Some modules in this project are blank modules. That being, they are
-     * simply folders which act as container for real modules. By default,
-     * Gradle will output JARs for these blank modules. The closures below
-     * disable this undesirable behavior.
+     * Some modules in this project are blank modules. They are
+     * simply folders which contain for real modules. By default,
+     * Gradle will output JARs for them, even though they have
+     * no source code. The closures below disable this undesirable behavior.
      */
     def blankModules = ["adapters", "devices"]
     if(blankModules.contains(project.name)) {
-        tasks.jar.enabled = false;
-        tasks.sourcesJar.enabled = false;
-        tasks.javadocJar.enabled = false;
+        tasks.jar.enabled = false
+        tasks.sourcesJar.enabled = false
+        tasks.javadocJar.enabled = false
 		
-		tasks.publishMavenPublicationToMavenLocal.enabled = false;
+		tasks.publishMavenPublicationToMavenLocal.enabled = false
     }
 }

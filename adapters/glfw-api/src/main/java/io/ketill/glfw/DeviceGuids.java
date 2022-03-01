@@ -16,9 +16,9 @@ import java.util.Objects;
  * A container for the GUIDs a device.
  * <p>
  * This should be used with {@link GlfwJoystickSeeker} to determine which set
- * of GUIDs to use when seeking for a joystick. This is because the GUIDs for
- * a joystick varies across operating systems. This container can determine
- * which GUIDs to return automatically via {@link #getSystemGuids()}.
+ * of GUIDs to use when seeking for a joystick. The GUIDs of a joystick vary
+ * across different operating systems. This container can determine which
+ * GUIDs to return automatically via {@link #getSystemGuids()}.
  *
  * @see #addSystem(String, OsDeterminant)
  */
@@ -34,7 +34,23 @@ public abstract class DeviceGuids {
 
     private static final OsDeterminant ANDROID_DETERMINANT = () -> {
         String runtimeName = System.getProperty("java.runtime.name");
+        if (runtimeName == null) {
+            return false;
+        }
         return runtimeName.toLowerCase().contains("android");
+    };
+
+    private static final OsDeterminant LINUX_DETERMINANT = () -> {
+        /*
+         * Android devices run on Linux. Just to be safe, ensure
+         * that the current operating system is not Android before
+         * returning if its Linux. Otherwise, two of the default
+         * determinants could report they are the current system.
+         */
+        if (ANDROID_DETERMINANT.isCurrentOs()) {
+            return false;
+        }
+        return SystemUtils.IS_OS_LINUX;
     };
 
     private final Map<String, OsDeterminant> systems;
@@ -44,8 +60,8 @@ public abstract class DeviceGuids {
      * determinants for the following systems are added:
      * <ul>
      *     <li>Windows (ID: {@code "windows"})</li>
-     *     <li>Linux (ID: {@code "linux"})</li>
      *     <li>Mac OSX (ID: {@code "mac_osx"})</li>
+     *     <li>Linux (ID: {@code "linux"})</li>
      *     <li>Android (ID: {@code "android"})</li>
      * </ul>
      * Because it lacks an officially supported JVM, iOS is excluded from
@@ -59,8 +75,8 @@ public abstract class DeviceGuids {
         this.systems = new HashMap<>();
         if (useDefaultSystems) {
             this.addSystem(ID_WINDOWS, () -> SystemUtils.IS_OS_WINDOWS);
-            this.addSystem(ID_LINUX, () -> SystemUtils.IS_OS_LINUX);
             this.addSystem(ID_MAC_OSX, () -> SystemUtils.IS_OS_MAC_OSX);
+            this.addSystem(ID_LINUX, LINUX_DETERMINANT);
             this.addSystem(ID_ANDROID, ANDROID_DETERMINANT);
         }
     }
@@ -70,8 +86,8 @@ public abstract class DeviceGuids {
      * for the following operating systems already added:
      * <ul>
      *     <li>Windows (ID: {@code "windows"})</li>
-     *     <li>Linux (ID: {@code "linux"})</li>
      *     <li>Mac OSX (ID: {@code "mac_osx"})</li>
+     *     <li>Linux (ID: {@code "linux"})</li>
      *     <li>Android (ID: {@code "android"})</li>
      * </ul>
      * Because it lacks an officially supported JVM, iOS is excluded from
@@ -102,6 +118,7 @@ public abstract class DeviceGuids {
      * @param systemId the system ID to check for.
      * @return {@code true} if this container supports the system with the
      * specified ID, {@code false} otherwise.
+     * @throws NullPointerException if {@code systemId} is {@code null}.
      */
     public final boolean supportsSystem(@NotNull String systemId) {
         Objects.requireNonNull(systemId, "systemId");
@@ -160,7 +177,7 @@ public abstract class DeviceGuids {
 
     /* @formatter:off */
     protected abstract @Nullable Collection<@NotNull String>
-            getGuidsImpl(@NotNull String os);
+            getGuidsImpl(@NotNull String systemId);
     /* @formatter:on */
 
     /**
