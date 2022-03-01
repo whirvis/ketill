@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assumptions.*;
 @SuppressWarnings("ConstantConditions")
 class DeviceGuidsTest {
 
-    private MockDeviceGuids dfltGuids;
+    private MockDeviceGuids defaultGuids;
     private MockDeviceGuids noGuids;
 
     @BeforeEach
     void setup() {
-        this.dfltGuids = new MockDeviceGuids();
+        this.defaultGuids = new MockDeviceGuids();
         this.noGuids = new MockDeviceGuids(false);
     }
 
@@ -31,23 +31,23 @@ class DeviceGuidsTest {
          * this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> dfltGuids.supportsSystem(null));
+                () -> defaultGuids.supportsSystem(null));
 
         /*
          * The mock device GUID container was constructed with
          * support for the default systems enabled. As such, it
          * should support Windows, Linux, Mac OSX, and Android.
          */
-        assertTrue(dfltGuids.supportsSystem(DeviceGuids.ID_WINDOWS));
-        assertTrue(dfltGuids.supportsSystem(DeviceGuids.ID_LINUX));
-        assertTrue(dfltGuids.supportsSystem(DeviceGuids.ID_MAC_OSX));
-        assertTrue(dfltGuids.supportsSystem(DeviceGuids.ID_ANDROID));
+        assertTrue(defaultGuids.supportsSystem(DeviceGuids.ID_WINDOWS));
+        assertTrue(defaultGuids.supportsSystem(DeviceGuids.ID_LINUX));
+        assertTrue(defaultGuids.supportsSystem(DeviceGuids.ID_MAC_OSX));
+        assertTrue(defaultGuids.supportsSystem(DeviceGuids.ID_ANDROID));
 
         /*
          * Ensure that the device GUID container returns false
          * for an unsupported operating system, like iOS.
          */
-        assertFalse(dfltGuids.supportsSystem("ios"));
+        assertFalse(defaultGuids.supportsSystem("ios"));
 
         /*
          * When a device GUID container is constructed with the
@@ -69,9 +69,9 @@ class DeviceGuidsTest {
          * were mistakes by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> dfltGuids.addSystem(null, () -> false));
+                () -> defaultGuids.addSystem(null, () -> false));
         assertThrows(NullPointerException.class,
-                () -> dfltGuids.addSystem("dummy", null));
+                () -> defaultGuids.addSystem("dummy", null));
 
         /*
          * Empty IDs or IDs containing whitespace are not allowed
@@ -79,9 +79,9 @@ class DeviceGuidsTest {
          * if the user tries to use them.
          */
         assertThrows(IllegalArgumentException.class,
-                () -> dfltGuids.addSystem("", () -> false));
+                () -> defaultGuids.addSystem("", () -> false));
         assertThrows(IllegalArgumentException.class,
-                () -> dfltGuids.addSystem("\t", () -> false));
+                () -> defaultGuids.addSystem("\t", () -> false));
 
         /*
          * In the event two operating systems say they are the
@@ -94,8 +94,8 @@ class DeviceGuidsTest {
          * should not be kept as a supported operating system.
          */
         assertThrows(IllegalStateException.class,
-                () -> dfltGuids.addSystem("dummy", () -> true));
-        assertFalse(dfltGuids.supportsSystem("dummy"));
+                () -> defaultGuids.addSystem("dummy", () -> true));
+        assertFalse(defaultGuids.supportsSystem("dummy"));
     }
 
     @Test
@@ -106,7 +106,7 @@ class DeviceGuidsTest {
          * the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> dfltGuids.removeSystem(null));
+                () -> defaultGuids.removeSystem(null));
 
         /*
          * When an operating system which was previously added is
@@ -114,8 +114,8 @@ class DeviceGuidsTest {
          * must be returned. If it was not previously added, then
          * a value of false must be returned.
          */
-        assertTrue(dfltGuids.removeSystem(DeviceGuids.ID_WINDOWS));
-        assertFalse(dfltGuids.removeSystem(DeviceGuids.ID_WINDOWS));
+        assertTrue(defaultGuids.removeSystem(DeviceGuids.ID_WINDOWS));
+        assertFalse(defaultGuids.removeSystem(DeviceGuids.ID_WINDOWS));
     }
 
     @Test
@@ -126,14 +126,14 @@ class DeviceGuidsTest {
          * mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> dfltGuids.getGuids(null));
+                () -> defaultGuids.getGuids(null));
 
         /*
          * When there are no GUIDs present for an operating
          * system, the device GUID container must return null
          * rather than an empty collection.
          */
-        assertNull(dfltGuids.getGuids("dummy"));
+        assertNull(defaultGuids.getGuids("dummy"));
 
         /* randomly generate GUIDs for next test */
         Random random = new Random();
@@ -142,19 +142,19 @@ class DeviceGuidsTest {
             int guid = random.nextInt();
             generatedIds[i] = Integer.toHexString(guid);
         }
-        dfltGuids.currentGuids = generatedIds;
+        defaultGuids.currentGuids = generatedIds;
 
         /* randomly generate system ID for next test */
         int systemId = random.nextInt();
         String systemIdStr = Integer.toHexString(systemId);
-        dfltGuids.currentSystemId = systemIdStr;
+        defaultGuids.currentSystemId = systemIdStr;
 
         /*
          * Ensure all the randomly generated IDs for the randomly
          * generated system ID are returned. If any are missing,
          * something has gone wrong internally.
          */
-        Collection<String> fetched = dfltGuids.getGuids(systemIdStr);
+        Collection<String> fetched = defaultGuids.getGuids(systemIdStr);
         assertNotNull(fetched);
         for (String generatedId : generatedIds) {
             assertTrue(fetched.contains(generatedId));
@@ -202,8 +202,8 @@ class DeviceGuidsTest {
          * When running on Windows, ensure that getSystemGuids()
          * results in the GUIDs for Windows being requested.
          */
-        dfltGuids.getSystemGuids(); /* set guids.lastRequestedOs */
-        assertEquals(DeviceGuids.ID_WINDOWS, dfltGuids.lastRequestedOs);
+        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+        assertEquals(DeviceGuids.ID_WINDOWS, defaultGuids.lastRequestedOs);
     }
 
     @Test
@@ -213,8 +213,8 @@ class DeviceGuidsTest {
          * When running on Mac OSX, ensure that getSystemGuids()
          * results in the GUIDs for Mac OSX being requested.
          */
-        dfltGuids.getSystemGuids(); /* set guids.lastRequestedOs */
-        assertEquals(DeviceGuids.ID_MAC_OSX, dfltGuids.lastRequestedOs);
+        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+        assertEquals(DeviceGuids.ID_MAC_OSX, defaultGuids.lastRequestedOs);
     }
 
     @Test
@@ -224,8 +224,8 @@ class DeviceGuidsTest {
          * When running on Linux, ensure that getSystemGuids()
          * results in the GUIDs for Linux being requested.
          */
-        dfltGuids.getSystemGuids(); /* set guids.lastRequestedOs */
-        assertEquals(DeviceGuids.ID_LINUX, dfltGuids.lastRequestedOs);
+        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+        assertEquals(DeviceGuids.ID_LINUX, defaultGuids.lastRequestedOs);
     }
 
     @Test
@@ -246,8 +246,8 @@ class DeviceGuidsTest {
          * When running on Android, ensure that getSystemGuids()
          * results in the GUIDs for Android being requested.
          */
-        dfltGuids.getSystemGuids(); /* set guids.lastRequestedOs */
-        assertEquals(DeviceGuids.ID_ANDROID, dfltGuids.lastRequestedOs);
+        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+        assertEquals(DeviceGuids.ID_ANDROID, defaultGuids.lastRequestedOs);
     }
 
 }
