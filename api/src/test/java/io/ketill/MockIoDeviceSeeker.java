@@ -10,7 +10,7 @@ class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
     }
 
     @Override
-    protected void seekImpl() throws Exception {
+    protected void seekImpl() {
         if (errorOnSeek) {
             throw new KetillException();
         }

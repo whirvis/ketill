@@ -145,6 +145,29 @@ public abstract class IoDevice implements FeatureRegistry {
             return;
         }
 
+        /*
+         * It is possible for a class to not be public, and instead
+         * be package private. It is impossible to get the value of
+         * fields in these classes, even if they are public.
+         *
+         * However, a class can be package private if it resides in
+         * the same package as IoDevice. This makes it possible for
+         * the test classes to remain package private.
+         *
+         * Furthermore, this check should be run only if there are
+         * fields which will be registered. It would not make sense
+         * to force the user to make their class public if they did
+         * not make use of the feature which requires it.
+         */
+        /* @formatter:off */
+        Class<?> clazz = this.getClass();
+        boolean sharePkg = clazz.getPackage() == IoDevice.class.getPackage();
+        if(!Modifier.isPublic(clazz.getModifiers()) && !sharePkg) {
+            throw new KetillException("class " + clazz.getName() +
+                    " must be public");
+        }
+        /* @formatter:on */
+
         String fieldDesc = "@" + FeaturePresent.class.getSimpleName() +
                 " annotated field \"" + field.getName()
                 + "\" in class " + this.getClass().getName();
@@ -156,8 +179,9 @@ public abstract class IoDevice implements FeatureRegistry {
         }
 
         /*
-         * It would make no sense for @FeaturePresent annotated field to
-         * be hidden. As such, it is required that they be public.
+         * It would make no sense for @FeaturePresent annotated
+         * field to be hidden. As such, it is required that they
+         * be public; even if it resides in the same package.
          */
         int mods = field.getModifiers();
         if (!Modifier.isPublic(mods)) {
@@ -175,7 +199,7 @@ public abstract class IoDevice implements FeatureRegistry {
              * slim possibility, it would be infuriating to debug. As such,
              * perform this check before making the call to register.
              */
-            if(!this.isRegistered(feature)) {
+            if (!this.isRegistered(feature)) {
                 this.registerFeature(feature);
             }
         } catch (IllegalAccessException e) {
