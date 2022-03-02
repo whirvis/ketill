@@ -6,10 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When this annotation is present, it signals to a {@link GlfwJoystickSeeker}
- * that it should use a different base path when loading GUID resources. By
- * default, GLFW joystick seekers use the package they reside in as the base
- * path. This is done to prevent possible filename conflicts.
+ * When present, signals to a {@link GlfwJoystickSeeker} it should use a
+ * different base path when loading GUID resources. By default, the base
+ * path is the package in which the GLFW joystick seeker resides.
  *
  * @see #ROOT
  * @see GlfwJoystickSeeker#loadJsonGuids(String)
