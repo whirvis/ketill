@@ -77,7 +77,7 @@ class GlfwJoystickAdapterTest {
 
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             /*
-             * Mocking this specking GLFW method is required for
+             * Mocking this specific GLFW method is required for
              * a mock GLFW joystick adapter to be created. It is
              * used to validate a pointer to a GLFW window.
              */
