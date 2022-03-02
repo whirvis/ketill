@@ -42,7 +42,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice> extends GlfwDevice
      * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
      *                                  valid GLFW window pointer;
      *                                  if {@code glfwJoystick} is not a
-     *                                  valid joystick.
+     *                                  valid GLFW joystick.
      */
     public GlfwJoystickAdapter(@NotNull I device,
                                @NotNull MappedFeatureRegistry registry,
@@ -110,13 +110,17 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice> extends GlfwDevice
      * @param glfwButton the ID of the GLFW button to check.
      * @return {@code true} if {@code glfwButton} is currently pressed,
      * {@code false} otherwise (or if it does not exist.)
-     * @throws IndexOutOfBoundsException if {@code glfwButton} is negative.
+     * @throws IndexOutOfBoundsException if {@code glfwButton} is negative or
+     *                                   not smaller than the button count.
      */
     protected final boolean isPressed(int glfwButton) {
         if (glfwButton < 0) {
             throw new IndexOutOfBoundsException("glfwButton < 0");
-        } else if (buttons == null || glfwButton >= buttons.limit()) {
-            return false;
+        } else if (buttons == null) {
+            return false; /* buttons have yet to set, ignore */
+        } else if (glfwButton >= buttons.limit()) {
+            throw new IndexOutOfBoundsException(
+                    "glfwButton >= buttons.limit()");
         }
         return buttons.get(glfwButton) != 0;
     }
@@ -132,13 +136,16 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice> extends GlfwDevice
     /**
      * @param glfwAxis the ID of the GLFW axis to fetch.
      * @return the current axis value, {@code 0.0F} it does not exist.
-     * @throws IndexOutOfBoundsException if {@code glfwAxis} is negative.
+     * @throws IndexOutOfBoundsException if {@code glfwAxis} is negative or
+     *                                   not smaller than the axis count.
      */
     protected final float getAxis(int glfwAxis) {
         if (glfwAxis < 0) {
             throw new IndexOutOfBoundsException("glfwAxis < 0");
-        } else if (axes == null || glfwAxis >= axes.limit()) {
-            return 0.0F;
+        } else if (axes == null) {
+            return 0.0F; /* axes have yet to be set, ignore */
+        } else if (glfwAxis >= axes.limit()) {
+            throw new IndexOutOfBoundsException("glfwAxis >= axes.limit()");
         }
         return axes.get(glfwAxis);
     }
