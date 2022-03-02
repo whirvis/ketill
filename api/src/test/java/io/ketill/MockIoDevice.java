@@ -1,5 +1,7 @@
 package io.ketill;
 
+import org.jetbrains.annotations.NotNull;
+
 class MockIoDevice extends IoDevice {
 
     static class WithPrivateFeature extends MockIoDevice {
@@ -38,8 +40,8 @@ class MockIoDevice extends IoDevice {
         }
     }
 
-    MockIoDevice(String id,
-                 AdapterSupplier<MockIoDevice> adapterSupplier) {
+    MockIoDevice(@NotNull String id,
+                 @NotNull AdapterSupplier<MockIoDevice> adapterSupplier) {
         super(id, adapterSupplier);
         this.featureState = this.getState(FEATURE);
     }

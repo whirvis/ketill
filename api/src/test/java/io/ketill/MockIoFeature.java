@@ -1,14 +1,17 @@
 package io.ketill;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Supplier;
 
 class MockIoFeature extends IoFeature<Object> {
 
-    MockIoFeature(String id, Supplier<? super Object> initialState) {
+    MockIoFeature(@NotNull String id,
+                  @NotNull Supplier<? super Object> initialState) {
         super(id, initialState);
     }
 
-    MockIoFeature(String id) {
+    MockIoFeature(@NotNull String id) {
         this(id, Object::new);
     }
 
