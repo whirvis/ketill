@@ -13,7 +13,7 @@
 
 #
 
-### 🔖 Summary
+### 🔖 Summar
 
 Ketill provides dynamic device I/O for Java. Created from code originally written for the [Ardenus Engine](https://github.com/whirvis/ardenus-engine),
 it is intended for use in [game development](https://youtu.be/zCmMuOXr-Nk). However, other use cases are supported. Ketill paves an avenue to
