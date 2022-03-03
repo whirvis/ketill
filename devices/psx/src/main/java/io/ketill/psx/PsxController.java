@@ -57,7 +57,7 @@ public abstract class PsxController extends Controller {
             up = this.getState(BUTTON_UP),
             right = this.getState(BUTTON_RIGHT),
             down = this.getState(BUTTON_DOWN),
-            left = this.getState(BUTTON_RIGHT);
+            left = this.getState(BUTTON_LEFT);
     /* @formatter:on */
 
     public PsxController(@NotNull String id,

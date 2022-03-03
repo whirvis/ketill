@@ -1,11 +1,11 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
@@ -59,6 +59,17 @@ public class Ps4Controller extends PsxController {
             rumbleStrong = this.getState(MOTOR_STRONG),
             rumbleWeak = this.getState(MOTOR_WEAK);
 
+    /**
+     * TODO
+     *
+     * While this value can be modified directly, it is recommended
+     * to use one of the following setters below. They provide more
+     * formats as well as bounds checking.
+     *
+     * @see #setLightbarColor(float, float, float, float)
+     * @see #setLightbarColor(int, boolean)
+     * @see #setLightbarColor(Color)
+     */
     @FeatureState
     public final @NotNull Vector4f
             lightbar = this.getState(FEATURE_LIGHTBAR);
@@ -108,11 +119,11 @@ public class Ps4Controller extends PsxController {
      *                 should be used, {@code false} to have it discarded.
      */
     public void setLightbarColor(int rgba, boolean useAlpha) {
-        lightbar.x = ((byte) rgba) / 255.0F;
-        lightbar.y = ((byte) (rgba >> 8)) / 255.0F;
-        lightbar.z = ((byte) (rgba >> 16)) / 255.0F;
+        lightbar.x = (((byte) (rgba >> 24)) & 0xFF) / 255.0F;
+        lightbar.y = (((byte) (rgba >> 16)) & 0xFF) / 255.0F;
+        lightbar.z = (((byte) (rgba >> 8)) & 0xFF) / 255.0F;
         if (useAlpha) {
-            lightbar.w = ((byte) (rgba >> 24)) / 255.0F;
+            lightbar.w = (((byte) rgba) & 0xFF) / 255.0F;
         } else {
             lightbar.w = 1.0F;
         }
@@ -141,7 +152,10 @@ public class Ps4Controller extends PsxController {
         if (color == null) {
             this.setLightbarColor(0x00000000, true);
         } else {
-            this.setLightbarColor(color.getRGB(), true);
+            /* convert ARGB to RGBA for setLightbarColor(int) */
+            int rgba = color.getRGB() << 8;
+            rgba |= ((color.getRGB() & 0xFF000000) >> 24);
+            this.setLightbarColor(rgba, true);
         }
     }
 
