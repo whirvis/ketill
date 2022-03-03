@@ -13,13 +13,13 @@
 
 #
 
-### 🔖 Summar
+### 🔖 Summary
 
 Ketill provides dynamic device I/O for Java. Created from code originally written for the [Ardenus Engine](https://github.com/whirvis/ardenus-engine),
 it is intended for use in [game development](https://youtu.be/zCmMuOXr-Nk). However, other use cases are supported. Ketill paves an avenue to
 supply universal definitions for I/O devices (such as keyboards, mice, XBOX controllers, etc.) while keeping implementation details separate.
 
-### 📓 Histor
+### 📓 History
 
 Development on Ketill began in the fall of 2021. While working on a revision of the Ardenus Engine, I decided that I wanted to create a new input system
 from the ground up, since the original was clunky. At the time, Ketill was simply the `input` package of the engine. Later, as the package grew in size,
