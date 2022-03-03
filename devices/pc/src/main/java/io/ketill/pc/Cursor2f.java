@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+import java.util.Objects;
+
 public class Cursor2f extends Vector2f {
 
     public boolean visible;
@@ -37,8 +39,22 @@ public class Cursor2f extends Vector2f {
         return pos;
     }
 
+    /**
+     * @param pos the position to set the cursor to.
+     * @throws NullPointerException if {@code pos} is {@code null}.
+     */
     public void setPosition(@NotNull Vector2fc pos) {
+        Objects.requireNonNull(pos, "pos");
         this.requestedPos = pos;
+    }
+
+    /**
+     * @param xPos the X-axis position to set the cursor to.
+     * @param yPos the Y-axis position to set the cursor to.
+     * @see #setPosition(Vector2fc)
+     */
+    public final void setPosition(float xPos, float yPos) {
+        this.setPosition(new Vector2f(xPos, yPos));
     }
 
 }
