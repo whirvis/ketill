@@ -30,7 +30,7 @@ public class AnalogStick extends IoFeature<Vector3f> {
             case RIGHT:
                 return pos.x() >= STICK_PRESS;
         }
-        throw new KetillException("unknown direction");
+        throw new KetillException("this is a bug");
     }
 
     public final @Nullable DeviceButton zButton;

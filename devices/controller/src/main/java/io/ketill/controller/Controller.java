@@ -135,7 +135,7 @@ public abstract class Controller extends IoDevice {
         if (feature instanceof RumbleMotor) {
             synchronized (rumbleMotors) {
                 rumbleMotors.put((RumbleMotor) feature,
-                        (Vibration1f) this.getState(feature));
+                        (Vibration1f) registered.state);
             }
         }
         return registered;
