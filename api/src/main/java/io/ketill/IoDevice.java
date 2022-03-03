@@ -160,11 +160,11 @@ public abstract class IoDevice implements FeatureRegistry {
          * not make use of the feature which requires it.
          */
         /* @formatter:off */
-        Class<?> clazz = this.getClass();
+        Class<?> clazz = field.getDeclaringClass();
         boolean sharePkg = clazz.getPackage() == IoDevice.class.getPackage();
         if(!Modifier.isPublic(clazz.getModifiers()) && !sharePkg) {
             throw new KetillException("class " + clazz.getName() +
-                    " must be public");
+                    " declaring " + field.getName() +" must be public");
         }
         /* @formatter:on */
 
