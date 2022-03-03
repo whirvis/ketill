@@ -27,8 +27,8 @@ I realized it could work as its own library. This would allow seamless integrati
 
 After much refactoring, the `input` package was moved to a separate repository and was reborn as a [Maven](https://maven.apache.org/) project
 (like its ancestor). Following additional weeks of coding, the decision was made to split the now monolothic library into modules. While Maven
-supports modules, they are a nuisance to work with. However, while tinkering with [PaperMC](https://papermc.io/) one night, I was introduced to
-[Gradle](https://gradle.org/). The cleanliness of its build scripts was delightful, so the decision was made to use it for future projects.
+supports modules, they are a nuisance to work with. However, while tinkering with [FabricMC](https://fabricmc.net/) one night, I was introduced
+to [Gradle](https://gradle.org/). The cleanliness of its build scripts was delightful, so the decision was made to use it for future projects.
 
 # 👾 Why use Ketill?
 By design, the definition of an `IoDevice` is kept separate from the code which implements it. The implementation of a device is provided by an
