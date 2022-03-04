@@ -6,14 +6,13 @@ import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
-import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A Nintendo Switch left Joy-Con.
  */
-public class NxLeftJoyCon extends Controller {
+public class NxLeftJoyCon extends NxJoyCon {
 
     /* @formatter:off */
     @FeaturePresent

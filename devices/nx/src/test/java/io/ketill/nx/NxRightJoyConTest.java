@@ -39,4 +39,17 @@ class NxRightJoyConTest {
         assertStateIsFeature(nxRight.rt, TRIGGER_ZR);
     }
 
+    @Test
+    void leftJoyCon() {
+        assertFalse(nxRight.isLeftJoyCon());
+        assertThrows(UnsupportedOperationException.class,
+                nxRight::asLeftJoyCon);
+    }
+
+    @Test
+    void rightJoyCon() {
+        assertTrue(nxRight.isRightJoyCon());
+        assertEquals(nxRight, nxRight.asRightJoyCon());
+    }
+
 }
