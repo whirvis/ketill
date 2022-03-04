@@ -30,6 +30,8 @@ class Ps3ControllerTest {
 
         assertStateIsFeature(ps3.rumbleStrong, MOTOR_STRONG);
         assertStateIsFeature(ps3.rumbleWeak, MOTOR_WEAK);
+
+        assertStateIsFeature(ps3.led, FEATURE_LED);
     }
 
 }

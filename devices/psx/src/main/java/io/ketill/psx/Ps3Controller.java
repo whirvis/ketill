@@ -1,11 +1,13 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
+import io.ketill.controller.Led1i;
+import io.ketill.controller.PlayerLed;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +32,11 @@ public class Ps3Controller extends PsxController {
     public static final @NotNull RumbleMotor
             MOTOR_STRONG = new RumbleMotor("rumble_strong"),
             MOTOR_WEAK = new RumbleMotor("rumble_weak");
-    /* @formatter:on */
 
-    /* TODO: player LED feature (present in wii-hid branch) */
+    @FeaturePresent
+    public static final @NotNull PlayerLed
+            FEATURE_LED = new PlayerLed("led");
+    /* @formatter:on */
 
     /* @formatter:off */
     @FeatureState
@@ -44,6 +48,10 @@ public class Ps3Controller extends PsxController {
     public final @NotNull Vibration1f
             rumbleStrong = this.getState(MOTOR_STRONG),
             rumbleWeak = this.getState(MOTOR_WEAK);
+
+    @FeatureState
+    public final @NotNull Led1i
+            led = this.getState(FEATURE_LED);
     /* @formatter:on */
 
     /**

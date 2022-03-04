@@ -7,6 +7,8 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Led1i;
+import io.ketill.controller.PlayerLed;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,6 +38,10 @@ public class NxLeftJoyCon extends NxJoyCon {
     @FeaturePresent
     public static final AnalogTrigger
             TRIGGER_ZL = new AnalogTrigger("zl");
+
+    @FeaturePresent
+    public static final @NotNull PlayerLed
+            FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -52,6 +58,10 @@ public class NxLeftJoyCon extends NxJoyCon {
             snapshot = this.getState(BUTTON_SNAPSHOT),
             l = this.getState(BUTTON_L),
             zl = this.getState(BUTTON_ZL);
+
+    @FeatureState
+    public final @NotNull Led1i
+            led = this.getState(FEATURE_LED);
     /* @formatter:on */
 
     /**

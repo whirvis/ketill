@@ -37,6 +37,8 @@ class NxLeftJoyConTest {
         assertStateIsFeature(nxLeft.ls, STICK_LS);
 
         assertStateIsFeature(nxLeft.lt, TRIGGER_ZL);
+
+        assertStateIsFeature(nxLeft.led, FEATURE_LED);
     }
 
     @Test

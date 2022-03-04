@@ -9,6 +9,8 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Led1i;
+import io.ketill.controller.PlayerLed;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,6 +51,10 @@ public class NxProController extends Controller {
     public static final @NotNull AnalogTrigger
             TRIGGER_LT = new AnalogTrigger("lt"),
             TRIGGER_RT = new AnalogTrigger("rt");
+
+    @FeaturePresent
+    public static final @NotNull PlayerLed
+            FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -74,6 +80,10 @@ public class NxProController extends Controller {
             right = this.getState(BUTTON_RIGHT),
             down = this.getState(BUTTON_DOWN),
             left = this.getState(BUTTON_LEFT);
+
+    @FeatureState
+    public final @NotNull Led1i
+            led = this.getState(FEATURE_LED);
     /* @formatter:on */
 
     /**
