@@ -1,5 +1,8 @@
 package io.ketill.pc;
 
+/**
+ * Contains the state of a {@link KeyboardKey}.
+ */
 public class Key1b implements Key1bc {
 
     public boolean pressed;

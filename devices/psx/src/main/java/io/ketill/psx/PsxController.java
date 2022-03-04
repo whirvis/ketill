@@ -1,19 +1,27 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.Direction;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.Direction;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A Sony PlayStation controller.
+ * The base for a Sony PlayStation controller.
+ * <p>
+ * <b>Note:</b> This class does <i>not</i> represent a PlayStation 1
+ * controller. If PlayStation 1 controllers are added in the future,
+ * their class will be named {@code Ps1Controller}.
+ *
+ * @see Ps3Controller
+ * @see Ps4Controller
+ * @see Ps5Controller
  */
 public abstract class PsxController extends Controller {
 
@@ -60,6 +68,12 @@ public abstract class PsxController extends Controller {
             left = this.getState(BUTTON_LEFT);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the PlayStation controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public PsxController(@NotNull String id,
                          @NotNull AdapterSupplier<?> adapterSupplier,
                          @Nullable AnalogTrigger lt,

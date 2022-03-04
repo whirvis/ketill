@@ -46,6 +46,12 @@ public class Ps3Controller extends PsxController {
             rumbleWeak = this.getState(MOTOR_WEAK);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the PlayStation 3 controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public Ps3Controller(@NotNull AdapterSupplier<Ps3Controller> adapterSupplier) {
         super("ps3", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }

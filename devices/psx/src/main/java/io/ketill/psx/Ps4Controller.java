@@ -75,6 +75,12 @@ public class Ps4Controller extends PsxController {
             lightbar = this.getState(FEATURE_LIGHTBAR);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the PlayStation 4 controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public Ps4Controller(@NotNull AdapterSupplier<Ps4Controller> adapterSupplier) {
         super("ps4", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }

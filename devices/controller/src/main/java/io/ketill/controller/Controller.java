@@ -56,6 +56,13 @@ public abstract class Controller extends IoDevice {
      * @param initAdapter     {@code true} if the constructor should call
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
+     * @throws NullPointerException     if {@code id} or
+     *                                  {@code adapterSupplier}
+     *                                  are {@code null}; if the adapter
+     *                                  given by {@code adapterSupplier}
+     *                                  is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public Controller(@NotNull String id,
                       @NotNull AdapterSupplier<?> adapterSupplier,
@@ -94,6 +101,13 @@ public abstract class Controller extends IoDevice {
      * @param rs              the right analog stick, may be {@code null}.
      * @param lt              the left analog trigger, may be {@code null}.
      * @param rt              the right analog trigger, may be {@code null}.
+     * @throws NullPointerException     if {@code id} or
+     *                                  {@code adapterSupplier}
+     *                                  are {@code null}; if the adapter
+     *                                  given by {@code adapterSupplier}
+     *                                  is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public Controller(@NotNull String id,
                       @NotNull AdapterSupplier<?> adapterSupplier,

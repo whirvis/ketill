@@ -5,6 +5,12 @@ import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * An I/O feature representing a button on a {@link Controller}.
+ *
+ * @see AnalogStick
+ * @see AnalogTrigger
+ */
 public class DeviceButton extends IoFeature<Button1b> {
 
     public final @Nullable Direction direction;
@@ -14,7 +20,9 @@ public class DeviceButton extends IoFeature<Button1b> {
      * @param direction the direction this button represents. A {@code null}
      *                  value is permitted, and indicates that this button
      *                  does not represent a direction.
-     * @throws NullPointerException if {@code id} is {@code null}.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public DeviceButton(@NotNull String id, @Nullable Direction direction) {
         super(id, Button1b::new);
@@ -23,7 +31,9 @@ public class DeviceButton extends IoFeature<Button1b> {
 
     /**
      * @param id the button ID.
-     * @throws NullPointerException if {@code id} is {@code null}.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public DeviceButton(@NotNull String id) {
         this(id, null);

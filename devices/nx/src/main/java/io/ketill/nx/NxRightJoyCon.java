@@ -54,9 +54,15 @@ public class NxRightJoyCon extends NxJoyCon {
             zr = this.getState(BUTTON_ZR);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the right Joy-Con adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public NxRightJoyCon(@NotNull AdapterSupplier<NxRightJoyCon> adapterSupplier) {
-        super("nx_joycon_right", adapterSupplier, null, STICK_RS, null,
-                TRIGGER_ZR);
+        super("nx_joycon_right", adapterSupplier,
+                null, STICK_RS, null, TRIGGER_ZR);
     }
 
 }

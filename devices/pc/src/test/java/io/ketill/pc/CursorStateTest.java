@@ -9,13 +9,21 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
-class Cursor2fTest {
+class CursorStateTest {
 
-    private Cursor2f cursor;
+    private CursorState cursor;
 
     @BeforeEach
     void setup() {
-        this.cursor = new Cursor2f();
+        this.cursor = new CursorState();
+    }
+
+    @Test
+    void isVisible() {
+        cursor.setVisible(true);
+        assertTrue(cursor.isVisible());
+        cursor.setVisible(false);
+        assertFalse(cursor.isVisible());
     }
 
     @Test

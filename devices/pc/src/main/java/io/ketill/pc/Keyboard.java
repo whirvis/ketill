@@ -6,6 +6,11 @@ import io.ketill.FeatureState;
 import io.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A generic computer keyboard.
+ *
+ * @see Mouse
+ */
 public class Keyboard extends IoDevice {
 
     /* @formatter:off */
@@ -264,6 +269,12 @@ public class Keyboard extends IoDevice {
             menu = this.getState(KEY_MENU);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the keyboard adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public Keyboard(@NotNull AdapterSupplier<Keyboard> adapterSupplier) {
         super("keyboard", adapterSupplier);
     }

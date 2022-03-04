@@ -7,23 +7,44 @@ import org.joml.Vector2fc;
 
 import java.util.Objects;
 
-public class Cursor2f extends Vector2f {
+/**
+ * Contains the state of a {@link Cursor}.
+ *
+ * @see #setPosition(Vector2fc)
+ */
+public class CursorState {
 
-    public boolean visible;
+    private boolean visible;
     private Vector2fc requestedPos;
 
     /**
      * @param visible the initial visibility.
      */
-    public Cursor2f(boolean visible) {
+    public CursorState(boolean visible) {
         this.visible = visible;
     }
 
     /**
      * Constructs a new {@code Cursor2f} with visibility enabled.
      */
-    public Cursor2f() {
+    public CursorState() {
         this(true);
+    }
+
+    /**
+     * @return {@code true} if the mouse cursor is currently visible,
+     * {@code false} otherwise.
+     */
+    public boolean isVisible() {
+        return this.visible;
+    }
+
+    /**
+     * @param visible {@code true} if the mouse cursor should be visible,
+     *                {@code false otherwise}.
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**

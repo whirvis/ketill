@@ -6,6 +6,11 @@ import io.ketill.FeatureState;
 import io.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A generic computer mouse.
+ *
+ * @see Keyboard
+ */
 public class Mouse extends IoDevice {
 
     /* @formatter:off */
@@ -47,10 +52,16 @@ public class Mouse extends IoDevice {
             middle = m3;
 
     @FeatureState
-    public final @NotNull Cursor2f
+    public final @NotNull CursorState
             cursor = this.getState(FEATURE_CURSOR);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the mouse adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public Mouse(@NotNull AdapterSupplier<Mouse> adapterSupplier) {
         super("mouse", adapterSupplier);
     }

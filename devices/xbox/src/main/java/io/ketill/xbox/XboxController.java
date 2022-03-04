@@ -76,9 +76,15 @@ public class XboxController extends Controller {
             rumbleFine = this.getState(MOTOR_FINE);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the XBOX controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public XboxController(@NotNull AdapterSupplier<XboxController> adapterSupplier) {
-        super("xbox", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
-                TRIGGER_RT);
+        super("xbox", adapterSupplier,
+                STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
     }
 
 }

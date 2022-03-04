@@ -1,5 +1,8 @@
 package io.ketill.pc;
 
+/**
+ * Contains the state of a {@link MouseButton}.
+ */
 public class Click1b implements Click1bc {
 
     public boolean clicked;

@@ -8,6 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
+/**
+ * An I/O feature representing an analog stick on a {@link Controller}.
+ *
+ * @see DeviceButton
+ * @see AnalogTrigger
+ * @see #isPressed(Vector3fc, Direction)
+ */
 public class AnalogStick extends IoFeature<Vector3f> {
 
     private static final float STICK_PRESS = 2.0F / 3.0F;
@@ -42,12 +49,23 @@ public class AnalogStick extends IoFeature<Vector3f> {
      *                {@code -1.0F}. A value of {@code null} is permitted,
      *                and indicates that no button corresponds to the Z-axis
      *                of this analog stick.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
      */
     public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton) {
         super(id, Vector3f::new);
         this.zButton = zButton;
     }
 
+    /**
+     * Constructs a new {@code AnalogStick} with no Z-button.
+     *
+     * @param id the analog stick ID.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
     public AnalogStick(@NotNull String id) {
         this(id, null);
     }

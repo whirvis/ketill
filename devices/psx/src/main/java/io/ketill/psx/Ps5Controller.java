@@ -38,6 +38,12 @@ public class Ps5Controller extends PsxController {
             mute = this.getState(BUTTON_MUTE);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the PlayStation 5 controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public Ps5Controller(@NotNull AdapterSupplier<Ps5Controller> adapterSupplier) {
         super("ps5", adapterSupplier, TRIGGER_LT, TRIGGER_RT);
     }

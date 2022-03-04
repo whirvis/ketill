@@ -1,5 +1,8 @@
 package io.ketill.controller;
 
+/**
+ * Contains the state of an {@link AnalogTrigger}.
+ */
 public class Trigger1f implements Trigger1fc {
 
     public float force;

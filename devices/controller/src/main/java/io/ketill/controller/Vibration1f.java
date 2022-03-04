@@ -1,5 +1,8 @@
 package io.ketill.controller;
 
+/**
+ * Contains the state of a {@link RumbleMotor}.
+ */
 public class Vibration1f {
 
     public float force;

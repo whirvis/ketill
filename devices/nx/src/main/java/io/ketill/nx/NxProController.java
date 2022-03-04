@@ -1,14 +1,14 @@
 package io.ketill.nx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.Direction;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.Direction;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -76,9 +76,15 @@ public class NxProController extends Controller {
             left = this.getState(BUTTON_LEFT);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the Pro Controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public NxProController(@NotNull AdapterSupplier<NxProController> adapterSupplier) {
-        super("nx_pro", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
-                TRIGGER_RT);
+        super("nx_pro", adapterSupplier,
+                STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
     }
 
 }

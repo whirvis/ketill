@@ -1,5 +1,8 @@
 package io.ketill.controller;
 
+/**
+ * Contains the state of a {@link DeviceButton}.
+ */
 public class Button1b implements Button1bc {
 
     public boolean pressed;

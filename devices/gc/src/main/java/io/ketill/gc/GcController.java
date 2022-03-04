@@ -1,14 +1,14 @@
 package io.ketill.gc;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.Direction;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.Direction;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.Trigger1fc;
 import io.ketill.controller.Vibration1f;
@@ -82,9 +82,15 @@ public class GcController extends Controller {
             rumble = this.getState(MOTOR_RUMBLE);
     /* @formatter:on */
 
+    /**
+     * @param adapterSupplier the GameCube controller adapter supplier.
+     * @throws NullPointerException if {@code adapterSupplier} is
+     *                              {@code null}; if the adapter given by
+     *                              {@code adapterSupplier} is {@code null}.
+     */
     public GcController(@NotNull AdapterSupplier<GcController> adapterSupplier) {
-        super("gc", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
-                TRIGGER_RT);
+        super("gc", adapterSupplier,
+                STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
     }
 
 }
