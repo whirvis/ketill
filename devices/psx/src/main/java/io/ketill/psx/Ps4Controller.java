@@ -160,7 +160,7 @@ public class Ps4Controller extends PsxController {
         } else {
             /* convert ARGB to RGBA for setLightbarColor(int) */
             int rgba = color.getRGB() << 8;
-            rgba |= ((color.getRGB() & 0xFF000000) >> 24);
+            rgba |= ((color.getRGB() & 0xFF000000L) >> 24);
             this.setLightbarColor(rgba, true);
         }
     }
