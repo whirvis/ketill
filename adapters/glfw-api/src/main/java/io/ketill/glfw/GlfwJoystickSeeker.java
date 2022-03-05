@@ -49,20 +49,24 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     private static String getGuidResourcePath(Class<?> clazz) {
+        String path = null;
+
         RelativeGuidPath guidResourcePath =
                 clazz.getAnnotation(RelativeGuidPath.class);
-        if (guidResourcePath == null) {
+        if (guidResourcePath != null) {
+            path = guidResourcePath.value();
+        } else {
             String packageName = clazz.getPackage().getName();
-            return "/" + packageName.replaceAll("\\.", "/");
+            path = "/" + packageName.replaceAll("\\.", "/") + "/";
         }
 
-        String value = guidResourcePath.value();
-        if (!value.startsWith("/") || !value.endsWith("/")) {
+        if (!path.startsWith("/") || !path.endsWith("/")) {
             String msg = "@" + RelativeGuidPath.class.getSimpleName();
             msg += " value must start and end with a forward slash (\"/\")";
             throw new KetillException(msg);
         }
-        return value;
+
+        return path;
     }
 
     private final I[] joysticks;
