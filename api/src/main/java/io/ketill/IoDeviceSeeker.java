@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 
 /**
  * The purpose of an I/O device seeker is to scan for I/O devices currently
- * connected to the system. When such device is detected, the appropriate
+ * connected to the system. When such a device is detected, the appropriate
  * {@code IoDevice} instance and adapter will be created. Devices must be
  * polled manually after creation using {@link IoDevice#poll()}. They can
  * be retrieved from {@link #discoveredDevices}.
