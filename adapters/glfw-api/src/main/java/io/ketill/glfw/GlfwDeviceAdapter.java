@@ -1,10 +1,20 @@
 package io.ketill.glfw;
 
+import io.ketill.AdapterSupplier;
 import io.ketill.IoDevice;
 import io.ketill.IoDeviceAdapter;
 import io.ketill.MappedFeatureRegistry;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * GLFW adapters map data from a GLFW window to an {@link IoDevice}. These
+ * allow for seamless integration with LWJGL's bindings to the GLFW API.
+ *
+ * @param <I> the I/O device type.
+ * @see AdapterSupplier
+ * @see GlfwDeviceSeeker
+ * @see GlfwJoystickAdapter
+ */
 public abstract class GlfwDeviceAdapter<I extends IoDevice>
         extends IoDeviceAdapter<I> {
 

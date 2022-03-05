@@ -1,5 +1,6 @@
 package io.ketill.glfw;
 
+import io.ketill.AdapterSupplier;
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDevice;
 import io.ketill.MappedFeatureRegistry;
@@ -19,7 +20,36 @@ import java.util.Objects;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public abstract class GlfwJoystickAdapter<I extends IoDevice> extends GlfwDeviceAdapter<I> {
+/**
+ * GLFW joystick adapters are an extension of {@link GlfwDeviceAdapter}
+ * which specialize in mapping data from GLFW joysticks. An assortment
+ * of utility methods are provided for mapping features.
+ * <p>
+ * Feature adapters like {@link #updateStick(Vector3f, GlfwStickMapping)}
+ * can also be overridden to modify data returned from GLFW. An example of
+ * this would be switching the polarity of an axis. This is done in the
+ * {@code glfw.psx} module, and can be seen in {@code GlfwPs4Adapter}.
+ * <pre>
+ *     &#64;Override
+ *     protected void updateTrigger(@NotNull Trigger1f trigger,
+ *                                  int glfwAxis) {
+ *         super.updateTrigger(trigger, glfwAxis);
+ *         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
+ *             trigger.force += 1.0F;
+ *             trigger.force /= 2.0F;
+ *         }
+ *     }
+ * </pre>
+ *
+ * @param <I> the I/O device type.
+ * @see #mapButton(DeviceButton, int)
+ * @see #mapStick(AnalogStick, GlfwStickMapping)
+ * @see #mapTrigger(AnalogTrigger, int)
+ * @see AdapterSupplier
+ * @see GlfwDeviceSeeker
+ */
+public abstract class GlfwJoystickAdapter<I extends IoDevice>
+        extends GlfwDeviceAdapter<I> {
 
     protected final int glfwJoystick;
 
