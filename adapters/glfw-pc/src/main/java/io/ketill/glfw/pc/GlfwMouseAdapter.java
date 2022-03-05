@@ -4,7 +4,7 @@ import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.glfw.GlfwDeviceAdapter;
 import io.ketill.pc.Click1b;
-import io.ketill.pc.Cursor2f;
+import io.ketill.pc.CursorState;
 import io.ketill.pc.Mouse;
 import io.ketill.pc.MouseButton;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @FeatureAdapter
-    protected void updateCursor(@NotNull Cursor2f cursor) {
+    protected void updateCursor(@NotNull CursorState cursor) {
         Vector2fc requested = cursor.getRequestedPos();
         if (requested != null) {
             cursor.x = requested.x();
