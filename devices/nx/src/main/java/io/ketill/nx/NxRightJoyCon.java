@@ -7,8 +7,6 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Led1i;
-import io.ketill.controller.PlayerLed;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,8 +21,6 @@ public class NxRightJoyCon extends NxJoyCon {
             BUTTON_X = new DeviceButton("x"),
             BUTTON_B = new DeviceButton("b"),
             BUTTON_Y = new DeviceButton("y"),
-            BUTTON_SL = new DeviceButton("sl"),
-            BUTTON_SR = new DeviceButton("sr"),
             BUTTON_PLUS = new DeviceButton("plus"),
             BUTTON_R_THUMB = new DeviceButton("r_thumb"),
             BUTTON_HOME = new DeviceButton("home"),
@@ -38,10 +34,6 @@ public class NxRightJoyCon extends NxJoyCon {
     @FeaturePresent
     public static final @NotNull AnalogTrigger
             TRIGGER_ZR = new AnalogTrigger("zr");
-
-    @FeaturePresent
-    public static final @NotNull PlayerLed
-            FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -51,17 +43,11 @@ public class NxRightJoyCon extends NxJoyCon {
             x = this.getState(BUTTON_X),
             b = this.getState(BUTTON_B),
             y = this.getState(BUTTON_Y),
-            sl = this.getState(BUTTON_SL),
-            sr = this.getState(BUTTON_SR),
             plus = this.getState(BUTTON_PLUS),
             rThumb = this.getState(BUTTON_R_THUMB),
             home = this.getState(BUTTON_HOME),
             r = this.getState(BUTTON_R),
             zr = this.getState(BUTTON_ZR);
-
-    @FeatureState
-    public final @NotNull Led1i
-            led = this.getState(FEATURE_LED);
     /* @formatter:on */
 
     /**

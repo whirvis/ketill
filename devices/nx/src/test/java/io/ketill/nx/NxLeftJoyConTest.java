@@ -9,49 +9,47 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NxLeftJoyConTest {
 
-    private NxLeftJoyCon nxLeft;
+    private NxLeftJoyCon nxLeftJoyCon;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, nxLeft.getState(feature));
+        assertEquals(state, nxLeftJoyCon.getState(feature));
     }
 
     @BeforeEach
     void setup() {
-        this.nxLeft = new NxLeftJoyCon(MockNxAdapter::new);
+        this.nxLeftJoyCon = new NxLeftJoyCon(MockNxAdapter::new);
     }
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(nxLeft.left, BUTTON_LEFT);
-        assertStateIsFeature(nxLeft.down, BUTTON_DOWN);
-        assertStateIsFeature(nxLeft.up, BUTTON_UP);
-        assertStateIsFeature(nxLeft.right, BUTTON_RIGHT);
-        assertStateIsFeature(nxLeft.sl, BUTTON_SL);
-        assertStateIsFeature(nxLeft.sr, BUTTON_SR);
-        assertStateIsFeature(nxLeft.minus, BUTTON_MINUS);
-        assertStateIsFeature(nxLeft.lThumb, BUTTON_L_THUMB);
-        assertStateIsFeature(nxLeft.snapshot, BUTTON_SNAPSHOT);
-        assertStateIsFeature(nxLeft.l, BUTTON_L);
-        assertStateIsFeature(nxLeft.zl, BUTTON_ZL);
+        assertStateIsFeature(nxLeftJoyCon.left, BUTTON_LEFT);
+        assertStateIsFeature(nxLeftJoyCon.down, BUTTON_DOWN);
+        assertStateIsFeature(nxLeftJoyCon.up, BUTTON_UP);
+        assertStateIsFeature(nxLeftJoyCon.right, BUTTON_RIGHT);
+        assertStateIsFeature(nxLeftJoyCon.sl, BUTTON_SL);
+        assertStateIsFeature(nxLeftJoyCon.sr, BUTTON_SR);
+        assertStateIsFeature(nxLeftJoyCon.minus, BUTTON_MINUS);
+        assertStateIsFeature(nxLeftJoyCon.lThumb, BUTTON_L_THUMB);
+        assertStateIsFeature(nxLeftJoyCon.snapshot, BUTTON_SNAPSHOT);
+        assertStateIsFeature(nxLeftJoyCon.l, BUTTON_L);
+        assertStateIsFeature(nxLeftJoyCon.zl, BUTTON_ZL);
 
-        assertStateIsFeature(nxLeft.ls, STICK_LS);
+        assertStateIsFeature(nxLeftJoyCon.ls, STICK_LS);
 
-        assertStateIsFeature(nxLeft.lt, TRIGGER_ZL);
-
-        assertStateIsFeature(nxLeft.led, FEATURE_LED);
+        assertStateIsFeature(nxLeftJoyCon.lt, TRIGGER_ZL);
     }
 
     @Test
     void leftJoyCon() {
-        assertTrue(nxLeft.isLeftJoyCon());
-        assertEquals(nxLeft, nxLeft.asLeftJoyCon());
+        assertTrue(nxLeftJoyCon.isLeftJoyCon());
+        assertEquals(nxLeftJoyCon, nxLeftJoyCon.asLeftJoyCon());
     }
 
     @Test
     void rightJoyCon() {
-        assertFalse(nxLeft.isRightJoyCon());
+        assertFalse(nxLeftJoyCon.isRightJoyCon());
         assertThrows(UnsupportedOperationException.class,
-                nxLeft::asRightJoyCon);
+                nxLeftJoyCon::asRightJoyCon);
     }
 
 }
