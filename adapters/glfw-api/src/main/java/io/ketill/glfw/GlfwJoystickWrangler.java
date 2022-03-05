@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * for joysticks when they are discovered.
  *
  * @param <I> the I/O device type.
- * @see GlfwJoystickSeeker#seekGuid(String, GlfwJoystickWrangler)
+ * @see GlfwJoystickSeeker#wrangleGuid(String, GlfwJoystickWrangler)
  */
 @FunctionalInterface
 public interface GlfwJoystickWrangler<I extends IoDevice> {

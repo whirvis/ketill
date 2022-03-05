@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A callback for events relating to GUIDs in a {@link GlfwJoystickSeeker}.
  *
- * @see GlfwJoystickSeeker#onSeekGuid(GuidCallback)
- * @see GlfwJoystickSeeker#onDropGuid(GuidCallback)
+ * @see GlfwJoystickSeeker#onWrangleGuid(GuidCallback)
+ * @see GlfwJoystickSeeker#onReleaseGuid(GuidCallback)
  */
 @FunctionalInterface
 public interface GuidCallback {

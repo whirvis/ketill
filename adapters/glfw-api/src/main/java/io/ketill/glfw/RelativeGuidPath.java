@@ -8,9 +8,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, signals to a {@link GlfwJoystickSeeker} it should use a
- * different relative base path when loading GUID resources. By default,
- * the base path is the package in which the GLFW joystick seeker resides.
+ * When present, signals to a {@link GlfwJoystickSeeker} what relative base
+ * path it should use when loading GUID resources. By default, the base path
+ * is the package in which the GLFW joystick seeker class resides.
  *
  * @see #ROOT
  * @see GlfwJoystickSeeker#loadJsonGuids(String)
@@ -19,16 +19,16 @@ import java.lang.annotation.Target;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GuidResourcePath {
+public @interface RelativeGuidPath {
 
     /**
      * Represents the root package.
      */
-    String ROOT = "";
+    String ROOT = "/";
 
     /**
-     * @return the new path to use. This <i>must not</i> end with a forward
-     * slash character ("/").
+     * @return the relative base path to use. This <i>must</i> begin and
+     * end with a forward slash character ("/").
      */
     String value();
 

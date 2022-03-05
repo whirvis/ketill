@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static io.ketill.glfw.MockGlfw.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.mockito.Mockito.*;
@@ -48,17 +49,21 @@ class GlfwJoystickAdapterTest {
                 () -> new MockGlfwJoystickAdapter(device, registry,
                         0x01, 0));
 
-        /*
-         * For a GLFW joystick adapter to function, a valid
-         * joystick must be provided. Throw an exception if
-         * the joystick is not within bounds.
-         */
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwJoystickAdapter(device, registry,
-                        0x01, GLFW_JOYSTICK_LAST + 1));
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwJoystickAdapter(device, registry,
-                        0x01, GLFW_JOYSTICK_1 - 1));
+        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
+            mockGlfwWindow(glfw, 0x01);
+
+            /*
+             * For a GLFW joystick adapter to function, a valid
+             * joystick must be provided. Throw an exception if
+             * the joystick is not within bounds.
+             */
+            assertThrows(IllegalArgumentException.class,
+                    () -> new MockGlfwJoystickAdapter(device, registry,
+                            0x01, GLFW_JOYSTICK_LAST + 1));
+            assertThrows(IllegalArgumentException.class,
+                    () -> new MockGlfwJoystickAdapter(device, registry,
+                            0x01, GLFW_JOYSTICK_1 - 1));
+        }
     }
 
     @BeforeEach
@@ -70,23 +75,13 @@ class GlfwJoystickAdapterTest {
          * can be created.
          */
         this.ptr_glfwWindow = RANDOM.nextLong();
-        this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST);
+        this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
 
         this.buttons = ByteBuffer.allocate(16);
         this.axes = FloatBuffer.allocate(4);
 
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            /*
-             * Mocking this specific GLFW method is required for
-             * a mock GLFW joystick adapter to be created. It is
-             * used to validate a pointer to a GLFW window.
-             */
-            glfw.when(() -> glfwGetWindowSize(eq(ptr_glfwWindow),
-                    (int[]) any(), any())).thenAnswer(a -> {
-                a.getArgument(1, int[].class)[0] = 1024;
-                a.getArgument(2, int[].class)[0] = 768;
-                return null;
-            });
+            mockGlfwWindow(glfw, ptr_glfwWindow);
 
             AtomicReference<MockGlfwJoystickAdapter> adapter =
                     new AtomicReference<>();
