@@ -4,6 +4,7 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.Trigger1f;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
+import io.ketill.glfw.WranglerMethod;
 import io.ketill.xbox.XboxController;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -20,12 +21,40 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
 
     protected static final int AXIS_LT = 4, AXIS_RT = 5;
 
-    public static @NotNull XboxController wrangle(long ptr_glfwWindow,
-                                                  int glfwJoystick) {
+    /**
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @return the wrangled XBOX controller.
+     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
+    /* @formatter:off */
+    @WranglerMethod
+    public static @NotNull XboxController
+            wrangle(long ptr_glfwWindow, int glfwJoystick) {
         return new XboxController((c, r) -> new GlfwXboxAdapter(c, r,
                 ptr_glfwWindow, glfwJoystick));
     }
+    /* @formatter:on */
 
+    /**
+     * @param controller     the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @throws NullPointerException     if {@code controller} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
     public GlfwXboxAdapter(@NotNull XboxController controller,
                            @NotNull MappedFeatureRegistry registry,
                            long ptr_glfwWindow, int glfwJoystick) {
