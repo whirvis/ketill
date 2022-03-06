@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <F> the I/O feature type.
  * @param <S> the state container type.
+ * @see FeaturePresent
  * @see FeatureState
  */
 public final class RegisteredFeature<F extends IoFeature<S>, S> {

@@ -50,6 +50,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @param <P>     the mapping parameters type.@throws
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
+     * @see MappingMethod
      */
     /* @formatter:off */
     public <F extends IoFeature<S>, S, P> void
@@ -77,9 +78,10 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @param <S>     the state container type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
+     * @see MappingMethod
      */
     /* @formatter:off */
-    public final <F extends IoFeature<S>, S> void
+    public <F extends IoFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater<S, F> updater) {
         this.mapFeature(feature, feature, updater);
@@ -102,9 +104,10 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @param <S>     the state container type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
+     * @see MappingMethod
      */
     /* @formatter:off */
-    public final <F extends IoFeature<S>, S> void
+    public <F extends IoFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater.NoParams<S> updater) {
         Objects.requireNonNull(updater, "updater");
@@ -201,7 +204,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         features.remove(feature);
     }
 
-    protected void updateFeatures() {
+    void updateFeatures() {
         for (RegisteredFeature<?, ?> registered : features.values()) {
             registered.updater.run();
         }

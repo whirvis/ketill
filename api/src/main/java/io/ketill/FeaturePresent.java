@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  * may be either instance or static.
  *
  * @see IoDevice#registerFeature(IoFeature)
+ * @see FeatureState
  */
 @Documented
 @Target(ElementType.FIELD)

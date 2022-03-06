@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
  * state it contains. However, this is not a requirement.
  *
  * @see IoDevice#getState(IoFeature)
+ * @see FeaturePresent
  */
 @Documented
 @Target(ElementType.FIELD)

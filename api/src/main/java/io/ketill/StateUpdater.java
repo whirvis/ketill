@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <S> the state container type.
  * @param <P> the mapping parameters type.
  * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
+ * @see FeatureAdapter
  */
 @FunctionalInterface
 public interface StateUpdater<S, P> {

@@ -13,6 +13,9 @@ import java.util.Objects;
  * @param <I> the I/O device type.
  * @see AdapterSupplier
  * @see IoDeviceSeeker
+ * @see FeatureAdapter
+ * @see MappingMethod
+ * @see MappingType
  */
 public abstract class IoDeviceAdapter<I extends IoDevice> {
 

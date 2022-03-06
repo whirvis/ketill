@@ -14,6 +14,8 @@ import java.util.function.Supplier;
  *
  * @param <S> the state container type.
  * @see IoDevice#registerFeature(IoFeature)
+ * @see FeaturePresent
+ * @see FeatureState
  */
 public class IoFeature<S> {
 
