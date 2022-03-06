@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  * joysticks into instantiated I/O devices. Use of this annotation is
  * optional, but recommended as it improves code readability.
  *
+ * @see GlfwJoystickWrangler#wrangleDevice(long, int) 
  * @see GlfwJoystickSeeker#wrangleGuid(String, GlfwJoystickWrangler)
  */
 @Documented
