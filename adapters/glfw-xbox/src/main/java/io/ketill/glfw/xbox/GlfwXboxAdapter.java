@@ -35,7 +35,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     /* @formatter:off */
     @WranglerMethod
     public static @NotNull XboxController
-            wrangle(long ptr_glfwWindow, int glfwJoystick) {
+                wrangle(long ptr_glfwWindow, int glfwJoystick) {
         return new XboxController((c, r) -> new GlfwXboxAdapter(c, r,
                 ptr_glfwWindow, glfwJoystick));
     }
