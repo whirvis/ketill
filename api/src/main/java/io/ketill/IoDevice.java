@@ -68,7 +68,7 @@ public abstract class IoDevice implements FeatureRegistry {
     public IoDevice(@NotNull String id,
                     @NotNull AdapterSupplier<?> adapterSupplier,
                     boolean registerFields, boolean initAdapter) {
-        this.id = Objects.requireNonNull(id, "id");
+        this.id = Objects.requireNonNull(id, "id cannot be null");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
         } else if (!id.matches("\\S+")) {
@@ -81,11 +81,13 @@ public abstract class IoDevice implements FeatureRegistry {
          * While this is an unchecked cast, the template requires that the
          * type extend IoDevice. As such, this cast is safe to perform.
          */
-        Objects.requireNonNull(adapterSupplier, "adapterSupplier");
+        Objects.requireNonNull(adapterSupplier,
+                "adapterSupplier cannot be null");
         AdapterSupplier<IoDevice> castedSupplier =
                 (AdapterSupplier<IoDevice>) adapterSupplier;
         this.adapter = castedSupplier.get(this, registry);
-        Objects.requireNonNull(adapter, "supplied adapter is null");
+        Objects.requireNonNull(adapter,
+                "value supplied by adapterSupplier cannot be null");
 
         if (registerFields) {
             this.registerFields();
@@ -249,7 +251,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #isFeatureSupported(IoFeature)
      */
     public boolean isFeatureSupported(@NotNull Object featureState) {
-        Objects.requireNonNull(featureState, "featureState");
+        Objects.requireNonNull(featureState, "featureState cannot be null");
         for (RegisteredFeature<?, ?> registered : registry.getFeatures()) {
             if (registered.state == featureState) {
                 return this.isFeatureSupported(registered.feature);

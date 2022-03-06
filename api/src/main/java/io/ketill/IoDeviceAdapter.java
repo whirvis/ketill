@@ -30,8 +30,10 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
      */
     public IoDeviceAdapter(@NotNull I device,
                            @NotNull MappedFeatureRegistry registry) {
-        this.device = Objects.requireNonNull(device, "device");
-        this.registry = Objects.requireNonNull(registry, "registry");
+        this.device = Objects.requireNonNull(device,
+                "device cannot be null");
+        this.registry = Objects.requireNonNull(registry,
+                "registry cannot be null");
     }
 
     /**

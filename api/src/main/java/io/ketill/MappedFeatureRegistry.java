@@ -31,7 +31,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     public boolean hasMapping(@NotNull IoFeature<?> feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         return mappings.containsKey(feature);
     }
 
@@ -56,8 +56,8 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     public <F extends IoFeature<S>, S, P> void
             mapFeature(@NotNull F feature, @Nullable P params,
                        @NotNull StateUpdater<S, P> updater) {
-        Objects.requireNonNull(feature, "feature");
-        Objects.requireNonNull(updater, "updater");
+        Objects.requireNonNull(feature, "feature cannot be null");
+        Objects.requireNonNull(updater, "updater cannot be null");
         mappings.put(feature, new MappedFeature<>(params, updater));
         this.updateMapping(feature);
     }
@@ -110,7 +110,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     public <F extends IoFeature<S>, S> void
             mapFeature(@NotNull F feature,
                        @NotNull StateUpdater.NoParams<S> updater) {
-        Objects.requireNonNull(updater, "updater");
+        Objects.requireNonNull(updater, "updater cannot be null");
         this.mapFeature(feature, null,
                 (state, params) -> updater.update(state));
     }
@@ -123,7 +123,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     public boolean unmapFeature(@NotNull IoFeature<?> feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         if (!mappings.containsKey(feature)) {
             return false;
         }
@@ -156,7 +156,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
     @Override
     public boolean isRegistered(@NotNull IoFeature<?> feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         return features.containsKey(feature);
     }
 
@@ -173,7 +173,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     @SuppressWarnings("unchecked")
     public <S> @Nullable RegisteredFeature<?, S>
             getRegistered(@NotNull IoFeature<S> feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         return (RegisteredFeature<?, S>) features.get(feature);
     }
     /* @formatter:on */
@@ -182,7 +182,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     @Override
     public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         if (this.isRegistered(feature)) {
             throw new IllegalStateException("feature already registered");
         }
@@ -197,7 +197,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
     @Override
     public void unregisterFeature(@NotNull IoFeature<?> feature) {
-        Objects.requireNonNull(feature, "feature");
+        Objects.requireNonNull(feature, "feature cannot be null");
         if (!this.isRegistered(feature)) {
             throw new IllegalStateException("feature not registered");
         }

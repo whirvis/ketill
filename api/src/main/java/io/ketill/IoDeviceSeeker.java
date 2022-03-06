@@ -111,7 +111,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     @MustBeInvokedByOverriders
     protected void discoverDevice(@NotNull I device) {
-        Objects.requireNonNull(device, "device");
+        Objects.requireNonNull(device, "device cannot be null");
         this.requireOpen();
         if (devices.contains(device)) {
             return;
@@ -124,7 +124,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     @MustBeInvokedByOverriders
     protected void forgetDevice(@NotNull I device) {
-        Objects.requireNonNull(device, "device");
+        Objects.requireNonNull(device, "device cannot be null");
         this.requireOpen();
         if (!devices.contains(device)) {
             return;

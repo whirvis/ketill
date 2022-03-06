@@ -33,7 +33,7 @@ public class IoFeature<S> {
      */
     public IoFeature(@NotNull String id,
                      @NotNull Supplier<@NotNull S> initialState) {
-        this.id = Objects.requireNonNull(id, "id");
+        this.id = Objects.requireNonNull(id, "id cannot be null");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
         } else if (!id.matches("\\S+")) {
@@ -42,9 +42,9 @@ public class IoFeature<S> {
 
         /* @formatter:off */
         this.initialState = Objects.requireNonNull(initialState,
-                "initialState");
+                "initialState cannot be null");
         Objects.requireNonNull(initialState.get(),
-                "supplied initial state is null");
+                "value supplied by initialState cannot be null");
         /* @formatter:on */
     }
 
