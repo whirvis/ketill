@@ -40,6 +40,10 @@ class GlfwUtilsTest {
         long ptr_glfwWindow = glfwCreateWindow(1024, 768,
                 "window", 0L, 0L);
         assertEquals(ptr_glfwWindow, GlfwUtils.requireWindow(ptr_glfwWindow));
+
+        /* make sure to shut down GLFW */
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
     @Test
