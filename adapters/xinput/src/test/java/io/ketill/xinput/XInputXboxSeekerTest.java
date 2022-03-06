@@ -7,10 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,7 +18,7 @@ import static org.mockito.Mockito.*;
 @EnabledOnOs(OS.WINDOWS)
 class XInputXboxSeekerTest {
 
-    XInputXboxSeeker seeker;
+    private XInputXboxSeeker seeker;
 
     @BeforeEach
     void setup() {

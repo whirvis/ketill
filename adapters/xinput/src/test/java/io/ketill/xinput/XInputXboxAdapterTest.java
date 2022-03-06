@@ -22,13 +22,13 @@ import static org.mockito.Mockito.*;
 @EnabledOnOs(OS.WINDOWS)
 class XInputXboxAdapterTest {
 
-    XInputDevice xDevice;
-    XInputAxes xAxes;
-    XInputButtons xButtons;
+    private XInputDevice xDevice;
+    private XInputAxes xAxes;
+    private XInputButtons xButtons;
 
-    XboxController controller;
-    MappedFeatureRegistry registry;
-    XInputXboxAdapter adapter;
+    private XboxController controller;
+    private MappedFeatureRegistry registry;
+    private XInputXboxAdapter adapter;
 
     @BeforeEach
     void setup() {
