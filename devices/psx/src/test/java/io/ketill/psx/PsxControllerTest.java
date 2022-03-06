@@ -41,7 +41,7 @@ class PsxControllerTest {
         assertNull(psx.rt);
 
         assertStateIsFeature(psx.ls, STICK_LS);
-        assertStateIsFeature(psx.ls, STICK_RS);
+        assertStateIsFeature(psx.rs, STICK_RS);
     }
 
 }
