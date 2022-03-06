@@ -7,7 +7,11 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3fc;
+
+import java.util.Objects;
 
 /**
  * A Nintendo Switch right Joy-Con.
@@ -48,6 +52,14 @@ public class NxRightJoyCon extends NxJoyCon {
             home = this.getState(BUTTON_HOME),
             r = this.getState(BUTTON_R),
             zr = this.getState(BUTTON_ZR);
+
+    @FeatureState
+    public final @NotNull Vector3fc
+            rs = Objects.requireNonNull(super.rs);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            rt = Objects.requireNonNull(super.rt);
     /* @formatter:on */
 
     /**

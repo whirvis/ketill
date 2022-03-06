@@ -1,12 +1,15 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
+import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * A Sony PlayStation 5 controller.
@@ -36,6 +39,11 @@ public class Ps5Controller extends PsxController {
             ps = this.getState(BUTTON_PS),
             tpad = this.getState(BUTTON_TPAD),
             mute = this.getState(BUTTON_MUTE);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
     /* @formatter:on */
 
     /**

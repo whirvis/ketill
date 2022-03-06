@@ -7,12 +7,14 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.Trigger1fc;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * A Sony PlayStation 4 controller.
@@ -53,6 +55,11 @@ public class Ps4Controller extends PsxController {
             options = this.getState(BUTTON_OPTIONS),
             ps = this.getState(BUTTON_PS),
             tpad = this.getState(BUTTON_TPAD);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull Vibration1f

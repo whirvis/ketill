@@ -15,6 +15,8 @@ import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3fc;
 
+import java.util.Objects;
+
 /**
  * A Nintendo GameCube controller.
  */
@@ -69,13 +71,13 @@ public class GcController extends Controller {
 
     @FeatureState
     public final @NotNull Vector3fc
-            ls = this.getState(STICK_LS),
-            rs = this.getState(STICK_RS);
+            ls = Objects.requireNonNull(super.ls),
+            rs = Objects.requireNonNull(super.rs);
 
     @FeatureState
     public final @NotNull Trigger1fc
-            lt = this.getState(TRIGGER_LT),
-            rt = this.getState(TRIGGER_RT);
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull Vibration1f

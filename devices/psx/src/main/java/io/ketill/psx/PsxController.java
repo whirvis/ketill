@@ -11,6 +11,9 @@ import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
+
+import java.util.Objects;
 
 /**
  * The base for a Sony PlayStation controller.
@@ -66,6 +69,11 @@ public abstract class PsxController extends Controller {
             right = this.getState(BUTTON_RIGHT),
             down = this.getState(BUTTON_DOWN),
             left = this.getState(BUTTON_LEFT);
+
+    @FeatureState
+    public final @NotNull Vector3fc
+            ls = Objects.requireNonNull(super.ls),
+            rs = Objects.requireNonNull(super.rs);
     /* @formatter:on */
 
     /**

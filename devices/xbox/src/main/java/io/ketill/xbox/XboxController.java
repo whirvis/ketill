@@ -1,17 +1,21 @@
 package io.ketill.xbox;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.Direction;
+import io.ketill.FeaturePresent;
+import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.Direction;
-import io.ketill.FeaturePresent;
-import io.ketill.FeatureState;
 import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.Trigger1fc;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3fc;
+
+import java.util.Objects;
 
 /**
  * A Microsoft XBOX controller.
@@ -69,6 +73,16 @@ public class XboxController extends Controller {
             right = this.getState(BUTTON_RIGHT),
             down = this.getState(BUTTON_DOWN),
             left = this.getState(BUTTON_LEFT);
+
+    @FeatureState
+    public final @NotNull Vector3fc
+            ls = Objects.requireNonNull(super.ls),
+            rs = Objects.requireNonNull(super.rs);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull Vibration1f

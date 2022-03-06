@@ -11,7 +11,11 @@ import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.Led1i;
 import io.ketill.controller.PlayerLed;
+import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3fc;
+
+import java.util.Objects;
 
 /**
  * A Nintendo Switch Pro controller.
@@ -80,6 +84,16 @@ public class NxProController extends Controller {
             right = this.getState(BUTTON_RIGHT),
             down = this.getState(BUTTON_DOWN),
             left = this.getState(BUTTON_LEFT);
+
+    @FeatureState
+    public final @NotNull Vector3fc
+            ls = Objects.requireNonNull(super.ls),
+            rs = Objects.requireNonNull(super.rs);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull Led1i

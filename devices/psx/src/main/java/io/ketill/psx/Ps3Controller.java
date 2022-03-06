@@ -9,8 +9,11 @@ import io.ketill.controller.DeviceButton;
 import io.ketill.controller.Led1i;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.Trigger1fc;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 /**
  * A Sony PlayStation 3 controller.
@@ -43,6 +46,11 @@ public class Ps3Controller extends PsxController {
     public final @NotNull Button1bc
             select = this.getState(BUTTON_SELECT),
             start = this.getState(BUTTON_START);
+
+    @FeatureState
+    public final @NotNull Trigger1fc
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull Vibration1f
