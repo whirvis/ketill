@@ -65,6 +65,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @param device         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
      * @throws NullPointerException     if {@code device} or {@code registry}
      *                                  are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
