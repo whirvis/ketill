@@ -29,7 +29,7 @@ import java.util.Objects;
  * question contain the GUIDs of a device when connected to a specific OS.
  * The keys of these arrays correspond to the operating system ID.
  * <p>
- * The following is an example of a JSON container:
+ * The following is an example of a valid JSON container.
  * <pre>
  * {
  *   "windows": [
@@ -46,6 +46,11 @@ import java.util.Objects;
  *     "030000005e0400008e02000010010000",
  *     "030000005e0400000a0b000005040000",
  *     "030000005e040000120b000001050000"
+ *   ],
+ *   "android": [
+ *     "64633436313965656664373634323364",
+ *     "32386235353630393033393135613831",
+ *     "30396232393162346330326334636566"
  *   ]
  * }
  * </pre>
