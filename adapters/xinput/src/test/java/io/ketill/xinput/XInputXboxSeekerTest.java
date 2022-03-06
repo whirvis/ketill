@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @EnabledOnOs(OS.WINDOWS)
-@ExtendWith(MockitoExtension.class)
 class XInputXboxSeekerTest {
 
     XInputXboxSeeker seeker;
