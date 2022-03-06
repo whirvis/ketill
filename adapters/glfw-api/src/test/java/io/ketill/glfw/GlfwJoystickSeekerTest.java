@@ -117,6 +117,9 @@ class GlfwJoystickSeekerTest {
             MockGlfwJoystickSeeker relative = new MockGlfwJoystickSeeker
                     .WithRelativePath(ptr_glfwWindow);
 
+            /* ensure correct value for root path */
+            assertEquals("/", RelativeGuidPath.ROOT);
+
             /*
              * To test @RelativeGuidPath, load the same file from
              * a GlfwJoystickSeeker which uses the annotation. It
