@@ -49,7 +49,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     private static String getGuidResourcePath(Class<?> clazz) {
-        String path = null;
+        String path;
 
         /*
          * Always return via the "path" variable, as it provides
