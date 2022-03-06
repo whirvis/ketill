@@ -51,6 +51,12 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     private static String getGuidResourcePath(Class<?> clazz) {
         String path = null;
 
+        /*
+         * Always return via the "path" variable, as it provides
+         * checks even for default values. This is done as unit
+         * testing failed to catch a bug caused by typo, which
+         * was left unchecked as it was returned directly.
+         */
         RelativeGuidPath guidResourcePath =
                 clazz.getAnnotation(RelativeGuidPath.class);
         if (guidResourcePath != null) {
