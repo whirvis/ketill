@@ -46,7 +46,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @see #mapStick(AnalogStick, GlfwStickMapping)
  * @see #mapTrigger(AnalogTrigger, int)
  * @see AdapterSupplier
- * @see GlfwDeviceSeeker
+ * @see GlfwJoystickSeeker
  */
 public abstract class GlfwJoystickAdapter<I extends IoDevice>
         extends GlfwDeviceAdapter<I> {
