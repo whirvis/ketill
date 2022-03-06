@@ -8,10 +8,10 @@ class DirectionTest {
 
     @Test
     void aliases() {
-        assertEquals(Direction.NORTH, Direction.UP);
-        assertEquals(Direction.SOUTH, Direction.DOWN);
-        assertEquals(Direction.WEST, Direction.LEFT);
-        assertEquals(Direction.EAST, Direction.RIGHT);
+        assertSame(Direction.NORTH, Direction.UP);
+        assertSame(Direction.SOUTH, Direction.DOWN);
+        assertSame(Direction.WEST, Direction.LEFT);
+        assertSame(Direction.EAST, Direction.RIGHT);
     }
 
 }

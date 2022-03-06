@@ -12,7 +12,7 @@ class MouseTest {
     private Mouse mouse;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, mouse.getState(feature));
+        assertSame(state, mouse.getState(feature));
     }
 
     @BeforeEach
@@ -31,9 +31,9 @@ class MouseTest {
         assertStateIsFeature(mouse.m7, BUTTON_M7);
         assertStateIsFeature(mouse.m8, BUTTON_M8);
 
-        assertEquals(mouse.left, mouse.m1);
-        assertEquals(mouse.right, mouse.m2);
-        assertEquals(mouse.middle, mouse.m3);
+        assertSame(mouse.left, mouse.m1);
+        assertSame(mouse.right, mouse.m2);
+        assertSame(mouse.middle, mouse.m3);
 
         assertStateIsFeature(mouse.cursor, FEATURE_CURSOR);
     }

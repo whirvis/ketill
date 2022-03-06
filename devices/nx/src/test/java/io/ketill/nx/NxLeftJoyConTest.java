@@ -12,7 +12,7 @@ class NxLeftJoyConTest {
     private NxLeftJoyCon nxLeftJoyCon;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, nxLeftJoyCon.getState(feature));
+        assertSame(state, nxLeftJoyCon.getState(feature));
     }
 
     @BeforeEach
@@ -42,7 +42,7 @@ class NxLeftJoyConTest {
     @Test
     void leftJoyCon() {
         assertTrue(nxLeftJoyCon.isLeftJoyCon());
-        assertEquals(nxLeftJoyCon, nxLeftJoyCon.asLeftJoyCon());
+        assertSame(nxLeftJoyCon, nxLeftJoyCon.asLeftJoyCon());
     }
 
     @Test

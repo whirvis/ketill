@@ -12,7 +12,7 @@ class KeyboardTest {
     private Keyboard keyboard;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, keyboard.getState(feature));
+        assertSame(state, keyboard.getState(feature));
     }
 
     @BeforeEach

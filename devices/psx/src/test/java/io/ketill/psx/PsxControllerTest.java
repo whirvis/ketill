@@ -12,7 +12,7 @@ class PsxControllerTest {
     private PsxController psx;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, psx.getState(feature));
+        assertSame(state, psx.getState(feature));
     }
 
     @BeforeEach

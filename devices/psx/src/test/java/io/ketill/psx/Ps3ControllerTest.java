@@ -12,7 +12,7 @@ class Ps3ControllerTest {
     private Ps3Controller ps3;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, ps3.getState(feature));
+        assertSame(state, ps3.getState(feature));
     }
 
     @BeforeEach

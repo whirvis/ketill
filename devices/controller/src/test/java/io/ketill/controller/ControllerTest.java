@@ -28,8 +28,8 @@ class ControllerTest {
          * construction, the controller should register them and
          * store their state as accessible fields.
          */
-        assertEquals(controller.ls, controller.getState(ls));
-        assertEquals(controller.lt, controller.getState(lt));
+        assertSame(controller.ls, controller.getState(ls));
+        assertSame(controller.lt, controller.getState(lt));
 
         /*
          * If one of the features in question is not provided

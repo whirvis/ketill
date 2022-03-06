@@ -14,7 +14,7 @@ class AssertUtils {
             caught = throwable.getCause();
         }
         assertNotNull(caught);
-        assertEquals(cause, caught);
+        assertSame(cause, caught);
     }
 
 }

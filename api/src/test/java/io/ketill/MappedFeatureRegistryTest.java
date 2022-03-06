@@ -115,7 +115,7 @@ class MappedFeatureRegistryTest {
          * expected to remain false. If it is set to true, then unmapFeature()
          * has not properly unmapped the feature.
          */
-        assertEquals(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
+        assertSame(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
         registry.updateFeatures();
         assertFalse(updated.get());
 
@@ -151,7 +151,7 @@ class MappedFeatureRegistryTest {
          */
         RegisteredFeature<?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertEquals(registeredFeature, registry.getRegistered(feature));
+        assertSame(registeredFeature, registry.getRegistered(feature));
 
         /*
          * It makes no sense to get the registration of a null feature. As
@@ -180,7 +180,7 @@ class MappedFeatureRegistryTest {
          */
         RegisteredFeature<?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertEquals(registeredFeature.state, registry.getState(feature));
+        assertSame(registeredFeature.state, registry.getState(feature));
     }
 
     @Test
@@ -198,10 +198,10 @@ class MappedFeatureRegistryTest {
          * well as the updater. If these are not their expected values, then
          * registerFeature() did not instantiate registeredFeature correctly.
          */
-        assertEquals(registeredFeature.feature, feature);
+        assertSame(registeredFeature.feature, feature);
         assertInstanceOf(registeredFeature.state.getClass(),
                 feature.initialState.get());
-        assertEquals(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
+        assertSame(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
 
         /*
          * It makes no sense to register a null feature or a feature which

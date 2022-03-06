@@ -12,7 +12,7 @@ class Ps5ControllerTest {
     private Ps5Controller ps5;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, ps5.getState(feature));
+        assertSame(state, ps5.getState(feature));
     }
 
     @BeforeEach

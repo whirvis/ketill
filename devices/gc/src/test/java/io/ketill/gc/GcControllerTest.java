@@ -12,7 +12,7 @@ class GcControllerTest {
     private GcController gc;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, gc.getState(feature));
+        assertSame(state, gc.getState(feature));
     }
 
     @BeforeEach

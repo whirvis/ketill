@@ -143,7 +143,7 @@ class IoDeviceTest {
          * The getRegistered() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        assertEquals(device.getRegistered(MockIoDevice.FEATURE),
+        assertSame(device.getRegistered(MockIoDevice.FEATURE),
                 adapter.registry.getRegistered(MockIoDevice.FEATURE));
     }
 

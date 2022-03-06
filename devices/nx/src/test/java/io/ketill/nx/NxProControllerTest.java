@@ -12,7 +12,7 @@ class NxProControllerTest {
     private NxProController nxPro;
 
     private void assertStateIsFeature(Object state, IoFeature<?> feature) {
-        assertEquals(state, nxPro.getState(feature));
+        assertSame(state, nxPro.getState(feature));
     }
 
     @BeforeEach
