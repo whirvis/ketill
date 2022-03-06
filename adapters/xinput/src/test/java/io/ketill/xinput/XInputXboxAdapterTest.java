@@ -5,20 +5,16 @@ import com.github.strikerx3.jxinput.XInputButtons;
 import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
-import io.ketill.MappedFeatureRegistry;
 import io.ketill.RegisteredFeature;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SuppressWarnings("ConstantConditions")
 @EnabledOnOs(OS.WINDOWS)
 class XInputXboxAdapterTest {
 
@@ -27,7 +23,6 @@ class XInputXboxAdapterTest {
     private XInputButtons xButtons;
 
     private XboxController controller;
-    private MappedFeatureRegistry registry;
     private XInputXboxAdapter adapter;
 
     @BeforeEach
@@ -43,17 +38,15 @@ class XInputXboxAdapterTest {
         when(xAxes.get(any())).thenReturn(0.0F);
 
         this.controller = new XboxController(((d, r) -> {
-            this.registry = r;
             this.adapter = new XInputXboxAdapter(d, r, xDevice);
             return adapter;
         }));
     }
 
     @Test
-    @MockitoSettings(strictness = Strictness.LENIENT)
-    void ensureAllFeaturesMapped() {
+    void ensureAllFeaturesSupported() {
         for (RegisteredFeature<?, ?> rf : controller.getFeatures()) {
-            assertTrue(registry.hasMapping(rf.feature));
+            assertTrue(controller.isFeatureSupported(rf.feature));
         }
     }
 
