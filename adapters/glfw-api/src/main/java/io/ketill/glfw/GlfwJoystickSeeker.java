@@ -206,6 +206,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      *                              are {@code null}.
      * @see #onWrangleGuid(GuidCallback)
      * @see #releaseGuid(String)
+     * @see WranglerMethod
      */
     protected final void wrangleGuid(@NotNull String guid,
                                      @NotNull GlfwJoystickWrangler<I> wrangler) {
@@ -255,6 +256,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      *                              {@code guids} is {@code null}.
      * @see #onWrangleGuid(GuidCallback)
      * @see #releaseGuids(Collection)
+     * @see WranglerMethod
      */
     protected final void wrangleGuids(@NotNull Iterable<@NotNull String> guids,
                                       @NotNull GlfwJoystickWrangler<I> wrangler) {
