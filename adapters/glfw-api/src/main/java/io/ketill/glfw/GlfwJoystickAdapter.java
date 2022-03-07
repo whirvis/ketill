@@ -93,7 +93,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
     protected void mapButton(@NotNull DeviceButton button, int glfwButton) {
         Objects.requireNonNull(button, "button");
         if (glfwButton < 0) {
-            throw new IllegalArgumentException("button < 0");
+            throw new IllegalArgumentException("glfwButton < 0");
         }
         registry.mapFeature(button, glfwButton, this::updateButton);
     }
@@ -124,7 +124,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
     protected void mapTrigger(@NotNull AnalogTrigger trigger, int glfwAxis) {
         Objects.requireNonNull(trigger, "trigger");
         if (glfwAxis < 0) {
-            throw new IllegalArgumentException("axis < 0");
+            throw new IllegalArgumentException("glfwAxis < 0");
         }
         registry.mapFeature(trigger, glfwAxis, this::updateTrigger);
     }
