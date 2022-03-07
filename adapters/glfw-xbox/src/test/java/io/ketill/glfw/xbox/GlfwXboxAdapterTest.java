@@ -29,12 +29,6 @@ class GlfwXboxAdapterTest {
 
     @BeforeEach
     void setup() {
-        /*
-         * For the test to successfully execute, GLFW must
-         * successfully initialize. If it fails to do so,
-         * that is fine. It just means the current machine
-         * does not have access to GLFW.
-         */
         assumeTrue(glfwInit());
 
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -45,12 +39,7 @@ class GlfwXboxAdapterTest {
     }
 
     @Test
-    void ensureAllFeaturesSupported() {
-        /*
-         * All features in the list are ignored, as they are
-         * intentionally not supported. This test is to ensure
-         * all originally intended features are supported.
-         */
+    void ensureIntendedFeaturesSupported() {
         List<IoFeature<?>> unsupported = new ArrayList<>();
         unsupported.add(XboxController.MOTOR_COARSE);
         unsupported.add(XboxController.MOTOR_FINE);
@@ -65,22 +54,18 @@ class GlfwXboxAdapterTest {
     @Test
     void updateStick() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            FloatBuffer xboxAxes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(xboxAxes);
+            FloatBuffer axes = FloatBuffer.allocate(16);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
             float rsYValue = RANDOM.nextFloat();
-            xboxAxes.put(GlfwXboxAdapter.LS_MAPPING.glfwYAxis, lsYValue);
-            xboxAxes.put(GlfwXboxAdapter.RS_MAPPING.glfwYAxis, rsYValue);
+            axes.put(GlfwXboxAdapter.LS_MAPPING.glfwYAxis, lsYValue);
+            axes.put(GlfwXboxAdapter.RS_MAPPING.glfwYAxis, rsYValue);
 
             controller.poll(); /* update sticks */
 
-            /*
-             * The analog sticks on an XBOX controller, for some
-             * reason, have their Y-axes inverted. This ensures
-             * that they are correctly flipped around.
-             */
             lsYValue *= -1.0F;
             rsYValue *= -1.0F;
             assertEquals(lsYValue, controller.ls.y());
@@ -91,22 +76,18 @@ class GlfwXboxAdapterTest {
     @Test
     void updateTrigger() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            FloatBuffer xboxAxes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(xboxAxes);
+            FloatBuffer axes = FloatBuffer.allocate(16);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float ltValue = RANDOM.nextFloat();
             float rtValue = RANDOM.nextFloat();
-            xboxAxes.put(GlfwXboxAdapter.AXIS_LT, ltValue);
-            xboxAxes.put(GlfwXboxAdapter.AXIS_RT, rtValue);
+            axes.put(GlfwXboxAdapter.AXIS_LT, ltValue);
+            axes.put(GlfwXboxAdapter.AXIS_RT, rtValue);
 
             controller.poll(); /* update triggers */
 
-            /*
-             * Ensure that analog trigger values are converted
-             * from a scale of -1.0F to 1.0F to a proper scale
-             * of 0.0F to 1.0F.
-             */
             ltValue = (ltValue + 1.0F) / 2.0F;
             rtValue = (rtValue + 1.0F) / 2.0F;
             assertEquals(ltValue, controller.lt.force());
