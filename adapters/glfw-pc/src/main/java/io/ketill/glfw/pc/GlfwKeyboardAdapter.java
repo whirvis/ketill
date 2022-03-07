@@ -2,25 +2,66 @@ package io.ketill.glfw.pc;
 
 import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
+import io.ketill.glfw.WranglerMethod;
 import io.ketill.pc.Key1b;
 import io.ketill.pc.Keyboard;
 import io.ketill.pc.KeyboardKey;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static io.ketill.pc.Keyboard.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
 
+    /**
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @return the wrangled keyboard.
+     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer.
+     */
+    @WranglerMethod
+    public static @NotNull Keyboard wrangle(long ptr_glfwWindow) {
+        return new Keyboard((d, r) -> new GlfwKeyboardAdapter(d, r,
+                ptr_glfwWindow));
+    }
+
+    /**
+     * @param keyboard       the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @throws NullPointerException     if {@code keyboard} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer.
+     */
     public GlfwKeyboardAdapter(@NotNull Keyboard keyboard,
                                @NotNull MappedFeatureRegistry registry,
                                long ptr_glfwWindow) {
         super(keyboard, registry, ptr_glfwWindow);
     }
 
+    /**
+     * @param key     the keyboard key to map.
+     * @param glfwKey the GLFW key to map {@code key} to.
+     * @throws NullPointerException     if {@code key} is {@code null}.
+     * @throws IllegalArgumentException if {@code glfwKey} is negative.
+     * @see #updateKey(Key1b, int)
+     */
+    @MappingMethod
     protected void mapKey(@NotNull KeyboardKey key, int glfwKey) {
-        registry.mapFeature(key, glfwKey, this::updateButton);
+        Objects.requireNonNull(key, "key");
+        if (glfwKey < 0) {
+            throw new IllegalArgumentException("glfwKey < 0");
+        }
+        registry.mapFeature(key, glfwKey, this::updateKey);
     }
 
     private void mapPrintableKeys() {
@@ -156,7 +197,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     @FeatureAdapter
-    protected void updateButton(@NotNull Key1b key, int glfwKey) {
+    protected void updateKey(@NotNull Key1b key, int glfwKey) {
         int status = glfwGetKey(ptr_glfwWindow, glfwKey);
         key.pressed = status >= GLFW_PRESS;
     }
