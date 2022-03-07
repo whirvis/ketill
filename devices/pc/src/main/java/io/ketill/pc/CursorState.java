@@ -18,10 +18,20 @@ public class CursorState {
     private Vector2fc requestedPos;
 
     /**
+     * The current position of the mouse on the screen. The fields of this
+     * vector should be treated as read only. Changing their values will
+     * <i>not</i> change the position of the mouse on screen!
+     *
+     * @see #setPosition(Vector2fc)
+     */
+    public final Vector2f currentPos;
+
+    /**
      * @param visible the initial visibility.
      */
     public CursorState(boolean visible) {
         this.visible = visible;
+        this.currentPos = new Vector2f();
     }
 
     /**
