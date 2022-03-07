@@ -10,7 +10,18 @@ import org.joml.Vector3f;
 
 import static io.ketill.psx.PsxController.*;
 
-public abstract class GlfwPsxAdapter<I extends PsxController> extends GlfwJoystickAdapter<I> {
+/**
+ * The base for a Sony PlayStation GLFW controller adapter.
+ * <p>
+ * <b>Note:</b> This class is <i>not</i> an adapter for a PlayStation 1
+ * controller. If a GLFW adapter for PlayStation 1 controllers is added
+ * in the future, the class will be named {@code GlfwPs1Adapter}.
+ *
+ * @see GlfwPs4Adapter
+ * @see GlfwPs5Adapter
+ */
+public abstract class GlfwPsxAdapter<I extends PsxController>
+        extends GlfwJoystickAdapter<I> {
 
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
@@ -18,6 +29,20 @@ public abstract class GlfwPsxAdapter<I extends PsxController> extends GlfwJoysti
             RS_MAPPING = new GlfwStickMapping(2, 5, 9);
     /* @formatter:on */
 
+    /**
+     * @param controller     the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @throws NullPointerException     if {@code controller} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
     public GlfwPsxAdapter(@NotNull I controller,
                           @NotNull MappedFeatureRegistry registry,
                           long ptr_glfwWindow, int glfwJoystick) {

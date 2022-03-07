@@ -2,6 +2,7 @@ package io.ketill.glfw.psx;
 
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.Trigger1f;
+import io.ketill.glfw.WranglerMethod;
 import io.ketill.psx.Ps5Controller;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,12 +12,40 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
 
     protected static final int AXIS_LT = 3, AXIS_RT = 4;
 
-    public static @NotNull Ps5Controller wrangle(long ptr_glfwWindow,
-                                                 int glfwJoystick) {
+    /**
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @return the wrangled PlayStation 5 controller.
+     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
+    /* @formatter:off */
+    @WranglerMethod
+    public static @NotNull Ps5Controller
+            wrangle(long ptr_glfwWindow, int glfwJoystick) {
         return new Ps5Controller((c, r) -> new GlfwPs5Adapter(c, r,
                 ptr_glfwWindow, glfwJoystick));
     }
+    /* @formatter:on */
 
+    /**
+     * @param controller     the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @throws NullPointerException     if {@code controller} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
     public GlfwPs5Adapter(@NotNull Ps5Controller controller,
                           @NotNull MappedFeatureRegistry registry,
                           long ptr_glfwWindow, int glfwJoystick) {
