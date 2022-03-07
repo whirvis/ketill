@@ -8,11 +8,10 @@ import java.lang.annotation.Target;
 
 /**
  * When present, indicates a method is used solely for wrangling GLFW
- * joysticks into instantiated I/O devices. Use of this annotation is
+ * devices into instantiated I/O devices. Use of this annotation is
  * optional, but recommended as it improves code readability.
  *
- * @see GlfwJoystickWrangler#wrangleDevice(long, int) 
- * @see GlfwJoystickSeeker#wrangleGuid(String, GlfwJoystickWrangler)
+ * @see GlfwJoystickWrangler
  */
 @Documented
 @Target(ElementType.METHOD)
