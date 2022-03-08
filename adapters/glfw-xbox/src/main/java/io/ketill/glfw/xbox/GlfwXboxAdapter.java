@@ -15,8 +15,8 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
 
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
-            LS_MAPPING = new GlfwStickMapping(0, 1, 8),
-            RS_MAPPING = new GlfwStickMapping(2, 3, 9);
+            MAPPING_LS = new GlfwStickMapping(0, 1, 8),
+            MAPPING_RS = new GlfwStickMapping(2, 3, 9);
     /* @formatter:on */
 
     protected static final int AXIS_LT = 4, AXIS_RT = 5;
@@ -78,8 +78,8 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
         this.mapButton(BUTTON_DOWN, 12);
         this.mapButton(BUTTON_LEFT, 13);
 
-        this.mapStick(STICK_LS, LS_MAPPING);
-        this.mapStick(STICK_RS, RS_MAPPING);
+        this.mapStick(STICK_LS, MAPPING_LS);
+        this.mapStick(STICK_RS, MAPPING_RS);
 
         this.mapTrigger(TRIGGER_LT, AXIS_LT);
         this.mapTrigger(TRIGGER_RT, AXIS_RT);
@@ -89,7 +89,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     protected void updateStick(@NotNull Vector3f stick,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(stick, mapping);
-        if (mapping == LS_MAPPING || mapping == RS_MAPPING) {
+        if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
             stick.y *= -1.0F;
         }
     }

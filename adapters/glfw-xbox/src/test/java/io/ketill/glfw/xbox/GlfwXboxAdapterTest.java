@@ -61,8 +61,8 @@ class GlfwXboxAdapterTest {
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
             float rsYValue = RANDOM.nextFloat();
-            axes.put(GlfwXboxAdapter.LS_MAPPING.glfwYAxis, lsYValue);
-            axes.put(GlfwXboxAdapter.RS_MAPPING.glfwYAxis, rsYValue);
+            axes.put(GlfwXboxAdapter.MAPPING_LS.glfwYAxis, lsYValue);
+            axes.put(GlfwXboxAdapter.MAPPING_RS.glfwYAxis, rsYValue);
 
             controller.poll(); /* update sticks */
 
