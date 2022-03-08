@@ -61,8 +61,9 @@ subprojects {
 
     /*
      * At the moment, these modules are currently broken.
-     * This will be removed when they are ready for released.
+     * This will be removed when they are ready for release.
      */
     compileJava.onlyIf { !project.name.startsWith("hid-usb") }
+    compileTestJava.onlyIf { !project.name.startsWith("hid-usb") }
     test.onlyIf { !project.name.startsWith("hid-usb") }
 }
