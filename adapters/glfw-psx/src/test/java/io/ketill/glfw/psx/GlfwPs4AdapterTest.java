@@ -62,8 +62,8 @@ class GlfwPs4AdapterTest {
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
             float rsYValue = RANDOM.nextFloat();
-            axes.put(GlfwPs4Adapter.LS_MAPPING.glfwYAxis, lsYValue);
-            axes.put(GlfwPs4Adapter.RS_MAPPING.glfwYAxis, rsYValue);
+            axes.put(GlfwPs4Adapter.MAPPING_LS.glfwYAxis, lsYValue);
+            axes.put(GlfwPs4Adapter.MAPPING_RS.glfwYAxis, rsYValue);
 
             controller.poll(); /* update sticks */
 

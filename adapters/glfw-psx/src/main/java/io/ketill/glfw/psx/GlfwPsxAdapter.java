@@ -25,8 +25,8 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
 
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
-            LS_MAPPING = new GlfwStickMapping(0, 1, 8),
-            RS_MAPPING = new GlfwStickMapping(2, 5, 9);
+            MAPPING_LS = new GlfwStickMapping(0, 1, 8),
+            MAPPING_RS = new GlfwStickMapping(2, 5, 9);
     /* @formatter:on */
 
     /**
@@ -63,15 +63,15 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
         this.mapButton(BUTTON_L_THUMB, 8);
         this.mapButton(BUTTON_R_THUMB, 9);
 
-        this.mapStick(STICK_LS, LS_MAPPING);
-        this.mapStick(STICK_RS, RS_MAPPING);
+        this.mapStick(STICK_LS, MAPPING_LS);
+        this.mapStick(STICK_RS, MAPPING_RS);
     }
 
     @Override
     protected void updateStick(@NotNull Vector3f stick,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(stick, mapping);
-        if (mapping == LS_MAPPING || mapping == RS_MAPPING) {
+        if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
             stick.y *= -1.0F;
         }
     }
