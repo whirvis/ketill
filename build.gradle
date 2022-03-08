@@ -48,7 +48,7 @@ subprojects {
      * Some modules in this project are blank modules. They are
      * simply folders which contain for real modules. By default,
      * Gradle will output JARs for them, even though they have
-     * no source code. The closures below disable this undesirable behavior.
+     * no source code. The closures below disable this behavior.
      */
     def blankModules = ["adapters", "devices"]
     if(blankModules.contains(project.name)) {
@@ -58,4 +58,11 @@ subprojects {
 		
 		tasks.publishMavenPublicationToMavenLocal.enabled = false
     }
+
+    /*
+     * At the moment, these modules are currently broken.
+     * This will be removed when they are ready for released.
+     */
+    compileJava.onlyIf { !project.name.startsWith("hid-usb") }
+    test.onlyIf { !project.name.startsWith("hid-usb") }
 }
