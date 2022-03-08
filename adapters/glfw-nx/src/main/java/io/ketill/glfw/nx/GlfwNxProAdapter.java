@@ -7,6 +7,7 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Trigger1f;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
+import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxProController;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -21,18 +22,42 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
             MAPPING_RS = new GlfwStickMapping(2, 3, 11);
     /* @formatter:on */
 
-    protected static float normalize(float pos, float min, float max) {
-        pos = Math.min(Math.max(pos, min), max);
-        float mid = (max - min) / 2.0F;
-        return (pos - min - mid) / mid;
-    }
+    protected static final int ZL_INDEX = 6, ZR_INDEX = 7;
 
-    public static @NotNull NxProController wrangle(long ptr_glfwWindow,
-                                                   int glfwJoystick) {
+    /**
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @return the wrangled Switch Pro controller.
+     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
+    /* @formatter:off */
+    @WranglerMethod
+    public static @NotNull NxProController
+            wrangle(long ptr_glfwWindow, int glfwJoystick) {
         return new NxProController((c, r) -> new GlfwNxProAdapter(c, r,
                 ptr_glfwWindow, glfwJoystick));
     }
+    /* @formatter:on */
 
+    /**
+     * @param controller     the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @throws NullPointerException     if {@code controller} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
     public GlfwNxProAdapter(@NotNull NxProController controller,
                             @NotNull MappedFeatureRegistry registry,
                             long ptr_glfwWindow, int glfwJoystick) {
@@ -52,8 +77,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapButton(BUTTON_X, 3);
         this.mapButton(BUTTON_L, 4);
         this.mapButton(BUTTON_R, 5);
-        this.mapButton(BUTTON_ZL, 6);
-        this.mapButton(BUTTON_ZR, 7);
+        this.mapButton(BUTTON_ZL, ZL_INDEX);
+        this.mapButton(BUTTON_ZR, ZR_INDEX);
         this.mapButton(BUTTON_MINUS, 8);
         this.mapButton(BUTTON_PLUS, 9);
         this.mapButton(BUTTON_L_THUMB, 10);
@@ -70,8 +95,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapStick(STICK_LS, MAPPING_LS);
         this.mapStick(STICK_RS, MAPPING_RS);
 
-        this.mapProTrigger(TRIGGER_LT, 4);
-        this.mapProTrigger(TRIGGER_RT, 5);
+        this.mapProTrigger(TRIGGER_LT, ZL_INDEX);
+        this.mapProTrigger(TRIGGER_RT, ZR_INDEX);
     }
 
     @Override
@@ -79,13 +104,11 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(stick, mapping);
         if (mapping == MAPPING_LS) {
-            stick.x = normalize(stick.x, -0.70F, 0.70F);
-            stick.y = normalize(stick.y, -0.76F, 0.72F);
             stick.y *= -1.0F;
+            device.calibration.applyLs(stick);
         } else if (mapping == MAPPING_RS) {
-            stick.x = normalize(stick.x, -0.72F, 0.72F);
-            stick.y = normalize(stick.y, -0.68F, 0.76F);
             stick.y *= -1.0F;
+            device.calibration.applyRs(stick);
         }
     }
 

@@ -1,28 +1,58 @@
 package io.ketill.glfw.nx;
 
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxRightJoyCon;
 import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.nx.NxRightJoyCon.*;
 
-public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon> {
+public class GlfwNxRightJoyConAdapter
+        extends GlfwNxJoyConAdapter<NxRightJoyCon> {
 
     /* @formatter:off */
     protected static final @NotNull JoyConStickMapping
             MAPPING_RS = new JoyConStickMapping(17,19,16,18, 11);
     /* @formatter:on */
 
-    public static @NotNull NxRightJoyCon wrangle(long ptr_glfwWindow,
-                                                 int glfwJoystick) {
+    /**
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @return the wrangled Switch right Joy-Con.
+     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
+    /* @formatter:off */
+    @WranglerMethod
+    public static @NotNull NxRightJoyCon
+            wrangle(long ptr_glfwWindow, int glfwJoystick) {
         return new NxRightJoyCon((c, r) -> new GlfwNxRightJoyConAdapter(c, r,
                 ptr_glfwWindow, glfwJoystick));
     }
+    /* @formatter:on */
 
-    public GlfwNxRightJoyConAdapter(@NotNull NxRightJoyCon device,
+    /**
+     * @param controller     the device which owns this adapter.
+     * @param registry       the device's mapped feature registry.
+     * @param ptr_glfwWindow the GLFW window pointer.
+     * @param glfwJoystick   the GLFW joystick.
+     * @throws NullPointerException     if {@code controller} or
+     *                                  {@code registry} are {@code null};
+     *                                  if {@code ptr_glfwWindow} is a null
+     *                                  pointer (has a value of zero.)
+     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
+     *                                  valid GLFW window pointer;
+     *                                  if {@code glfwJoystick} is not a
+     *                                  valid GLFW joystick.
+     */
+    public GlfwNxRightJoyConAdapter(@NotNull NxRightJoyCon controller,
                                     @NotNull MappedFeatureRegistry registry,
                                     long ptr_glfwWindow, int glfwJoystick) {
-        super(device, registry, ptr_glfwWindow, glfwJoystick);
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
