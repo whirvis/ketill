@@ -65,5 +65,6 @@ subprojects {
      */
     compileJava.onlyIf { !project.name.startsWith("hid-usb") }
     compileTestJava.onlyIf { !project.name.startsWith("hid-usb") }
+    javadoc.onlyIf { !project.name.startsWith("hid-usb") }
     test.onlyIf { !project.name.startsWith("hid-usb") }
 }
