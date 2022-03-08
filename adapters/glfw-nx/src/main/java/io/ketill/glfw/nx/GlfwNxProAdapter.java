@@ -97,6 +97,14 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
 
         this.mapProTrigger(TRIGGER_LT, ZL_INDEX);
         this.mapProTrigger(TRIGGER_RT, ZR_INDEX);
+
+        /*
+         * This feature is supported, but its value is only referenced.
+         * Map this feature to a no-op so isFeatureSupported() returns
+         * a value of true as expected by the user.
+         */
+        registry.mapFeature(FEATURE_CALIBRATION, (f) -> {
+        });
     }
 
     @Override
