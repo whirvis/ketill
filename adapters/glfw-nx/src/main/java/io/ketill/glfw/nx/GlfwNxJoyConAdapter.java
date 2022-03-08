@@ -15,11 +15,11 @@ abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
         extends GlfwJoystickAdapter<I> {
 
     /**
-     * @param controller     the device which owns this adapter.
+     * @param joycon         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
-     * @throws NullPointerException     if {@code controller} or
+     * @throws NullPointerException     if {@code joycon} or
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
@@ -28,10 +28,10 @@ abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
      *                                  if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
-    GlfwNxJoyConAdapter(@NotNull I controller,
+    GlfwNxJoyConAdapter(@NotNull I joycon,
                         @NotNull MappedFeatureRegistry registry,
                         long ptr_glfwWindow, int glfwJoystick) {
-        super(controller, registry, ptr_glfwWindow, glfwJoystick);
+        super(joycon, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @MappingMethod

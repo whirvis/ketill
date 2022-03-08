@@ -15,6 +15,8 @@ public class GlfwNxRightJoyConAdapter
             MAPPING_RS = new JoyConStickMapping(17,19,16,18, 11);
     /* @formatter:on */
 
+    protected static final int ZR_INDEX = 15;
+
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
@@ -36,7 +38,7 @@ public class GlfwNxRightJoyConAdapter
     /* @formatter:on */
 
     /**
-     * @param controller     the device which owns this adapter.
+     * @param joycon         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
@@ -49,10 +51,10 @@ public class GlfwNxRightJoyConAdapter
      *                                  if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
-    public GlfwNxRightJoyConAdapter(@NotNull NxRightJoyCon controller,
+    public GlfwNxRightJoyConAdapter(@NotNull NxRightJoyCon joycon,
                                     @NotNull MappedFeatureRegistry registry,
                                     long ptr_glfwWindow, int glfwJoystick) {
-        super(controller, registry, ptr_glfwWindow, glfwJoystick);
+        super(joycon, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class GlfwNxRightJoyConAdapter
 
         this.mapJoyConStick(STICK_RS, MAPPING_RS);
 
-        this.mapJoyConTrigger(TRIGGER_ZR, 15);
+        this.mapJoyConTrigger(TRIGGER_ZR, ZR_INDEX);
     }
 
 }
