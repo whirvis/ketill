@@ -50,6 +50,8 @@ class NxProControllerTest {
         assertStateIsFeature(nxPro.rt, TRIGGER_RT);
 
         assertStateIsFeature(nxPro.led, FEATURE_LED);
+
+        assertStateIsFeature(nxPro.calibration, FEATURE_CALIBRATION);
     }
 
 }

@@ -59,6 +59,10 @@ public class NxProController extends Controller {
     @FeaturePresent
     public static final @NotNull PlayerLed
             FEATURE_LED = new PlayerLed("led");
+
+    @FeaturePresent
+    public static final @NotNull NxCalibration
+            FEATURE_CALIBRATION = new NxCalibration("calibration");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -98,6 +102,10 @@ public class NxProController extends Controller {
     @FeatureState
     public final @NotNull Led1i
             led = this.getState(FEATURE_LED);
+
+    @FeatureState
+    public final @NotNull NxCalibrationConfig
+            calibration = this.getState(FEATURE_CALIBRATION);
     /* @formatter:on */
 
     /**
