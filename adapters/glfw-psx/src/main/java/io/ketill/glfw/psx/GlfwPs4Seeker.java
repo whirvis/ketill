@@ -18,8 +18,8 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker<Ps4Controller> {
         super(Ps4Controller.class, ptr_glfwWindow);
 
         String guidsPath = "guids_ps4.json";
-        Collection<String> xboxGuids = this.loadJsonGuids(guidsPath);
-        this.wrangleGuids(xboxGuids, GlfwPs4Adapter::wrangle);
+        Collection<String> ps4Guids = this.loadJsonGuids(guidsPath);
+        this.wrangleGuids(ps4Guids, GlfwPs4Adapter::wrangle);
     }
 
 }
