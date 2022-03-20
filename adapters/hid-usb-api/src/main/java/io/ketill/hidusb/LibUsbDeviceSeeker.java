@@ -87,7 +87,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      *                                  than {@value #MINIMUM_SCAN_INTERVAL}.
      * @throws NullPointerException     if {@code deviceSupplier}
      *                                  is {@code null}.
-     * @see LibUsbDevice#initContext()
+     * @throws LibUsbException          if LibUSB could not be initialized.
      */
     public LibUsbDeviceSeeker(long scanIntervalMs,
                               @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
@@ -118,7 +118,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      * @param deviceSupplier the LibUSB device supplier. This can usually
      *                       just be {@code LibUsbDevice::new}.
      * @throws NullPointerException if {@code deviceSupplier} is {@code null}.
-     * @see LibUsbDevice#initContext()
+     * @throws LibUsbException      if LibUSB could not be initialized.
      */
     public LibUsbDeviceSeeker(@NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
         this(MINIMUM_SCAN_INTERVAL, LibUsbDevice.initContext(), deviceSupplier);
