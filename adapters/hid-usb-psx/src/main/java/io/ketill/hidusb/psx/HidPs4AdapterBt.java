@@ -102,7 +102,7 @@ public final class HidPs4AdapterBt extends HidPs4Adapter {
         this.mapButton(BUTTON_TPAD, 9, 1);
 
         this.mapStick(STICK_LS, 3, 4, 8, 6);
-        this.mapStick(STICK_LS, 5, 6, 8, 7);
+        this.mapStick(STICK_RS, 5, 6, 8, 7);
 
         this.mapTrigger(TRIGGER_LT, 10);
         this.mapTrigger(TRIGGER_RT, 11);
