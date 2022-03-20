@@ -1,16 +1,14 @@
 package io.ketill.hidusb;
 
 import io.ketill.IoDevice;
-import io.ketill.IoDeviceSeeker;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.usb4java.Context;
-import org.usb4java.Device;
 import org.usb4java.LibUsbException;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -23,334 +21,174 @@ import java.util.Objects;
  * the HID protocol.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #seekProduct(int, int)}. If
+ * told which devices to seek out via {@link #targetProduct(DeviceId)}. If
  * this is neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
  * @param <L> the LibUSB device type. This can usually just be
- *            {@link LibUsbDevice}. However, if additional features
- *            of LibUSB must be implemented, extend that class and
- *            use it as the template type here instead.
+ *            {@link LibUsbDevice}. However, if additional features of
+ *            LibUSB must be implemented, extend that class and use it
+ *            as the template type here instead.
  */
 public abstract class LibUsbDeviceSeeker<I extends IoDevice,
-        L extends LibUsbDevice> extends IoDeviceSeeker<I> {
+        L extends LibUsbDevice> extends SystemDeviceSeeker<I, L> {
 
-    public static final int DEFAULT_SCAN_INTERVAL = 1000;
-
-    private final LibUsbDeviceSupplier<L> deviceSupplier;
     private final Context usbContext;
-    private final List<L> connected;
-    private final List<DeviceInfo> seeking;
-    private final List<Device> blacklisted;
-    private final List<L> devices;
-    private final int scanIntervalMs;
-    private long lastScan;
+    private final LibUsbDeviceSupplier<L> deviceSupplier;
+    private final Map<L, LibUsbQueued<L>> connectQueue;
 
     /**
-     * @param scanIntervalMs the interval in milliseconds between USB
-     *                       device enumeration scans.
-     * @param deviceSupplier the LibUSB device supplier. Usually, this can
+     * @param scanIntervalMs the interval in milliseconds between device
+     *                       enumeration scans. This does <i>not</i> cause
+     *                       {@link #seek()} to block. It only prevents a
+     *                       device scan from being performed unless enough
+     *                       time has elapsed between method calls.
+     * @param context        the USB context.
+     * @param deviceSupplier the LibUSB device supplier. This can usually
      *                       just be {@code LibUsbDevice::new}.
      * @throws IllegalArgumentException if {@code scanIntervalMs} is less
-     *                                  than or equal to zero.
-     * @throws NullPointerException     if {@code deviceSupplier}
-     *                                  is {@code null}.
-     * @throws LibUsbException          if LibUSB could not be initialized.
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL}.
+     * @throws NullPointerException     if {@code context} or
+     *                                  {@code deviceSupplier}
+     *                                  are {@code null}.
+     * @see LibUsbDevice#initContext()
      */
     @SuppressWarnings("unchecked")
-    public LibUsbDeviceSeeker(int scanIntervalMs,
+    public LibUsbDeviceSeeker(long scanIntervalMs,
+                              @NotNull Context context,
                               @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
-        if (scanIntervalMs <= 0) {
-            throw new IllegalArgumentException("scanIntervalMs <= 0");
-        }
+        super(scanIntervalMs);
+        this.usbContext = Objects.requireNonNull(context,
+                "default context is forbidden");
 
         /*
          * While this is an unchecked cast, the template requires that the
          * type extend LibUsbDevice. As such, this cast is safe to perform.
          */
-        Objects.requireNonNull(deviceSupplier, "deviceSupplier");
+        Objects.requireNonNull(deviceSupplier,
+                "deviceSupplier cannot be null");
         this.deviceSupplier = (LibUsbDeviceSupplier<L>) deviceSupplier;
 
-        this.usbContext = LibUsbDevice.initContext();
-
-        this.connected = new ArrayList<>();
-        this.seeking = new ArrayList<>();
-        this.blacklisted = new ArrayList<>();
-        this.devices = new ArrayList<>();
-        this.scanIntervalMs = scanIntervalMs;
+        this.connectQueue = new HashMap<>();
     }
 
     /**
      * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
-     * {@code scanIntervalMs} being {@value #DEFAULT_SCAN_INTERVAL}.
+     * {@code context} being a newly initialized LibUSB context.
      *
-     * @param deviceSupplier the LibUSB device supplier. Usually, this can
+     * @param scanIntervalMs the interval in milliseconds between device
+     *                       enumeration scans. This does <i>not</i> cause
+     *                       {@link #seek()} to block. It only prevents a
+     *                       device scan from being performed unless enough
+     *                       time has elapsed between method calls.
+     * @param deviceSupplier the LibUSB device supplier. This can usually
      *                       just be {@code LibUsbDevice::new}.
-     * @throws NullPointerException if {@code deviceSupplier}
-     *                              is {@code null}.
-     * @throws LibUsbException      if LibUSB could not be initialized.
+     * @throws IllegalArgumentException if {@code scanIntervalMs} is less
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL}.
+     * @throws NullPointerException     if {@code deviceSupplier}
+     *                                  is {@code null}.
+     * @see LibUsbDevice#initContext()
      */
-    public LibUsbDeviceSeeker(@NotNull LibUsbDeviceSupplier<?
-            extends LibUsbDevice> deviceSupplier) {
-        this(DEFAULT_SCAN_INTERVAL, deviceSupplier);
-    }
-
-    public int getScanIntervalMs() {
-        return this.scanIntervalMs;
+    public LibUsbDeviceSeeker(long scanIntervalMs,
+                              @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
+        this(scanIntervalMs, LibUsbDevice.initContext(), deviceSupplier);
     }
 
     /**
-     * @param vendorId  the vendor ID.
-     * @param productId the product ID.
-     * @return {@code true} if this device seeker is seeking out USB devices
-     * with {@code vendorId} and {@code productId}, {@code false} otherwise.
-     * @throws IllegalArgumentException if {@code vendorId} or
-     *                                  {@code productId} are not within range
-     *                                  of {@code 0x0000} to {@code 0xFFFF}.
-     */
-    public boolean isSeekingProduct(int vendorId, int productId) {
-        DeviceInfo.requireValidId(vendorId, productId);
-        for (DeviceInfo info : seeking) {
-            if (info.vendorId == vendorId && info.productId == productId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isSeekingProduct(@NotNull L device) {
-        return this.isSeekingProduct(device.getVendorId(),
-                device.getProductId());
-    }
-
-    private boolean isProduct(@NotNull L device, int vendorId, int productId) {
-        return device.getVendorId() == vendorId
-                && device.getProductId() == productId;
-    }
-
-    /**
-     * Indicates to the seeker it should seek out USB devices with the
-     * specified vendor and product ID. When such a device is located,
-     * the {@link #onDeviceConnect(LibUsbDevice)} callback will be executed.
+     * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
+     * {@code scanIntervalMs} being {@value #MINIMUM_SCAN_INTERVAL}.
      *
-     * @param vendorId  the vendor ID.
-     * @param productId the product ID.
-     * @throws IllegalArgumentException if {@code vendorId} or
-     *                                  {@code productId} are not within range
-     *                                  of {@code 0x0000} to {@code 0xFFFF}.
-     * @throws IllegalStateException    if this HID device seeker has been
-     *                                  closed via {@link #close()}.
-     * @see #onDeviceConnect(LibUsbDevice)
+     * @param context        the USB context.
+     * @param deviceSupplier the LibUSB device supplier. This can usually
+     *                       just be {@code LibUsbDevice::new}.
+     * @throws NullPointerException if {@code context} or
+     *                              {@code deviceSupplier} are {@code null}.
+     * @see LibUsbDevice#initContext()
      */
-    protected void seekProduct(int vendorId, int productId) {
-        DeviceInfo.requireValidId(vendorId, productId);
-        this.requireOpen();
-        if (!this.isSeekingProduct(vendorId, productId)) {
-            seeking.add(new DeviceInfo(vendorId, productId));
-        }
+    public LibUsbDeviceSeeker(@NotNull Context context,
+                              @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
+        this(MINIMUM_SCAN_INTERVAL, context, deviceSupplier);
     }
 
     /**
-     * Indicates to the seeker it should no longer seek out USB devices with
-     * the specified vendor and product ID. All currently connected devices
-     * with the specified vendor and product ID will be disconnected.
+     * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
+     * {@code scanIntervalMs} being {@value #MINIMUM_SCAN_INTERVAL} and
+     * {@code context} being a newly initialized LibUSB context.
      *
-     * @param vendorId  the vendor ID.
-     * @param productId the product ID.
-     * @throws IllegalArgumentException if {@code vendorId} or
-     *                                  {@code productId} are not within range
-     *                                  of {@code 0x0000} to {@code 0xFFFF}.
-     * @throws IllegalStateException    if this HID device seeker has been
-     *                                  closed via {@link #close()}.
-     * @see #onDeviceDisconnect(LibUsbDevice)
+     * @param deviceSupplier the LibUSB device supplier. This can usually
+     *                       just be {@code LibUsbDevice::new}.
+     * @throws NullPointerException if {@code deviceSupplier} is {@code null}.
+     * @see LibUsbDevice#initContext()
      */
-    protected void dropProduct(int vendorId, int productId) {
-        DeviceInfo.requireValidId(vendorId, productId);
-        this.requireOpen();
-        if (!this.isSeekingProduct(vendorId, productId)) {
-            return;
-        }
-
-        seeking.removeIf(info -> info.vendorId == vendorId
-                && info.productId == productId);
-
-        Iterator<L> devicesI = devices.iterator();
-        while (devicesI.hasNext()) {
-            L device = devicesI.next();
-            if (this.isProduct(device, vendorId, productId)) {
-                devicesI.remove();
-                this.disconnect(device);
-            }
-        }
+    public LibUsbDeviceSeeker(@NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
+        this(MINIMUM_SCAN_INTERVAL, LibUsbDevice.initContext(), deviceSupplier);
     }
 
-    /**
-     * Blacklists a device from this device seeker. When blacklisted, a device
-     * will be forcefully disconnected. Afterwards, it will not be reconnected.
-     *
-     * @param device the LibUSB device to blacklist.
-     * @throws NullPointerException  if {@code handle} is {@code null}.
-     * @throws IllegalStateException if this HID device seeker has been
-     *                               closed via {@link #close()}.
-     */
-    protected void blacklistDevice(@NotNull L device) {
-        Objects.requireNonNull(device, "device");
-        this.requireOpen();
-        if (!blacklisted.contains(device.usbDevice())) {
-            blacklisted.add(device.usbDevice());
-            this.disconnect(device);
-        }
-    }
-
-    /**
-     * Exempts a device from the blacklist. This can be used to allow a
-     * previously blacklisted device to connect again.
-     * <p>
-     * <b>Note:</b> This method <i>does not</i> prevent a device from being
-     * blacklisted again. To change the behavior of blacklisting, override
-     * {@link #blacklistDevice(LibUsbDevice)}.
-     *
-     * @param device the LibUSB device to exempt.
-     * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this HID device seeker has been
-     *                               closed via {@link #close()}.
-     */
-    protected void exemptDevice(@NotNull LibUsbDevice device) {
-        Objects.requireNonNull(device, "device");
-        this.requireOpen();
-        blacklisted.remove(device.usbDevice());
-    }
-
-    private void connect(@NotNull L device) {
-        devices.add(device);
-
+    @Override
+    protected final @NotNull DeviceId getDeviceId(@NotNull L device) {
         /*
-         * Only increment the reference count after the device
-         * has been successfully opened. This prevents a memory
-         * leak if the device fails to open. When the device is
-         * disconnected, its reference count will be decreased.
+         * Vendor IDs and product IDs are unsigned shorts. However,
+         * the underlying LibUSB API returns them as a signed Java
+         * short. This converts them to an unsigned value and stores
+         * them in an int so the expected value is returned.
          */
-        try {
-            this.onDeviceConnect(device);
-        } catch (Throwable cause) {
-            device.close();
-            throw cause;
+        int vendorId = device.usbDescriptor.idVendor() & 0xFFFF;
+        int productId = device.usbDescriptor.idProduct() & 0xFFFF;
+        return new DeviceId(vendorId, productId);
+    }
+
+    @Override
+    protected final int getDeviceHash(@NotNull L device) {
+        return device.hashCode();
+    }
+
+    @Override
+    protected void onDeviceAttach(@NotNull L device) {
+        synchronized (connectQueue) {
+            connectQueue.put(device, new LibUsbQueued<>(device, 3));
         }
     }
 
-    private void disconnect(@NotNull L device) {
-        devices.remove(device);
-
-        /*
-         * Surround onDeviceDisconnect() in a try catch block just
-         * in case it throws an exception. This ensures that the
-         * USB device is unreferenced even if the callback fails.
-         */
-        try {
-            this.onDeviceDisconnect(device);
-            device.close();
-        } catch (Throwable cause) {
-            device.close();
-            throw cause;
+    @Override
+    protected void onDeviceDetach(@NotNull L device) {
+        synchronized (connectQueue) {
+            connectQueue.remove(device);
+            this.disconnectDevice(device, true);
         }
     }
 
-    /* package-private for testing */
-    synchronized void usbDeviceAttached(@NotNull L device) {
-        if (devices.contains(device)) {
-            /* don't unref(), it's being used */
-            return;
-        }
+    @Override
+    protected final @NotNull Collection<@NotNull L> scanDevices() {
+        return LibUsbDevice.getConnected(usbContext, deviceSupplier);
+    }
 
-        if (blacklisted.contains(device.usbDevice())) {
-            device.close();
-            return;
-        }
-
-        /*
-         * Only unreference the device after determining it will
-         * not be needed. When a device is found, attach() will
-         * increase its reference count to keep it in memory.
-         * Otherwise, free the device here.
-         */
-        if (!this.isSeekingProduct(device)) {
-            device.close();
-            return;
+    private boolean attemptOpen(LibUsbQueued<L> queued) {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - queued.lastAttempt < 1000L) {
+            return false;
         }
 
         try {
-            device.openHandle();
-        } catch (Throwable cause) {
-            device.close();
-            this.blacklistDevice(device);
-            return;
-        }
-
-        this.connect(device);
-    }
-
-    /* package-private for testing */
-    synchronized void usbDeviceDetached(@NotNull L device) {
-        if (!devices.remove(device)) {
-            return; /* device not previously connected */
-        }
-        this.disconnect(device);
-    }
-
-    /* package-private for testing */
-    synchronized void scanDevices() {
-        List<L> scanned =
-                LibUsbDevice.getConnected(usbContext, deviceSupplier);
-
-        for (L device : scanned) {
-            if (!connected.contains(device)) {
-                this.usbDeviceAttached(device);
-                connected.add(device);
+            queued.device.openHandle();
+            this.connectDevice(queued.device);
+            return true; /* device connected */
+        } catch (LibUsbException e) {
+            queued.attemptsLeft--;
+            queued.lastAttempt = currentTime;
+            if (queued.attemptsLeft <= 0) {
+                this.blockDevice(queued.device, e, true);
+                return true; /* all attempts used */
             }
-        }
-
-        Iterator<L> devicesI = connected.iterator();
-        while (devicesI.hasNext()) {
-            L device = devicesI.next();
-            if (!scanned.contains(device)) {
-                devicesI.remove();
-                this.usbDeviceDetached(device);
-                connected.remove(device);
-            }
+            return false; /* failed to open */
         }
     }
-
-    /**
-     * Called when a USB device being sought after has connected.
-     * <p>
-     * <b>Note:</b> Connected devices are <i>not</i> discovered.
-     * They must be discovered using {@link #discoverDevice(IoDevice)}.
-     *
-     * @param device the LibUSB device.
-     */
-    protected abstract void onDeviceConnect(@NotNull L device);
-
-    /**
-     * Called when a previously connected USB device has disconnected.
-     * <p>
-     * <b>Note:</b> Disconnected devices are <i>not</i> forgotten.
-     * They must be forgotten using {@link #forgetDevice(IoDevice)}.
-     *
-     * @param device the LibUSB device.
-     */
-    protected abstract void onDeviceDisconnect(@NotNull L device);
 
     @Override
     @MustBeInvokedByOverriders
-    protected void seekImpl() {
-        if (seeking.isEmpty()) {
-            throw new IllegalStateException("no USB devices targeted");
-        }
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastScan >= scanIntervalMs) {
-            this.scanDevices();
-            this.lastScan = currentTime;
+    protected void seekImpl() throws Exception {
+        super.seekImpl();
+        synchronized (connectQueue) {
+            connectQueue.values().removeIf(this::attemptOpen);
         }
     }
 
@@ -360,19 +198,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         if (this.isClosed()) {
             return;
         }
-
-        seeking.clear();
-        blacklisted.clear();
-
         super.close();
-
-        Iterator<L> devicesI = devices.iterator();
-        while (devicesI.hasNext()) {
-            L device = devicesI.next();
-            device.close();
-            devicesI.remove();
-        }
-
         LibUsbDevice.exitContext(usbContext);
     }
 

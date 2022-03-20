@@ -67,7 +67,7 @@ public class LibUsbDevice implements Closeable {
      */
     @SuppressWarnings("UnusedReturnValue")
     protected static int requireSuccess(@NotNull LibUsbOperation operation) {
-        Objects.requireNonNull(operation, "operation");
+        Objects.requireNonNull(operation, "operation cannot be null");
         int result = operation.execute();
         if (result < LibUsb.SUCCESS) {
             throw new LibUsbException(result);
@@ -105,7 +105,7 @@ public class LibUsbDevice implements Closeable {
          * such, it is assumed to be an error by the user if they
          * provide null context.
          */
-        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(context, "default context is forbidden");
         LibUsb.exit(context);
     }
 
@@ -138,8 +138,10 @@ public class LibUsbDevice implements Closeable {
     public static @NotNull <L extends LibUsbDevice> List<@NotNull L>
             getConnected(@NotNull Context context,
                          @NotNull LibUsbDeviceSupplier<L> deviceSupplier) {
-        Objects.requireNonNull(context, "context");
-        Objects.requireNonNull(deviceSupplier, "deviceSupplier");
+        Objects.requireNonNull(context,
+                "default context is forbidden");
+        Objects.requireNonNull(deviceSupplier,
+                "deviceSupplier cannot be null");
 
         long currentTime = System.currentTimeMillis();
         long lastGetDeviceTime = 0L;
@@ -163,7 +165,8 @@ public class LibUsbDevice implements Closeable {
         List<L> connected = new ArrayList<>();
         for (Device device : devices) {
             L wrapped = deviceSupplier.get(context, device);
-            Objects.requireNonNull(wrapped, "supplied device is null");
+            Objects.requireNonNull(wrapped,
+                    "supplied device cannot be null");
             connected.add(wrapped);
         }
 
@@ -188,9 +191,9 @@ public class LibUsbDevice implements Closeable {
     /* @formatter:off */
     public static void
             closeDevices(@NotNull Iterable<? extends LibUsbDevice> devices) {
-        Objects.requireNonNull(devices, "devices");
+        Objects.requireNonNull(devices, "devices cannot be null");
         for (LibUsbDevice device : devices) {
-            Objects.requireNonNull(device, "device");
+            Objects.requireNonNull(device, "device cannot be null");
             device.close();
         }
     }
@@ -272,8 +275,8 @@ public class LibUsbDevice implements Closeable {
      * @see #close()
      */
     public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
-        this.usbContext = Objects.requireNonNull(context, "context");
-        this.usbDevice = Objects.requireNonNull(device, "device");
+        this.usbContext = Objects.requireNonNull(context, "default context is forbidden");
+        this.usbDevice = Objects.requireNonNull(device, "device cannot be null");
         this.ptr = usbDevice.getPointer();
 
         this.usbDescriptor = new DeviceDescriptor();
