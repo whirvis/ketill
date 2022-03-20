@@ -41,7 +41,8 @@ public interface FeatureRegistry {
     default <S> @NotNull S getState(@NotNull IoFeature<S> feature) {
         RegisteredFeature<?, S> registered = this.getRegistered(feature);
         if (registered == null) {
-            throw new IllegalStateException("no such feature");
+            String msg = "no such feature \"" + feature.id + "\"";
+            throw new IllegalStateException(msg);
         }
         return registered.state;
     }
