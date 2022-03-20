@@ -311,8 +311,13 @@ public class LibUsbDevice implements Closeable {
         if (usbHandle != null) {
             return;
         }
-        this.usbHandle = new DeviceHandle();
-        requireSuccess(() -> LibUsb.open(usbDevice, usbHandle));
+        try {
+            this.usbHandle = new DeviceHandle();
+            requireSuccess(() -> LibUsb.open(usbDevice, usbHandle));
+        } catch (LibUsbException e) {
+            this.usbHandle = null;
+            throw e;
+        }
     }
 
     /**
