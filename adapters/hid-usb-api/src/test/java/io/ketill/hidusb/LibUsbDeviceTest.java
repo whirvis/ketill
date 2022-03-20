@@ -4,21 +4,24 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.opentest4j.TestAbortedException;
 import org.usb4java.Context;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
 class LibUsbDeviceTest {
@@ -55,6 +58,76 @@ class LibUsbDeviceTest {
             result.set(code);
         });
         assertEquals(success, result.get());
+    }
+
+    @Test
+    void getZadigHomepage() {
+        /*
+         * While specified as a possibility in its documentation,
+         * this method should never return null. If it does, that
+         * means something has gone wrong. The null return value
+         * is simply to prevent the application from crashing.
+         */
+        assertNotNull(LibUsbDevice.getZadigHomepage());
+    }
+
+    @Test
+    void openZadigHomepage() throws IOException {
+        try (MockedStatic<Desktop> awtDesktop = mockStatic(Desktop.class)) {
+            /*
+             * If Java AWT desktop is not supported, then opening
+             * the home page for Zadig will not succeed. As such,
+             * this method should return false.
+             */
+            awtDesktop.when(Desktop::isDesktopSupported).thenReturn(false);
+            assertFalse(LibUsbDevice.openZadigHomepage());
+            awtDesktop.when(Desktop::isDesktopSupported).thenReturn(true);
+
+            Desktop desktop = mock(Desktop.class);
+            awtDesktop.when(Desktop::getDesktop).thenReturn(desktop);
+
+            /*
+             * If browsing is not supported, then opening the home
+             * page for Zadig will not be possible. As such, this
+             * method should return false.
+             */
+            when(desktop.isSupported(Desktop.Action.BROWSE)).thenReturn(false);
+            assertFalse(LibUsbDevice.openZadigHomepage());
+            when(desktop.isSupported(Desktop.Action.BROWSE)).thenReturn(true);
+
+            /*
+             * If calling browse() results in an I/O exception, it
+             * means the home page  was not opened. As such, this
+             * method should return false.
+             */
+            doThrow(new IOException()).when(desktop).browse(any());
+            assertFalse(LibUsbDevice.openZadigHomepage());
+            doNothing().when(desktop).browse(any());
+
+            /*
+             * If everything goes right when opening the home page,
+             * this method should return true. It should have also
+             * made a call to the browse().
+             */
+            assertTrue(LibUsbDevice.openZadigHomepage());
+            verify(desktop, times(2)).browse(any());
+        }
+
+
+        try (MockedStatic<LibUsbDevice> libUsbDevice =
+                     mockStatic(LibUsbDevice.class)) {
+            libUsbDevice.when(LibUsbDevice::getZadigHomepage)
+                    .thenReturn(null);
+
+            /*
+             * If the URI for the Zadig home page could not
+             * be resolved, this method will fail. As such,
+             * it should return false.
+             */
+            libUsbDevice.when(LibUsbDevice::openZadigHomepage)
+                    .thenCallRealMethod();
+            assertFalse(LibUsbDevice.openZadigHomepage());
+        }
     }
 
     private static Context context;
@@ -213,7 +286,7 @@ class LibUsbDeviceTest {
          * to create it during setup. If they do not match, assume
          * something has gone wrong during instantiation.
          */
-        assertEquals(guineaPig.usbContext(), context);
+        assertEquals(guineaPig.usbContext, context);
     }
 
     @Test
@@ -225,40 +298,12 @@ class LibUsbDeviceTest {
          * is nothing to perform I/O with. This makes the wrapper
          * a dead weight, and indicates something has gone wrong.
          */
-        assertNotNull(guineaPig.usbDevice());
-    }
-
-    @Test
-    void getVendorId() {
-        assumeGuineaPigPresent();
-
-        /*
-         * Vendor IDs are unsigned shorts. However, the underlying
-         * LibUSB API returns them as a signed Java short. After
-         * construction, getVendorId() is expected to return the
-         * vendor ID as an unsigned short.
-         */
-        int originalVid = guineaPig.usbDescriptor.idVendor() & 0xFFFF;
-        assertEquals(guineaPig.getVendorId(), originalVid);
-    }
-
-    @Test
-    void getProductId() {
-        assumeGuineaPigPresent();
-
-        /*
-         * Product IDs are unsigned shorts. However, the underlying
-         * LibUSB API returns them as a signed Java short. After
-         * construction, getProductId() is expected to return the
-         * product ID as an unsigned short.
-         */
-        int originalPid = guineaPig.usbDescriptor.idProduct() & 0xFFFF;
-        assertEquals(guineaPig.getProductId(), originalPid);
+        assertNotNull(guineaPig.usbDevice);
     }
 
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    void usbHandle() {
+    void getHandle() {
         assumeGuineaPigPresent();
 
         /*
@@ -267,7 +312,7 @@ class LibUsbDeviceTest {
          * user is expected to open the USB handle themselves.
          */
         assertThrows(IllegalStateException.class,
-                () -> guineaPig.usbHandle());
+                () -> guineaPig.getHandle());
     }
 
     @Test
@@ -276,7 +321,7 @@ class LibUsbDeviceTest {
 
         try {
             guineaPig.openHandle();
-            assertNotNull(guineaPig.usbHandle());
+            assertNotNull(guineaPig.getHandle());
         } catch (LibUsbException e) {
             libUsbError(e);
         }
@@ -297,7 +342,7 @@ class LibUsbDeviceTest {
          * device will confirm if it's been destroyed or not.
          */
         assertThrows(IllegalStateException.class,
-                () -> LibUsb.refDevice(guineaPig.usbDevice()));
+                () -> LibUsb.refDevice(guineaPig.usbDevice));
 
         /*
          * It would not make sense to open a USB handle after this
@@ -312,6 +357,25 @@ class LibUsbDeviceTest {
          * with the Closeable interface as provided by Java.
          */
         assertDoesNotThrow(guineaPig::close);
+    }
+
+    @Test
+    @SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself"})
+    void testEquals() {
+        assumeGuineaPigPresent();
+
+        assertFalse(guineaPig.equals(null));
+        assertFalse(guineaPig.equals(new Object()));
+        assertFalse(guineaPig.equals(mock(LibUsbDevice.class)));
+        assertTrue(guineaPig.equals(guineaPig));
+    }
+
+    @Test
+    void testHashCode() {
+        assumeGuineaPigPresent();
+
+        long ptr = guineaPig.usbDevice.getPointer();
+        assertEquals(Objects.hash(ptr), guineaPig.hashCode());
     }
 
     @AfterAll
