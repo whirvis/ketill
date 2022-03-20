@@ -7,7 +7,9 @@ import org.usb4java.*;
 
 import java.io.Closeable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -26,6 +28,9 @@ import java.util.Objects;
  * @see #requireSuccess(LibUsbOperation)
  */
 public class LibUsbDevice implements Closeable {
+
+    private static final Map<Context, Long> LAST_GET_DEVICE_TIMES =
+            new HashMap<>();
 
     protected interface LibUsbOperation {
         int execute();
@@ -91,6 +96,12 @@ public class LibUsbDevice implements Closeable {
      * All devices returned in this list must be freed, otherwise a memory
      * leak will occur. Use {@link #close()} when finished with a LibUSB
      * device, as it will ensure it is freed from memory.
+     * <p>
+     * <b>Note:</b> This method is non-blocking unless called multiple times
+     * in less than one second for the specified context. When calling this
+     * method too quickly, the thread will be put to sleep for the remaining
+     * duration. This is to help ensure issues don't arise when communicating
+     * with USB devices.
      *
      * @param context        the context to operate on. A value of
      *                       {@code null} is <i>not</i> permitted,
@@ -110,6 +121,22 @@ public class LibUsbDevice implements Closeable {
                          @NotNull LibUsbDeviceSupplier<L> deviceSupplier) {
         Objects.requireNonNull(context, "context");
         Objects.requireNonNull(deviceSupplier, "deviceSupplier");
+
+        long currentTime = System.currentTimeMillis();
+        long lastGetDeviceTime = 0L;
+        if(LAST_GET_DEVICE_TIMES.containsKey(context)) {
+            lastGetDeviceTime = LAST_GET_DEVICE_TIMES.get(context);
+        }
+
+        long awaitMs = 1000L - (currentTime - lastGetDeviceTime);
+        if(awaitMs > 0) {
+            try {
+                Thread.sleep(awaitMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        LAST_GET_DEVICE_TIMES.put(context, currentTime);
 
         DeviceList devices = new DeviceList();
         requireSuccess(() -> LibUsb.getDeviceList(context, devices));
