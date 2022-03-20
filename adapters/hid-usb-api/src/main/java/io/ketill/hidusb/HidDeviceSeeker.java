@@ -49,9 +49,9 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
      *                       device scan from being performed unless enough
      *                       time has elapsed between method calls.
      * @throws IllegalArgumentException if {@code scanIntervalMs} is less
-     *                                  than {@value #MINIMUM_SCAN_INTERVAL}
-     *                                  or greater than
-     *                                  {@value Integer#MAX_VALUE}.
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL};
+     *                                  if {@code scanIntervalMs} is greater
+     *                                  than {@value Integer#MAX_VALUE}.
      */
     public HidDeviceSeeker(long scanIntervalMs) {
         super(scanIntervalMs);
