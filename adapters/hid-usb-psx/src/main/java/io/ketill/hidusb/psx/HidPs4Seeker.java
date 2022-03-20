@@ -27,16 +27,21 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * possibility a single PS4 controller will report itself as both a
      * USB controller and Bluetooth controller.
      *
-     * @param scanIntervalMs the interval in milliseconds between HID
-     *                       device enumeration scans.
+     * @param scanIntervalMs the interval in milliseconds between device
+     *                       enumeration scans. This does <i>not</i> cause
+     *                       {@link #seek()} to block. It only prevents a
+     *                       device scan from being performed unless enough
+     *                       time has elapsed between method calls.
      * @param allowUsb       {@code true} if USB connections should be allowed,
      *                       {@code false} otherwise.
      * @param allowBt        {@code true} if Bluetooth connections should be
      *                       allowed, {@code false} otherwise.
      * @throws IllegalArgumentException if {@code scanIntervalMs} is less
-     *                                  than or equal to zero; if both
-     *                                  {@code allowUsb} and {@code allowBt}
-     *                                  are {@code false}.
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL};
+     *                                  if {@code scanIntervalMs} is greater
+     *                                  than {@value Integer#MAX_VALUE};
+     *                                  if both{@code allowUsb} and
+     *                                  {@code allowBt} are {@code false}.
      * @see #isAmbiguous()
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
@@ -62,6 +67,10 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * If both USB and Bluetooth controllers are allowed, there exists a
      * possibility a single PS4 controller will report itself as both a
      * USB controller and Bluetooth controller.
+     * <p>
+     * <b>Note:</b> The scan interval does <i>not</i> cause {@link #seek()}
+     * to block. It only prevents a device scan from being performed unless
+     * enough time has elapsed between method calls.
      *
      * @param allowUsb {@code true} if USB connections should be allowed,
      *                 {@code false} otherwise.
@@ -83,11 +92,20 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * Since both USB and Bluetooth controllers are allowed, there exists
      * a possibility a single PS4 controller will report itself as both a
      * USB controller and Bluetooth controller.
+     * <p>
+     * <b>Note:</b> The scan interval does <i>not</i> cause {@link #seek()}
+     * to block. It only prevents a device scan from being performed unless
+     * enough time has elapsed between method calls.
      *
-     * @param scanIntervalMs the interval in milliseconds between HID
-     *                       device enumeration scans.
+     * @param scanIntervalMs the interval in milliseconds between device
+     *                       enumeration scans. This does <i>not</i> cause
+     *                       {@link #seek()} to block. It only prevents a
+     *                       device scan from being performed unless enough
+     *                       time has elapsed between method calls.
      * @throws IllegalArgumentException if {@code scanIntervalMs} is less
-     *                                  than or equal to zero.
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL};
+     *                                  if {@code scanIntervalMs} is greater
+     *                                  than {@value Integer#MAX_VALUE}.
      * @see #isAmbiguous()
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
