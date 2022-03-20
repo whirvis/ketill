@@ -40,7 +40,8 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * @see #isAmbiguous()
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
-    public HidPs4Seeker(int scanIntervalMs, boolean allowUsb, boolean allowBt) {
+    public HidPs4Seeker(long scanIntervalMs, boolean allowUsb,
+                        boolean allowBt) {
         super(scanIntervalMs);
         if (!allowUsb && !allowBt) {
             throw new IllegalArgumentException("must allow USB or Bluetooth");
@@ -50,13 +51,13 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
         this.allowBt = allowBt;
         this.sessions = new HashMap<>();
 
-        this.seekProduct(VENDOR_SONY, PRODUCT_DS4);
-        this.seekProduct(VENDOR_SONY, PRODUCT_DS4_REV);
+        this.targetProduct(VENDOR_SONY, PRODUCT_DS4);
+        this.targetProduct(VENDOR_SONY, PRODUCT_DS4_REV);
     }
 
     /**
      * Constructs a new {@code HidDs4Seeker} with the argument for
-     * {@code scanIntervalMs} being {@value #DEFAULT_SCAN_INTERVAL}.
+     * {@code scanIntervalMs} being {@value #MINIMUM_SCAN_INTERVAL}.
      * <p>
      * If both USB and Bluetooth controllers are allowed, there exists a
      * possibility a single PS4 controller will report itself as both a
@@ -72,7 +73,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
     public HidPs4Seeker(boolean allowUsb, boolean allowBt) {
-        this(DEFAULT_SCAN_INTERVAL, allowUsb, allowBt);
+        this(MINIMUM_SCAN_INTERVAL, allowUsb, allowBt);
     }
 
     /**
@@ -90,14 +91,14 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * @see #isAmbiguous()
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
-    public HidPs4Seeker(int scanIntervalMs) {
+    public HidPs4Seeker(long scanIntervalMs) {
         this(scanIntervalMs, true, true);
     }
 
     /**
      * Constructs a new {@code HidDs4Seeker} with support for both USB and
      * Bluetooth controllers. The scan interval for this device seeker is
-     * the default ({@value #DEFAULT_SCAN_INTERVAL}).
+     * the default ({@value #MINIMUM_SCAN_INTERVAL}).
      * <p>
      * Since both USB and Bluetooth controllers are allowed, there exists
      * a possibility a single PS4 controller will report itself as both a
@@ -107,7 +108,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * @see #onAmbiguity(HidPs4AmbiguityCallback)
      */
     public HidPs4Seeker() {
-        this(DEFAULT_SCAN_INTERVAL);
+        this(MINIMUM_SCAN_INTERVAL);
     }
 
     /**
