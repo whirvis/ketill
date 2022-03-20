@@ -32,6 +32,7 @@ public class LibUsbDevice implements Closeable {
     private static final Map<Context, Long> LAST_GET_DEVICE_TIMES =
             new HashMap<>();
 
+    @FunctionalInterface
     protected interface LibUsbOperation {
         int execute();
     }
