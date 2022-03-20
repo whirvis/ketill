@@ -9,9 +9,9 @@ import org.hid4java.event.HidServicesEvent;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * An I/O device seeker for HID devices, using Hid4Java.
@@ -68,7 +68,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         specs.setScanInterval((int) scanIntervalMs);
         specs.setPauseInterval(0);
 
-        this.scanned = new ArrayList<>();
+        this.scanned = new CopyOnWriteArrayList<>();
         this.services = HidManager.getHidServices(specs);
         services.addHidServicesListener(new HidDeviceListener(this));
     }
@@ -92,7 +92,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
 
     /* package-private for testing */
     synchronized void hidDeviceDetached(HidServicesEvent event) {
-        scanned.add(event.getHidDevice());
+        scanned.remove(event.getHidDevice());
     }
 
     /* package-private for testing */
@@ -100,6 +100,7 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         HidDevice device = event.getHidDevice();
         if (!this.isClosed() && !this.isBlocked(device)) {
             try {
+                scanned.remove(device);
                 this.blockDevice(device, true);
             } catch (Exception e) {
                 this.hidException = e;
