@@ -3,9 +3,19 @@ package io.ketill.hidusb;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.usb4java.*;
+import org.usb4java.Context;
+import org.usb4java.Device;
+import org.usb4java.DeviceDescriptor;
+import org.usb4java.DeviceHandle;
+import org.usb4java.DeviceList;
+import org.usb4java.LibUsb;
+import org.usb4java.LibUsbException;
 
+import java.awt.*;
 import java.io.Closeable;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,14 +25,21 @@ import java.util.Objects;
 /**
  * A wrapper for an underlying LibUSB device.
  * <p>
- * This class was created to make unit testing possible with Mockito (which
- * does not support mocking native methods.) However, it has proven to make
- * the code which interfaces with USB devices cleaner and safer.
+ * This class was originally created to make unit testing possible with
+ * Mockito (as it does not support mocking native methods.) However, it
+ * has proven to make the code which interfaces with USB devices cleaner
+ * and safer.
  * <p>
- * This class can be extended and provided as the LibUSB device template to
- * a {@link LibUsbDeviceSeeker}. Children of this class have access to the
- * underlying USB context, device, handle, etc. These can be used to add
- * missing LibUSB functionality.
+ * This class can be extended and provided as the LibUSB device template
+ * type to a {@link LibUsbDeviceSeeker}. Children of this class have access
+ * to the underlying USB context, device, handle, etc. These can be used to
+ * add missing LibUSB functionality.
+ * <p>
+ * <b>Note:</b> Most USB devices cannot be communicated with unless LibUSB
+ * drivers have been installed for them on this system. This can be achieved
+ * easily using Zadig. Make sure to inform clients of this! The function
+ * {@link #openZadigHomepage()} is provided for this purpose. It directs
+ * users to the home page of <a href="https://zadig.akeo.ie/">Zadig.</a>
  *
  * @see LibUsbDeviceSupplier
  * @see #requireSuccess(LibUsbOperation)
@@ -31,6 +48,7 @@ public class LibUsbDevice implements Closeable {
 
     private static final Map<Context, Long> LAST_GET_DEVICE_TIMES =
             new HashMap<>();
+    private static URI zadigHomepage;
 
     @FunctionalInterface
     protected interface LibUsbOperation {
@@ -178,8 +196,54 @@ public class LibUsbDevice implements Closeable {
     }
     /* @formatter:on */
 
-    private final @NotNull Context usbContext;
-    private final @NotNull Device usbDevice;
+    /**
+     * @return the URI for the Zadig homepage, {@code null} if it could not
+     * be resolved.
+     */
+    public static URI getZadigHomepage() {
+        if (zadigHomepage == null) {
+            try {
+                zadigHomepage = new URI("https://zadig.akeo.ie/");
+            } catch (URISyntaxException e) {
+                zadigHomepage = null;
+            }
+        }
+        return zadigHomepage;
+    }
+
+    /**
+     * Attempts to open the home page for the Zadig homepage with the
+     * default web browser of the current system.
+     *
+     * @return {@code true} if the page was successfully opened,
+     * {@code false} otherwise.
+     */
+    public static boolean openZadigHomepage() {
+        if (!Desktop.isDesktopSupported()) {
+            return false;
+        }
+
+        Desktop desktop = Desktop.getDesktop();
+        if (!desktop.isSupported(Desktop.Action.BROWSE)) {
+            return false;
+        }
+
+        URI zadigHomepage = getZadigHomepage();
+        if (zadigHomepage == null) {
+            return false;
+        }
+
+        try {
+            desktop.browse(zadigHomepage);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    protected final @NotNull Context usbContext;
+    protected final @NotNull Device usbDevice;
+    private final long ptr;
 
     protected final @NotNull DeviceDescriptor usbDescriptor;
     private final int vendorId; /* follow getter pattern */
