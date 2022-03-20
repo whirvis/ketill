@@ -246,8 +246,6 @@ public class LibUsbDevice implements Closeable {
     private final long ptr;
 
     protected final @NotNull DeviceDescriptor usbDescriptor;
-    private final int vendorId; /* follow getter pattern */
-    private final int productId; /* follow getter pattern */
 
     private @Nullable DeviceHandle usbHandle;
     private boolean closed;
@@ -275,43 +273,10 @@ public class LibUsbDevice implements Closeable {
     public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
         this.usbContext = Objects.requireNonNull(context, "context");
         this.usbDevice = Objects.requireNonNull(device, "device");
+        this.ptr = usbDevice.getPointer();
 
         this.usbDescriptor = new DeviceDescriptor();
-        requireSuccess(() -> LibUsb.getDeviceDescriptor(device,
-                usbDescriptor));
-
-        /*
-         * Vendor IDs and product IDs are unsigned shorts. However,
-         * the underlying LibUSB API returns them as a signed Java
-         * short. This converts them to an unsigned value and stores
-         * them in an int so the expected value is returned.
-         */
-        this.vendorId = usbDescriptor.idVendor() & 0xFFFF;
-        this.productId = usbDescriptor.idProduct() & 0xFFFF;
-    }
-
-    /* getter for testing */
-    protected final @NotNull Context usbContext() {
-        return this.usbContext;
-    }
-
-    /* getter for testing */
-    protected final @NotNull Device usbDevice() {
-        return this.usbDevice;
-    }
-
-    /**
-     * @return the vendor ID of this device as an {@code unsigned short}.
-     */
-    public final int getVendorId() {
-        return this.vendorId;
-    }
-
-    /**
-     * @return the product ID of this device as an {@code unsigned short}.
-     */
-    public final int getProductId() {
-        return this.productId;
+        requireSuccess(() -> LibUsb.getDeviceDescriptor(device, usbDescriptor));
     }
 
     /**
