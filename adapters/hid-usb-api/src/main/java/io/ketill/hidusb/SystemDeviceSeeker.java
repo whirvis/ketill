@@ -192,7 +192,7 @@ public abstract class SystemDeviceSeeker<I extends IoDevice, S>
      * @see #onDeviceAttach(Object)
      * @see #onDeviceConnect(Object)
      */
-    protected void targetProduct(int vendorId, int productId) {
+    protected final void targetProduct(int vendorId, int productId) {
         this.targetProduct(new DeviceId(vendorId, productId));
     }
 
@@ -262,7 +262,7 @@ public abstract class SystemDeviceSeeker<I extends IoDevice, S>
      * @see #onDeviceDisconnect(Object)
      * @see #onDeviceDetach(Object)
      */
-    protected void dropProduct(int vendorId, int productId) {
+    protected final void dropProduct(int vendorId, int productId) {
         this.dropProduct(new DeviceId(vendorId, productId));
     }
 
@@ -366,8 +366,8 @@ public abstract class SystemDeviceSeeker<I extends IoDevice, S>
      * @see #unblockDevice(Object)
      * @see #onBlockDevice(Consumer)
      */
-    protected void blockDevice(@NotNull S systemDevice,
-                               boolean unblockAfterDetach) {
+    protected final void blockDevice(@NotNull S systemDevice,
+                                     boolean unblockAfterDetach) {
         this.blockDevice(systemDevice, null, unblockAfterDetach);
     }
 
@@ -403,7 +403,7 @@ public abstract class SystemDeviceSeeker<I extends IoDevice, S>
      *                 in nothing being executed.
      * @see #blockDevice(Object, boolean)
      */
-    public void onBlockDevice(@Nullable Consumer<BlockedDevice<S>> callback) {
+    public final void onBlockDevice(@Nullable Consumer<BlockedDevice<S>> callback) {
         this.onBlockCallback = callback;
     }
 
@@ -417,7 +417,7 @@ public abstract class SystemDeviceSeeker<I extends IoDevice, S>
      *                 in nothing being executed.
      * @see #unblockDevice(Object)
      */
-    public void onUnblockDevice(@Nullable Consumer<BlockedDevice<S>> callback) {
+    public final void onUnblockDevice(@Nullable Consumer<BlockedDevice<S>> callback) {
         this.onUnblockCallback = callback;
     }
 
