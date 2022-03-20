@@ -285,7 +285,7 @@ public class LibUsbDevice implements Closeable {
      * @throws IllegalStateException if a call to {@link #openHandle()} was not
      *                               made before calling this method.
      */
-    protected final @NotNull DeviceHandle usbHandle() {
+    protected final @NotNull DeviceHandle getHandle() {
         if (usbHandle == null) {
             throw new IllegalStateException("handle not open");
         }
