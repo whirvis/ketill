@@ -4,27 +4,26 @@ import io.ketill.FeatureAdapter;
 import io.ketill.IoDeviceAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
+import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1b;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Led1i;
 import io.ketill.controller.Trigger1f;
 import io.ketill.controller.Vibration1f;
 import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.usb4java.Context;
-import org.usb4java.DeviceHandle;
+import org.joml.Vector3f;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 import org.usb4java.Transfer;
-import org.usb4java.TransferCallback;
 
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import static io.ketill.psx.Ps3Controller.*;
 
-public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> implements TransferCallback {
+public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
 
     /* @formatter:off */
     private static final byte
@@ -54,6 +53,13 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
             (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x00
     };
+
+    private static final byte[] LED_PATTERNS = new byte[]{
+            0b0000,                         /* disable LEDs      */
+            0b0001, 0b0010, 0b0100, 0b1000, /* players #1 to #4  */
+            0b1001, 0b1010, 0b1100, 0b1101, /* players #5 to #8  */
+            0b1110, 0b1111                  /* players #9 to #10 */
+    };
     /* @formatter:on */
 
     private static final int INPUT_SIZE = 64;
@@ -64,8 +70,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         return wrapped;
     }
 
-    private final Context usbContext;
-    private final DeviceHandle usbHandle;
+    private final LibUsbDevicePs3 usbDevice;
     private final ByteBuffer hidReport;
     private ByteBuffer input;
 
@@ -74,22 +79,21 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
     private boolean requestedData;
     private byte rumbleWeak;
     private byte rumbleStrong;
+    private byte ledByte;
 
     /**
-     * @param controller the controller which owns this adapter.
+     * @param controller the controller which owns this device.
      * @param registry   the controller's mapped feature registry.
-     * @param usbContext the LibUSB context, may be {@code null}.
-     * @param usbHandle  the USB handle.
+     * @param usbDevice  the USB device.
      * @throws NullPointerException if {@code controller}, {@code registry},
-     *                              or {@code usbHandle} are {@code} null.
+     *                              or {@code usbDevice} are {@code} null.
      */
     public LibUsbPs3Adapter(@NotNull Ps3Controller controller,
                             @NotNull MappedFeatureRegistry registry,
-                            @Nullable Context usbContext,
-                            @NotNull DeviceHandle usbHandle) {
+                            @NotNull LibUsbDevicePs3 usbDevice) {
         super(controller, registry);
-        this.usbContext = usbContext;
-        this.usbHandle = Objects.requireNonNull(usbHandle, "usbHandle");
+        this.usbDevice = Objects.requireNonNull(usbDevice,
+                "usbDevice cannot be null");
         this.hidReport = wrapDirectBuffer(HID_REPORT);
         this.input = ByteBuffer.allocateDirect(INPUT_SIZE);
     }
@@ -102,8 +106,16 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
     }
 
     @MappingMethod
+    @SuppressWarnings("SameParameterValue")
+    void mapStick(@NotNull AnalogStick stick, int byteOffsetX,
+                  int byteOffsetY, int thumbByteOffset, int thumbBitIndex) {
+        registry.mapFeature(stick, new StickMapping(byteOffsetX, byteOffsetY,
+                thumbByteOffset, thumbBitIndex), this::updateStick);
+    }
+
+    @MappingMethod
     private void mapTrigger(@NotNull AnalogTrigger trigger, int byteOffset) {
-        registry.mapFeature(trigger, byteOffset, this::updateForce);
+        registry.mapFeature(trigger, byteOffset, this::updateTrigger);
     }
 
     @Override
@@ -125,23 +137,58 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         this.mapButton(BUTTON_CIRCLE, 3, 5);
         this.mapButton(BUTTON_CROSS, 3, 6);
 
-        /* TODO: analog sticks */
+        this.mapStick(STICK_LS, 6, 7, 2, 1);
+        this.mapStick(STICK_RS, 8, 9, 2, 2);
 
         this.mapTrigger(TRIGGER_LT, 18);
         this.mapTrigger(TRIGGER_RT, 19);
 
         registry.mapFeature(MOTOR_WEAK, 2, this::updateWeakMotor);
         registry.mapFeature(MOTOR_STRONG, 4, this::updateStrongMotor);
+
+        registry.mapFeature(FEATURE_LED, 9, this::updateLed);
+    }
+
+    private boolean isPressed(int byteOffset, int bitIndex) {
+        int bits = input.get(byteOffset) & 0xFF;
+        return (bits & (1 << bitIndex)) != 0;
     }
 
     @FeatureAdapter
-    private void updateButton(Button1b button, ButtonMapping mapping) {
-        int bits = input.get(mapping.byteOffset) & 0xFF;
-        button.pressed = (bits & (1 << mapping.bitIndex)) != 0;
+    private void updateButton(@NotNull Button1b button,
+                              @NotNull ButtonMapping mapping) {
+        button.pressed = this.isPressed(mapping.byteOffset, mapping.bitIndex);
     }
 
     @FeatureAdapter
-    private void updateForce(Trigger1f trigger, int byteOffset) {
+    private void updateStick(@NotNull Vector3f vec,
+                             @NotNull StickMapping mapping) {
+        int posX = input.get(mapping.byteOffsetX) & 0xFF;
+        int posY = input.get(mapping.byteOffsetY) & 0xFF;
+
+        boolean pressed = false;
+        if (mapping.hasThumb) {
+            pressed = this.isPressed(mapping.thumbByteOffset,
+                    mapping.thumbBitIndex);
+        }
+
+        /*
+         * This may look confusing, but it's just some normalization. The
+         * analog sticks are first converted from a 0x00 to 0xFF scale to
+         * a 0.0F to 1.0F scale. However, this is not sufficient for the
+         * input API; it uses a scale of -1.0F to 1.0F for analog sticks.
+         *
+         * The X-axis starts from the left at (at 0.0F) and ends at the
+         * very right (1.0F.). The Y-axis starts at the very at the very
+         * top (0.0F) and ends at the very bottom (1.0F.)
+         */
+        vec.x = ((posX / 255.0F) * 2.0F) - 1.0F;
+        vec.y = ((posY / 255.0F) * -2.0F) + 1.0F;
+        vec.z = pressed ? -1.0F : 0.0F;
+    }
+
+    @FeatureAdapter
+    private void updateTrigger(@NotNull Trigger1f trigger, int byteOffset) {
         int value = input.get(byteOffset) & 0xFF;
         trigger.force = (value / 255.0F);
     }
@@ -168,17 +215,27 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         }
     }
 
-    /* TODO: LEDs */
+    @FeatureAdapter
+    private void updateLed(@NotNull Led1i led, int byteOffset) {
+        byte ledByte = 0x00; /* default to off */
 
-    @Override
-    public void processTransfer(Transfer transfer) {
-        if (!usbHandle.equals(transfer.devHandle())) {
-            return; /* not our device */
-        } else if (transfer.endpoint() == ENDPOINT_IN) {
-            this.input = transfer.buffer();
-            this.requestedData = false;
+        int index = led.number;
+        if (index >= 0 && index < LED_PATTERNS.length) {
+            ledByte = LED_PATTERNS[index];
         }
-        LibUsb.freeTransfer(transfer);
+
+        /*
+         * The LEDs at this byte start at bit index one, rather
+         * than zero. To accommodate for this, shift the value
+         * of ledByte to the left by a single bit.
+         */
+        ledByte = (byte) (ledByte << 1);
+
+        if (ledByte != this.ledByte) {
+            hidReport.put(byteOffset, ledByte);
+            this.ledByte = ledByte;
+            this.sendReport();
+        }
     }
 
     private void initDevice() {
@@ -186,28 +243,24 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
             return;
         }
 
-        int result = LibUsb.claimInterface(usbHandle, CONFIG);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        usbDevice.claimInterface(CONFIG);
 
         ByteBuffer setup = wrapDirectBuffer(SETUP);
-        int transferred = LibUsb.controlTransfer(usbHandle, REQUEST_TYPE,
-                REQUEST, SETUP_VALUE, INDEX, setup, 0L);
-        if (transferred < 0) {
-            throw new LibUsbException(transferred);
-        }
+        usbDevice.controlTransfer(REQUEST_TYPE, REQUEST, SETUP_VALUE, INDEX,
+                setup, 0L);
 
         this.initialized = true;
         this.connected = true;
     }
 
     private void sendReport() {
-        int result = LibUsb.controlTransfer(usbHandle, REQUEST_TYPE, REQUEST,
-                REPORT_VALUE, INDEX, hidReport, 0L);
-        if (result < 0) {
-            throw new LibUsbException(result);
-        }
+        usbDevice.controlTransfer(REQUEST_TYPE, REQUEST, REPORT_VALUE,
+                INDEX, hidReport, 0L);
+    }
+
+    private void handleTransfer(ByteBuffer buffer) {
+        this.input = buffer;
+        this.requestedData = false;
     }
 
     @Override
@@ -221,10 +274,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
          * must ask LibUsb to handle the events manually. If this
          * is not done, no data will come in from the transfers!
          */
-        int result = LibUsb.handleEventsTimeout(usbContext, 0);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        usbDevice.handleEventsTimeout(0L);
 
         /*
          * The requestedData boolean is used to prevent needless
@@ -235,10 +285,10 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> imple
         if (!requestedData) {
             Transfer transfer = LibUsb.allocTransfer();
             ByteBuffer input = ByteBuffer.allocateDirect(INPUT_SIZE);
-            LibUsb.fillInterruptTransfer(transfer, usbHandle, ENDPOINT_IN,
-                    input, this, null, 0);
+            usbDevice.fillInterruptTransfer(transfer, ENDPOINT_IN, input,
+                    this::handleTransfer, null, 0L);
 
-            result = LibUsb.submitTransfer(transfer);
+            int result = LibUsb.submitTransfer(transfer);
             if (result == LibUsb.ERROR_IO) {
                 this.connected = false;
             } else if (result != LibUsb.SUCCESS) {

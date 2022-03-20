@@ -11,8 +11,8 @@ final class StickMapping {
     public final int thumbBitIndex;
     public final boolean hasThumb;
 
-    public StickMapping(int byteOffsetX, int byteOffsetY,
-                        int thumbByteOffset, int thumbBitIndex) {
+    StickMapping(int byteOffsetX, int byteOffsetY,
+                 int thumbByteOffset, int thumbBitIndex) {
         this.byteOffsetX = byteOffsetX;
         this.byteOffsetY = byteOffsetY;
         this.thumbByteOffset = thumbByteOffset;
