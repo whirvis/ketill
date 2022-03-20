@@ -7,7 +7,7 @@ import java.util.Objects;
  * This is used by {@link SystemDeviceSeeker} to identify which devices are
  * currently being sought after.
  */
-public class DeviceId {
+public final class DeviceId {
 
     private static void requireValidId(int vendorId, int productId) {
         String msgFormat = "%s 0x%X out of range" +
