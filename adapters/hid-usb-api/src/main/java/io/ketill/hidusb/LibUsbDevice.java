@@ -57,13 +57,13 @@ public class LibUsbDevice implements Closeable {
 
     /**
      * Requires that an operation return a value indicating a LibUSB
-     * operation was successful. Intended to reduce boilerplate when
-     * making calls to methods in the {@code LibUsb} class.
+     * operation was successful. It is intended to reduce boilerplate
+     * when making calls to {@link LibUsb}.
      *
      * @param operation the code to execute.
-     * @return the result of the operation, can be ignored.
+     * @return the result of the operation, may be ignored.
      * @throws NullPointerException if {@code operation} is {@code null}.
-     * @throws LibUsbException if an error code is returned.
+     * @throws LibUsbException      if an error code is returned.
      */
     @SuppressWarnings("UnusedReturnValue")
     protected static int requireSuccess(@NotNull LibUsbOperation operation) {
@@ -251,19 +251,20 @@ public class LibUsbDevice implements Closeable {
     private boolean closed;
 
     /**
-     * Preferably, the construction of LibUSB devices should only be performed
+     * Preferably, the construction of LibUSB devices should only be done
      * by {@link #getConnected(Context, LibUsbDeviceSupplier)}. If this
      * <i>must</i> be used, responsibility is placed upon the caller to
      * provide the correct arguments.
      * <p>
-     * Children underlying USB context and USB device can be accessed via
-     * the internal {@code usbContext} and {@code usbDevice} fields. The
-     * device descriptor is also available via {@code usbDescriptor}.
+     * Children can access the underlying USB context and device via the
+     * internal {@code usbContext} and {@code usbDevice} fields. A handle
+     * for the USB handle can also be opened via {@link #openHandle()} and
+     * later retrieved using {@link #getHandle()}.
      *
-     * @param context  the context to operate on. A value of
-     *                 {@code null} is <i>not</i> permitted,
-     *                 the default context is forbidden.
-     * @param device   the USB device to perform I/O on.
+     * @param context the context to operate on. A value of
+     *                {@code null} is <i>not</i> permitted,
+     *                the default context is forbidden.
+     * @param device  the USB device to perform I/O on.
      * @throws NullPointerException if {@code context} or {@code device}
      *                              are {@code null}.
      * @throws LibUsbException      if an error code is returned when
@@ -292,16 +293,18 @@ public class LibUsbDevice implements Closeable {
     }
 
     /**
-     * Opens this device and obtains an internal device handle. This USB
-     * handle can be obtained via {@link #usbHandle()}. If the handle is
+     * Opens this device and obtains an internal device handle. The USB
+     * handle can be obtained via {@link #getHandle()}. If the handle is
      * already open, this method has no effect.
      * <p>
      * <b>Note:</b> A LibUSB device can be closed without ever opening a
      * handle. The method {@link #requireOpen()} only ensures that this
      * device has not been closed via {@link #close()}.
      *
-     * @throws LibUsbException if an error code is returned when opening
-     *                         the device handle.
+     * @throws LibUsbException       if an error code is returned when
+     *                               opening the device handle.
+     * @throws IllegalStateException if this LibUSB device has been
+     *                               closed via {@link #close()}.
      */
     protected final void openHandle() {
         this.requireOpen();
