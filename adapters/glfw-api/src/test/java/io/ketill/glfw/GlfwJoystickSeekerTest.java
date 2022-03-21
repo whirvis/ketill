@@ -236,7 +236,7 @@ class GlfwJoystickSeekerTest {
             assertThrows(KetillException.class, seeker::seek);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((d) -> discovered.set(d == device));
+            seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
 
             /*
              * Now that a valid wrangler has been registered, the
@@ -250,7 +250,7 @@ class GlfwJoystickSeekerTest {
             seeker.onReleaseGuid((g, w) -> released.set(g.equals(guid)));
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((d) -> forgot.set(d == device));
+            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
              * When the wrangler for a GUID is re-assigned, the
@@ -294,7 +294,7 @@ class GlfwJoystickSeekerTest {
                     released.set(g.equals(guid) && w == wrangler));
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((d) -> forgot.set(d == device));
+            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
              * When a GUID is released, the seeker must forget all
@@ -323,7 +323,7 @@ class GlfwJoystickSeekerTest {
             seeker.wrangleGuid(guid, wrangler);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((d) -> discovered.set(d == device));
+            seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
 
             /*
              * When the GUID for a joystick is not equal to null,
@@ -336,7 +336,7 @@ class GlfwJoystickSeekerTest {
             assertTrue(discovered.get());
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((d) -> forgot.set(d == device));
+            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
              * When the GUID for a joystick is equal to null,

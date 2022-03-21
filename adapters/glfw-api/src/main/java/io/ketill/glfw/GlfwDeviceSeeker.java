@@ -3,7 +3,7 @@ package io.ketill.glfw;
 import io.ketill.IoDevice;
 import io.ketill.IoDeviceSeeker;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * GLFW device seekers scan for I/O devices currently connected to a
@@ -21,9 +21,9 @@ import java.util.function.Consumer;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(Consumer)
- * @see #onForgetDevice(Consumer)
- * @see #onSeekError(Consumer)
+ * @see #onDiscoverDevice(BiConsumer)
+ * @see #onForgetDevice(BiConsumer)
+ * @see #onSeekError(BiConsumer)
  * @see GlfwDeviceAdapter
  * @see GlfwJoystickSeeker
  */

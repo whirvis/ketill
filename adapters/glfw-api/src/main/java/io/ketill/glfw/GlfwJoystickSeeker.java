@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -36,9 +36,9 @@ import static org.lwjgl.glfw.GLFW.*;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(Consumer)
- * @see #onForgetDevice(Consumer)
- * @see #onSeekError(Consumer)
+ * @see #onDiscoverDevice(BiConsumer)
+ * @see #onForgetDevice(BiConsumer)
+ * @see #onSeekError(BiConsumer)
  * @see RelativeGuidPath
  * @see JsonDeviceGuids
  * @see GlfwJoystickAdapter

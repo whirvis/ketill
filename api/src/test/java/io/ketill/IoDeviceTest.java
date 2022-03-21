@@ -166,7 +166,7 @@ class IoDeviceTest {
     void registerFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean registered = new AtomicBoolean();
-        device.onRegisterFeature((f) -> registered.set(f == feature));
+        device.onRegisterFeature((d, f) -> registered.set(f == feature));
 
         device.registerFeature(feature);
         assertTrue(registered.get());
@@ -193,7 +193,7 @@ class IoDeviceTest {
     void unregisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean unregistered = new AtomicBoolean();
-        device.onUnregisterFeature((f) -> unregistered.set(f == feature));
+        device.onUnregisterFeature((d, f) -> unregistered.set(f == feature));
         device.registerFeature(feature); /* something to unregister */
 
         device.unregisterFeature(feature);
@@ -220,8 +220,8 @@ class IoDeviceTest {
     @Test
     void isConnected() {
         AtomicBoolean connected = new AtomicBoolean();
-        device.onConnect(() -> connected.set(true));
-        device.onDisconnect(() -> connected.set(false));
+        device.onConnect((d) -> connected.set(true));
+        device.onDisconnect((d) -> connected.set(false));
 
         /*
          * First test the callback for when the device is connected. Since
@@ -264,7 +264,7 @@ class IoDeviceTest {
          * callback of the error that has occurred and pass the exception.
          */
         AtomicBoolean caughtError = new AtomicBoolean();
-        device.onPollError(e -> caughtError.set(true));
+        device.onPollError((d, e) -> caughtError.set(true));
         assertDoesNotThrow(device::poll);
         assertTrue(caughtError.get());
 

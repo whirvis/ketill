@@ -57,7 +57,7 @@ class XInputXboxSeekerTest {
             x.when(() -> XInputDevice.getDeviceFor(0)).thenReturn(xDevice);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((d) -> discovered.set(true));
+            seeker.onDiscoverDevice((s, d) -> discovered.set(true));
             seeker.seek();
             assertTrue(discovered.get());
 
@@ -72,7 +72,7 @@ class XInputXboxSeekerTest {
 
             when(xDevice.isConnected()).thenReturn(false);
             AtomicBoolean forgotten = new AtomicBoolean();
-            seeker.onForgetDevice((d) -> forgotten.set(true));
+            seeker.onForgetDevice((s, d) -> forgotten.set(true));
             seeker.seek();
             assertTrue(forgotten.get());
         }

@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * The purpose of an I/O device seeker is to scan for I/O devices currently
@@ -27,9 +27,9 @@ import java.util.function.Consumer;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(Consumer)
- * @see #onForgetDevice(Consumer)
- * @see #onSeekError(Consumer)
+ * @see #onDiscoverDevice(BiConsumer)
+ * @see #onForgetDevice(BiConsumer)
+ * @see #onSeekError(BiConsumer)
  * @see IoDeviceAdapter
  */
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
@@ -37,9 +37,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     private final @NotNull List<I> devices;
     public final @NotNull List<I> discoveredDevices; /* read only view */
 
-    private @Nullable Consumer<? super I> discoverDeviceCallback;
-    private @Nullable Consumer<? super I> forgetDeviceCallback;
-    private @Nullable Consumer<Throwable> errorCallback;
+    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
+            ? super I> discoverDeviceCallback;
+    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
+            ? super I> forgetDeviceCallback;
+    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
+            Throwable> errorCallback;
 
     private boolean closed;
 
@@ -71,7 +74,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onDiscoverDevice(@Nullable Consumer<? super I> callback) {
+    public final void onDiscoverDevice(@Nullable BiConsumer<?
+            super IoDeviceSeeker<?>, ? super I> callback) {
         this.requireOpen();
         this.discoverDeviceCallback = callback;
     }
@@ -88,7 +92,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onForgetDevice(@Nullable Consumer<? super I> callback) {
+    public final void onForgetDevice(@Nullable BiConsumer<?
+            super IoDeviceSeeker<?>, ? super I> callback) {
         this.requireOpen();
         this.forgetDeviceCallback = callback;
     }
@@ -104,7 +109,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onSeekError(@Nullable Consumer<Throwable> callback) {
+    public final void onSeekError(@Nullable BiConsumer<?
+            super IoDeviceSeeker<?>, Throwable> callback) {
         this.requireOpen();
         this.errorCallback = callback;
     }
@@ -118,7 +124,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.add(device);
         if (discoverDeviceCallback != null) {
-            discoverDeviceCallback.accept(device);
+            discoverDeviceCallback.accept(this, device);
         }
     }
 
@@ -131,7 +137,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.remove(device);
         if (forgetDeviceCallback != null) {
-            forgetDeviceCallback.accept(device);
+            forgetDeviceCallback.accept(this, device);
         }
     }
 
@@ -152,7 +158,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      * @throws KetillException       if an error occurs and no callback was
-     *                               set via {@link #onSeekError(Consumer)}.
+     *                               set via {@link #onSeekError(BiConsumer)}.
      */
     public final synchronized void seek() {
         this.requireOpen();
@@ -160,7 +166,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             this.seekImpl();
         } catch (Throwable cause) {
             if (errorCallback != null) {
-                errorCallback.accept(cause);
+                errorCallback.accept(this, cause);
             } else {
                 throw new KetillException("error in DeviceSeeker", cause);
             }

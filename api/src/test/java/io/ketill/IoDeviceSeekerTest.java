@@ -32,7 +32,7 @@ class IoDeviceSeekerTest {
         AtomicBoolean discovered = new AtomicBoolean();
         MockIoDevice device = new MockIoDevice();
 
-        seeker.onDiscoverDevice((d) -> discovered.set(d == device));
+        seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
         seeker.discoverDevice(device);
         assertTrue(discovered.get());
 
@@ -65,7 +65,7 @@ class IoDeviceSeekerTest {
         MockIoDevice device = new MockIoDevice();
         seeker.discoverDevice(device); /* required to forget */
 
-        seeker.onForgetDevice((d) -> forgotten.set(d == device));
+        seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
         seeker.forgetDevice(device);
         assertTrue(forgotten.get());
 
@@ -121,7 +121,7 @@ class IoDeviceSeekerTest {
          * callback of the error that has occurred and pass the exception.
          */
         AtomicBoolean caughtError = new AtomicBoolean();
-        seeker.onSeekError(e -> caughtError.set(true));
+        seeker.onSeekError((s, e) -> caughtError.set(true));
         assertDoesNotThrow(seeker::seek);
         assertTrue(caughtError.get());
 
@@ -144,7 +144,7 @@ class IoDeviceSeekerTest {
          * will (usually) no longer be used.
          */
         assertFalse(seeker.isClosed());
-        seeker.onForgetDevice((d) -> forgotten.set(d == device));
+        seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
         seeker.close();
         assertTrue(forgotten.get());
         assertTrue(seeker.isClosed());

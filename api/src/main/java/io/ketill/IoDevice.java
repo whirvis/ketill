@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -40,11 +41,14 @@ public abstract class IoDevice implements FeatureRegistry {
     private boolean registeredFields;
     private boolean connected;
 
-    private @Nullable Consumer<IoFeature<?>> registerFeatureCallback;
-    private @Nullable Consumer<IoFeature<?>> unregisterFeatureCallback;
-    private @Nullable Consumer<Throwable> errorCallback;
-    private @Nullable Runnable connectCallback;
-    private @Nullable Runnable disconnectCallback;
+    private @Nullable BiConsumer<? super IoDevice,
+            IoFeature<?>> registerFeatureCallback;
+    private @Nullable BiConsumer<? super IoDevice,
+            IoFeature<?>> unregisterFeatureCallback;
+    private @Nullable BiConsumer<? super IoDevice,
+            Throwable> errorCallback;
+    private @Nullable Consumer<? super IoDevice> connectCallback;
+    private @Nullable Consumer<? super IoDevice> disconnectCallback;
 
     /**
      * @param id              the device ID.
@@ -294,7 +298,7 @@ public abstract class IoDevice implements FeatureRegistry {
         RegisteredFeature<F, S> registeredFeature =
                 registry.registerFeature(feature);
         if (registerFeatureCallback != null) {
-            registerFeatureCallback.accept(feature);
+            registerFeatureCallback.accept(this, feature);
         }
         return registeredFeature;
     }
@@ -304,7 +308,7 @@ public abstract class IoDevice implements FeatureRegistry {
     public void unregisterFeature(@NotNull IoFeature<?> feature) {
         registry.unregisterFeature(feature);
         if (unregisterFeatureCallback != null) {
-            unregisterFeatureCallback.accept(feature);
+            unregisterFeatureCallback.accept(this, feature);
         }
     }
 
@@ -319,7 +323,8 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #registerFeature(IoFeature)
      */
-    public final void onRegisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
+    public final void onRegisterFeature(@Nullable BiConsumer<? super IoDevice,
+            IoFeature<?>> callback) {
         this.registerFeatureCallback = callback;
     }
 
@@ -334,7 +339,8 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #unregisterFeature(IoFeature)
      */
-    public final void onUnregisterFeature(@Nullable Consumer<IoFeature<?>> callback) {
+    public final void onUnregisterFeature(@Nullable BiConsumer<?
+            super IoDevice, IoFeature<?>> callback) {
         this.unregisterFeatureCallback = callback;
     }
 
@@ -347,7 +353,8 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 of {@code null} is permitted, and will result in a
      *                 wrapping {@code KetillException} being thrown.
      */
-    public final void onPollError(@Nullable Consumer<Throwable> callback) {
+    public final void onPollError(@Nullable BiConsumer<? super IoDevice,
+            Throwable> callback) {
         this.errorCallback = callback;
     }
 
@@ -360,7 +367,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public final void onConnect(@Nullable Runnable callback) {
+    public final void onConnect(@Nullable Consumer<? super IoDevice> callback) {
         this.connectCallback = callback;
     }
 
@@ -373,7 +380,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public final void onDisconnect(@Nullable Runnable callback) {
+    public final void onDisconnect(@Nullable Consumer<? super IoDevice> callback) {
         this.disconnectCallback = callback;
     }
 
@@ -414,7 +421,7 @@ public abstract class IoDevice implements FeatureRegistry {
             adapter.pollDevice();
         } catch (Throwable cause) {
             if (errorCallback != null) {
-                errorCallback.accept(cause);
+                errorCallback.accept(this, cause);
             } else {
                 throw new KetillException("error in IoDevice", cause);
             }
@@ -425,9 +432,9 @@ public abstract class IoDevice implements FeatureRegistry {
         boolean wasConnected = this.connected;
         this.connected = adapter.isDeviceConnected();
         if (connected && !wasConnected && connectCallback != null) {
-            connectCallback.run();
+            connectCallback.accept(this);
         } else if (!connected && wasConnected && disconnectCallback != null) {
-            disconnectCallback.run();
+            disconnectCallback.accept(this);
         }
     }
 
