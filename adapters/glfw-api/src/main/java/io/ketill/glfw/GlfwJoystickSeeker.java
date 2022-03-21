@@ -231,7 +231,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
 
         wranglers.put(guid, wrangler);
         if (seekGuidCallback != null) {
-            seekGuidCallback.execute(guid, wrangler);
+            seekGuidCallback.execute(this, guid, wrangler);
         }
     }
 
@@ -296,7 +296,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
             Objects.requireNonNull(guid, "guid");
             GlfwJoystickWrangler<?> wrangler = wranglers.remove(guid);
             if (wrangler != null && releaseGuidCallback != null) {
-                releaseGuidCallback.execute(guid, wrangler);
+                releaseGuidCallback.execute(this, guid, wrangler);
             }
         }
 

@@ -206,7 +206,7 @@ class GlfwJoystickSeekerTest {
 
 
         AtomicBoolean wrangled = new AtomicBoolean();
-        seeker.onWrangleGuid((g, w) ->
+        seeker.onWrangleGuid((s, g, w) ->
                 wrangled.set(g.equals(guid) && w == wrangler));
 
         /* use wrangleGuids() here for full coverage */
@@ -247,7 +247,7 @@ class GlfwJoystickSeekerTest {
             assertTrue(discovered.get());
 
             AtomicBoolean released = new AtomicBoolean();
-            seeker.onReleaseGuid((g, w) -> released.set(g.equals(guid)));
+            seeker.onReleaseGuid((s, g, w) -> released.set(g.equals(guid)));
 
             AtomicBoolean forgot = new AtomicBoolean();
             seeker.onForgetDevice((s, d) -> forgot.set(d == device));
@@ -290,7 +290,7 @@ class GlfwJoystickSeekerTest {
             seeker.seek();
 
             AtomicBoolean released = new AtomicBoolean();
-            seeker.onReleaseGuid((g, w) ->
+            seeker.onReleaseGuid((s, g, w) ->
                     released.set(g.equals(guid) && w == wrangler));
 
             AtomicBoolean forgot = new AtomicBoolean();

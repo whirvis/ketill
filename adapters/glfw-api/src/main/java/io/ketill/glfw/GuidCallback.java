@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface GuidCallback {
 
-    void execute(@NotNull String guid,
+    void execute(@NotNull GlfwJoystickSeeker<?> seeker,
+                 @NotNull String guid,
                  @NotNull GlfwJoystickWrangler<?> wrangler);
 
 }
