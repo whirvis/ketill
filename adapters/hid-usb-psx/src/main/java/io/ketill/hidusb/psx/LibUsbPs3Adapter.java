@@ -219,9 +219,14 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     private void updateLed(@NotNull Led1i led, int byteOffset) {
         byte ledByte = 0x00; /* default to off */
 
-        int index = led.number;
-        if (index >= 0 && index < LED_PATTERNS.length) {
-            ledByte = LED_PATTERNS[index];
+        int mode = led.getMode();
+        if (mode == Led1i.MODE_NUMBER) {
+            int index = led.getValue();
+            if (index >= 0 && index < LED_PATTERNS.length) {
+                ledByte = LED_PATTERNS[index];
+            }
+        } else if (mode == Led1i.MODE_PATTERN) {
+            ledByte = (byte) led.getValue();
         }
 
         /*
