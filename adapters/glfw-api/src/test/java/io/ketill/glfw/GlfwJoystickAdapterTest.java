@@ -123,11 +123,11 @@ class GlfwJoystickAdapterTest {
 
             buttons.put(glfwButton, (byte) GLFW_PRESS);
             joystick.poll(); /* update buttons */
-            assertTrue(joystick.button.pressed());
+            assertTrue(joystick.button.isPressed());
 
             buttons.put(glfwButton, (byte) GLFW_RELEASE);
             joystick.poll(); /* update buttons */
-            assertFalse(joystick.button.pressed());
+            assertFalse(joystick.button.isPressed());
         }
     }
 

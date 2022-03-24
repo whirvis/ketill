@@ -17,9 +17,9 @@ class Button1bTest {
     @Test
     void pressed() {
         button.pressed = true;
-        assertTrue(button.pressed());
+        assertTrue(button.isPressed());
         button.pressed = false;
-        assertFalse(button.pressed());
+        assertFalse(button.isPressed());
     }
 
 }

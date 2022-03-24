@@ -23,7 +23,7 @@ public class Button1b implements Button1bc {
     }
 
     @Override
-    public boolean pressed() {
+    public boolean isPressed() {
         return this.pressed;
     }
 

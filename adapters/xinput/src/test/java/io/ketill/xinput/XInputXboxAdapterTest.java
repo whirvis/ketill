@@ -62,8 +62,8 @@ class XInputXboxAdapterTest {
 
         controller.poll(); /* update button states */
 
-        assertTrue(controller.a.pressed());
-        assertFalse(controller.b.pressed());
+        assertTrue(controller.a.isPressed());
+        assertFalse(controller.b.isPressed());
     }
 
     @Test
