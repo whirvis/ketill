@@ -220,6 +220,33 @@ public abstract class IoDevice implements FeatureRegistry {
     /* @formatter:on */
 
     /**
+     * Returns the feature associated with the given state. If no feature
+     * owning {@code featureState} is registered to this device, {@code null}
+     * is returned and no exception is thrown.
+     *
+     * @param featureState the state of the feature to fetch.
+     * @return the {@code feature} which owns {@code featureState},
+     * {@code null} if no such feature is currently registered.
+     * @throws NullPointerException          if {@code featureState}
+     *                                       is {@code null}.
+     * @throws UnsupportedOperationException if {@code featureState} is
+     *                                       an {@link IoFeature} instance.
+     */
+    public IoFeature<?> getFeature(Object featureState) {
+        Objects.requireNonNull(featureState, "featureState cannot be null");
+        if (featureState instanceof IoFeature<?>) {
+            String msg = "did you mean getState(IoFeature)?";
+            throw new UnsupportedOperationException(msg);
+        }
+        for (RegisteredFeature<?, ?> registered : registry.getFeatures()) {
+            if (registered.state == featureState) {
+                return registered.feature;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns if this device, with its adapter provided at construction,
      * supports the specified feature. A feature is considered supported
      * if it currently has a mapping assigned by its adapter.
@@ -255,13 +282,8 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #isFeatureSupported(IoFeature)
      */
     public boolean isFeatureSupported(@NotNull Object featureState) {
-        Objects.requireNonNull(featureState, "featureState cannot be null");
-        for (RegisteredFeature<?, ?> registered : registry.getFeatures()) {
-            if (registered.state == featureState) {
-                return this.isFeatureSupported(registered.feature);
-            }
-        }
-        return false;
+        IoFeature<?> feature = this.getFeature(featureState);
+        return feature != null && this.isFeatureSupported(feature);
     }
 
     @Override

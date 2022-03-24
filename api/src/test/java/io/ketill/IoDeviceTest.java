@@ -115,6 +115,24 @@ class IoDeviceTest {
     }
 
     @Test
+    void getFeature() {
+        assertThrows(NullPointerException.class,
+                () -> device.getFeature(null));
+
+        /*
+         * This method is to get the feature which created the
+         * given state, not the other way around. Assume this
+         * was a mistake by the user and throw an exception.
+         */
+        assertThrows(UnsupportedOperationException.class,
+                () -> device.getFeature(MockIoDevice.FEATURE));
+
+        assertEquals(MockIoDevice.FEATURE,
+                device.getFeature(device.featureState));
+        assertNull(device.getFeature(new Object()));
+    }
+
+    @Test
     void isFeatureSupported() {
         assertThrows(NullPointerException.class,
                 () -> device.isFeatureSupported(null));
