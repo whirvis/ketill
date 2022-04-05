@@ -18,16 +18,6 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void discoveredDevices() {
-        /*
-         * This is a read only view of all currently discovered devices.
-         * As such, any modification to it from the outside is illegal.
-         */
-        assertThrows(UnsupportedOperationException.class,
-                () -> seeker.discoveredDevices.clear());
-    }
-
-    @Test
     void discoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
         MockIoDevice device = new MockIoDevice();

@@ -15,8 +15,8 @@ import java.util.function.Consumer;
  * The purpose of an I/O device seeker is to scan for I/O devices currently
  * connected to the system. When such a device is detected, the appropriate
  * {@code IoDevice} instance and adapter will be created. Devices must be
- * polled manually after creation using {@link IoDevice#poll()}. They can
- * be retrieved from {@link #discoveredDevices}.
+ * polled manually after creation using {@link IoDevice#poll()}. This can
+ * be done using {@link #pollDevices()}.
  * <p>
  * Implementations should call {@link #discoverDevice(IoDevice)} when a
  * device is discovered and {@link #forgetDevice(IoDevice)} when a device
@@ -185,12 +185,14 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * For continuous scanning, this method must be called periodically once
      * every application update.
      *
+     * @return this device seeker.
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      * @throws KetillException       if an error occurs and no callback was
      *                               set via {@link #onSeekError(BiConsumer)}.
+     * @see #pollDevices()
      */
-    public final synchronized void seek() {
+    public final synchronized IoDeviceSeeker<I> seek() {
         this.requireOpen();
         try {
             this.seekImpl();
@@ -202,6 +204,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
                 throw new KetillException("error in DeviceSeeker", cause);
             }
         }
+        return this;
     }
 
 
@@ -215,6 +218,41 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     @SuppressWarnings("unused")
     protected void seekerError(@NotNull Throwable cause) {
         /* optional implement */
+    }
+
+    /**
+     * Performs the given action for each device discovered by this device
+     * seeker until they have all been processed or {@code action} throws
+     * an exception. Exceptions thrown by the action are relayed to the
+     * caller.
+     *
+     * @param action the action to perform for each discovered device.
+     * @return this device seeker.
+     * @throws NullPointerException  if {@code action} is {@code null}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     */
+    /* @formatter:off */
+    public final synchronized IoDeviceSeeker<I>
+            forEachDevice(@NotNull Consumer<@NotNull I> action) {
+        Objects.requireNonNull(action, "action cannot be null");
+        this.requireOpen();
+        for (I device : devices) {
+            action.accept(device);
+        }
+        return this;
+    }
+    /* @formatter:on */
+
+    /**
+     * Calls {@link IoDevice#poll()} for each discovered device.
+     *
+     * @return this device seeker.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     */
+    public final synchronized IoDeviceSeeker<I> pollDevices() {
+        return this.forEachDevice(IoDevice::poll);
     }
 
     /**
