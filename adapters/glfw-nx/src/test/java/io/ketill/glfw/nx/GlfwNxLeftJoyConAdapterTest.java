@@ -91,11 +91,11 @@ class GlfwNxLeftJoyConAdapterTest {
 
             buttons.put(ZL_INDEX, (byte) GLFW_PRESS);
             joycon.poll(); /* update analog triggers */
-            assertEquals(1.0F, joycon.lt.force());
+            assertEquals(1.0F, joycon.lt.getForce());
 
             buttons.put(ZL_INDEX, (byte) GLFW_RELEASE);
             joycon.poll(); /* update analog triggers */
-            assertEquals(0.0F, joycon.lt.force());
+            assertEquals(0.0F, joycon.lt.getForce());
         }
     }
 

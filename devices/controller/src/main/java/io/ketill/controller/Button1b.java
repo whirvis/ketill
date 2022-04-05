@@ -1,11 +1,20 @@
 package io.ketill.controller;
 
+import io.ketill.AdapterUpdatedField;
+import io.ketill.pressable.MonitorUpdatedField;
+
 /**
- * Contains the state of a {@link DeviceButton}.
+ * Contains the state of a {@link DeviceButton}, one of the directions of an
+ * {@link AnalogStick}, or an {@link AnalogTrigger}'s button representation.
  */
 public class Button1b implements Button1bc {
 
+    @AdapterUpdatedField("if belongs to DeviceButton")
+    @MonitorUpdatedField("if belongs to AnalogStick")
     public boolean pressed;
+
+    @MonitorUpdatedField
+    public boolean held;
 
     /**
      * @param pressed the initial button state.
@@ -25,6 +34,11 @@ public class Button1b implements Button1bc {
     @Override
     public boolean isPressed() {
         return this.pressed;
+    }
+
+    @Override
+    public boolean isHeld() {
+        return this.held;
     }
 
 }

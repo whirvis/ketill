@@ -201,15 +201,15 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @param mapping the GLFW stick mapping.
      */
     @FeatureAdapter
-    protected void updateStick(@NotNull Vector3f stick,
+    protected void updateStick(@NotNull Vector3f pos,
                                @NotNull GlfwStickMapping mapping) {
-        stick.x = this.getAxis(mapping.glfwXAxis);
-        stick.y = this.getAxis(mapping.glfwYAxis);
+        pos.x = this.getAxis(mapping.glfwXAxis);
+        pos.y = this.getAxis(mapping.glfwYAxis);
         if (mapping.hasZButton) {
             boolean pressed = this.isPressed(mapping.glfwZButton);
-            stick.z = pressed ? -1.0F : 0.0F;
+            pos.z = pressed ? -1.0F : 0.0F;
         } else {
-            stick.z = 0.0F;
+            pos.z = 0.0F;
         }
     }
 

@@ -1,8 +1,13 @@
 package io.ketill.pc;
 
 import io.ketill.IoFeature;
+import io.ketill.pressable.PressableFeatureConfig;
+import io.ketill.pressable.PressableFeatureEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static io.ketill.pc.Mouse.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +41,92 @@ class MouseTest {
         assertSame(mouse.middle, mouse.m3);
 
         assertStateIsFeature(mouse.cursor, FEATURE_CURSOR);
+    }
+
+    @Test
+    void onMouseButtonEvent() {
+        /* set callback for next test */
+        AtomicBoolean notified = new AtomicBoolean();
+        mouse.onPressableEvent(e -> notified.set(true));
+
+        /*
+         * When a mouse button is registered to a mouse,
+         * the mouse is expected to notify listeners when
+         * said button is clicked or unclicked.
+         */
+        MouseButton button = new MouseButton("button");
+        Click1b state = mouse.registerFeature(button).state;
+
+        state.clicked = true; /* click button */
+        mouse.poll(); /* fire events */
+        assertTrue(notified.get());
+
+        /*
+         * When a mouse button unregistered from a mouse,
+         * the mouse should no longer notify listeners when
+         * said button is clicked or unclicked.
+         */
+        mouse.unregisterFeature(button);
+        notified.set(false);
+
+        state.clicked = false; /* unclick button */
+        mouse.poll(); /* fire events */
+        assertFalse(notified.get());
+    }
+
+    @Test
+    void getPressableCallback() {
+        /*
+         * By default, the mouse should have no pressable
+         * feature callback set unless one is provided by
+         * the user via onPressableEvent().
+         */
+        assertNull(mouse.getPressableCallback());
+    }
+
+    @Test
+    void usePressableCallback() {
+        /*
+         * After setting the pressable feature callback, the
+         * mouse should use the one provided by the user.
+         */
+        /* @formatter:off */
+        Consumer<PressableFeatureEvent> callback = (e) -> {};
+        mouse.onPressableEvent(callback);
+        assertSame(callback, mouse.getPressableCallback());
+        /* @formatter:on */
+    }
+
+    @Test
+    void usePressableConfig() {
+        /*
+         * When the mouse is told to use a not null value
+         * for the pressable feature config, it is expected
+         * to use the one specified.
+         */
+        PressableFeatureConfig config = new PressableFeatureConfig();
+        mouse.usePressableConfig(config);
+        assertSame(config, mouse.getPressableConfig());
+
+        /*
+         * When the mouse is told to use a null value for
+         * the pressable feature config, it should use the
+         * default configuration instead.
+         */
+        mouse.usePressableConfig(null);
+        assertSame(PressableFeatureConfig.DEFAULT,
+                mouse.getPressableConfig());
+    }
+
+    @Test
+    void getPressableConfig() {
+        /*
+         * By default, mice should use the default pressable
+         * feature config until a user specifies a different
+         * one via usePressableConfig().
+         */
+        assertSame(PressableFeatureConfig.DEFAULT,
+                mouse.getPressableConfig());
     }
 
 }

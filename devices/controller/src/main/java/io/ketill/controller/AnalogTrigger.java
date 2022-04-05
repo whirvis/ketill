@@ -11,6 +11,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnalogTrigger extends IoFeature<Trigger1f> {
 
+    private static final float TRIGGER_PRESS = 2.0F / 3.0F;
+
+    /**
+     * @param force the analog trigger force.
+     * @return {@code true} if {@code force} indicates the analog trigger
+     * is currently pressed, {@code false} otherwise.
+     */
+    public static boolean isPressed(float force) {
+        return force >= TRIGGER_PRESS;
+    }
+
     /**
      * @param id the analog trigger ID.
      * @throws NullPointerException     if {@code id} is {@code null}.

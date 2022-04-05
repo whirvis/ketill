@@ -6,11 +6,21 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("ConstantConditions")
 class AnalogStickTest {
 
     @Test
     void isPressed() {
         Vector3f pos = new Vector3f();
+
+        /*
+         * It would not make sense to check if an analog
+         * stick is facing towards a null direction. As
+         * such, assume this was a user mistake and throw
+         * an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> AnalogStick.isPressed(pos, null));
 
         /* not facing any direction */
         assertFalse(AnalogStick.isPressed(pos, Direction.UP));

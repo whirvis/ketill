@@ -94,14 +94,14 @@ class XInputXboxAdapterTest {
 
         controller.poll(); /* update trigger forces */
 
-        assertEquals(controller.lt.force(), 0.123F);
-        assertEquals(controller.rt.force(), 0.456F);
+        assertEquals(0.123F, controller.lt.getForce());
+        assertEquals(0.456F, controller.rt.getForce());
     }
 
     @Test
     void updateMotor() {
-        controller.rumbleCoarse.force = 0.125F;
-        controller.rumbleFine.force = 0.875F;
+        controller.rumbleCoarse.setStrength(0.125F);
+        controller.rumbleFine.setStrength(0.875F);
 
         /*
          * Once the force of each rumble motor has been set, a controller
@@ -121,8 +121,8 @@ class XInputXboxAdapterTest {
         controller.poll(); /* update rumble motors */
         verify(xDevice, never()).setVibration(anyInt(), anyInt());
 
-        controller.rumbleCoarse.force = -1.0F;
-        controller.rumbleFine.force = 2.0F;
+        controller.rumbleCoarse.strength = -1.0F;
+        controller.rumbleFine.strength = 2.0F;
 
         /*
          * If the rumble motor force is out of bounds, it is up to the

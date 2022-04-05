@@ -9,6 +9,12 @@ public interface Key1bc {
      * @return {@code true} if this keyboard key is currently pressed,
      * {@code false} otherwise.
      */
-    boolean pressed();
+    boolean isPressed();
+
+    /**
+     * @return {@code true} if this keyboard key is currently held down,
+     * {@code false} otherwise.
+     */
+    boolean isHeld();
 
 }

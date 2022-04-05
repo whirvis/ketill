@@ -161,7 +161,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f vec,
+    private void updateStick(@NotNull Vector3f pos,
                              @NotNull StickMapping mapping) {
         int posX = input.get(mapping.byteOffsetX) & 0xFF;
         int posY = input.get(mapping.byteOffsetY) & 0xFF;
@@ -182,9 +182,9 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
          * very right (1.0F.). The Y-axis starts at the very at the very
          * top (0.0F) and ends at the very bottom (1.0F.)
          */
-        vec.x = ((posX / 255.0F) * 2.0F) - 1.0F;
-        vec.y = ((posY / 255.0F) * -2.0F) + 1.0F;
-        vec.z = pressed ? -1.0F : 0.0F;
+        pos.x = ((posX / 255.0F) * 2.0F) - 1.0F;
+        pos.y = ((posY / 255.0F) * -2.0F) + 1.0F;
+        pos.z = pressed ? -1.0F : 0.0F;
     }
 
     @FeatureAdapter
@@ -196,7 +196,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     @FeatureAdapter
     private void updateWeakMotor(@NotNull Vibration1f vibration,
                                  int byteOffset) {
-        byte rumbleWeak = (byte) (vibration.force > 0.0F ? 0x01 : 0x00);
+        byte rumbleWeak = (byte) (vibration.getStrength() > 0.0F ? 0x01 : 0x00);
         if (rumbleWeak != this.rumbleWeak) {
             hidReport.put(byteOffset, rumbleWeak);
             this.rumbleWeak = rumbleWeak;
@@ -207,7 +207,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     @FeatureAdapter
     private void updateStrongMotor(@NotNull Vibration1f vibration,
                                    int byteOffset) {
-        byte rumbleStrong = (byte) (vibration.force * 255.0F);
+        byte rumbleStrong = (byte) (vibration.getStrength() * 255.0F);
         if (rumbleStrong != this.rumbleStrong) {
             hidReport.put(byteOffset, rumbleStrong);
             this.rumbleStrong = rumbleStrong;

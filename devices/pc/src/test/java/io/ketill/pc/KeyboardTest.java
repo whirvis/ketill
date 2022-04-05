@@ -1,8 +1,13 @@
 package io.ketill.pc;
 
 import io.ketill.IoFeature;
+import io.ketill.pressable.PressableFeatureConfig;
+import io.ketill.pressable.PressableFeatureEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import static io.ketill.pc.Keyboard.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,6 +148,93 @@ class KeyboardTest {
         assertStateIsFeature(keyboard.rightAlt, KEY_RIGHT_ALT);
         assertStateIsFeature(keyboard.rightSuper, KEY_RIGHT_SUPER);
         assertStateIsFeature(keyboard.menu, KEY_MENU);
+    }
+
+    @Test
+    void onKeyboardKeyEvent() {
+        /* set callback for next test */
+        AtomicBoolean notified = new AtomicBoolean();
+        keyboard.onPressableEvent(e -> notified.set(true));
+
+        /*
+         * When a keyboard key is registered to a keyboard,
+         * the keyboard is expected to notify listeners when
+         * said key is pressed or released.
+         */
+        KeyboardKey key = new KeyboardKey("key");
+        Key1b state = keyboard.registerFeature(key).state;
+
+        state.pressed = true; /* press key */
+        keyboard.poll(); /* fire events */
+        assertTrue(notified.get());
+
+        /*
+         * When a keyboard key unregistered from a keyboard,
+         * the keyboard should no longer notify listeners
+         * when said key is pressed or released.
+         */
+        keyboard.unregisterFeature(key);
+        notified.set(false);
+
+        state.pressed = false; /* release key */
+        keyboard.poll(); /* fire events */
+        assertFalse(notified.get());
+    }
+
+    @Test
+    void getPressableCallback() {
+        /*
+         * By default, the keyboard should have no pressable
+         * feature callback set unless one is provided by the
+         * user via onPressableEvent().
+         */
+        assertNull(keyboard.getPressableCallback());
+    }
+
+    @Test
+    void usePressableCallback() {
+        /*
+         * After setting the pressable feature callback,
+         * the keyboard should use the one provided by
+         * the user.
+         */
+        /* @formatter:off */
+        Consumer<PressableFeatureEvent> callback = (e) -> {};
+        keyboard.onPressableEvent(callback);
+        assertSame(callback, keyboard.getPressableCallback());
+        /* @formatter:on */
+    }
+
+    @Test
+    void usePressableConfig() {
+        /*
+         * When the keyboard is told to use a not null
+         * value for the pressable feature config, it
+         * is expected to use the one specified.
+         */
+        PressableFeatureConfig config = new PressableFeatureConfig();
+        keyboard.usePressableConfig(config);
+        assertSame(config, keyboard.getPressableConfig());
+
+        /*
+         * When the keyboard is told to use a null value
+         * for the pressable feature config, it should use
+         * the default configuration instead.
+         */
+        keyboard.usePressableConfig(null);
+        assertSame(PressableFeatureConfig.DEFAULT,
+                keyboard.getPressableConfig());
+    }
+
+    @Test
+    void getPressableConfig() {
+        /*
+         * By default, keyboards should use the default
+         * pressable feature config until a user specifies
+         * a different one via usePressableConfig().
+         */
+        assertSame(PressableFeatureConfig.DEFAULT,
+                keyboard.getPressableConfig());
     }
 
 }

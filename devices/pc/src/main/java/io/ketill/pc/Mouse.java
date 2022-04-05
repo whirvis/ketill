@@ -4,14 +4,29 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
+import io.ketill.IoFeature;
+import io.ketill.RegisteredFeature;
+import io.ketill.pressable.PressableFeatureConfig;
+import io.ketill.pressable.PressableFeatureConfigView;
+import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.pressable.PressableFeatureMonitor;
+import io.ketill.pressable.PressableFeatureSupport;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * A generic computer mouse.
  *
  * @see Keyboard
  */
-public class Mouse extends IoDevice {
+@SuppressWarnings("SynchronizeOnNonFinalField")
+public class Mouse extends IoDevice
+        implements PressableFeatureSupport {
 
     /* @formatter:off */
     @FeaturePresent
@@ -56,6 +71,11 @@ public class Mouse extends IoDevice {
             cursor = this.getState(FEATURE_CURSOR);
     /* @formatter:on */
 
+    private List<PressableFeatureMonitor<?, ?>> monitors;
+    private @NotNull PressableFeatureConfigView pressableConfig;
+
+    private @Nullable Consumer<PressableFeatureEvent> pressableCallback;
+
     /**
      * @param adapterSupplier the mouse adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
@@ -64,6 +84,70 @@ public class Mouse extends IoDevice {
      */
     public Mouse(@NotNull AdapterSupplier<Mouse> adapterSupplier) {
         super("mouse", adapterSupplier);
+        this.pressableConfig = PressableFeatureConfig.DEFAULT;
+    }
+
+    @Override
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+        /*
+         * Due to the order of class initialization, the monitors list must
+         * be initialized here (otherwise, it would be final and initialized
+         * in the constructor.) This is because features can be registered
+         * during construction of the super class.
+         */
+        if (monitors == null) {
+            this.monitors = new ArrayList<>();
+        }
+
+        if (registered.feature instanceof MouseButton) {
+            synchronized (monitors) {
+                MouseButton button = (MouseButton) registered.feature;
+                monitors.add(new MouseButtonMonitor(this, button,
+                        () -> pressableCallback));
+            }
+        }
+    }
+
+    @Override
+    @MustBeInvokedByOverriders
+    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+        monitors.removeIf(monitor -> monitor.feature == feature);
+    }
+
+    protected final @Nullable Consumer<PressableFeatureEvent> getPressableCallback() {
+        return this.pressableCallback;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Note:</b> Classes extending {@code Controller} can access the
+     * callback set here via {@link #getPressableCallback()}.
+     */
+    @Override
+    public final void onPressableEvent(@Nullable Consumer<PressableFeatureEvent> callback) {
+        this.pressableCallback = callback;
+    }
+
+    @Override
+    public final void usePressableConfig(@Nullable PressableFeatureConfigView view) {
+        this.pressableConfig = PressableFeatureConfig.valueOf(view);
+    }
+
+    @Override
+    public final @NotNull PressableFeatureConfigView getPressableConfig() {
+        return this.pressableConfig;
+    }
+
+    @Override
+    @MustBeInvokedByOverriders
+    public void poll() {
+        super.poll();
+        synchronized (monitors) {
+            for (PressableFeatureMonitor<?, ?> monitor : monitors) {
+                monitor.poll();
+            }
+        }
     }
 
 }

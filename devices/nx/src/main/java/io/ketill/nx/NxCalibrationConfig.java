@@ -1,5 +1,6 @@
 package io.ketill.nx;
 
+import io.ketill.UserUpdatedField;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -33,6 +34,7 @@ public final class NxCalibrationConfig {
     private final @NotNull Vector2f rsUpper, rsLower;
 
     /* read-only view of LS and RS bounds */
+    @UserUpdatedField
     public final @NotNull Vector2fc lsUpperBounds, lsLowerBounds;
     public final @NotNull Vector2fc rsUpperBounds, rsLowerBounds;
 
@@ -72,6 +74,7 @@ public final class NxCalibrationConfig {
      *                                  is not higher than the value
      *                                  of {@code lower}.
      */
+    @UserUpdatedField
     public void setLsBounds(@NotNull Vector2fc upper,
                             @NotNull Vector2fc lower) {
         this.verifyBounds(upper, lower);
@@ -93,6 +96,7 @@ public final class NxCalibrationConfig {
      * @throws NullPointerException if {@code stick} is {@code null}.
      * @see #setLsBounds(Vector2fc, Vector2fc)
      */
+    @UserUpdatedField
     public void applyLs(@NotNull Vector3f stick) {
         Objects.requireNonNull(stick, "stick cannot be null");
         stick.x = normalize(stick.x, lsUpper.x, lsLower.x);
@@ -110,6 +114,7 @@ public final class NxCalibrationConfig {
      *                                  is not higher than the value
      *                                  of {@code lower}.
      */
+    @UserUpdatedField
     public void setRsBounds(@NotNull Vector2fc upper,
                             @NotNull Vector2fc lower) {
         this.verifyBounds(upper, lower);
@@ -131,6 +136,7 @@ public final class NxCalibrationConfig {
      * @throws NullPointerException if {@code stick} is {@code null}.
      * @see #setRsBounds(Vector2fc, Vector2fc)
      */
+    @UserUpdatedField
     public void applyRs(Vector3f stick) {
         Objects.requireNonNull(stick, "stick cannot be null");
         stick.x = normalize(stick.x, rsUpper.x, rsLower.x);

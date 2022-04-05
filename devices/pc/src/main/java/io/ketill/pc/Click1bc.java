@@ -9,6 +9,12 @@ public interface Click1bc {
      * @return {@code true} if this mouse button is currently clicked,
      * {@code false} otherwise.
      */
-    boolean clicked();
+    boolean isClicked();
+
+    /**
+     * @return {@code true} if this mouse button is currently held down,
+     * {@code false} otherwise.
+     */
+    boolean isHeld();
 
 }

@@ -1,5 +1,7 @@
 package io.ketill.pc;
 
+import io.ketill.AdapterUpdatedField;
+import io.ketill.UserUpdatedField;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
@@ -14,7 +16,11 @@ import java.util.Objects;
  */
 public class CursorState {
 
+    @UserUpdatedField
     private boolean visible;
+
+    @UserUpdatedField
+    @AdapterUpdatedField
     private Vector2fc requestedPos;
 
     /**
@@ -45,6 +51,7 @@ public class CursorState {
      * @return {@code true} if the mouse cursor is currently visible,
      * {@code false} otherwise.
      */
+    @UserUpdatedField
     public boolean isVisible() {
         return this.visible;
     }
@@ -53,6 +60,7 @@ public class CursorState {
      * @param visible {@code true} if the mouse cursor should be visible,
      *                {@code false otherwise}.
      */
+    @UserUpdatedField
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
@@ -64,6 +72,7 @@ public class CursorState {
      *
      * @return the requested cursor position, {@code null} if none.
      */
+    @AdapterUpdatedField
     public @Nullable Vector2fc getRequestedPos() {
         Vector2fc pos = this.requestedPos;
         this.requestedPos = null;
@@ -74,6 +83,7 @@ public class CursorState {
      * @param pos the position to set the cursor to.
      * @throws NullPointerException if {@code pos} is {@code null}.
      */
+    @UserUpdatedField
     public void setPosition(@NotNull Vector2fc pos) {
         Objects.requireNonNull(pos, "pos");
         this.requestedPos = pos;
@@ -84,6 +94,7 @@ public class CursorState {
      * @param yPos the Y-axis position to set the cursor to.
      * @see #setPosition(Vector2fc)
      */
+    @UserUpdatedField
     public final void setPosition(float xPos, float yPos) {
         this.setPosition(new Vector2f(xPos, yPos));
     }

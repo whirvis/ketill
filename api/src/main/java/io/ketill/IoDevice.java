@@ -41,14 +41,11 @@ public abstract class IoDevice implements FeatureRegistry {
     private boolean registeredFields;
     private boolean connected;
 
-    private @Nullable BiConsumer<? super IoDevice,
-            IoFeature<?>> registerFeatureCallback;
-    private @Nullable BiConsumer<? super IoDevice,
-            IoFeature<?>> unregisterFeatureCallback;
-    private @Nullable BiConsumer<? super IoDevice,
-            Throwable> errorCallback;
-    private @Nullable Consumer<? super IoDevice> connectCallback;
-    private @Nullable Consumer<? super IoDevice> disconnectCallback;
+    private @Nullable BiConsumer<IoDevice, IoFeature<?>> registerFeatureCallback;
+    private @Nullable BiConsumer<IoDevice, IoFeature<?>> unregisterFeatureCallback;
+    private @Nullable BiConsumer<IoDevice, Throwable> errorCallback;
+    private @Nullable Consumer<IoDevice> connectCallback;
+    private @Nullable Consumer<IoDevice> disconnectCallback;
 
     /**
      * @param id              the device ID.
@@ -174,15 +171,16 @@ public abstract class IoDevice implements FeatureRegistry {
         }
         /* @formatter:on */
 
-        String fieldDesc = "@" + FeaturePresent.class.getSimpleName() +
-                " annotated field \"" + field.getName()
-                + "\" in class " + this.getClass().getName();
+        String fieldDesc = "@" + FeaturePresent.class.getSimpleName();
+        fieldDesc += " annotated field \"" + field.getName() + "\"";
+        fieldDesc += " in class " + this.getClass().getName();
 
-        Class<?> type = field.getType();
-        if (!IoFeature.class.isAssignableFrom(type)) {
-            throw new KetillException(fieldDesc + " must be assignable"
-                    + " from " + this.getClass().getName());
+        /* @formatter:off */
+        if (!IoFeature.class.isAssignableFrom(field.getType())) {
+            throw new KetillException(fieldDesc + " must be assignable from "
+                    + this.getClass().getName());
         }
+        /* @formatter:on */
 
         /*
          * It would make no sense for @FeaturePresent annotated
@@ -317,21 +315,47 @@ public abstract class IoDevice implements FeatureRegistry {
     @Override
     public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
             registerFeature(@NotNull F feature) {
-        RegisteredFeature<F, S> registeredFeature =
-                registry.registerFeature(feature);
+        Objects.requireNonNull(feature, "feature cannot be null");
+        RegisteredFeature<F, S> registered = registry.registerFeature(feature);
+        this.featureRegistered(registered);
         if (registerFeatureCallback != null) {
             registerFeatureCallback.accept(this, feature);
         }
-        return registeredFeature;
+        return registered;
     }
     /* @formatter:on */
+
+    /**
+     * Called when a feature is registered. Overriding this method allows
+     * for an I/O device to know when a feature has been registered without
+     * needing to set themselves as the callback.
+     *
+     * @param registered the registered feature.
+     */
+    @SuppressWarnings("unused")
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+        /* optional implement */
+    }
 
     @Override
     public void unregisterFeature(@NotNull IoFeature<?> feature) {
         registry.unregisterFeature(feature);
+        this.featureUnregistered(feature);
         if (unregisterFeatureCallback != null) {
             unregisterFeatureCallback.accept(this, feature);
         }
+    }
+
+    /**
+     * Called when a feature is unregistered. Overriding this method allows
+     * for an I/O device to know when a feature has been unregistered without
+     * needing to set themselves as the callback.
+     *
+     * @param feature the unregistered feature.
+     */
+    @SuppressWarnings("unused")
+    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+        /* optional implement */
     }
 
     /**
@@ -339,13 +363,17 @@ public abstract class IoDevice implements FeatureRegistry {
      * was set <i>after</i> one or more features have been registered, it
      * will not be called for them. Current features will have to be fetched
      * via {@link #getFeatures()}.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #featureRegistered(RegisteredFeature)}. The callback
+     * is for users.
      *
      * @param callback the code to execute when a feature is registered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      * @see #registerFeature(IoFeature)
      */
-    public final void onRegisterFeature(@Nullable BiConsumer<? super IoDevice,
+    public final void onRegisterFeature(@Nullable BiConsumer<IoDevice,
             IoFeature<?>> callback) {
         this.registerFeatureCallback = callback;
     }
@@ -355,14 +383,18 @@ public abstract class IoDevice implements FeatureRegistry {
      * was set <i>after</i> one or more features have been unregistered, it
      * will not be called for them. Current features will have to be fetched
      * via {@link #getFeatures()}.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #featureUnregistered(IoFeature)}. The callback is for
+     * users.
      *
      * @param callback the code to execute when a feature is unregistered. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      * @see #unregisterFeature(IoFeature)
      */
-    public final void onUnregisterFeature(@Nullable BiConsumer<?
-            super IoDevice, IoFeature<?>> callback) {
+    public final void onUnregisterFeature(@Nullable BiConsumer<IoDevice,
+            IoFeature<?>> callback) {
         this.unregisterFeatureCallback = callback;
     }
 
@@ -375,7 +407,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *                 of {@code null} is permitted, and will result in a
      *                 wrapping {@code KetillException} being thrown.
      */
-    public final void onPollError(@Nullable BiConsumer<? super IoDevice,
+    public final void onPollError(@Nullable BiConsumer<IoDevice,
             Throwable> callback) {
         this.errorCallback = callback;
     }
@@ -383,27 +415,51 @@ public abstract class IoDevice implements FeatureRegistry {
     /**
      * Sets the callback for when this device connects. If this callback was
      * set <i>after</i> the device has connected, it will not be called.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #deviceConnected()}. The callback is for users.
      *
      * @param callback the code to execute when this device connects. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public final void onConnect(@Nullable Consumer<? super IoDevice> callback) {
+    public final void onConnect(@Nullable Consumer<IoDevice> callback) {
         this.connectCallback = callback;
     }
 
     /**
      * Sets the callback for when this device disconnects. If this callback
      * was set <i>after</i> the device has disconnected, it will not be called.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #deviceDisconnected()}. The callback is for users.
      *
      * @param callback the code to execute when this device disconnects. A
      *                 value of {@code null} is permitted, and will result
      *                 in nothing being executed.
      * @see #isConnected()
      */
-    public final void onDisconnect(@Nullable Consumer<? super IoDevice> callback) {
+    public final void onDisconnect(@Nullable Consumer<IoDevice> callback) {
         this.disconnectCallback = callback;
+    }
+
+    /**
+     * Called when this device is first connected. Overriding this method
+     * allows for an I/O device to know when it has been connected without
+     * needing to set themselves as the callback.
+     */
+    protected void deviceConnected() {
+        /* optional implement */
+    }
+
+    /**
+     * Called when this device is disconnected. Overriding this method
+     * allows for an I/O device to know when it has been disconnected
+     * without needing to set themselves as the callback.
+     */
+    protected void deviceDisconnected() {
+        /* optional implement */
     }
 
     /**
@@ -449,15 +505,21 @@ public abstract class IoDevice implements FeatureRegistry {
             }
         }
 
-        registry.updateFeatures();
-
         boolean wasConnected = this.connected;
         this.connected = adapter.isDeviceConnected();
-        if (connected && !wasConnected && connectCallback != null) {
-            connectCallback.accept(this);
-        } else if (!connected && wasConnected && disconnectCallback != null) {
-            disconnectCallback.accept(this);
+        if (connected && !wasConnected) {
+            this.deviceConnected();
+            if (connectCallback != null) {
+                connectCallback.accept(this);
+            }
+        } else if (!connected && wasConnected) {
+            this.deviceDisconnected();
+            if (disconnectCallback != null) {
+                disconnectCallback.accept(this);
+            }
         }
+
+        registry.updateFeatures();
     }
 
 }

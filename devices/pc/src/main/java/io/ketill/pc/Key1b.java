@@ -1,11 +1,18 @@
 package io.ketill.pc;
 
+import io.ketill.AdapterUpdatedField;
+import io.ketill.pressable.MonitorUpdatedField;
+
 /**
  * Contains the state of a {@link KeyboardKey}.
  */
 public class Key1b implements Key1bc {
 
+    @AdapterUpdatedField
     public boolean pressed;
+
+    @MonitorUpdatedField
+    public boolean held;
 
     /**
      * @param pressed the initial key state.
@@ -23,8 +30,13 @@ public class Key1b implements Key1bc {
     }
 
     @Override
-    public boolean pressed() {
+    public boolean isPressed() {
         return this.pressed;
+    }
+
+    @Override
+    public boolean isHeld() {
+        return this.held;
     }
 
 }

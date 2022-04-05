@@ -91,8 +91,8 @@ class GlfwPs4AdapterTest {
 
             ltValue = (ltValue + 1.0F) / 2.0F;
             rtValue = (rtValue + 1.0F) / 2.0F;
-            assertEquals(ltValue, controller.lt.force());
-            assertEquals(rtValue, controller.rt.force());
+            assertEquals(ltValue, controller.lt.getForce());
+            assertEquals(rtValue, controller.rt.getForce());
         }
     }
 

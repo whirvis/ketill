@@ -100,16 +100,16 @@ class GlfwNxProAdapterTest {
             buttons.put(GlfwNxProAdapter.ZR_INDEX, (byte) GLFW_PRESS);
 
             controller.poll(); /* update triggers */
-            assertEquals(1.0F, controller.lt.force());
-            assertEquals(1.0F, controller.rt.force());
+            assertEquals(1.0F, controller.lt.getForce());
+            assertEquals(1.0F, controller.rt.getForce());
 
             /* update button states for next test */
             buttons.put(GlfwNxProAdapter.ZL_INDEX, (byte) GLFW_RELEASE);
             buttons.put(GlfwNxProAdapter.ZR_INDEX, (byte) GLFW_RELEASE);
 
             controller.poll(); /* update triggers */
-            assertEquals(0.0F, controller.lt.force());
-            assertEquals(0.0F, controller.rt.force());
+            assertEquals(0.0F, controller.lt.getForce());
+            assertEquals(0.0F, controller.rt.getForce());
         }
     }
 

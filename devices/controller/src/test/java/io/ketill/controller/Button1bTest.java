@@ -15,11 +15,19 @@ class Button1bTest {
     }
 
     @Test
-    void pressed() {
+    void isPressed() {
         button.pressed = true;
         assertTrue(button.isPressed());
         button.pressed = false;
         assertFalse(button.isPressed());
+    }
+
+    @Test
+    void isHeld() {
+        button.held = true;
+        assertTrue(button.isHeld());
+        button.held = false;
+        assertFalse(button.isHeld());
     }
 
 }

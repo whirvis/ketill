@@ -9,9 +9,9 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Stick3fc;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3fc;
 
 import java.util.Objects;
 
@@ -71,7 +71,7 @@ public abstract class PsxController extends Controller {
             left = this.getState(BUTTON_LEFT);
 
     @FeatureState
-    public final @NotNull Vector3fc
+    public final @NotNull Stick3fc
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
     /* @formatter:on */

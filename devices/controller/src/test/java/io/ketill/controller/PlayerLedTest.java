@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlayerLedTest {
+class PlayerLedTest {
 
     @Test
     void __init__() {
@@ -18,7 +18,7 @@ public class PlayerLedTest {
 
         /* ensure proper default ledCount */
         PlayerLed led = new PlayerLed("led");
-        assertEquals(led.ledCount, 4);
+        assertEquals(4, led.ledCount);
     }
 
 }

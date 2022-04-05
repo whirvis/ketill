@@ -1,75 +1,42 @@
 package io.ketill.controller;
 
+import io.ketill.IoDevice;
+import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.pressable.PressableFeatureMonitor;
+import io.ketill.pressable.PressableFeatureSupport;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-final class DeviceButtonMonitor {
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-    private final Controller controller;
-    private final DeviceButton feature;
-    private final Button1bc state;
+final class DeviceButtonMonitor
+        extends PressableFeatureMonitor<DeviceButton, Button1b> {
 
-    private boolean pressed;
-    private boolean held;
-    private long pressTime;
-    private long lastHeldPress;
-
-    DeviceButtonMonitor(@NotNull Controller controller,
-                        @NotNull DeviceButton button) {
-        this.controller = controller;
-        this.feature = button;
-        this.state = controller.getState(button);
+    /* @formatter:off */
+    <I extends IoDevice & PressableFeatureSupport>
+            DeviceButtonMonitor(@NotNull I device,
+                                @NotNull DeviceButton button,
+                                @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
+        super(device, button, callbackSupplier);
     }
+    /* @formatter:on */
 
-    boolean isButtonHeld() {
-        return this.held;
-    }
-
-    private void fireEvent(DeviceButtonEvent event) {
-        DeviceButtonCallback<? super Controller> callback =
-                controller.buttonCallback;
-        if (callback != null) {
-            callback.execute(controller, feature, event, held);
+    @Override
+    protected void eventFired(@NotNull PressableFeatureEvent event) {
+        switch (event.type) {
+            case HOLD:
+                state.held = true;
+                break;
+            case RELEASE:
+                state.held = false;
+                break;
         }
     }
 
-    private void firePressEvents(long currentTime) {
-        boolean pressed = state.isPressed();
-        boolean wasPressed = this.pressed;
-        this.pressed = pressed;
-
-        if (!wasPressed && pressed) {
-            this.pressTime = currentTime;
-            this.fireEvent(DeviceButtonEvent.PRESS);
-        } else if (wasPressed && !pressed) {
-            this.held = false;
-            this.fireEvent(DeviceButtonEvent.RELEASE);
-        }
-    }
-
-    private void fireHoldEvents(long currentTime) {
-        if (!pressed || !controller.isHoldEnabled()) {
-            return;
-        }
-
-        long holdTime = controller.getHoldTime();
-        long holdPressInterval = controller.getHoldPressInterval();
-
-        long pressDuration = currentTime - pressTime;
-        if (!held && pressDuration >= holdTime) {
-            this.held = true;
-            this.fireEvent(DeviceButtonEvent.HOLD);
-        }
-
-        long lastHeldPressDuration = currentTime - lastHeldPress;
-        if (held && lastHeldPressDuration >= holdPressInterval) {
-            this.lastHeldPress = currentTime;
-            this.fireEvent(DeviceButtonEvent.PRESS);
-        }
-    }
-
-    void fireEvents(long currentTime) {
-        this.firePressEvents(currentTime);
-        this.fireHoldEvents(currentTime);
+    @Override
+    protected boolean isPressed() {
+        return state.isPressed();
     }
 
 }

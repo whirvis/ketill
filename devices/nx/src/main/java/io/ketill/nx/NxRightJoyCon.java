@@ -7,9 +7,9 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Stick3fc;
 import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3fc;
 
 import java.util.Objects;
 
@@ -54,7 +54,7 @@ public class NxRightJoyCon extends NxJoyCon {
             zr = this.getState(BUTTON_ZR);
 
     @FeatureState
-    public final @NotNull Vector3fc
+    public final @NotNull Stick3fc
             rs = Objects.requireNonNull(super.rs);
 
     @FeatureState

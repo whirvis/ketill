@@ -6,9 +6,9 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.Button1bc;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.Stick3fc;
 import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3fc;
 
 class MockJoystick extends IoDevice {
 
@@ -17,7 +17,7 @@ class MockJoystick extends IoDevice {
     static final AnalogTrigger TRIGGER = new AnalogTrigger("trigger");
 
     final Button1bc button;
-    final Vector3fc stick;
+    final Stick3fc stick;
     final Trigger1fc trigger;
 
     public MockJoystick(@NotNull AdapterSupplier<?> adapterSupplier) {

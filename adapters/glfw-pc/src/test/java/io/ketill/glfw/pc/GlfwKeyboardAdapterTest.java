@@ -62,12 +62,12 @@ class GlfwKeyboardAdapterTest {
             glfw.when(() -> glfwGetKey(ptr_glfwWindow, GLFW_KEY_SPACE))
                     .thenReturn(GLFW_PRESS);
             keyboard.poll(); /* update keyboard keys */
-            assertTrue(keyboard.space.pressed());
+            assertTrue(keyboard.space.isPressed());
 
             glfw.when(() -> glfwGetKey(ptr_glfwWindow, GLFW_KEY_SPACE))
                     .thenReturn(GLFW_RELEASE);
             keyboard.poll(); /* update keyboard keys */
-            assertFalse(keyboard.space.pressed());
+            assertFalse(keyboard.space.isPressed());
         }
     }
 

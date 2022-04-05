@@ -10,10 +10,10 @@ import io.ketill.controller.Button1bc;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.Stick3fc;
 import io.ketill.controller.Trigger1fc;
 import io.ketill.controller.Vibration1f;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3fc;
 
 import java.util.Objects;
 
@@ -70,7 +70,7 @@ public class GcController extends Controller {
             l = this.getState(BUTTON_L);
 
     @FeatureState
-    public final @NotNull Vector3fc
+    public final @NotNull Stick3fc
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 

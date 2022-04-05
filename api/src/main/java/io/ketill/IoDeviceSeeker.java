@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * The purpose of an I/O device seeker is to scan for I/O devices currently
@@ -35,14 +35,10 @@ import java.util.function.BiConsumer;
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     private final @NotNull List<I> devices;
-    public final @NotNull List<I> discoveredDevices; /* read only view */
 
-    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
-            ? super I> discoverDeviceCallback;
-    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
-            ? super I> forgetDeviceCallback;
-    private @Nullable BiConsumer<? super IoDeviceSeeker<?>,
-            Throwable> errorCallback;
+    private @Nullable BiConsumer<IoDeviceSeeker<I>, I> discoverDeviceCallback;
+    private @Nullable BiConsumer<IoDeviceSeeker<I>, I> forgetDeviceCallback;
+    private @Nullable BiConsumer<IoDeviceSeeker<I>, Throwable> errorCallback;
 
     private boolean closed;
 
@@ -59,14 +55,15 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
          * As such, the overhead is negligible.
          */
         this.devices = new CopyOnWriteArrayList<>();
-        this.discoveredDevices = Collections.unmodifiableList(devices);
     }
 
     /**
      * Sets the callback for when this seeker has discovered a device. If this
      * callback was set <i>after</i> one or more devices have been discovered,
-     * it will not be called for them. Current devices will have to be
-     * retrieved via {@link #discoveredDevices}.
+     * it will not be called for them.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #deviceDiscovered(IoDevice)}. The callback is for users.
      *
      * @param callback the code to execute when a device is discovered. A
      *                 value of {@code null} is permitted, and will result
@@ -74,8 +71,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onDiscoverDevice(@Nullable BiConsumer<?
-            super IoDeviceSeeker<?>, ? super I> callback) {
+    public final void onDiscoverDevice(@Nullable BiConsumer<IoDeviceSeeker<I>,
+            I> callback) {
         this.requireOpen();
         this.discoverDeviceCallback = callback;
     }
@@ -83,8 +80,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /**
      * Sets the callback for when this seeker has forgotten a device. If this
      * callback was set <i>after</i> one or more devices have been forgotten,
-     * it will not be called for them. Current devices will have to be
-     * retrieved via {@link #discoveredDevices}.
+     * it will not be called for them.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #deviceForgotten(IoDevice)}. The callback is for users.
      *
      * @param callback the code to execute when a device is forgotten. A
      *                 value of {@code null} is permitted, and will result
@@ -92,8 +91,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onForgetDevice(@Nullable BiConsumer<?
-            super IoDeviceSeeker<?>, ? super I> callback) {
+    public final void onForgetDevice(@Nullable BiConsumer<IoDeviceSeeker<I>,
+            I> callback) {
         this.requireOpen();
         this.forgetDeviceCallback = callback;
     }
@@ -102,6 +101,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * Sets the callback for when an error occurs in {@link #seek()}. By
      * default, a wrapping {@code KetillException} will be constructed for
      * the original error and thrown.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event should
+     * override {@link #seekerError(Throwable)}. The callback is for users.
+     * Furthermore, for the sake of the user, implementing this method will
+     * not prevent an exception from being thrown.
      *
      * @param callback the code to execute when an error occurs. A value
      *                 of {@code null} is permitted, and will result in a
@@ -109,8 +113,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final void onSeekError(@Nullable BiConsumer<?
-            super IoDeviceSeeker<?>, Throwable> callback) {
+    public final void onSeekError(@Nullable BiConsumer<IoDeviceSeeker<I>,
+            Throwable> callback) {
         this.requireOpen();
         this.errorCallback = callback;
     }
@@ -123,9 +127,22 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             return;
         }
         devices.add(device);
+        this.deviceDiscovered(device);
         if (discoverDeviceCallback != null) {
             discoverDeviceCallback.accept(this, device);
         }
+    }
+
+    /**
+     * Called when a device is discovered. Overriding this method allows
+     * for an I/O device seeker to know when a device has been discovered
+     * without needing to set themselves as the callback.
+     *
+     * @param device the discovered device.
+     */
+    @SuppressWarnings("unused")
+    protected void deviceDiscovered(@NotNull I device) {
+        /* optional implement */
     }
 
     @MustBeInvokedByOverriders
@@ -136,9 +153,22 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             return;
         }
         devices.remove(device);
+        this.deviceForgotten(device);
         if (forgetDeviceCallback != null) {
             forgetDeviceCallback.accept(this, device);
         }
+    }
+
+    /**
+     * Called when a device is forgotten. Overriding this method allows
+     * for an I/O device seeker to know when a device has been forgotten
+     * without needing to set themselves as the callback.
+     *
+     * @param device the forgotten device.
+     */
+    @SuppressWarnings("unused")
+    protected void deviceForgotten(@NotNull I device) {
+        /* optional implement */
     }
 
     /**
@@ -165,12 +195,26 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         try {
             this.seekImpl();
         } catch (Throwable cause) {
+            this.seekerError(cause);
             if (errorCallback != null) {
                 errorCallback.accept(this, cause);
             } else {
                 throw new KetillException("error in DeviceSeeker", cause);
             }
         }
+    }
+
+
+    /**
+     * Called when an error occurs in {@link #seek()}. Overriding this
+     * method allows for an I/O device seeker to know when an error has
+     * occurred without needing to set themselves as the callback.
+     *
+     * @param cause the cause of the error.
+     */
+    @SuppressWarnings("unused")
+    protected void seekerError(@NotNull Throwable cause) {
+        /* optional implement */
     }
 
     /**

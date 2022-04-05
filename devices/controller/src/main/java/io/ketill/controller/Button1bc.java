@@ -11,4 +11,10 @@ public interface Button1bc {
      */
     boolean isPressed();
 
+    /**
+     * @return {@code true} if this button is currently held down,
+     * {@code false} otherwise.
+     */
+    boolean isHeld();
+
 }

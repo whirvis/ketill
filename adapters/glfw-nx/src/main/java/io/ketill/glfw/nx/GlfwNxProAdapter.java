@@ -108,15 +108,15 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     }
 
     @Override
-    protected void updateStick(@NotNull Vector3f stick,
+    protected void updateStick(@NotNull Vector3f pos,
                                @NotNull GlfwStickMapping mapping) {
-        super.updateStick(stick, mapping);
+        super.updateStick(pos, mapping);
         if (mapping == MAPPING_LS) {
-            stick.y *= -1.0F;
-            device.calibration.applyLs(stick);
+            pos.y *= -1.0F;
+            device.calibration.applyLs(pos);
         } else if (mapping == MAPPING_RS) {
-            stick.y *= -1.0F;
-            device.calibration.applyRs(stick);
+            pos.y *= -1.0F;
+            device.calibration.applyRs(pos);
         }
     }
 

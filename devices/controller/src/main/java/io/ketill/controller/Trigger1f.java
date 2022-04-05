@@ -1,17 +1,24 @@
 package io.ketill.controller;
 
+import io.ketill.AdapterUpdatedField;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Contains the state of an {@link AnalogTrigger}.
  */
 public class Trigger1f implements Trigger1fc {
 
+    @AdapterUpdatedField
     public float force;
+
+    public @NotNull Button1b button;
 
     /**
      * @param force the initial trigger force.
      */
     public Trigger1f(float force) {
         this.force = force;
+        this.button = new Button1b();
     }
 
     /**
@@ -22,8 +29,13 @@ public class Trigger1f implements Trigger1fc {
     }
 
     @Override
-    public float force() {
+    public float getForce() {
         return this.force;
+    }
+
+    @Override
+    public @NotNull Button1bc button() {
+        return this.button;
     }
 
 }

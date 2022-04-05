@@ -219,11 +219,11 @@ class GlfwJoystickAdapterTest {
 
             axes.put(glfwAxis, 1.23F);
             joystick.poll(); /* update axes */
-            assertEquals(1.23F, joystick.trigger.force());
+            assertEquals(1.23F, joystick.trigger.getForce());
 
             axes.put(glfwAxis, 0.00F);
             joystick.poll(); /* update axes */
-            assertEquals(0.00F, joystick.trigger.force());
+            assertEquals(0.00F, joystick.trigger.getForce());
         }
     }
 

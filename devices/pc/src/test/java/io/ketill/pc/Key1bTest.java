@@ -15,11 +15,19 @@ class Key1bTest {
     }
 
     @Test
-    void pressed() {
+    void isPressed() {
         key.pressed = true;
-        assertTrue(key.pressed());
+        assertTrue(key.isPressed());
         key.pressed = false;
-        assertFalse(key.pressed());
+        assertFalse(key.isPressed());
+    }
+
+    @Test
+    void isHeld() {
+        key.held = true;
+        assertTrue(key.isHeld());
+        key.held = false;
+        assertFalse(key.isHeld());
     }
 
 }

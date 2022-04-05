@@ -11,9 +11,9 @@ import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.Led1i;
 import io.ketill.controller.PlayerLed;
+import io.ketill.controller.Stick3fc;
 import io.ketill.controller.Trigger1fc;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3fc;
 
 import java.util.Objects;
 
@@ -90,7 +90,7 @@ public class NxProController extends Controller {
             left = this.getState(BUTTON_LEFT);
 
     @FeatureState
-    public final @NotNull Vector3fc
+    public final @NotNull Stick3fc
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 

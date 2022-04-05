@@ -62,12 +62,12 @@ class GlfwMouseAdapterTest {
             glfw.when(() -> glfwGetMouseButton(ptr_glfwWindow,
                     GLFW_MOUSE_BUTTON_1)).thenReturn(GLFW_PRESS);
             mouse.poll(); /* update mouse buttons */
-            assertTrue(mouse.m1.clicked());
+            assertTrue(mouse.m1.isClicked());
 
             glfw.when(() -> glfwGetMouseButton(ptr_glfwWindow,
                     GLFW_MOUSE_BUTTON_1)).thenReturn(GLFW_RELEASE);
             mouse.poll(); /* update mouse buttons */
-            assertFalse(mouse.m1.clicked());
+            assertFalse(mouse.m1.isClicked());
         }
     }
 

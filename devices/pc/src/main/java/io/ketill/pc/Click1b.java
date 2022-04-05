@@ -1,11 +1,18 @@
 package io.ketill.pc;
 
+import io.ketill.AdapterUpdatedField;
+import io.ketill.pressable.MonitorUpdatedField;
+
 /**
  * Contains the state of a {@link MouseButton}.
  */
 public class Click1b implements Click1bc {
 
+    @AdapterUpdatedField
     public boolean clicked;
+
+    @MonitorUpdatedField
+    public boolean held;
 
     /**
      * @param clicked the initial click state.
@@ -23,8 +30,13 @@ public class Click1b implements Click1bc {
     }
 
     @Override
-    public boolean clicked() {
+    public boolean isClicked() {
         return this.clicked;
+    }
+
+    @Override
+    public boolean isHeld() {
+        return this.held;
     }
 
 }

@@ -16,6 +16,8 @@ import java.util.function.Supplier;
  * @see IoDevice#registerFeature(IoFeature)
  * @see FeaturePresent
  * @see FeatureState
+ * @see AdapterUpdatedField
+ * @see UserUpdatedField
  */
 public class IoFeature<S> {
 

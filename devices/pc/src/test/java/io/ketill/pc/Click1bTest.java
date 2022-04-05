@@ -15,11 +15,19 @@ class Click1bTest {
     }
 
     @Test
-    void clicked() {
+    void isClicked() {
         click.clicked = true;
-        assertTrue(click.clicked());
+        assertTrue(click.isClicked());
         click.clicked = false;
-        assertFalse(click.clicked());
+        assertFalse(click.isClicked());
+    }
+
+    @Test
+    void isHeld() {
+        click.held = true;
+        assertTrue(click.isHeld());
+        click.held = false;
+        assertFalse(click.isHeld());
     }
 
 }

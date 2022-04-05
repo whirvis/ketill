@@ -1,17 +1,25 @@
 package io.ketill.controller;
 
 import io.ketill.AdapterSupplier;
+import io.ketill.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.IoDevice;
 import io.ketill.IoFeature;
 import io.ketill.RegisteredFeature;
+import io.ketill.pressable.PressableFeatureConfig;
+import io.ketill.pressable.PressableFeatureConfigView;
+import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.pressable.PressableFeatureMonitor;
+import io.ketill.pressable.PressableFeatureSupport;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3fc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * A controller which and can send receive I/O data. Examples of controllers
@@ -22,24 +30,20 @@ import java.util.Objects;
  * periodically via the {@link #poll()} method. It is recommended to poll
  * the controller once every application update.
  */
-public abstract class Controller extends IoDevice {
+public abstract class Controller extends IoDevice
+        implements PressableFeatureSupport {
 
-    public static final long DISABLE_HOLD = -1L;
-
-    private final @NotNull Map<DeviceButton, DeviceButtonMonitor> deviceButtons;
     private final @NotNull Map<RumbleMotor, Vibration1f> rumbleMotors;
+    private final @NotNull List<PressableFeatureMonitor<?, ?>> monitors;
+    private @NotNull PressableFeatureConfigView pressableConfig;
 
-    private long holdTime;
-    private long holdPressInterval;
-
-    /* package-private for monitor access */
-    @Nullable DeviceButtonCallback<? super Controller> buttonCallback;
+    private @Nullable Consumer<PressableFeatureEvent> pressableCallback;
 
     /**
      * The left and right analog sticks of the controller.<br>
      * These may not be present, and as such may be {@code null}.
      */
-    public final @Nullable Vector3fc ls, rs;
+    public final @Nullable Stick3fc ls, rs;
 
     /**
      * The left and right analog triggers of the controller.<br>
@@ -80,11 +84,10 @@ public abstract class Controller extends IoDevice {
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt,
                       boolean registerFields, boolean initAdapter) {
         super(id, adapterSupplier, false, false);
-        this.deviceButtons = new HashMap<>();
-        this.rumbleMotors = new HashMap<>();
 
-        this.holdTime = 1000L;
-        this.holdPressInterval = 100L;
+        this.rumbleMotors = new HashMap<>();
+        this.monitors = new ArrayList<>();
+        this.pressableConfig = PressableFeatureConfig.DEFAULT;
 
         if (registerFields) {
             this.registerFields();
@@ -148,203 +151,112 @@ public abstract class Controller extends IoDevice {
         if (feature == null) {
             return null;
         }
-        if (!this.isRegistered(feature)) {
+        if (!this.isFeatureRegistered(feature)) {
             this.registerFeature(feature);
         }
         return this.getState(feature);
     }
     /* @formatter:on */
 
-    /* @formatter:off */
     @Override
-    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
-            registerFeature(@NotNull F feature) {
-        RegisteredFeature<F, S> registered = super.registerFeature(feature);
-        if (feature instanceof DeviceButton) {
+    @MustBeInvokedByOverriders
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+        if (registered.feature instanceof DeviceButton) {
             DeviceButton button = (DeviceButton) registered.feature;
-            DeviceButtonMonitor monitor =
-                    new DeviceButtonMonitor(this, button);
-            synchronized (deviceButtons) {
-                deviceButtons.put(button, monitor);
+            synchronized (monitors) {
+                monitors.add(new DeviceButtonMonitor(this, button,
+                        () -> pressableCallback));
             }
-        } else if (feature instanceof RumbleMotor) {
+        } else if (registered.feature instanceof AnalogStick) {
+            AnalogStick stick = (AnalogStick) registered.feature;
+            Stick3f pos = (Stick3f) registered.state;
+
+            /* @formatter:off */
+            synchronized (monitors) {
+                monitors.add(new AnalogStickMonitor(this, stick,
+                        Direction.UP, pos.up, () -> pressableCallback));
+                monitors.add(new AnalogStickMonitor(this, stick,
+                        Direction.DOWN, pos.down, () -> pressableCallback));
+                monitors.add(new AnalogStickMonitor(this, stick,
+                        Direction.LEFT, pos.left, () -> pressableCallback));
+                monitors.add(new AnalogStickMonitor(this, stick,
+                        Direction.RIGHT, pos.right, () -> pressableCallback));
+            }
+            /* @formatter:on */
+        } else if (registered.feature instanceof AnalogTrigger) {
+            AnalogTrigger trigger = (AnalogTrigger) registered.feature;
+            synchronized (monitors) {
+                monitors.add(new AnalogTriggerMonitor(this, trigger,
+                        () -> pressableCallback));
+            }
+        } else if (registered.feature instanceof RumbleMotor) {
             RumbleMotor motor = (RumbleMotor) registered.feature;
             Vibration1f vibration = (Vibration1f) registered.state;
             synchronized (rumbleMotors) {
                 rumbleMotors.put(motor, vibration);
             }
         }
-        return registered;
     }
-    /* @formatter:on */
 
     @Override
-    public void unregisterFeature(@NotNull IoFeature<?> feature) {
-        super.unregisterFeature(feature);
-        if (feature instanceof DeviceButton) {
-            synchronized (deviceButtons) {
-                deviceButtons.remove(feature);
-            }
-        } else if (feature instanceof RumbleMotor) {
+    @MustBeInvokedByOverriders
+    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+        monitors.removeIf(monitor -> monitor.feature == feature);
+        if (feature instanceof RumbleMotor) {
             synchronized (rumbleMotors) {
-                rumbleMotors.remove(feature);
+                Vibration1f vibration = rumbleMotors.remove(feature);
+                vibration.setStrength(0.0F);
             }
         }
     }
 
     /**
-     * Sets the callback for when a {@link DeviceButton} related event
-     * occurs (e.g., when a button is pressed or released).
+     * Sets the vibration force of each rumble motor.
      *
-     * @param callback the code to execute when a {@link DeviceButton} related
-     *                 event occurs. A value of {@code null} is permitted, and
-     *                 will result in nothing being executed.
-     * @see #getHoldTime()
-     * @see #getHoldPressInterval()
+     * @param strength the vibration strength to set each motor to. This
+     *                 value will be capped to a range of {@code 0.0F}
+     *                 to {@code 1.0F} to prevent unexpected behaviors.
      */
-    public void onDeviceButtonEvent(@Nullable DeviceButtonCallback<?
-            super Controller> callback) {
-        this.buttonCallback = callback;
-    }
-
-    /**
-     * @return {@code true} if feature holding is enabled for this
-     * controller, {@code false} otherwise.
-     */
-    public boolean isHoldEnabled() {
-        return this.holdTime >= 0;
-    }
-
-    /**
-     * @return how long in milliseconds a feature must be pressed to be
-     * considered held down. A negative value indicates that this is
-     * disabled for the controller.
-     */
-    public long getHoldTime() {
-        return this.holdTime;
-    }
-
-    /**
-     * Sets how long in milliseconds a feature must be pressed for it to
-     * be considered held down. Once a feature is held down, the feature
-     * press callback (if set) will be automatically fired. The virtual
-     * press rate is determined by {@link #getHoldPressInterval()}.
-     *
-     * @param holdTime how long in milliseconds a feature must be
-     *                 pressed to be considered held down. A negative
-     *                 value indicates that this is disabled for the
-     *                 controller.
-     * @see #setHoldPressInterval(long)
-     */
-    public void setHoldTime(long holdTime) {
-        this.holdTime = holdTime;
-    }
-
-    /**
-     * @return how many milliseconds should pass between virtual feature
-     * presses when a feature is being held down.
-     */
-    public long getHoldPressInterval() {
-        return this.holdPressInterval;
-    }
-
-    /**
-     * Sets how many milliseconds should pass between virtual feature
-     * presses when a feature is considered to be held down. While not
-     * recommended, {@code holdPressInterval} may be as low as one.
-     * The time required for a feature to be considered held down is
-     * determined by {@link #getHoldTime()}.
-     *
-     * @param holdPressInterval how many milliseconds should pass
-     *                          between virtual feature presses.
-     * @throws IllegalArgumentException if {@code holdPressInterval}
-     *                                  is less than one.
-     * @see #setHoldTime(long)
-     */
-    public void setHoldPressInterval(long holdPressInterval) {
-        if (holdPressInterval < 1) {
-            String msg = "holdPressInterval cannot be less than one";
-            throw new IllegalArgumentException(msg);
-        }
-        this.holdPressInterval = holdPressInterval;
-    }
-
-    /**
-     * Returns if a button is currently being held down.
-     * <p>
-     * A button is considered held down if it has been pressed for a time
-     * longer than or equal to the value returned by {@link #getHoldTime()}.
-     *
-     * @param button the button to check.
-     * @return {@code true} if {@code button} is currently being held down,
-     * {@code false} otherwise. If {@link #getHoldTime()} returns a negative
-     * value, this method will always return {@code false}.
-     * @throws NullPointerException if {@code button} is {@code null}.
-     * @see #setHoldTime(long)
-     * @see #setHoldPressInterval(long)
-     */
-    public boolean isHeld(@NotNull DeviceButton button) {
-        Objects.requireNonNull(button, "button cannot be null");
-        if (this.isHoldEnabled()) {
-            return false;
-        }
-        DeviceButtonMonitor monitor = deviceButtons.get(button);
-        return monitor != null && monitor.isButtonHeld();
-    }
-
-    /**
-     * Returns if a button is currently being held down.
-     * <p>
-     * A button is considered held down if it has been pressed for a time
-     * longer than or equal to the value returned by {@link #getHoldTime()}.
-     *
-     * @param buttonState the state of the button to check.
-     * @return {@code true} if {@code buttonState} is currently being held
-     * down, {@code false} otherwise. If feature holding is disabled, this
-     * method will always return {@code false}.
-     * @throws NullPointerException if {@code buttonState} is {@code null}.
-     * @see #isHoldEnabled()
-     * @see #setHoldTime(long)
-     */
-    public boolean isHeld(@NotNull Button1bc buttonState) {
-        Objects.requireNonNull(buttonState, "buttonState cannot be null");
-        if (this.isHoldEnabled()) {
-            return false;
-        }
-
-        IoFeature<?> feature = this.getFeature(buttonState);
-        if (!(feature instanceof DeviceButton)) {
-            return false;
-        } else {
-            return this.isHeld((DeviceButton) feature);
-        }
-    }
-
-    /**
-     * Sets the vibration force of each rumble motor. To prevent unexpected
-     * behavior, the force is capped between a value of {@code 0.0F} and
-     * {@code 1.0F}.
-     *
-     * @param force the vibration force to set each motor to.
-     */
-    public void rumble(float force) {
-        float capped = Math.min(Math.max(force, 0.0F), 1.0F);
+    public void rumble(float strength) {
         synchronized (rumbleMotors) {
             for (Vibration1f vibration : rumbleMotors.values()) {
-                vibration.force = capped;
+                vibration.setStrength(strength);
             }
         }
     }
 
+    protected final @Nullable Consumer<PressableFeatureEvent> getPressableCallback() {
+        return this.pressableCallback;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Note:</b> Classes extending {@code Controller} can access the
+     * callback set here via {@link #getPressableCallback()}.
+     */
     @Override
+    public final void onPressableEvent(@Nullable Consumer<PressableFeatureEvent> callback) {
+        this.pressableCallback = callback;
+    }
+
+    @Override
+    public final void usePressableConfig(@Nullable PressableFeatureConfigView view) {
+        this.pressableConfig = PressableFeatureConfig.valueOf(view);
+    }
+
+    @Override
+    public final @NotNull PressableFeatureConfigView getPressableConfig() {
+        return this.pressableConfig;
+    }
+
+    @Override
+    @MustBeInvokedByOverriders
     public void poll() {
-        long currentTime = System.currentTimeMillis();
-
         super.poll();
-
-        synchronized (deviceButtons) {
-            for (DeviceButtonMonitor monitor : deviceButtons.values()) {
-                monitor.fireEvents(currentTime);
+        synchronized (monitors) {
+            for (PressableFeatureMonitor<?, ?> monitor : monitors) {
+                monitor.poll();
             }
         }
     }

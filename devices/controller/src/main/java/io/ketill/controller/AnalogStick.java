@@ -5,8 +5,9 @@ import io.ketill.IoFeature;
 import io.ketill.KetillException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
+
+import java.util.Objects;
 
 /**
  * An I/O feature representing an analog stick on a {@link Controller}.
@@ -15,7 +16,7 @@ import org.joml.Vector3fc;
  * @see AnalogTrigger
  * @see #isPressed(Vector3fc, Direction)
  */
-public class AnalogStick extends IoFeature<Vector3f> {
+public class AnalogStick extends IoFeature<Stick3f> {
 
     private static final float STICK_PRESS = 2.0F / 3.0F;
 
@@ -24,9 +25,11 @@ public class AnalogStick extends IoFeature<Vector3f> {
      * @param direction the direction to check for.
      * @return {@code true} if {@code pos} is pointing towards
      * {@code direction}, {@code false} otherwise.
+     * @throws NullPointerException if {@code direction} is {@code null}.
      */
     public static boolean isPressed(@NotNull Vector3fc pos,
                                     @NotNull Direction direction) {
+        Objects.requireNonNull(direction, "direction cannot be null");
         switch (direction) {
             case UP:
                 return pos.y() >= STICK_PRESS;
@@ -54,7 +57,7 @@ public class AnalogStick extends IoFeature<Vector3f> {
      *                                  whitespace.
      */
     public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton) {
-        super(id, Vector3f::new);
+        super(id, Stick3f::new);
         this.zButton = zButton;
     }
 
