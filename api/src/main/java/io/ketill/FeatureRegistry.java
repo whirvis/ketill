@@ -48,6 +48,22 @@ public interface FeatureRegistry {
     }
 
     /**
+     * Unlike {@link #getState(IoFeature)}, this method will not throw an
+     * {@code IllegalStateException} if {@code feature} is not registered.
+     * Rather, it will simply return {@code null}.
+     *
+     * @param feature the feature whose state to fetch.
+     * @param <S>     the state container type.
+     * @return the current state of {@code feature}, {@code null} if
+     * it is not registered.
+     * @throws NullPointerException if {@code feature} is {@code null}.
+     */
+    default <S> @Nullable S requestState(@NotNull IoFeature<S> feature) {
+        RegisteredFeature<?, S> registered = this.getFeatureRegistration(feature);
+        return registered != null ? registered.state : null;
+    }
+
+    /**
      * @param feature the feature to register.
      * @param <F>     the device feature type.
      * @param <S>     the state container type.

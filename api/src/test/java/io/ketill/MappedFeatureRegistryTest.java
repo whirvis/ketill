@@ -184,6 +184,26 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
+    void requestState() {
+        MockIoFeature feature = new MockIoFeature();
+
+        /*
+         * It makes no sense to retrieve the state of a null feature.
+         * As such, assume this was a mistake by the user and throw
+         * an exception.
+         */
+        assertThrows(NullPointerException.class, () -> registry.getState(null));
+        assertThrows(IllegalStateException.class,
+                () -> registry.getState(feature));
+
+        /*
+         * Unlike getState(), requestState() simply returns null if
+         * the feature is not currently registered.
+         */
+        assertNull(registry.requestState(feature));
+    }
+
+    @Test
     void registerFeature() {
         /* it is convient to test isRegistered() here */
         MockIoFeature feature = new MockIoFeature();
