@@ -10,7 +10,7 @@ class PressableFeatureEventTypeTest {
     void fromId() {
         /*
          * It would not make sense to get a feature event
-         * type from ID for a feature that does not exist.
+         * type from an ID for a type that does not exist.
          * As such, assume this was a user mistake by the
          * user and throw an exception.
          */
