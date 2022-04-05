@@ -121,7 +121,7 @@ public class Mouse extends IoDevice
     /**
      * {@inheritDoc}
      * <p>
-     * <b>Note:</b> Classes extending {@code Controller} can access the
+     * <b>Note:</b> Classes extending {@code Mouse} can access the
      * callback set here via {@link #getPressableCallback()}.
      */
     @Override

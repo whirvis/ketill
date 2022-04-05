@@ -333,7 +333,7 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
     /**
      * {@inheritDoc}
      * <p>
-     * <b>Note:</b> Classes extending {@code Controller} can access the
+     * <b>Note:</b> Classes extending {@code Keyboard} can access the
      * callback set here via {@link #getPressableCallback()}.
      */
     @Override
