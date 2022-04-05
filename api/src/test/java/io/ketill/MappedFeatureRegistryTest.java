@@ -140,9 +140,9 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void getRegistered() {
+    void getFeatureRegistration() {
         MockIoFeature feature = new MockIoFeature();
-        assertNull(registry.getRegistered(feature));
+        assertNull(registry.getFeatureRegistration(feature));
 
         /*
          * The getRegistered() method returns the instance of an earlier
@@ -151,14 +151,14 @@ class MappedFeatureRegistryTest {
          */
         RegisteredFeature<?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertSame(registeredFeature, registry.getRegistered(feature));
+        assertSame(registeredFeature, registry.getFeatureRegistration(feature));
 
         /*
          * It makes no sense to get the registration of a null feature. As
          * such, assume this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> registry.getRegistered(null));
+                () -> registry.getFeatureRegistration(null));
     }
 
     @Test
@@ -207,10 +207,10 @@ class MappedFeatureRegistryTest {
     void registerFeature() {
         /* it is convient to test isRegistered() here */
         MockIoFeature feature = new MockIoFeature();
-        assertFalse(registry.isRegistered(feature));
+        assertFalse(registry.isFeatureRegistered(feature));
         RegisteredFeature<?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertTrue(registry.isRegistered(feature));
+        assertTrue(registry.isFeatureRegistered(feature));
 
         /*
          * Ensure that the fields within registeredFeature correlate to their
@@ -240,7 +240,7 @@ class MappedFeatureRegistryTest {
         registry.registerFeature(feature); /* required to unregister */
 
         registry.unregisterFeature(feature);
-        assertFalse(registry.isRegistered(feature));
+        assertFalse(registry.isFeatureRegistered(feature));
 
         /*
          * It makes no sense to unregister a null feature or a feature which

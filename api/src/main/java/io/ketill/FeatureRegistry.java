@@ -13,10 +13,17 @@ public interface FeatureRegistry {
      * otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    boolean isRegistered(@NotNull IoFeature<?> feature);
+    boolean isFeatureRegistered(@NotNull IoFeature<?> feature);
+
+    /**
+     * @return the amount of registered features.
+     * @see #getFeatures()
+     */
+    int getFeatureCount();
 
     /**
      * @return all registered features.
+     * @see #getFeatureCount()
      */
     @NotNull Collection<@NotNull RegisteredFeature<?, ?>> getFeatures();
 
@@ -28,18 +35,22 @@ public interface FeatureRegistry {
      */
     /* @formatter:off */
     <S> @Nullable RegisteredFeature<?, S>
-            getRegistered(@NotNull IoFeature<S> feature);
+            getFeatureRegistration(@NotNull IoFeature<S> feature);
     /* @formatter:on */
 
     /**
+     * Unlike {@link #requestState(IoFeature)}, this method will not return
+     * {@code null} if {@code feature} is not registered. Rather, it will
+     * throw an {@code IllegalStateException}.
+     *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
      * @return the current state of {@code feature}.
-     * @throws NullPointerException if {@code feature} is {@code null}.
+     * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
     default <S> @NotNull S getState(@NotNull IoFeature<S> feature) {
-        RegisteredFeature<?, S> registered = this.getRegistered(feature);
+        RegisteredFeature<?, S> registered = this.getFeatureRegistration(feature);
         if (registered == null) {
             String msg = "no such feature \"" + feature.id + "\"";
             throw new IllegalStateException(msg);
@@ -68,7 +79,7 @@ public interface FeatureRegistry {
      * @param <F>     the device feature type.
      * @param <S>     the state container type.
      * @return the feature registration.
-     * @throws NullPointerException if {@code feature} is {@code null}.
+     * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is already registered.
      */
     /* @formatter:off */
@@ -78,7 +89,7 @@ public interface FeatureRegistry {
 
     /**
      * @param feature the feature to unregister.
-     * @throws NullPointerException if {@code feature} is {@code null}.
+     * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
     void unregisterFeature(@NotNull IoFeature<?> feature);

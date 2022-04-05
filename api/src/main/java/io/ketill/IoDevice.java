@@ -203,7 +203,7 @@ public abstract class IoDevice implements FeatureRegistry {
              * slim possibility, it would be infuriating to debug. As such,
              * perform this check before making the call to register.
              */
-            if (!this.isRegistered(feature)) {
+            if (!this.isFeatureRegistered(feature)) {
                 this.registerFeature(feature);
             }
         } catch (IllegalAccessException e) {
@@ -285,8 +285,13 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     @Override
-    public boolean isRegistered(@NotNull IoFeature<?> feature) {
-        return registry.isRegistered(feature);
+    public boolean isFeatureRegistered(@NotNull IoFeature<?> feature) {
+        return registry.isFeatureRegistered(feature);
+    }
+
+    @Override
+    public int getFeatureCount() {
+        return registry.getFeatureCount();
     }
 
     /* @formatter:off */
@@ -300,8 +305,8 @@ public abstract class IoDevice implements FeatureRegistry {
     /* @formatter:off */
     @Override
     public <S> @Nullable RegisteredFeature<?, S>
-            getRegistered(@NotNull IoFeature<S> feature) {
-        return registry.getRegistered(feature);
+            getFeatureRegistration(@NotNull IoFeature<S> feature) {
+        return registry.getFeatureRegistration(feature);
     }
     /* @formatter:on */
 

@@ -52,7 +52,7 @@ class IoDeviceTest {
          */
         MockIoDevice device = new MockIoDevice("mock", adapterSupplier,
                 false, false);
-        assertFalse(device.isRegistered(MockIoDevice.FEATURE));
+        assertFalse(device.isFeatureRegistered(MockIoDevice.FEATURE));
         assertFalse(adapter.get().isInitialized());
     }
 
@@ -92,7 +92,7 @@ class IoDeviceTest {
          * field which is present in the MockInputDevice class and is
          * annotated with @FeaturePresent.
          */
-        assertTrue(device.isRegistered(MockIoDevice.FEATURE));
+        assertTrue(device.isFeatureRegistered(MockIoDevice.FEATURE));
 
         /*
          * Attempting to call registerFields() again should result in an
@@ -156,28 +156,28 @@ class IoDeviceTest {
     }
 
     @Test
-    void getRegistered() {
+    void getFeatureRegistration() {
         /*
          * The getRegistered() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        assertSame(device.getRegistered(MockIoDevice.FEATURE),
-                adapter.registry.getRegistered(MockIoDevice.FEATURE));
+        assertSame(device.getFeatureRegistration(MockIoDevice.FEATURE),
+                adapter.registry.getFeatureRegistration(MockIoDevice.FEATURE));
     }
 
     @Test
-    void isRegistered() {
+    void isFeatureRegistered() {
         MockIoFeature feature = new MockIoFeature();
 
         /*
          * The isRegistered() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        assertEquals(device.isRegistered(feature),
-                adapter.registry.isRegistered(feature));
+        assertEquals(device.isFeatureRegistered(feature),
+                adapter.registry.isFeatureRegistered(feature));
         device.registerFeature(feature);
-        assertEquals(device.isRegistered(feature),
-                adapter.registry.isRegistered(feature));
+        assertEquals(device.isFeatureRegistered(feature),
+                adapter.registry.isFeatureRegistered(feature));
     }
 
     @Test
@@ -188,7 +188,7 @@ class IoDeviceTest {
 
         device.registerFeature(feature);
         assertTrue(registered.get());
-        assertTrue(device.isRegistered(feature));
+        assertTrue(device.isFeatureRegistered(feature));
 
         /*
          * A null value is allowed when setting a callback. This should
@@ -216,7 +216,7 @@ class IoDeviceTest {
 
         device.unregisterFeature(feature);
         assertTrue(unregistered.get());
-        assertFalse(device.isRegistered(feature));
+        assertFalse(device.isFeatureRegistered(feature));
 
         /*
          * A null value is allowed when setting a callback. This should
