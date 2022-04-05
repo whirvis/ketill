@@ -27,6 +27,9 @@ class XInputXboxAdapterTest {
 
     @BeforeEach
     void setup() {
+        assertTrue(XInputStatus.isAvailable());
+        assertDoesNotThrow(XInputStatus::requireAvailable);
+
         this.xDevice = mock(XInputDevice.class);
         this.xAxes = mock(XInputAxes.class);
         this.xButtons = mock(XInputButtons.class);
@@ -78,13 +81,13 @@ class XInputXboxAdapterTest {
 
         controller.poll(); /* update stick positions */
 
-        assertEquals(controller.ls.x(), 0.123F);
-        assertEquals(controller.ls.y(), 0.456F);
-        assertEquals(controller.ls.z(), 0.0F);
+        assertEquals(0.123F, controller.ls.x());
+        assertEquals(0.456F, controller.ls.y());
+        assertEquals(0.0F, controller.ls.z());
 
-        assertEquals(controller.rs.x(), 0.789F);
-        assertEquals(controller.rs.y(), 1.011F);
-        assertEquals(controller.rs.z(), -1.0F);
+        assertEquals(0.789F, controller.rs.x());
+        assertEquals(1.011F, controller.rs.y());
+        assertEquals(-1.0F, controller.rs.z());
     }
 
     @Test
@@ -121,8 +124,8 @@ class XInputXboxAdapterTest {
         controller.poll(); /* update rumble motors */
         verify(xDevice, never()).setVibration(anyInt(), anyInt());
 
-        controller.rumbleCoarse.strength = -1.0F;
-        controller.rumbleFine.strength = 2.0F;
+        controller.rumbleCoarse.setStrength(-1.0F);
+        controller.rumbleFine.setStrength(2.0F);
 
         /*
          * If the rumble motor force is out of bounds, it is up to the

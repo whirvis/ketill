@@ -5,20 +5,18 @@ import io.ketill.MappingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-
 @MappingType
 final class StickMapping {
 
     final @NotNull XInputAxis xAxis;
     final @NotNull XInputAxis yAxis;
-    final @Nullable Field zButtonField;
+    final @Nullable XInputButton zButton;
 
     StickMapping(@NotNull XInputAxis xAxis, @NotNull XInputAxis yAxis,
-                 @Nullable Field zButtonField) {
+                 @Nullable XInputButton zButton) {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
-        this.zButtonField = zButtonField;
+        this.zButton = zButton;
     }
 
 }

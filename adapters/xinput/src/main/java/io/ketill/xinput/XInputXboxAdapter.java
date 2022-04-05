@@ -7,7 +7,6 @@ import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDeviceAdapter;
-import io.ketill.KetillException;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 import static io.ketill.xbox.XboxController.*;
@@ -55,48 +53,19 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
         this.xDevice = Objects.requireNonNull(xDevice, "xDevice");
     }
 
-    private boolean isPressed(@Nullable Field field) {
-        if (field == null) {
-            return false;
-        }
-        try {
-            return field.getBoolean(buttons);
-        } catch (IllegalAccessException e) {
-            throw new KetillException(e);
-        }
-    }
-
-    @Nullable
-    private Field getButtonField(@Nullable String fieldName) {
-        if (fieldName == null) {
-            return null;
-        }
-        try {
-            return XInputButtons.class.getField(fieldName);
-        } catch (NoSuchFieldException e) {
-            String msg = "no such button " + fieldName;
-            throw new KetillException(msg, e);
-        } catch (SecurityException e) {
-            String msg = "field " + fieldName + " not accessible";
-            throw new KetillException(msg, e);
-        }
-    }
-
     @MappingMethod
     private void mapXButton(@NotNull DeviceButton button,
-                            @NotNull String buttonFieldName) {
-        Field field = this.getButtonField(buttonFieldName);
-        registry.mapFeature(button, field, this::updateButton);
+                            @NotNull XInputButton accessor) {
+        registry.mapFeature(button, accessor, this::updateButton);
     }
 
     @MappingMethod
     private void mapXStick(@NotNull AnalogStick stick,
                            @NotNull XInputAxis xAxis,
                            @NotNull XInputAxis yAxis,
-                           @Nullable String zButtonFieldName) {
-        Field zButtonField = this.getButtonField(zButtonFieldName);
-        StickMapping m = new StickMapping(xAxis, yAxis, zButtonField);
-        registry.mapFeature(stick, m, this::updateStick);
+                           @Nullable XInputButton zReader) {
+        StickMapping mapping = new StickMapping(xAxis, yAxis, zReader);
+        registry.mapFeature(stick, mapping, this::updateStick);
     }
 
     @MappingMethod
@@ -111,26 +80,26 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @Override
-    public void initAdapter() {
-        this.mapXButton(BUTTON_A, "a");
-        this.mapXButton(BUTTON_B, "b");
-        this.mapXButton(BUTTON_X, "x");
-        this.mapXButton(BUTTON_Y, "y");
-        this.mapXButton(BUTTON_LB, "lShoulder");
-        this.mapXButton(BUTTON_RB, "rShoulder");
-        this.mapXButton(BUTTON_GUIDE, "guide");
-        this.mapXButton(BUTTON_START, "start");
-        this.mapXButton(BUTTON_L_THUMB, "lThumb");
-        this.mapXButton(BUTTON_R_THUMB, "rThumb");
-        this.mapXButton(BUTTON_UP, "up");
-        this.mapXButton(BUTTON_RIGHT, "right");
-        this.mapXButton(BUTTON_DOWN, "down");
-        this.mapXButton(BUTTON_LEFT, "left");
+    protected void initAdapter() {
+        this.mapXButton(BUTTON_A, xb -> xb.a);
+        this.mapXButton(BUTTON_B, xb -> xb.b);
+        this.mapXButton(BUTTON_X, xb -> xb.x);
+        this.mapXButton(BUTTON_Y, xb -> xb.y);
+        this.mapXButton(BUTTON_LB, xb -> xb.lShoulder);
+        this.mapXButton(BUTTON_RB, xb -> xb.rShoulder);
+        this.mapXButton(BUTTON_GUIDE, xb -> xb.guide);
+        this.mapXButton(BUTTON_START, xb -> xb.start);
+        this.mapXButton(BUTTON_L_THUMB, xb -> xb.lThumb);
+        this.mapXButton(BUTTON_R_THUMB, xb -> xb.rThumb);
+        this.mapXButton(BUTTON_UP, xb -> xb.up);
+        this.mapXButton(BUTTON_RIGHT, xb -> xb.right);
+        this.mapXButton(BUTTON_DOWN, xb -> xb.down);
+        this.mapXButton(BUTTON_LEFT, xb -> xb.left);
 
         this.mapXStick(STICK_LS, XInputAxis.LEFT_THUMBSTICK_X,
-                XInputAxis.LEFT_THUMBSTICK_Y, "lThumb");
+                XInputAxis.LEFT_THUMBSTICK_Y, xb -> xb.lThumb);
         this.mapXStick(STICK_RS, XInputAxis.RIGHT_THUMBSTICK_X,
-                XInputAxis.RIGHT_THUMBSTICK_Y, "rThumb");
+                XInputAxis.RIGHT_THUMBSTICK_Y, xb -> xb.rThumb);
 
         this.mapXTrigger(TRIGGER_LT, XInputAxis.LEFT_TRIGGER);
         this.mapXTrigger(TRIGGER_RT, XInputAxis.RIGHT_TRIGGER);
@@ -140,16 +109,23 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateButton(@NotNull Button1b button, @NotNull Field field) {
-        button.pressed = this.isPressed(field);
+    private void updateButton(@NotNull Button1b state,
+                              @NotNull XInputButton button) {
+        state.pressed = button.isPressed(buttons);
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f stick,
+    private void updateStick(@NotNull Vector3f pos,
                              @NotNull StickMapping mapping) {
-        stick.x = axes.get(mapping.xAxis);
-        stick.y = axes.get(mapping.yAxis);
-        stick.z = this.isPressed(mapping.zButtonField) ? -1.0F : 0.0F;
+        pos.x = axes.get(mapping.xAxis);
+        pos.y = axes.get(mapping.yAxis);
+
+        XInputButton zButton = mapping.zButton;
+        if (zButton != null && zButton.isPressed(buttons)) {
+            pos.z = -1.0F;
+        } else {
+            pos.z = 0.0F;
+        }
     }
 
     @FeatureAdapter
@@ -166,7 +142,7 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
          * force that is out of its valid bounds. Clamping the force will
          * prevent this from occurring.
          */
-        int force = (int) Math.ceil(RUMBLE_MAX * vibration.force);
+        int force = (int) Math.ceil(RUMBLE_MAX * vibration.getStrength());
         force = Math.min(Math.max(force, RUMBLE_MIN), RUMBLE_MAX);
 
         /*
