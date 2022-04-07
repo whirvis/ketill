@@ -42,16 +42,14 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
         requireScanWaitDisabled();
         if (!attached.contains(peripheral)) {
             attached.add(peripheral);
-            this.seek(); /* scan for peripherals */
         }
+        this.seek(); /* scan for peripherals */
     }
 
     void detachMock(@NotNull MockPeripheral peripheral) {
         requireScanWaitDisabled();
-        if (attached.contains(peripheral)) {
-            attached.remove(peripheral);
-            this.seek(); /* scan for peripherals */
-        }
+        attached.remove(peripheral);
+        this.seek(); /* scan for peripherals */
     }
 
     @Override
