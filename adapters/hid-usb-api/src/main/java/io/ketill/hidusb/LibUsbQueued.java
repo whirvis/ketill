@@ -1,12 +1,14 @@
 package io.ketill.hidusb;
 
+import org.jetbrains.annotations.NotNull;
+
 final class LibUsbQueued<L> {
 
-    final L device;
+    final @NotNull L device;
     int attemptsLeft;
     long lastAttempt;
 
-    LibUsbQueued(L device, int attempts) {
+    LibUsbQueued(@NotNull L device, int attempts) {
         this.device = device;
         this.attemptsLeft = attempts;
     }

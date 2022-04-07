@@ -186,7 +186,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
     }
 
     @Override
-    protected void onDeviceConnect(@NotNull HidDevice device) {
+    protected void peripheralConnected(@NotNull HidDevice device) {
         HidPs4Type type = HidPs4Type.fromPath(device.getPath());
 
         AdapterSupplier<Ps4Controller> adapterSupplier = null;
@@ -205,7 +205,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
     }
 
     @Override
-    protected void onDeviceDisconnect(@NotNull HidDevice device) {
+    protected void peripheralDisconnected(@NotNull HidDevice device) {
         HidPs4Session session = sessions.remove(device);
         if (session != null) {
             this.forgetDevice(session.controller);

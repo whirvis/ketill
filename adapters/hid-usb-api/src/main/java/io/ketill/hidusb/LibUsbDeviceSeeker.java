@@ -21,7 +21,7 @@ import java.util.Objects;
  * the HID protocol.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must be
- * told which devices to seek out via {@link #targetProduct(DeviceId)}. If
+ * told which devices to seek out via {@link #targetProduct(ProductId)}. If
  * this is neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
@@ -31,7 +31,7 @@ import java.util.Objects;
  *            as the template type here instead.
  */
 public abstract class LibUsbDeviceSeeker<I extends IoDevice,
-        L extends LibUsbDevice> extends SystemDeviceSeeker<I, L> {
+        L extends LibUsbDevice> extends PeripheralSeeker<I, L> {
 
     private final Context usbContext;
     private final LibUsbDeviceSupplier<L> deviceSupplier;
@@ -125,40 +125,40 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     }
 
     @Override
-    protected final @NotNull DeviceId getDeviceId(@NotNull L device) {
+    protected final @NotNull ProductId getId(@NotNull L peripheral) {
         /*
          * Vendor IDs and product IDs are unsigned shorts. However,
          * the underlying LibUSB API returns them as a signed Java
          * short. This converts them to an unsigned value and stores
          * them in an int so the expected value is returned.
          */
-        int vendorId = device.usbDescriptor.idVendor() & 0xFFFF;
-        int productId = device.usbDescriptor.idProduct() & 0xFFFF;
-        return new DeviceId(vendorId, productId);
+        int vendorId = peripheral.usbDescriptor.idVendor() & 0xFFFF;
+        int productId = peripheral.usbDescriptor.idProduct() & 0xFFFF;
+        return new ProductId(vendorId, productId);
     }
 
     @Override
-    protected final int getDeviceHash(@NotNull L device) {
-        return device.hashCode();
+    protected final int getHash(@NotNull L peripheral) {
+        return peripheral.hashCode();
     }
 
     @Override
-    protected void onDeviceAttach(@NotNull L device) {
+    protected void peripheralAttached(@NotNull L peripheral) {
         synchronized (connectQueue) {
-            connectQueue.put(device, new LibUsbQueued<>(device, 3));
+            connectQueue.put(peripheral, new LibUsbQueued<>(peripheral, 3));
         }
     }
 
     @Override
-    protected void onDeviceDetach(@NotNull L device) {
+    protected void peripheralDetached(@NotNull L peripheral) {
         synchronized (connectQueue) {
-            connectQueue.remove(device);
-            this.disconnectDevice(device, true);
+            connectQueue.remove(peripheral);
+            this.disconnectPeripheral(peripheral);
         }
     }
 
     @Override
-    protected final @NotNull Collection<@NotNull L> scanDevices() {
+    protected final @NotNull Collection<@NotNull L> scanPeripherals() {
         return LibUsbDevice.getConnected(usbContext, deviceSupplier);
     }
 
@@ -170,13 +170,13 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
 
         try {
             queued.device.openHandle();
-            this.connectDevice(queued.device);
+            this.connectPeripheral(queued.device);
             return true; /* device connected */
         } catch (LibUsbException e) {
             queued.attemptsLeft--;
             queued.lastAttempt = currentTime;
             if (queued.attemptsLeft <= 0) {
-                this.blockDevice(queued.device, e, true);
+                this.blockPeripheral(queued.device, e, true);
                 return true; /* all attempts used */
             }
             return false; /* failed to open */

@@ -21,13 +21,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * {@link LibUsbDeviceSeeker} should be used for those.
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the device seeker must
- * be told which devices to seek out via {@link #targetProduct(DeviceId)}.
+ * be told which devices to seek out via {@link #targetProduct(ProductId)}.
  * If this is neglected, an {@code IllegalStateException} will be thrown.
  *
  * @param <I> the I/O device type.
  */
 public abstract class HidDeviceSeeker<I extends IoDevice>
-        extends SystemDeviceSeeker<I, HidDevice> {
+        extends PeripheralSeeker<I, HidDevice> {
 
     private final List<HidDevice> scanned;
     private final HidServices services;
@@ -98,10 +98,10 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     /* package-private for testing */
     synchronized void hidFailure(HidServicesEvent event) {
         HidDevice device = event.getHidDevice();
-        if (!this.isClosed() && !this.isBlocked(device)) {
+        if (!this.isClosed() && !this.isPeripheralBlocked(device)) {
             try {
                 scanned.remove(device);
-                this.blockDevice(device, true);
+                this.blockPeripheral(device, true);
             } catch (Exception e) {
                 this.hidException = e;
             }
@@ -109,30 +109,30 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     }
 
     @Override
-    protected final @NotNull DeviceId getDeviceId(@NotNull HidDevice device) {
-        int vendorId = device.getVendorId();
-        int productId = device.getProductId();
-        return new DeviceId(vendorId, productId);
+    protected final @NotNull ProductId getId(@NotNull HidDevice peripheral) {
+        int vendorId = peripheral.getVendorId();
+        int productId = peripheral.getProductId();
+        return new ProductId(vendorId, productId);
     }
 
     @Override
-    protected final int getDeviceHash(@NotNull HidDevice device) {
-        return device.hashCode();
+    protected final int getHash(@NotNull HidDevice peripheral) {
+        return peripheral.hashCode();
     }
 
     @Override
-    protected final @NotNull Collection<@NotNull HidDevice> scanDevices() {
+    protected final @NotNull Collection<@NotNull HidDevice> scanPeripherals() {
         return this.scanned;
     }
 
     @Override
-    protected void onDeviceAttach(@NotNull HidDevice device) {
+    protected void peripheralAttached(@NotNull HidDevice peripheral) {
         try {
-            if (device.open()) {
-                device.setNonBlocking(true);
-                this.connectDevice(device);
+            if (peripheral.open()) {
+                peripheral.setNonBlocking(true);
+                this.connectPeripheral(peripheral);
             } else {
-                this.blockDevice(device, true);
+                this.blockPeripheral(peripheral, true);
             }
         } catch (Exception e) {
             this.hidException = e;
@@ -140,10 +140,10 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     }
 
     @Override
-    protected void onDeviceDetach(@NotNull HidDevice device) {
+    protected void peripheralDetached(@NotNull HidDevice peripheral) {
         try {
-            device.close();
-            this.disconnectDevice(device, true);
+            peripheral.close();
+            this.disconnectPeripheral(peripheral);
         } catch (Exception e) {
             this.hidException = e;
         }

@@ -8,7 +8,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
-class DeviceIdTest {
+class ProductIdTest {
 
     @Test
     void __init__() {
@@ -17,18 +17,18 @@ class DeviceIdTest {
          * the range of 0x0000 to 0xFFFF is out of bounds.
          */
         assertThrows(IllegalArgumentException.class,
-                () -> new DeviceId(Integer.MIN_VALUE, 0x0000));
+                () -> new ProductId(Integer.MIN_VALUE, 0x0000));
         assertThrows(IllegalArgumentException.class,
-                () -> new DeviceId(Integer.MAX_VALUE, 0x0000));
+                () -> new ProductId(Integer.MAX_VALUE, 0x0000));
 
         /*
          * Product IDs are an unsigned short. Any value outside
          * the range of 0x0000 to 0xFFFF is out of bounds.
          */
         assertThrows(IllegalArgumentException.class,
-                () -> new DeviceId(0x0000, Integer.MIN_VALUE));
+                () -> new ProductId(0x0000, Integer.MIN_VALUE));
         assertThrows(IllegalArgumentException.class,
-                () -> new DeviceId(0x0000, Integer.MAX_VALUE));
+                () -> new ProductId(0x0000, Integer.MAX_VALUE));
 
         /*
          * Any randomly generated number within a range 0x0000 to
@@ -38,44 +38,29 @@ class DeviceIdTest {
         Random random = new Random();
         int vendorId = random.nextInt(0xFFFF);
         int productId = random.nextInt(0xFFFF);
-        assertDoesNotThrow(() -> new DeviceId(vendorId, productId));
+        assertDoesNotThrow(() -> new ProductId(vendorId, productId));
     }
 
     @Test
     void testEquals() {
-        DeviceId id = new DeviceId(0x1234, 0x5678);
+        ProductId id = new ProductId(0x1234, 0x5678);
 
-        /*
-         * TODO
-         */
         boolean equalsNull = id.equals(null);
         assertFalse(equalsNull);
 
-        /*
-         * TODO
-         */
         Object obj = new Object();
         boolean equalsObj = id.equals(obj);
         assertFalse(equalsObj);
 
-        /*
-         * TODO
-         */
-        DeviceId blank = new DeviceId(0x0000, 0x0000);
+        ProductId blank = new ProductId(0x0000, 0x0000);
         boolean equalsBlank = id.equals(blank);
         assertFalse(equalsBlank);
 
-        /*
-         * TODO
-         */
         @SuppressWarnings("EqualsWithItself")
         boolean equalsSelf = id.equals(id);
         assertTrue(equalsSelf);
 
-        /*
-         * TODO
-         */
-        DeviceId copy = new DeviceId(id.vendorId, id.productId);
+        ProductId copy = new ProductId(id.vendorId, id.productId);
         boolean equalsCopy = id.equals(copy);
         assertTrue(equalsCopy);
     }
@@ -85,7 +70,7 @@ class DeviceIdTest {
         Random random = new Random();
         int vendorId = random.nextInt(0xFFFF);
         int productId = random.nextInt(0xFFFF);
-        DeviceId id = new DeviceId(vendorId, productId);
+        ProductId id = new ProductId(vendorId, productId);
 
         int hash = Objects.hash(vendorId, productId);
         assertEquals(hash, id.hashCode());
