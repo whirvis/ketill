@@ -446,12 +446,18 @@ class PeripheralSeekerTest {
         peripheral.id = new ProductId(0x1234, 0x5678);
 
         /*
-         * TODO
+         * If a peripheral is not attached, it makes no
+         * sense to connect them. As such, assume this
+         * was a user mistake and throw an exception.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.connectPeripheral(peripheral));
 
-        // todo
+        /*
+         * After targeting the product and attaching it,
+         * the default behavior should kick in and result
+         * in the peripheral connecting automatically.
+         */
         seeker.targetProduct(peripheral.id);
         seeker.attachMock(peripheral);
         assertTrue(seeker.connectedPeripheral);
