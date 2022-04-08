@@ -109,7 +109,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void dropProduct() {
+    void dropProduct() { // todo
         /*
          * It would not make sense to drop a product with a
          * null product ID. As such, assume this was a user
@@ -127,7 +127,7 @@ class PeripheralSeekerTest {
          */
         seeker.dropProduct(peripheral.id);
         assertFalse(seeker.disconnectedPeripheral);
-        assertFalse(seeker.detachedPeripheral);
+        assertFalse(seeker.shutdownPeripheral);
 
         /* attach peripheral for next test */
         seeker.targetProduct(peripheral.id);
@@ -145,8 +145,8 @@ class PeripheralSeekerTest {
         seeker.dropProduct(peripheral.id);
         assertTrue(dropped.get());
         assertTrue(seeker.droppedProduct);
+        assertTrue(seeker.shutdownPeripheral);
         assertTrue(seeker.disconnectedPeripheral);
-        assertTrue(seeker.detachedPeripheral);
     }
 
     @Test
@@ -179,7 +179,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void blockPeripheral() {
+    void blockPeripheral() { // todo
         /*
          * It makes no sense to block a null peripheral.
          * As such, assume this was a mistake by the user
@@ -241,20 +241,13 @@ class PeripheralSeekerTest {
          * disconnected by the peripheral seeker.
          */
         assertTrue(seeker.blockedPeripheral);
+        assertTrue(seeker.shutdownPeripheral);
         assertTrue(seeker.disconnectedPeripheral);
         assertTrue(afterDisconnect.get());
-
-        /*
-         * Since the arguments for blocking the peripheral
-         * stated it will be unblocked after detaching, the
-         * seeker must not detach it. Doing so would result
-         * in the peripheral being immediately re-attached.
-         */
-        assertFalse(seeker.detachedPeripheral);
     }
 
     @Test
-    void unblockPeripheral() {
+    void unblockPeripheral() { // todo
         /*
          * It makes no sense to unblock a null peripheral.
          * As such, assume this was a mistake by the user
@@ -286,28 +279,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void isPeripheralAttached() {
-        /*
-         * It makes no sense to check if a null peripheral
-         * is currently attached. As such, assume this was
-         * a mistake by the user and throw an exception.
-         */
-        assertThrows(NullPointerException.class,
-                () -> seeker.isPeripheralAttached(null));
-
-        MockPeripheral peripheral = new MockPeripheral();
-        peripheral.id = new ProductId(0x1234, 0x5678);
-        seeker.targetProduct(peripheral.id);
-
-        seeker.attachMock(peripheral);
-        assertTrue(seeker.isPeripheralAttached(peripheral));
-
-        seeker.detachMock(peripheral);
-        assertFalse(seeker.isPeripheralAttached((peripheral)));
-    }
-
-    @Test
-    void attachPeripheral() {
+    void attachPeripheral() { // todo
         /* attach peripheral for next test */
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
@@ -319,7 +291,7 @@ class PeripheralSeekerTest {
          */
         seeker.targetProduct(0x0000, 0x0000);
         seeker.attachMock(peripheral);
-        assertFalse(seeker.attachedPeripheral);
+        assertFalse(seeker.setupPeripheral);
 
         /*
          * The product of the peripheral is now targeted.
@@ -328,16 +300,16 @@ class PeripheralSeekerTest {
          */
         seeker.targetProduct(peripheral.id);
         seeker.attachMock(peripheral);
-        assertTrue(seeker.attachedPeripheral);
+        assertTrue(seeker.setupPeripheral);
 
         /*
          * Once a peripheral has been attached, it should
          * not be re-attached on the next scan. They should
          * only be re-attached if previously detached.
          */
-        seeker.attachedPeripheral = false;
+        seeker.setupPeripheral = false;
         seeker.attachMock(peripheral);
-        assertFalse(seeker.attachedPeripheral);
+        assertFalse(seeker.setupPeripheral);
 
         /* block peripheral for next test */
         MockPeripheral blockedPeripheral = new MockPeripheral();
@@ -349,14 +321,14 @@ class PeripheralSeekerTest {
          * attached by the seeker even if detected on the
          * next peripheral scan.
          */
-        seeker.attachedPeripheral = false;
+        seeker.setupPeripheral = false;
         seeker.attachMock(blockedPeripheral);
-        assertFalse(seeker.attachedPeripheral);
+        assertFalse(seeker.setupPeripheral);
 
         /* create broken peripheral for next test */
         MockPeripheral brokenPeripheral = new MockPeripheral();
         brokenPeripheral.id = peripheral.id;
-        seeker.errorOnAttach = true;
+        seeker.errorOnSetup = true;
 
         /* set callback for next test */
         AtomicBoolean didBlock = new AtomicBoolean();
@@ -375,11 +347,10 @@ class PeripheralSeekerTest {
         seeker.attachMock(brokenPeripheral);
         assertTrue(didBlock.get());
         assertTrue(willDetach.get());
-        assertTrue(seeker.failedAttach);
     }
 
     @Test
-    void detachPeripheral() {
+    void detachPeripheral() { // todo
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
         seeker.targetProduct(peripheral.id);
@@ -406,9 +377,9 @@ class PeripheralSeekerTest {
          * not be blocked. This is because communication is
          * already over, so blocking it would do nothing.
          */
-        seeker.errorOnDetach = true;
+        seeker.errorOnShutdown = true;
         seeker.detachMock(peripheral);
-        assertTrue(seeker.failedDetach);
+        assertTrue(seeker.failedShutdown);
     }
 
     @Test
@@ -428,81 +399,8 @@ class PeripheralSeekerTest {
         seeker.attachMock(peripheral);
         assertTrue(seeker.isPeripheralConnected(peripheral));
 
-        seeker.disconnectPeripheral(peripheral);
+        seeker.detachMock(peripheral);
         assertFalse(seeker.isPeripheralConnected(peripheral));
-    }
-
-    @Test
-    void connectPeripheral() {
-        /*
-         * It makes no sense to connect a null peripheral.
-         * As such, assume this was a mistake by the user
-         * and throw an exception.
-         */
-        assertThrows(NullPointerException.class,
-                () -> seeker.connectPeripheral(null));
-
-        MockPeripheral peripheral = new MockPeripheral();
-        peripheral.id = new ProductId(0x1234, 0x5678);
-
-        /*
-         * If a peripheral is not attached, it makes no
-         * sense to connect them. As such, assume this
-         * was a user mistake and throw an exception.
-         */
-        assertThrows(IllegalStateException.class,
-                () -> seeker.connectPeripheral(peripheral));
-
-        /*
-         * After targeting the product and attaching it,
-         * the default behavior should kick in and result
-         * in the peripheral connecting automatically.
-         */
-        seeker.targetProduct(peripheral.id);
-        seeker.attachMock(peripheral);
-        assertTrue(seeker.connectedPeripheral);
-
-        /*
-         * It would not make sense to connect a peripheral
-         * that is already connected. As such, assume this
-         * was a user mistake and throw an exception.
-         */
-        assertThrows(IllegalStateException.class,
-                () -> seeker.connectPeripheral(peripheral));
-    }
-
-    @Test
-    void disconnectPeripheral() {
-        /*
-         * It makes no sense to disconnect a null peripheral.
-         * As such, assume this was a mistake by the user and
-         * throw an exception.
-         */
-        assertThrows(NullPointerException.class,
-                () -> seeker.disconnectPeripheral(null));
-
-        MockPeripheral peripheral = new MockPeripheral();
-        peripheral.id = new ProductId(0x1234, 0x5678);
-        seeker.targetProduct(peripheral.id);
-
-        /* connect peripheral for next test */
-        seeker.attachMock(peripheral);
-
-        /*
-         * Since the peripheral is currently connected, the
-         * peripheral seeker should run the necessary code
-         * to perform a proper disconnection.
-         */
-        seeker.disconnectPeripheral(peripheral);
-        assertTrue(seeker.disconnectedPeripheral);
-
-        /*
-         * It makes no sense to disconnect a peripheral that
-         * is already disconnected. As such, assume this was
-         * a mistake by the user and throw an exception.
-         */
-        assertThrows(IllegalStateException.class,
-                () -> seeker.disconnectPeripheral(peripheral));
     }
 
     @Test
@@ -584,10 +482,6 @@ class PeripheralSeekerTest {
                 () -> seeker.blockPeripheral(peripheral, true));
         assertThrows(IllegalStateException.class,
                 () -> seeker.unblockPeripheral(peripheral));
-        assertThrows(IllegalStateException.class,
-                () -> seeker.connectPeripheral(peripheral));
-        assertThrows(IllegalStateException.class,
-                () -> seeker.disconnectPeripheral(peripheral));
 
         /*
          * It would not make sense to set any callbacks after
