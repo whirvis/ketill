@@ -21,9 +21,10 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
 
     boolean targetedProduct, droppedProduct;
     boolean blockedPeripheral, unblockedPeripheral;
-    boolean attachedPeripheral, detachedPeripheral;
-    boolean errorOnAttach, errorOnDetach;
-    boolean failedAttach, failedDetach;
+    boolean setupPeripheral, shutdownPeripheral;
+    boolean blockOnSetup, blockOnShutdown;
+    boolean errorOnSetup, errorOnShutdown;
+    boolean failedSetup, failedShutdown;
     boolean connectedPeripheral, disconnectedPeripheral;
 
     int peripheralScanCount;
@@ -36,6 +37,23 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
     MockPeripheralSeeker() {
         super();
         this.attached = new ArrayList<>();
+    }
+
+    void reset() {
+        this.targetedProduct = false;
+        this.droppedProduct = false;
+        this.blockedPeripheral = false;
+        this.unblockedPeripheral = false;
+        this.setupPeripheral = false;
+        this.shutdownPeripheral = false;
+        this.blockOnSetup = false;
+        this.blockOnShutdown = false;
+        this.errorOnSetup = false;
+        this.errorOnShutdown = false;
+        this.failedSetup = false;
+        this.failedShutdown = false;
+        this.connectedPeripheral = false;
+        this.disconnectedPeripheral = false;
     }
 
     void attachMock(@NotNull MockPeripheral peripheral) {
@@ -89,33 +107,38 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
     }
 
     @Override
-    protected void peripheralAttached(@NotNull MockPeripheral peripheral) throws Exception {
-        if (errorOnAttach) {
+    protected void setupPeripheral(@NotNull MockPeripheral peripheral) {
+        if (blockOnSetup) {
+            this.blockPeripheral(peripheral, true);
+        }
+        if (errorOnSetup) {
             throw new RuntimeException();
         }
-        this.attachedPeripheral = true;
-        super.peripheralAttached(peripheral);
+        this.setupPeripheral = true;
     }
 
     @Override
-    protected void peripheralAttachFailed(@NotNull MockPeripheral peripheral,
-                                          @NotNull Throwable cause) {
-        this.failedAttach = true;
+    protected void peripheralSetupFailed(@NotNull MockPeripheral peripheral,
+                                         @NotNull Throwable cause) {
+        this.failedSetup = true;
     }
 
     @Override
-    protected void peripheralDetached(@NotNull MockPeripheral peripheral) throws Exception {
-        if (errorOnDetach) {
+    protected void shutdownPeripheral(@NotNull MockPeripheral peripheral) {
+        if (blockOnShutdown) {
+            this.blockPeripheral(peripheral, true);
+        }
+        if (errorOnShutdown) {
             throw new RuntimeException();
         }
-        this.detachedPeripheral = true;
-        super.peripheralDetached(peripheral);
+        this.shutdownPeripheral = true;
     }
 
+
     @Override
-    protected void peripheralDetachFailed(@NotNull MockPeripheral peripheral,
-                                          @NotNull Throwable cause) {
-        this.failedDetach = true;
+    protected void peripheralShutdownFailed(@NotNull MockPeripheral peripheral,
+                                            @NotNull Throwable cause) {
+        this.failedShutdown = true;
     }
 
     @Override

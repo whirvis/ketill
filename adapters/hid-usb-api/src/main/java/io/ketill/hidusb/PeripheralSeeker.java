@@ -19,11 +19,26 @@ import java.util.function.BiConsumer;
  * An I/O device seeker for peripherals attached to the system.<br>
  * <b>For the sake of the reader:</b> The term "device" or similar refers
  * to an {@link IoDevice}. The term "peripheral" or similar refers a device,
- * virtual or physical, attached to the system.
+ * virtual or physical, attached to the system. The process for connecting
+ * peripherals is as follows:
+ * <ul>
+ * <li>1. A peripheral is attached to the system.</li>
+ * <li>2. The method {@link #setupPeripheral(Object)} is called. By default,
+ * this does nothing. However, it can be overridden to perform additional
+ * device setup. If an exception is thrown,
+ * {@link #blockPeripheral(Object, boolean)} will be called for the
+ * peripheral, with {@code unblockAfterDetach} being {@code true}.</li>
+ * <li>3. The method {@link #peripheralConnected(Object)} is called. Here,
+ * the peripheral can be discovered as one or more devices by instantiating
+ * an I/O device and then calling {@link #discoverDevice(IoDevice)}.</li>
+ * </ul>
  * <p>
  * <b>Note:</b> Before calling {@link #seek()}, the peripheral seeker
- * must be told what to seek via {@link #targetProduct(ProductId)}. If
- * this is neglected, an {@code IllegalStateException} will be thrown.
+ * must be told what to seek via {@link #targetProduct(ProductId)}. An
+ * {@code IllegalStateException} will be thrown is this is neglected.
+ * Furthermore, scans must also be performed periodically for this to
+ * work as expected. It is recommended to perform a scan once every
+ * application update.
  *
  * @param <I> the I/O device type.
  * @param <P> the peripheral type.
@@ -106,16 +121,19 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     protected abstract @NotNull ProductId getId(@NotNull P peripheral);
 
     /**
-     * Used by the peripheral seeker to properly enforce peripheral blocking.
-     * If the peripheral type provides a proper implementation of
-     * {@link Object#hashCode()}, feel free to implement this method as:
+     * Used by the peripheral seeker to determine if two instances of a
+     * peripheral instance are the same. If the peripheral type provides
+     * a proper implementation of {@link Object#hashCode()}, feel free
+     * to implement this method as:
      * <pre>
      * &#64;Override
      * protected int getHash(@NotNull P peripheral) {
      *     return peripheral.hashCode();
      * }
      * </pre>
-     * Otherwise, generate a hash with unique data for the peripheral.
+     * <b>Otherwise, generate one using unique data fields from the
+     * peripheral.</b> The {@link Objects#hash(Object...)} utility
+     * method can be used to achieve this easily.
      *
      * @param peripheral the peripheral.
      * @return the generated hash for {@code peripheral}.
@@ -271,34 +289,32 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * Indicates to the seeker it should target peripherals with the
-     * specified product ID. When such a peripheral is located, the
-     * {@link #peripheralAttached(Object)} callback will be executed.
+     * Indicates to the seeker it should connect peripherals with the
+     * specified product ID.
      *
      * @param id the ID of the product to target.
      * @throws NullPointerException  if {@code id} is {@code null}.
      * @throws IllegalStateException if this peripheral seeker has been
      *                               closed via {@link #close()}.
-     * @see #peripheralAttached(Object)
      * @see #peripheralConnected(Object)
      */
     protected void targetProduct(@NotNull ProductId id) {
-        Objects.requireNonNull(id, "iId cannot be null");
+        Objects.requireNonNull(id, "id cannot be null");
         this.requireOpen();
+        if (this.isTargetingProduct(id)) {
+            return; /* already targeted */
+        }
 
-        if (!targeted.contains(id)) {
-            targeted.add(id);
-            this.productTargeted(id);
-            if (targetCallback != null) {
-                targetCallback.accept(this, id);
-            }
+        targeted.add(id);
+        this.productTargeted(id);
+        if (targetCallback != null) {
+            targetCallback.accept(this, id);
         }
     }
 
     /**
-     * Indicates to the seeker it should target peripherals with the
-     * specified product ID. When such a peripheral is located, the
-     * {@link #peripheralAttached(Object)} callback will be executed.
+     * Indicates to the seeker it should connect peripheral with the
+     * specified product ID.
      * <p>
      * This method is a shorthand for {@link #targetProduct(ProductId)}
      * with the argument for {@code id} being constructed from the
@@ -311,7 +327,6 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      *                                  to {@code 0xFFFF}.
      * @throws IllegalStateException    if this peripheral seeker has been
      *                                  closed via {@link #close()}.
-     * @see #peripheralAttached(Object)
      * @see #peripheralConnected(Object)
      */
     protected final void targetProduct(int vendorId, int productId) {
@@ -330,16 +345,15 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * Indicates to the seeker it should no longer seek out peripherals
-     * with the specified peripherals ID. Peripherals currently connected
-     * with a matching product ID will be disconnected and then detached.
+     * Indicates to the seeker it should no longer connect peripherals
+     * with the specified product ID. Peripherals with a matching ID
+     * that are currently connected will be disconnected.
      *
      * @param id the ID of the product to drop.
      * @throws NullPointerException  if {@code id} is {@code null}.
      * @throws IllegalStateException if this peripheral seeker has been
      *                               closed via {@link #close()}.
      * @see #peripheralDisconnected(Object)
-     * @see #peripheralDetached(Object)
      */
     protected void dropProduct(@NotNull ProductId id) {
         Objects.requireNonNull(id, "id cannot be null");
@@ -371,7 +385,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
             ProductId productId = this.getId(peripheral);
             if (id.equals(productId)) {
                 attachedI.remove();
-                this.detachPeripheral(peripheral, false);
+                this.detachPeripheral(peripheral);
             }
         }
 
@@ -383,9 +397,9 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * Indicates to the seeker it should no longer seek out peripherals
-     * with the specified product ID. All currently connected peripherals
-     * with a matching product ID will be disconnected and then detached.
+     * Indicates to the seeker it should no longer connect peripherals
+     * with the specified product ID. Peripherals with a matching ID
+     * that are currently connected will be disconnected.
      * <p>
      * This method is a shorthand for {@link #dropProduct(ProductId)} with
      * the argument for {@code id} being constructed from the arguments for
@@ -399,7 +413,6 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      * @throws IllegalStateException    if this peripheral seeker has been
      *                                  closed via {@link #close()}.
      * @see #peripheralDisconnected(Object)
-     * @see #peripheralDetached(Object)
      */
     protected final void dropProduct(int vendorId, int productId) {
         this.dropProduct(new ProductId(vendorId, productId));
@@ -430,13 +443,9 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * When blocked, a peripheral is automatically disconnected (assuming it
-     * was already connected.) Afterwards, it will not be able to re-attach
-     * after detaching (unless {@code unblockAfterDetach} is {@code true}.)
-     * <p>
-     * <b>Note:</b> Unless {@code unblockAfterDetach} is {@code false}, this
-     * will <i>not</i> detach the peripheral. Doing so would result in the
-     * peripheral being unblocked immediately after calling this method.
+     * When blocked, a peripheral is disconnected (assuming it was connected
+     * when calling this method). Afterwards, it will not be able to reconnect
+     * after detaching (unless {@code unblockAfterDetach} is {@code true}).
      *
      * @param peripheral         the peripheral to block.
      * @param cause              the reason for blocking. A value of
@@ -467,23 +476,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
         int peripheralHash = this.getHash(peripheral);
         blocked.put(peripheralHash, block);
 
-        /*
-         * Disconnect the peripheral if currently connected.
-         * It would not make sense for it to linger if it has
-         * been blocked. Do this before detaching it from the
-         * peripheral seeker to preserve natural order.
-         */
         this.disconnectPeripheral(peripheral, true);
-
-        /*
-         * Only detach the peripheral if it won't be unblocked
-         * afterwards. If the peripheral is set to be unblocked
-         * when it is detached, detaching it now would result
-         * in it being re-attached on the next scan.
-         */
-        if (!unblockAfterDetach) {
-            this.detachPeripheral(peripheral, true);
-        }
 
         /* execute callback after consequences */
         this.peripheralBlocked(block);
@@ -493,17 +486,13 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * When blocked, a peripheral is automatically disconnected (assuming it
-     * was already connected.) Afterwards, it will not be able to re-attach
-     * after detaching (unless {@code unblockAfterDetach} is {@code true}.)
-     * <p>
-     * <b>Note:</b> Unless {@code unblockAfterDetach} is {@code false}, this
-     * will <i>not</i> detach the peripheral. Doing so would result in the
-     * peripheral being unblocked immediately after calling this method.
+     * When blocked, a peripheral is disconnected (assuming it was connected
+     * when calling this method). Afterwards, it will not be able to reconnect
+     * after detaching (unless {@code unblockAfterDetach} is {@code true}).
      * <p>
      * This method is a shorthand for
-     * {@link #blockPeripheral(Object, Throwable, boolean)}, with the
-     * argument for {@code cause} being {@code null}.
+     * {@link #blockPeripheral(Object, Throwable, boolean)},
+     * with the argument for {@code cause} being {@code null}.
      *
      * @param peripheral         the peripheral to block.
      * @param unblockAfterDetach {@code true} if {@code peripheral}
@@ -550,11 +539,13 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
 
         int peripheralHash = this.getHash(peripheral);
         BlockedPeripheral<P> block = blocked.remove(peripheralHash);
-        if (block != null) {
-            this.peripheralUnblocked(block);
-            if (unblockCallback != null) {
-                unblockCallback.accept(this, block);
-            }
+        if (block == null) {
+            return; /* peripheral not blocked */
+        }
+
+        this.peripheralUnblocked(block);
+        if (unblockCallback != null) {
+            unblockCallback.accept(this, block);
         }
     }
 
@@ -570,87 +561,41 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
     }
 
     /**
-     * Called periodically by {@link #seekImpl()} per the scan interval
+     * Called periodically by {@link #seek()} per the scan interval
      * specified during construction. This method should return <i>all</i>
-     * peripherals currently connected to the system. Peripheral will be
+     * peripherals currently connected to the system. Peripherals will be
      * filtered out before being attached using their product ID.
      *
      * @return all peripherals currently connected to the system.
      * @see #isTargetingProduct(ProductId)
-     * @see #peripheralAttached(Object)
-     * @see #peripheralDetached(Object)
      */
     protected abstract @NotNull Collection<@NotNull P> scanPeripherals();
-
-    /**
-     * @param peripheral the peripheral to check.
-     * @return {@code true} if {@code peripheral} is attached,
-     * {@code false} otherwise.
-     * @throws NullPointerException if {@code peripheral} is {@code null}.
-     */
-    protected final boolean isPeripheralAttached(@NotNull P peripheral) {
-        Objects.requireNonNull(peripheral, "peripheral cannot be null");
-        return attached.contains(peripheral);
-    }
 
     private void attachPeripheral(P peripheral) {
         if (!this.isTargetingPeripheral(peripheral)) {
             return;
-        } else if (this.isPeripheralAttached(peripheral)) {
-            return;
-        } else if (this.isPeripheralBlocked(peripheral)) {
-            return;
         }
 
-        attached.add(peripheral);
-        try {
-            this.peripheralAttached(peripheral);
-        } catch (Throwable cause) {
-            this.blockPeripheral(peripheral, cause, true);
-            this.peripheralAttachFailed(peripheral, cause);
+        /*
+         * When a peripheral is blocked, it is disconnected, but not detached
+         * (it is only detached when disconnect from the system). As such, we
+         * only make sure we don't add the peripheral to the list again. The
+         * connectPeripheral() method will always be called. It will ensure
+         * a peripheral is not connected twice in error.
+         */
+        if(!attached.contains(peripheral)) {
+            attached.add(peripheral);
         }
-    }
 
-    /**
-     * Called when a targeted peripheral has been attached.
-     * <p>
-     * By default, this method just connects the peripheral. When
-     * overridden, it should perform setup before connecting it via
-     * {@link #connectPeripheral(Object)}.
-     * <p>
-     * <b>Note:</b> If any errors occur in this method, the peripheral
-     * will not be connected. It will also be blocked until it is later
-     * detached using {@link #blockPeripheral(Object, boolean)}.
-     *
-     * @param peripheral the attached peripheral.
-     * @throws Exception if an error occurs.
-     * @see #peripheralAttachFailed(Object, Throwable)
-     * @see #peripheralConnected(Object)
-     */
-    @SuppressWarnings("RedundantThrows")
-    protected void peripheralAttached(@NotNull P peripheral) throws Exception {
-        /* optional implement, just connect the peripheral */
         this.connectPeripheral(peripheral);
     }
 
-    /**
-     * Called when a peripheral fails to attach. Overriding this method
-     * allows for a peripheral seeker to know when a peripheral fails to
-     * attach without needing to set themselves as the callback.
-     *
-     * @param peripheral the peripheral.
-     * @param cause      the cause for failure.
+    /*
+     * Like disconnectPeripheral(), there used to be a parameter called
+     * requireAttached. However, this was false in every usage. As such,
+     * the parameter was removed from this method.
      */
-    protected void peripheralAttachFailed(@NotNull P peripheral,
-                                          @NotNull Throwable cause) {
-        /* optional implement */
-    }
-
-    private void detachPeripheral(P peripheral, boolean onlyIfAttached) {
-        if (onlyIfAttached && !attached.contains(peripheral)) {
-            return; /* not attached when required to be */
-        }
-
+    private void detachPeripheral(P peripheral) {
         int peripheralHash = this.getHash(peripheral);
         BlockedPeripheral<P> listing = blocked.get(peripheralHash);
         if (listing != null && listing.unblockAfterDetach) {
@@ -658,56 +603,6 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
         }
 
         attached.remove(peripheral);
-
-        try {
-            this.peripheralDetached(peripheral);
-        } catch (Throwable cause) {
-            /*
-             * Only notify the peripheral seeker an error has occurred when
-             * detaching a peripheral. Do not block it! That would resolve
-             * nothing, since communication is already over. If the user
-             * desires, they can block the peripheral themselves.
-             */
-            this.peripheralDetachFailed(peripheral, cause);
-        }
-    }
-
-    /**
-     * Called when a peripheral fails to properly detach. Overriding this
-     * method allows for a peripheral seeker to know when a peripheral
-     * fails to detach without needing to set themselves as the callback.
-     *
-     * @param peripheral the peripheral.
-     * @param cause      the cause for failure.
-     */
-    protected void peripheralDetachFailed(@NotNull P peripheral,
-                                          @NotNull Throwable cause) {
-        /* optional implement */
-    }
-
-    /**
-     * Called when an attached peripheral has been detached.
-     * <p>
-     * By default, this method just disconnects the peripheral. When
-     * overridden, it should perform shutdown before disconnecting it
-     * via {@link #disconnectPeripheral(Object, boolean)}.
-     * <p>
-     * Peripherals can be detached without ever being disconnected. For
-     * example, if an error occurs in {@link #peripheralAttached(Object)}
-     * meaning the peripheral never got connected.
-     * <p>
-     * <b>Note:</b> If any errors occur in this method, the peripheral will
-     * be blocked permanently via {@link #blockPeripheral(Object, boolean)},
-     * meaning it won't be able to re-attach.
-     *
-     * @param peripheral the detached peripheral.
-     * @throws Exception if an error occurs.
-     * @see #peripheralDetachFailed(Object, Throwable)
-     * @see #peripheralDisconnected(Object)
-     */
-    @SuppressWarnings("RedundantThrows")
-    protected void peripheralDetached(@NotNull P peripheral) throws Exception {
-        /* optional implement, just disconnect the peripheral */
         this.disconnectPeripheral(peripheral, true);
     }
 
@@ -722,79 +617,174 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
         return connected.contains(peripheral);
     }
 
-    /**
-     * @param peripheral the peripheral to connect.
-     * @throws NullPointerException  if {@code peripheral} is {@code null}.
-     * @throws IllegalStateException if this peripheral seeker has been
-     *                               closed via {@link #close()};
-     *                               if {@code peripheral} is not attached;
-     *                               if {@code peripheral} is already
-     *                               connected.
-     * @see #peripheralAttached(Object)
-     */
-    protected void connectPeripheral(@NotNull P peripheral) {
-        Objects.requireNonNull(peripheral, "peripheral cannot be null");
-        this.requireOpen();
-        if (!this.isPeripheralAttached(peripheral)) {
-            throw new IllegalStateException("peripheral not attached");
-        } else if (this.isPeripheralConnected(peripheral)) {
-            throw new IllegalStateException("peripheral already connected");
+    private void connectPeripheral(@NotNull P peripheral) {
+        if (connected.contains(peripheral)) {
+            return;
         }
-        connected.add(peripheral);
-        this.peripheralConnected(peripheral);
+
+        if (this.isPeripheralBlocked(peripheral)) {
+            return;
+        }
+
+        boolean setupSuccessful;
+        try {
+            this.setupPeripheral(peripheral);
+            setupSuccessful = true;
+        } catch (Throwable cause) {
+            this.blockPeripheral(peripheral, cause, true);
+            this.peripheralSetupFailed(peripheral, cause);
+            setupSuccessful = false;
+        }
+
+        /*
+         * Its possible the peripheral somehow got blocked while setting
+         * it up. As such, check if the peripheral is blocked again. If
+         * that turns out to be the case, do not finish connection.
+         */
+        if (this.isPeripheralBlocked(peripheral)) {
+            return;
+        }
+
+        /*
+         * Only connect the peripheral if setup was successful. If setup
+         * fails for any reason, proper communication will likely not be
+         * possible. Furthermore, the user can listen for setup failure
+         * by implementing the peripheralSetupFailed() method.
+         */
+        if (setupSuccessful) {
+            connected.add(peripheral);
+            this.peripheralConnected(peripheral);
+        }
     }
 
     /**
-     * Called when a targeted peripheral has connected.
+     * Called just before a peripheral is connected. By default, this
+     * method does nothing. This can be used to perform setup for the
+     * peripheral (which is often error-prone) before final connection.
+     * This method can throw any exception without needing to catch it.
+     * <p>
+     * <b>Note:</b> If this method does throw an exception, connection
+     * of the peripheral will be aborted. Furthermore, it will be blocked
+     * until it is later detached.
+     *
+     * @param peripheral the peripheral.
+     * @throws Exception if an error occurs.
+     * @see #peripheralSetupFailed(Object, Throwable)
+     * @see #peripheralConnected(Object)
+     */
+    @SuppressWarnings("RedundantThrows")
+    protected void setupPeripheral(@NotNull P peripheral) throws Exception {
+        /* optional implement */
+    }
+
+    /**
+     * Called when {@link #setupPeripheral(Object)} fails as a result of
+     * an exception being thrown. By default, this method does nothing. This
+     * can be used to perform corrective measures (e.g., freeing resources).
+     *
+     * @param peripheral the peripheral.
+     * @param cause      the cause for setup failure.
+     */
+    protected void peripheralSetupFailed(@NotNull P peripheral,
+                                         @NotNull Throwable cause) {
+        /* optional implement */
+    }
+
+    /**
+     * Called when a targeted peripheral has connected. This is executed
+     * after setup is performed. If setup fails (due to an exception),
+     * this method will <i>not</i> be called.
      * <p>
      * <b>Note:</b> Connected peripherals are <i>not</i> discovered.
      * They must be discovered using {@link #discoverDevice(IoDevice)}.
+     * Furthermore, it is by intention that no user callback exists for
+     * this event. It is not for the user to know when peripherals are
+     * connected! They should only be listening for I/O device discovery.
      *
      * @param peripheral the peripheral.
+     * @see #setupPeripheral(Object)
      */
     protected abstract void peripheralConnected(@NotNull P peripheral);
 
-    /**
-     * @param peripheral      the peripheral to disconnect.
-     * @param onlyIfConnected {@code true} if {@code peripheral} must be
-     *                        previously connected in order for it to be
-     *                        disconnected, {@code false} otherwise.
-     * @see #peripheralDetached(Object)
-     */
     private void disconnectPeripheral(@NotNull P peripheral,
-                                      boolean onlyIfConnected) {
-        if (onlyIfConnected && !this.isPeripheralConnected(peripheral)) {
+                                      boolean requireConnected) {
+        if (!connected.contains(peripheral) && requireConnected) {
             return; /* not connected when required to be */
         }
+
+        /*
+         * The peripheral must be removed from the connected list before
+         * performing shutdown. It is very possible the shutdown code will
+         * call blockPeripheral() (which calls this method). Removing it
+         * from the list before this can happen prevents a stack overflow.
+         *
+         * Furthermore, it doesn't make sense for a device that is being
+         * shutdown to be considered still connected (as detaching the
+         * device is what triggers the shutdown code).
+         */
         connected.remove(peripheral);
+
+        try {
+            this.shutdownPeripheral(peripheral);
+        } catch (Throwable cause) {
+            /*
+             * Only notify the peripheral seeker an error has occurred
+             * when detaching a peripheral. Do not block it! That would
+             * resolve nothing since communication has already ended.
+             * If the user desires, they can block it themselves.
+             */
+            this.peripheralShutdownFailed(peripheral, cause);
+        }
+
         this.peripheralDisconnected(peripheral);
     }
 
     /**
-     * @param peripheral the peripheral to disconnect.
-     * @throws NullPointerException  if {@code peripheral} is {@code null}.
-     * @throws IllegalStateException if this peripheral seeker has been
-     *                               closed via {@link #close()};
-     *                               if {@code peripheral} is currently
-     *                               not connected.
-     * @see #peripheralDetached(Object)
+     * Called just before a peripheral is disconnected. By default, this
+     * method does nothing. This can be used to perform shutdown for the
+     * peripheral (which is often error-prone) before final disconnection.
+     * This method can throw any exception without needing to catch it.
+     * <p>
+     * <b>Note:</b> If this method does throw an exception, disconnection
+     * of the peripheral will <i>not</i> be aborted. Furthermore, it will
+     * not be blocked (as that would be pointless at this stage).
+     *
+     * @param peripheral the peripheral.
+     * @throws Exception if an error occurs.
+     * @see #peripheralSetupFailed(Object, Throwable)
+     * @see #peripheralConnected(Object)
      */
-    protected void disconnectPeripheral(@NotNull P peripheral) {
-        Objects.requireNonNull(peripheral, "peripheral cannot be null");
-        this.requireOpen();
-        if (!this.isPeripheralConnected(peripheral)) {
-            throw new IllegalStateException("peripheral not connected");
-        }
-        this.disconnectPeripheral(peripheral, true);
+    @SuppressWarnings("RedundantThrows")
+    protected void shutdownPeripheral(@NotNull P peripheral) throws Exception {
+        /* optional implement */
+    }
+
+    /**
+     * Called when {@link #shutdownPeripheral(Object)} as a result of an
+     * exception being thrown. By default, this method does nothing. This
+     * can be used to perform corrective measures (e.g., freeing resources).
+     *
+     * @param peripheral the peripheral.
+     * @param cause      the cause for setup failure.
+     */
+    protected void peripheralShutdownFailed(@NotNull P peripheral,
+                                            @NotNull Throwable cause) {
+        /* optional implement */
     }
 
     /**
      * Called when a previously connected peripheral has disconnected.
+     * This is executed after shutdown is performed, regardless if
+     * shutdown was successfully executed.
      * <p>
      * <b>Note:</b> Disconnected peripherals are <i>not</i> forgotten.
      * They must be forgotten using {@link #forgetDevice(IoDevice)}.
+     * Furthermore, it is by intention that no user callback exists for
+     * this event. It is not for the user to know when peripherals are
+     * disconnected! They should only be listening for I/O device discovery.
      *
      * @param peripheral the peripheral.
+     * @see #shutdownPeripheral(Object)
      */
     protected abstract void peripheralDisconnected(@NotNull P peripheral);
 
@@ -815,7 +805,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
                 P peripheral = attachedI.next();
                 if (!scanned.contains(peripheral)) {
                     attachedI.remove();
-                    this.detachPeripheral(peripheral, false);
+                    this.detachPeripheral(peripheral);
                 }
             }
 

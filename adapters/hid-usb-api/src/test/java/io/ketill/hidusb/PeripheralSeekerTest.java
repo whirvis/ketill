@@ -109,7 +109,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void dropProduct() { // todo
+    void dropProduct() {
         /*
          * It would not make sense to drop a product with a
          * null product ID. As such, assume this was a user
@@ -179,7 +179,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void blockPeripheral() { // todo
+    void blockPeripheral() {
         /*
          * It makes no sense to block a null peripheral.
          * As such, assume this was a mistake by the user
@@ -227,13 +227,19 @@ class PeripheralSeekerTest {
         assertTrue(seeker.isPeripheralBlocked(peripheralCopy));
 
         /*
-         * Once the peripheral has been blocked, it cannot
-         * be blocked again unless previously unblocked.
-         * This is to prevent blocking arguments from being
-         * silently overridden on accident.
+         * Once the peripheral has been blocked, it cannot be
+         * blocked again unless previously unblocked. This is
+         * to prevent blocking arguments from being silently
+         * overridden on accident.
+         *
+         * Furthermore, the peripheral copy should result in
+         * an exception as it is considered to be the same
+         * peripheral as the original.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.blockPeripheral(peripheral, true));
+        assertThrows(IllegalStateException.class,
+                () -> seeker.blockPeripheral(peripheralCopy, true));
 
         /*
          * Since the peripheral was already connected when
@@ -247,7 +253,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void unblockPeripheral() { // todo
+    void unblockPeripheral() {
         /*
          * It makes no sense to unblock a null peripheral.
          * As such, assume this was a mistake by the user
@@ -268,6 +274,7 @@ class PeripheralSeekerTest {
          * the callback should not be executed.
          */
         seeker.unblockPeripheral(peripheral);
+        assertFalse(seeker.unblockedPeripheral);
         assertFalse(unblocked.get());
 
         /* block peripheral for next test */
@@ -279,7 +286,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void attachPeripheral() { // todo
+    void attachPeripheral() {
         /* attach peripheral for next test */
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
@@ -289,6 +296,7 @@ class PeripheralSeekerTest {
          * it is not currently targeted by the peripheral.
          * seeker. As such, it should not be attached.
          */
+        seeker.reset();
         seeker.targetProduct(0x0000, 0x0000);
         seeker.attachMock(peripheral);
         assertFalse(seeker.setupPeripheral);
@@ -298,18 +306,21 @@ class PeripheralSeekerTest {
          * The peripheral seeker should now connect it on
          * the first peripheral scan that it is detected.
          */
+        seeker.reset();
         seeker.targetProduct(peripheral.id);
         seeker.attachMock(peripheral);
         assertTrue(seeker.setupPeripheral);
+        assertTrue(seeker.connectedPeripheral);
 
         /*
          * Once a peripheral has been attached, it should
          * not be re-attached on the next scan. They should
          * only be re-attached if previously detached.
          */
-        seeker.setupPeripheral = false;
+        seeker.reset();
         seeker.attachMock(peripheral);
         assertFalse(seeker.setupPeripheral);
+        assertFalse(seeker.connectedPeripheral);
 
         /* block peripheral for next test */
         MockPeripheral blockedPeripheral = new MockPeripheral();
@@ -321,22 +332,13 @@ class PeripheralSeekerTest {
          * attached by the seeker even if detected on the
          * next peripheral scan.
          */
-        seeker.setupPeripheral = false;
+        seeker.reset();
         seeker.attachMock(blockedPeripheral);
         assertFalse(seeker.setupPeripheral);
 
         /* create broken peripheral for next test */
         MockPeripheral brokenPeripheral = new MockPeripheral();
         brokenPeripheral.id = peripheral.id;
-        seeker.errorOnSetup = true;
-
-        /* set callback for next test */
-        AtomicBoolean didBlock = new AtomicBoolean();
-        AtomicBoolean willDetach = new AtomicBoolean();
-        seeker.onBlockPeripheral((seeker, blocked) -> {
-            didBlock.set(blocked.peripheral == brokenPeripheral);
-            willDetach.set(blocked.unblockAfterDetach);
-        });
 
         /*
          * If an error occurs while attaching a peripheral,
@@ -344,26 +346,45 @@ class PeripheralSeekerTest {
          * until it is detached. This allows for connection
          * to be re-attempted and prevents a seeker crash.
          */
+        seeker.reset();
+        seeker.errorOnSetup = true;
         seeker.attachMock(brokenPeripheral);
-        assertTrue(didBlock.get());
-        assertTrue(willDetach.get());
+        assertTrue(seeker.failedSetup);
+        assertFalse(seeker.connectedPeripheral);
+        assertTrue(seeker.blockedPeripheral);
+
+        /* unblock peripheral for next test */
+        seeker.unblockPeripheral(blockedPeripheral);
+
+        /*
+         * It is possible for peripheral to be blocked while
+         * it is being connected. The peripheral seeker must
+         * be aware of this. If this occurs, the seeker must
+         * not connect the peripheral.
+         */
+        seeker.reset();
+        seeker.blockOnSetup = true;
+        seeker.attachMock(blockedPeripheral);
+        assertTrue(seeker.setupPeripheral);
+        assertFalse(seeker.connectedPeripheral);
     }
 
     @Test
-    void detachPeripheral() { // todo
+    void detachPeripheral() {
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
         seeker.targetProduct(peripheral.id);
 
-        /* attach and block peripheral for next test */
+        /* attach peripheral for next test */
         seeker.attachMock(peripheral);
-        seeker.blockPeripheral(peripheral, true);
 
         /*
          * When blocking a peripheral, the user can specify
          * for it to be unblocked after it is detached. This
          * ensures that functionality is operational.
          */
+        seeker.reset();
+        seeker.blockPeripheral(peripheral, true);
         seeker.detachMock(peripheral);
         assertFalse(seeker.isPeripheralBlocked(peripheral));
 
@@ -377,9 +398,27 @@ class PeripheralSeekerTest {
          * not be blocked. This is because communication is
          * already over, so blocking it would do nothing.
          */
+        seeker.reset();
         seeker.errorOnShutdown = true;
         seeker.detachMock(peripheral);
         assertTrue(seeker.failedShutdown);
+        assertTrue(seeker.disconnectedPeripheral);
+        assertFalse(seeker.blockedPeripheral);
+
+        /* attach peripheral for next test */
+        seeker.attachMock(peripheral);
+
+        /*
+         * It is possible for peripheral to be blocked while
+         * it is being disconnected. The peripheral seeker
+         * must be able to handle this event. If this occurs,
+         * the peripheral will still be disconnected.
+         */
+        seeker.reset();
+        seeker.blockOnShutdown = true;
+        seeker.detachMock(peripheral);
+        assertTrue(seeker.shutdownPeripheral);
+        assertTrue(seeker.disconnectedPeripheral);
     }
 
     @Test
