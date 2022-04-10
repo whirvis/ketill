@@ -85,29 +85,6 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         this(MINIMUM_SCAN_INTERVAL);
     }
 
-    /* package-private for testing */
-    synchronized void hidDeviceAttached(HidServicesEvent event) {
-        scanned.add(event.getHidDevice());
-    }
-
-    /* package-private for testing */
-    synchronized void hidDeviceDetached(HidServicesEvent event) {
-        scanned.remove(event.getHidDevice());
-    }
-
-    /* package-private for testing */
-    synchronized void hidFailure(HidServicesEvent event) {
-        HidDevice device = event.getHidDevice();
-        if (!this.isClosed() && !this.isPeripheralBlocked(device)) {
-            try {
-                scanned.remove(device);
-                this.blockPeripheral(device, true);
-            } catch (Exception e) {
-                this.hidException = e;
-            }
-        }
-    }
-
     @Override
     protected final @NotNull ProductId getId(@NotNull HidDevice peripheral) {
         int vendorId = peripheral.getVendorId();
@@ -120,19 +97,45 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
         return peripheral.hashCode();
     }
 
-    @Override
-    protected final @NotNull Collection<@NotNull HidDevice> scanPeripherals() {
-        return this.scanned;
+    /* package-private for listener */
+    synchronized void hidDeviceAttached(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
+
+        try {
+            HidDevice device = event.getHidDevice();
+            if (!scanned.contains(device)) {
+                scanned.add(device);
+            }
+        } catch (Exception e) {
+            this.hidException = e;
+        }
     }
 
-    @Override
-    protected void peripheralAttached(@NotNull HidDevice peripheral) {
+    /* package-private for listener */
+    synchronized void hidDeviceDetached(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
+
         try {
-            if (peripheral.open()) {
-                peripheral.setNonBlocking(true);
-                this.connectPeripheral(peripheral);
-            } else {
-                this.blockPeripheral(peripheral, true);
+            scanned.remove(event.getHidDevice());
+        } catch (Exception e) {
+            this.hidException = e;
+        }
+    }
+
+    /* package-private for listener */
+    synchronized void hidFailure(HidServicesEvent event) {
+        if (this.isClosed()) {
+            return;
+        }
+
+        try {
+            HidDevice device = event.getHidDevice();
+            if (!this.isPeripheralBlocked(device)) {
+                this.blockPeripheral(device, true);
             }
         } catch (Exception e) {
             this.hidException = e;
@@ -140,18 +143,26 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     }
 
     @Override
-    protected void peripheralDetached(@NotNull HidDevice peripheral) {
-        try {
-            peripheral.close();
-            this.disconnectPeripheral(peripheral);
-        } catch (Exception e) {
-            this.hidException = e;
+    protected final @NotNull Collection<@NotNull HidDevice> scanPeripherals() {
+        return this.scanned;
+    }
+
+    @Override
+    protected final void setupPeripheral(@NotNull HidDevice peripheral) {
+        if (peripheral.open()) {
+            peripheral.setNonBlocking(true);
+        } else {
+            this.blockPeripheral(peripheral, true);
         }
     }
 
     @Override
-    @MustBeInvokedByOverriders
-    protected void seekImpl() throws Exception {
+    protected final void shutdownPeripheral(@NotNull HidDevice peripheral) {
+        peripheral.close();
+    }
+
+    @Override
+    protected final void seekImpl() throws Exception {
         if (hidException != null) {
             throw hidException;
         }
