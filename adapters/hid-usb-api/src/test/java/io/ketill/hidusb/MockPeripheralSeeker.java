@@ -120,6 +120,7 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
     @Override
     protected void peripheralSetupFailed(@NotNull MockPeripheral peripheral,
                                          @NotNull Throwable cause) {
+        super.peripheralSetupFailed(peripheral, cause);
         this.failedSetup = true;
     }
 
@@ -138,6 +139,7 @@ class MockPeripheralSeeker extends PeripheralSeeker<IoDevice, MockPeripheral> {
     @Override
     protected void peripheralShutdownFailed(@NotNull MockPeripheral peripheral,
                                             @NotNull Throwable cause) {
+        super.peripheralShutdownFailed(peripheral, cause);
         this.failedShutdown = true;
     }
 

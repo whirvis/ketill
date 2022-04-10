@@ -631,7 +631,6 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
             this.setupPeripheral(peripheral);
             setupSuccessful = true;
         } catch (Throwable cause) {
-            this.blockPeripheral(peripheral, cause, true);
             this.peripheralSetupFailed(peripheral, cause);
             setupSuccessful = false;
         }
@@ -679,15 +678,16 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
 
     /**
      * Called when {@link #setupPeripheral(Object)} fails as a result of
-     * an exception being thrown. By default, this method does nothing. This
-     * can be used to perform corrective measures (e.g., freeing resources).
+     * an exception. <b>By default, this blocks the peripheral.</b> This
+     * can be used to perform measures necessary to perform corrective
+     * measures (e.g., freeing resources).
      *
      * @param peripheral the peripheral.
      * @param cause      the cause for setup failure.
      */
     protected void peripheralSetupFailed(@NotNull P peripheral,
                                          @NotNull Throwable cause) {
-        /* optional implement */
+        this.blockPeripheral(peripheral, cause, true);
     }
 
     /**
@@ -761,8 +761,8 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
 
     /**
      * Called when {@link #shutdownPeripheral(Object)} as a result of an
-     * exception being thrown. By default, this method does nothing. This
-     * can be used to perform corrective measures (e.g., freeing resources).
+     * exception. <b>By default, this method does nothing.</b> This can
+     * be used to perform corrective measures (e.g., freeing resources).
      *
      * @param peripheral the peripheral.
      * @param cause      the cause for setup failure.
