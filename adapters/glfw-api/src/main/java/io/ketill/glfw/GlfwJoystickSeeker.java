@@ -23,8 +23,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * GLFW window as a joystick. When a joystick is connected to the window,
  * the appropriate {@code IoDevice} instance and adapter will be created
  * using a {@link GlfwJoystickWrangler}. Devices must be polled manually
- * after creation using {@link IoDevice#poll()}. They can be retrieved from
- * {@link #discoveredDevices}.
+ * after creation using {@link IoDevice#poll()}.
  * <p>
  * Implementations should call
  * {@link #wrangleGuid(String, GlfwJoystickWrangler)} to tell the seeker
@@ -79,7 +78,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     private final @NotNull Map<String, GlfwJoystickWrangler<I>> wranglers;
     private final @NotNull String guidResourcePath;
 
-    private @Nullable GuidCallback seekGuidCallback;
+    private @Nullable GuidCallback wrangleGuidCallback;
     private @Nullable GuidCallback releaseGuidCallback;
 
     /**
@@ -142,17 +141,25 @@ public class GlfwJoystickSeeker<I extends IoDevice>
 
     /**
      * Sets the callback for when this seeker begins wrangling a GUID.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event
+     * should override {@link #guidWrangled(String, GlfwJoystickWrangler)}.
+     * The callback is for users.
      *
      * @param callback the code to execute when a GUID is wrangled. A
      *                 value of {@code null} is permitted, and will
      *                 result in nothing being executed.
      */
     public final void onWrangleGuid(@Nullable GuidCallback callback) {
-        this.seekGuidCallback = callback;
+        this.wrangleGuidCallback = callback;
     }
 
     /**
      * Sets the callback for when this seeker releases a GUID.
+     * <p>
+     * <b>Note:</b> Extending classes wishing to listen for this event
+     * should override {@link #guidReleased(String, GlfwJoystickWrangler)}.
+     * The callback is for users.
      *
      * @param callback the code to execute when a GUID is released. A
      *                 value of {@code null} is permitted, and will
@@ -230,8 +237,9 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         }
 
         wranglers.put(guid, wrangler);
-        if (seekGuidCallback != null) {
-            seekGuidCallback.execute(this, guid, wrangler);
+        this.guidWrangled(guid, wrangler);
+        if (wrangleGuidCallback != null) {
+            wrangleGuidCallback.execute(this, guid, wrangler);
         }
     }
 
@@ -267,6 +275,19 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     }
 
     /**
+     * Called when a GUID is being wrangled. Overriding this method allows
+     * for a GLFW joystick seeker to know when a GUID is being wrangled
+     * without needing to set themselves as the callback.
+     *
+     * @param guid     the GUID.
+     * @param wrangler the wrangler assigned to {@code guid}.
+     */
+    protected void guidWrangled(@NotNull String guid,
+                                @NotNull GlfwJoystickWrangler<I> wrangler) {
+        /* optional implement */
+    }
+
+    /**
      * All currently registered joysticks with a matching GUID will be
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
@@ -294,9 +315,12 @@ public class GlfwJoystickSeeker<I extends IoDevice>
          */
         for (String guid : toRelease) {
             Objects.requireNonNull(guid, "guid");
-            GlfwJoystickWrangler<?> wrangler = wranglers.remove(guid);
-            if (wrangler != null && releaseGuidCallback != null) {
-                releaseGuidCallback.execute(this, guid, wrangler);
+            GlfwJoystickWrangler<I> wrangler = wranglers.remove(guid);
+            if (wrangler != null) {
+                this.guidReleased(guid, wrangler);
+                if (releaseGuidCallback != null) {
+                    releaseGuidCallback.execute(this, guid, wrangler);
+                }
             }
         }
 
@@ -342,6 +366,19 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     protected final void releaseGuid(@NotNull String toRelease) {
         Objects.requireNonNull(toRelease, "toRelease");
         this.releaseGuids(Collections.singletonList(toRelease));
+    }
+
+    /**
+     * Called when a GUID has been released. Overriding this method allows
+     * for a GLFW joystick seeker to know when a GUID has been released
+     * without needing to set themselves as the callback.
+     *
+     * @param guid     the GUID.
+     * @param wrangler the wrangler assigned to {@code guid}.
+     */
+    protected void guidReleased(@NotNull String guid,
+                                @NotNull GlfwJoystickWrangler<I> wrangler) {
+        /* optional implement */
     }
 
     @Override

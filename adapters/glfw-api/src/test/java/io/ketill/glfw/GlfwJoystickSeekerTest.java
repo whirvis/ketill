@@ -212,8 +212,20 @@ class GlfwJoystickSeekerTest {
         /* use wrangleGuids() here for full coverage */
         seeker.wrangleGuids(guids, wrangler);
         assertTrue(wrangled.get());
+        assertTrue(seeker.wrangledGuid);
         assertTrue(seeker.isWrangling(guid));
         assertTrue(seeker.isWranglingWith(guid, wrangler));
+
+        /*
+         * If the GLFW joystick seeker is told to wrangle one
+         * or more GUIDs with the same wrangler as previous,
+         * then it should do nothing.
+         */
+        wrangled.set(false);
+        seeker.wrangledGuid = false;
+        seeker.wrangleGuids(guids, wrangler);
+        assertFalse(wrangled.get());
+        assertFalse(seeker.wrangledGuid);
 
         /*
          * A null value is allowed when setting a callback.
@@ -305,8 +317,19 @@ class GlfwJoystickSeekerTest {
             seeker.releaseGuid(guid);
             assertTrue(released.get());
             assertTrue(forgot.get());
+            assertTrue(seeker.releasedGuid);
             assertFalse(seeker.isWrangling(guid));
             assertFalse(seeker.isWranglingWith(guid, wrangler));
+
+            /*
+             * If a GUID that is not being wrangled is released, then
+             * the GLFW joystick seeker should do nothing.
+             */
+            released.set(false);
+            seeker.releasedGuid = false;
+            seeker.releaseGuid(guid);
+            assertFalse(released.get());
+            assertFalse(seeker.releasedGuid);
         }
 
         /*
