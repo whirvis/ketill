@@ -298,7 +298,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      *                               closed via {@link #close()}.
      * @see #peripheralConnected(Object)
      */
-    protected void targetProduct(@NotNull ProductId id) {
+    protected synchronized void targetProduct(@NotNull ProductId id) {
         Objects.requireNonNull(id, "id cannot be null");
         this.requireOpen();
         if (this.isTargetingProduct(id)) {
@@ -355,7 +355,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      *                               closed via {@link #close()}.
      * @see #peripheralDisconnected(Object)
      */
-    protected void dropProduct(@NotNull ProductId id) {
+    protected synchronized void dropProduct(@NotNull ProductId id) {
         Objects.requireNonNull(id, "id cannot be null");
         this.requireOpen();
         if (!this.isTargetingProduct(id)) {
@@ -462,9 +462,9 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      * @see #unblockPeripheral(Object)
      * @see #onBlockPeripheral(BiConsumer)
      */
-    protected void blockPeripheral(@NotNull P peripheral,
-                                   @Nullable Throwable cause,
-                                   boolean unblockAfterDetach) {
+    protected synchronized void blockPeripheral(@NotNull P peripheral,
+                                                @Nullable Throwable cause,
+                                                boolean unblockAfterDetach) {
         Objects.requireNonNull(peripheral, "peripheral cannot be null");
         this.requireOpen();
         if (this.isPeripheralBlocked(peripheral)) {
@@ -533,7 +533,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
      *                               closed via {@link #close()}.
      * @see #onUnblockPeripheral(BiConsumer)
      */
-    protected void unblockPeripheral(@NotNull P peripheral) {
+    protected synchronized void unblockPeripheral(@NotNull P peripheral) {
         Objects.requireNonNull(peripheral, "peripheral cannot be null");
         this.requireOpen();
 
@@ -583,7 +583,7 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
          * connectPeripheral() method will always be called. It will ensure
          * a peripheral is not connected twice in error.
          */
-        if(!attached.contains(peripheral)) {
+        if (!attached.contains(peripheral)) {
             attached.add(peripheral);
         }
 
