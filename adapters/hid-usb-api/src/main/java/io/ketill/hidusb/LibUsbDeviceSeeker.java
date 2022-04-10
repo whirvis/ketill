@@ -35,7 +35,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
 
     private final Context usbContext;
     private final LibUsbDeviceSupplier<L> deviceSupplier;
-    private final Map<L, LibUsbQueued<L>> connectQueue;
+    private final Map<L, LibUsbOpening<L>> openings;
 
     /**
      * @param scanIntervalMs the interval in milliseconds between device
@@ -69,7 +69,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
                 "deviceSupplier cannot be null");
         this.deviceSupplier = (LibUsbDeviceSupplier<L>) deviceSupplier;
 
-        this.connectQueue = new HashMap<>();
+        this.openings = new HashMap<>();
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
          * Vendor IDs and product IDs are unsigned shorts. However,
          * the underlying LibUSB API returns them as a signed Java
          * short. This converts them to an unsigned value and stores
-         * them in an int so the expected value is returned.
+         * them as an int so the expected value is returned.
          */
         int vendorId = peripheral.usbDescriptor.idVendor() & 0xFFFF;
         int productId = peripheral.usbDescriptor.idProduct() & 0xFFFF;
@@ -143,53 +143,54 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     }
 
     @Override
-    protected void peripheralAttached(@NotNull L peripheral) {
-        synchronized (connectQueue) {
-            connectQueue.put(peripheral, new LibUsbQueued<>(peripheral, 3));
-        }
-    }
-
-    @Override
-    protected void peripheralDetached(@NotNull L peripheral) {
-        synchronized (connectQueue) {
-            connectQueue.remove(peripheral);
-            this.disconnectPeripheral(peripheral);
-        }
-    }
-
-    @Override
     protected final @NotNull Collection<@NotNull L> scanPeripherals() {
         return LibUsbDevice.getConnected(usbContext, deviceSupplier);
     }
 
-    private boolean attemptOpen(LibUsbQueued<L> queued) {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - queued.lastAttempt < 1000L) {
-            return false;
+    @Override
+    @MustBeInvokedByOverriders
+    protected void setupPeripheral(@NotNull L peripheral) {
+        if (!openings.containsKey(peripheral)) {
+            openings.put(peripheral, new LibUsbOpening<>(peripheral, 3));
         }
 
-        try {
-            queued.device.openHandle();
-            this.connectPeripheral(queued.device);
-            return true; /* device connected */
-        } catch (LibUsbException e) {
-            queued.attemptsLeft--;
-            queued.lastAttempt = currentTime;
-            if (queued.attemptsLeft <= 0) {
-                this.blockPeripheral(queued.device, e, true);
-                return true; /* all attempts used */
-            }
-            return false; /* failed to open */
+        /*
+         * Attempt to open the handle here. If no exception is thrown
+         * here, the peripheral will be removed the opening tracker.
+         * Otherwise, the setup failure handle will take over.
+         */
+        peripheral.openHandle();
+        openings.remove(peripheral);
+    }
+
+    @Override
+    protected void peripheralSetupFailed(@NotNull L peripheral,
+                                         @NotNull Throwable cause) {
+        if (!(cause instanceof LibUsbException)) {
+            super.peripheralSetupFailed(peripheral, cause);
+            return; /* something else went wrong here */
+        }
+
+        /*
+         * Sometimes, opening a device handle fails (for no discernable
+         * reason). When this happens, decrement the amount of remaining
+         * attempts. If any attempts remain, setup will be attempted once
+         * more on the next peripheral scan. If no attempts remain, block
+         * the peripheral until it is detached.
+         */
+        LibUsbOpening<L> queued = openings.get(peripheral);
+        queued.attemptsLeft--;
+        if (queued.attemptsLeft <= 0) {
+            openings.remove(peripheral);
+            this.blockPeripheral(queued.device, cause, true);
         }
     }
 
     @Override
     @MustBeInvokedByOverriders
-    protected void seekImpl() throws Exception {
-        super.seekImpl();
-        synchronized (connectQueue) {
-            connectQueue.values().removeIf(this::attemptOpen);
-        }
+    protected void shutdownPeripheral(@NotNull L peripheral) {
+        openings.remove(peripheral);
+        peripheral.close();
     }
 
     @Override
