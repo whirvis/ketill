@@ -2,20 +2,21 @@ package io.ketill.hidusb.gc;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.gc.GcController;
+import io.ketill.hidusb.ProductId;
 import io.ketill.hidusb.LibUsbDeviceSeeker;
 import org.jetbrains.annotations.NotNull;
-import org.usb4java.DeviceHandle;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
+public final class LibUsbGcSeeker
+        extends LibUsbDeviceSeeker<GcController, LibUsbDeviceGc> {
 
     private static final short VENDOR_NINTENDO = 0x057E;
     private static final short PRODUCT_GC_WIIU_ADAPTER = 0x0337;
 
     private final boolean allowMultiple;
-    private final Map<DeviceHandle, GcWiiUAdapter> wiiUAdapters;
+    private final Map<LibUsbDeviceGc, GcWiiUAdapter> wiiUAdapters;
     private final Map<AdapterSupplier<?>, GcController> sessions;
 
     /**
@@ -24,10 +25,13 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
      *                      first one discovered should be used.
      */
     public LibUsbGcSeeker(boolean allowMultiple) {
+        super(LibUsbDeviceGc::new);
+
         this.allowMultiple = allowMultiple;
         this.wiiUAdapters = new HashMap<>();
         this.sessions = new HashMap<>();
-        this.seekProduct(VENDOR_NINTENDO, PRODUCT_GC_WIIU_ADAPTER);
+        this.targetProduct(new ProductId(VENDOR_NINTENDO,
+                PRODUCT_GC_WIIU_ADAPTER));
     }
 
     /**
@@ -39,16 +43,16 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
     }
 
     @Override
-    protected void onDeviceAttach(@NotNull DeviceHandle handle) {
+    protected void peripheralConnected(@NotNull LibUsbDeviceGc usbDevice) {
         if (wiiUAdapters.isEmpty() || allowMultiple) {
-            GcWiiUAdapter adapter = new GcWiiUAdapter(usbContext, handle);
-            wiiUAdapters.put(handle, adapter);
+            GcWiiUAdapter adapter = new GcWiiUAdapter(usbDevice);
+            wiiUAdapters.put(usbDevice, adapter);
         }
     }
 
     @Override
-    protected void onDeviceDetach(@NotNull DeviceHandle device) {
-        GcWiiUAdapter wiiUAdapter = wiiUAdapters.remove(device);
+    protected void peripheralDisconnected(@NotNull LibUsbDeviceGc usbDevice) {
+        GcWiiUAdapter wiiUAdapter = wiiUAdapters.remove(usbDevice);
         if (wiiUAdapter == null) {
             return;
         }
@@ -84,7 +88,7 @@ public final class LibUsbGcSeeker extends LibUsbDeviceSeeker<GcController> {
     }
 
     @Override
-    protected void seekImpl() {
+    protected void seekImpl() throws Exception {
         super.seekImpl();
         for (GcWiiUAdapter wiiUAdapter : wiiUAdapters.values()) {
             this.seekAdapter(wiiUAdapter);

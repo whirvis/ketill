@@ -102,10 +102,10 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f stick,
+    private void updateStick(@NotNull Vector3f pos,
                              @NotNull StickMapping mapping) {
-        stick.x = this.getNormalizedAxis(mapping.xAxis);
-        stick.y = this.getNormalizedAxis(mapping.yAxis);
+        pos.x = this.getNormalizedAxis(mapping.xAxis);
+        pos.y = this.getNormalizedAxis(mapping.yAxis);
     }
 
     @FeatureAdapter
@@ -116,7 +116,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
 
     @FeatureAdapter
     private void updateMotor(@NotNull Vibration1f vibration) {
-        slot.setRumbling(vibration.force > 0.0F);
+        slot.setRumbling(vibration.getStrength() > 0.0F);
     }
 
     @Override

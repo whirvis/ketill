@@ -82,7 +82,7 @@ final class GcWiiUSlotState {
         }
     }
 
-    void clear() {
+    void reset() {
         Arrays.fill(data, (byte) 0x00);
         this.update(); /* use zeroed out data */
         this.setRumbling(false);

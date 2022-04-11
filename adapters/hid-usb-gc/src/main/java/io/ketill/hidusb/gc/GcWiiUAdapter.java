@@ -3,13 +3,9 @@ package io.ketill.hidusb.gc;
 import io.ketill.AdapterSupplier;
 import io.ketill.gc.GcController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.usb4java.Context;
-import org.usb4java.DeviceHandle;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 import org.usb4java.Transfer;
-import org.usb4java.TransferCallback;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
@@ -19,7 +15,7 @@ import java.util.Objects;
 /**
  * TODO: docs
  */
-public final class GcWiiUAdapter implements TransferCallback, Closeable {
+public final class GcWiiUAdapter implements Closeable {
 
     /* @formatter:off */
     private static final byte
@@ -43,8 +39,7 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
 
     public static final int SLOT_COUNT = 4;
 
-    private final Context usbContext;
-    private final DeviceHandle usbHandle;
+    private final LibUsbDeviceGc usbDevice;
     private final GcWiiUSlotState[] slots;
     private final ByteBuffer rumblePacket;
 
@@ -53,16 +48,13 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
     private boolean closed;
 
     /**
-     * TODO: docs
+     * TODO docs
      *
-     * @param usbContext the LibUSB context, may be {@code null}.
-     * @param usbHandle  the USB handle.
-     * @throws NullPointerException if {@code usbHandle} is {@code} null.
+     * @throws NullPointerException if {@code usbDevice} is {@code} null.
      */
-    public GcWiiUAdapter(@Nullable Context usbContext,
-                         @NotNull DeviceHandle usbHandle) {
-        this.usbContext = usbContext;
-        this.usbHandle = Objects.requireNonNull(usbHandle, "usbHandle");
+    public GcWiiUAdapter(@NotNull LibUsbDeviceGc usbDevice) {
+        this.usbDevice = Objects.requireNonNull(usbDevice,
+                "usbDevice cannot be null");
 
         this.slots = new GcWiiUSlotState[SLOT_COUNT];
         for (int i = 0; i < slots.length; i++) {
@@ -72,10 +64,22 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
         /*
          * The size of this packet is equal to one (the rumble packet
          * ID) plus the amount of slots present on this adapter. Each
-         * slot takes one byte for its rumble status.
+         * slot also takes up one byte for its rumble status.
          */
         this.rumblePacket = ByteBuffer.allocateDirect(1 + slots.length);
         rumblePacket.put(RUMBLE_ID);
+    }
+
+    private void requirePort(int port) {
+        if (port < 0 || port >= slots.length) {
+            throw new IndexOutOfBoundsException("no such port " + port);
+        }
+    }
+
+    private void requireOpen() {
+        if (closed) {
+            throw new IllegalStateException("adapter closed");
+        }
     }
 
     /**
@@ -85,15 +89,13 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
      * @throws IndexOutOfBoundsException if {@code port} is less than
      *                                   zero or greater than or equal
      *                                   to {@value #SLOT_COUNT}.
-     * @throws IllegalStateException     if the adapter is closed.
+     * @throws IllegalStateException     if this adapter has been closed
+     *                                   via {@link #close()}.
      * @see #getSlotSupplier(int)
      */
     public boolean isSlotConnected(int port) {
-        if (port < 0 || port >= slots.length) {
-            throw new IndexOutOfBoundsException("no such port " + port);
-        } else if (closed) {
-            throw new IllegalStateException("adapter closed");
-        }
+        this.requirePort(port);
+        this.requireOpen();
         return slots[port].isConnected();
     }
 
@@ -104,60 +106,73 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
      * @throws IndexOutOfBoundsException if {@code port} is less than
      *                                   zero or greater than or equal
      *                                   to {@value #SLOT_COUNT}.
-     * @throws IllegalStateException     if the adapter is closed.
+     * @throws IllegalStateException     if this adapter has been closed
+     *                                   via {@link #close()}.
      * @see #isSlotConnected(int)
      */
     public @NotNull AdapterSupplier<GcController> getSlotSupplier(int port) {
-        if (port < 0 || port >= slots.length) {
-            throw new IndexOutOfBoundsException("no such port " + port);
-        } else if (closed) {
-            throw new IllegalStateException("adapter closed");
-        }
+        this.requirePort(port);
+        this.requireOpen();
         return slots[port].supplier;
     }
 
     private void initAdapter() {
-        int result = LibUsb.claimInterface(usbHandle, CONFIG);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        /*
+         * Before communication can occur with a Nintendo Wii U GameCube
+         * controller adapter, the configuration interface must be claimed.
+         * After this, the initialization packet can be sent.
+         */
+        usbDevice.claimInterface(CONFIG);
 
+        /* create initialization packet */
         ByteBuffer init = ByteBuffer.allocateDirect(1);
         init.put(INIT_ID);
 
+        /*
+         * The initialization packet must be sent as an interrupt transfer to
+         * the adapter. Once this is done, the adapter communication is fully
+         * operational. Slot data can be read, rumble can be written, etc.
+         */
         IntBuffer transferred = IntBuffer.allocate(1);
-        result = LibUsb.interruptTransfer(usbHandle, ENDPOINT_OUT, init,
-                transferred, 0);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        usbDevice.interruptTransfer(ENDPOINT_OUT, init, transferred, 0L);
     }
 
     private void sendRumblePacket() {
-        boolean submit = false;
+        boolean submitRumble = false;
 
+        /*
+         * Prepare the rumble packet before sending it out. This
+         * has the  added benefit of determining if any data needs
+         * to be sent.
+         */
         for (int i = 0; i < slots.length; i++) {
             int offset = i + 1; /* +1 to account for rumble ID */
             boolean rumbling = slots[i].isRumbling();
             byte state = (rumbling ? RUMBLE_START : RUMBLE_STOP);
             if (rumblePacket.get(offset) != state) {
                 rumblePacket.put(offset, state);
-                submit = true;
+                submitRumble = true;
             }
         }
 
         /*
-         * Only write to the adapter once the rumble packet has
-         * been modified. It would be horrendous for performance
-         * to submit these every update call.
+         * Only send an interrupt transfer to the adapter if the rumble
+         * packet has been modified. It would be horrendous performance
+         * wise to submit them every update call.
+         *
+         * Furthermore, the status of the transfer is not checked. If an
+         * error occurs, broken rumble does not deem an exception. It is
+         * more likely that the USB device was unplugged while the packet
+         * was being generated.
          */
-        if (submit) {
-            Transfer transfer = LibUsb.allocTransfer();
-            LibUsb.fillInterruptTransfer(transfer, usbHandle, ENDPOINT_OUT,
-                    rumblePacket, this, null, 0);
-            int result = LibUsb.submitTransfer(transfer);
-            if (result != LibUsb.SUCCESS) {
-                throw new LibUsbException(result);
+        if (submitRumble) {
+            try {
+                Transfer transfer = LibUsb.allocTransfer();
+                usbDevice.fillInterruptTransfer(transfer, ENDPOINT_OUT,
+                        rumblePacket, this::processTransfer, null, 0L);
+                LibUsb.submitTransfer(transfer);
+            } catch (LibUsbException e) {
+                /* expected possibility, ignore */
             }
         }
     }
@@ -170,28 +185,20 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
         }
     }
 
-    @Override
-    public void processTransfer(Transfer transfer) {
-        if (closed) {
-            return; /* received after adapter was closed */
-        } else if (!usbHandle.equals(transfer.devHandle())) {
-            return; /* not our device, not for us */
+    private void processTransfer(ByteBuffer buffer) {
+        byte packetId = buffer.get();
+        if (packetId == DATA_ID) {
+            this.handleDataPacket(buffer);
+            this.requestedData = false;
         }
-
-        if (transfer.endpoint() == ENDPOINT_IN) {
-            ByteBuffer buffer = transfer.buffer();
-            byte packetId = buffer.get();
-            if (packetId == DATA_ID) {
-                this.handleDataPacket(buffer);
-                this.requestedData = false;
-            }
-        }
-
-        LibUsb.freeTransfer(transfer);
     }
 
     /**
-     * TODO: docs
+     * Performs a <i>single</i> query from the Wii U adapter and updates the
+     * rumble state of all GameCube controllers. It is recommended to call
+     * this method once every application update.
+     *
+     * @see #isSlotConnected(int)
      */
     public synchronized void poll() {
         if (closed) {
@@ -208,10 +215,7 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
          * must ask LibUsb to handle the events manually. If this
          * is not done, no data will come in from the transfers!
          */
-        int result = LibUsb.handleEventsTimeout(usbContext, 0);
-        if (result != LibUsb.SUCCESS) {
-            throw new LibUsbException(result);
-        }
+        usbDevice.handleEventsTimeout(0L);
 
         /*
          * The requestedData boolean is used to prevent needless
@@ -222,13 +226,9 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
         if (!requestedData) {
             Transfer transfer = LibUsb.allocTransfer();
             ByteBuffer data = ByteBuffer.allocateDirect(DATA_LEN);
-            LibUsb.fillInterruptTransfer(transfer, usbHandle, ENDPOINT_IN,
-                    data, this, null, 0L);
-
-            result = LibUsb.submitTransfer(transfer);
-            if (result != LibUsb.SUCCESS) {
-                throw new LibUsbException(result);
-            }
+            usbDevice.fillInterruptTransfer(transfer, ENDPOINT_IN,
+                    data, this::processTransfer, null, 0L);
+            usbDevice.submitTransfer(transfer);
             this.requestedData = true;
         }
 
@@ -237,17 +237,28 @@ public final class GcWiiUAdapter implements TransferCallback, Closeable {
 
     @Override
     public synchronized void close() {
-        if (!closed) {
-            for (GcWiiUSlotState slot : slots) {
-                slot.clear();
-            }
-            try {
-                this.sendRumblePacket();
-            } catch (Exception e) {
-                /* not necessary, just ignore */
-            }
-            this.closed = true;
+        if (closed) {
+            return;
         }
+
+        /*
+         * Since the adapter is closed, clear the slot data of every
+         * controller. This ensures the next time they are polled
+         * they display a default state (e.g., no buttons pressed).
+         */
+        for (GcWiiUSlotState slot : slots) {
+            slot.reset();
+        }
+
+        /*
+         * In case any controllers are rumbling at the time this adapter
+         * is closed, send one last rumble packet. Now that the slots are
+         * reset, they will all have rumble disabled. This will prevent
+         * the controllers from continually rumbling after this closes.
+         */
+        this.sendRumblePacket();
+
+        this.closed = true;
     }
 
 }
