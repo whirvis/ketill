@@ -269,7 +269,7 @@ public class LibUsbDevice implements Closeable {
      *                  {@code null} is <i>not</i> permitted,
      *                  the default context is forbidden.
      * @param usbDevice the USB device to perform I/O on.
-     * @throws NullPointerException if {@code context} or {@code device}
+     * @throws NullPointerException if {@code context} or {@code usbDevice}
      *                              are {@code null}.
      * @throws LibUsbException      if an error code is returned when
      *                              getting the device descriptor.
