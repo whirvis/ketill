@@ -277,7 +277,13 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             return;
         }
 
-        for (I discovered : devices) {
+        /*
+         * This workaround is technically unnecessary since the internal
+         * devices list is a CopyOnWriteArrayList. However, using this
+         * allows a different type to be used without breaking close().
+         */
+        while(!devices.isEmpty()) {
+            I discovered = devices.get(0);
             this.forgetDevice(discovered);
         }
 
