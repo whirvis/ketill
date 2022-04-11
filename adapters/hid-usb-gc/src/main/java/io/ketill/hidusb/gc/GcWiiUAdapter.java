@@ -9,11 +9,17 @@ import org.usb4java.Transfer;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.Objects;
 
 /**
- * TODO: docs
+ * Implementation for Nintendo's official Wii U GameCube controller adapter.
+ * The adapter for individual controllers is {@link LibUsbGcAdapter}.
+ * <p>
+ * <b>Note:</b> For data to stay up-to-date, the adapter must be polled
+ * periodically via the {@link #poll()} method. It is recommended to poll
+ * the adapter once every application update.
+ *
+ * @see #getSlotSupplier(int)
  */
 public final class GcWiiUAdapter implements Closeable {
 
@@ -48,9 +54,7 @@ public final class GcWiiUAdapter implements Closeable {
     private boolean closed;
 
     /**
-     * TODO docs
-     *
-     * @throws NullPointerException if {@code usbDevice} is {@code} null.
+     * @throws NullPointerException if {@code usbDevice} is {@code null}.
      */
     public GcWiiUAdapter(@NotNull LibUsbDeviceGc usbDevice) {
         this.usbDevice = Objects.requireNonNull(usbDevice,
@@ -124,17 +128,14 @@ public final class GcWiiUAdapter implements Closeable {
          */
         usbDevice.claimInterface(CONFIG);
 
-        /* create initialization packet */
-        ByteBuffer init = ByteBuffer.allocateDirect(1);
-        init.put(INIT_ID);
-
         /*
-         * The initialization packet must be sent as an interrupt transfer to
-         * the adapter. Once this is done, the adapter communication is fully
+         * The initialization packet must be sent as an interrupt transfer
+         * to the adapter. Once this is done, the adapter communication is
          * operational. Slot data can be read, rumble can be written, etc.
          */
-        IntBuffer transferred = IntBuffer.allocate(1);
-        usbDevice.interruptTransfer(ENDPOINT_OUT, init, transferred, 0L);
+        ByteBuffer init = ByteBuffer.allocateDirect(1);
+        init.put(INIT_ID);
+        usbDevice.interruptTransfer(ENDPOINT_OUT, init, 0L);
     }
 
     private void sendRumblePacket() {
@@ -169,7 +170,7 @@ public final class GcWiiUAdapter implements Closeable {
             try {
                 Transfer transfer = LibUsb.allocTransfer();
                 usbDevice.fillInterruptTransfer(transfer, ENDPOINT_OUT,
-                        rumblePacket, this::processTransfer, null, 0L);
+                        rumblePacket, null, null, 0L);
                 LibUsb.submitTransfer(transfer);
             } catch (LibUsbException e) {
                 /* expected possibility, ignore */
@@ -215,7 +216,7 @@ public final class GcWiiUAdapter implements Closeable {
          * must ask LibUsb to handle the events manually. If this
          * is not done, no data will come in from the transfers!
          */
-        usbDevice.handleEventsTimeout(0L);
+        usbDevice.handleEventsCompleted(0L);
 
         /*
          * The requestedData boolean is used to prevent needless
@@ -226,8 +227,8 @@ public final class GcWiiUAdapter implements Closeable {
         if (!requestedData) {
             Transfer transfer = LibUsb.allocTransfer();
             ByteBuffer data = ByteBuffer.allocateDirect(DATA_LEN);
-            usbDevice.fillInterruptTransfer(transfer, ENDPOINT_IN,
-                    data, this::processTransfer, null, 0L);
+            usbDevice.fillInterruptTransfer(transfer, ENDPOINT_IN, data,
+                    this::processTransfer, null, 0L);
             usbDevice.submitTransfer(transfer);
             this.requestedData = true;
         }
