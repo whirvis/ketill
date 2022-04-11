@@ -21,6 +21,8 @@ import java.util.function.Supplier;
  */
 public class IoFeature<S> {
 
+    // TODO: public state and internal state
+
     public final @NotNull String id;
     public final @NotNull Supplier<@NotNull S> initialState;
 
