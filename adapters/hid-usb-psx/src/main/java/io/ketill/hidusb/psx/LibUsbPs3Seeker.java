@@ -85,16 +85,16 @@ public final class LibUsbPs3Seeker
     }
 
     @Override
-    protected void peripheralConnected(@NotNull LibUsbDevicePs3 device) {
+    protected void peripheralConnected(@NotNull LibUsbDevicePs3 usbDevice) {
         Ps3Controller controller = new Ps3Controller((c, r) ->
-                new LibUsbPs3Adapter(c, r, device));
-        sessions.put(device, controller);
+                new LibUsbPs3Adapter(c, r, usbDevice));
+        sessions.put(usbDevice, controller);
         this.discoverDevice(controller);
     }
 
     @Override
-    protected void peripheralDisconnected(@NotNull LibUsbDevicePs3 device) {
-        Ps3Controller controller = sessions.remove(device);
+    protected void peripheralDisconnected(@NotNull LibUsbDevicePs3 usbDevice) {
+        Ps3Controller controller = sessions.remove(usbDevice);
         if (controller != null) {
             this.forgetDevice(controller);
         }
