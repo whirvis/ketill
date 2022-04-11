@@ -33,31 +33,19 @@ import java.util.Objects;
 public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         L extends LibUsbDevice> extends PeripheralSeeker<I, L> {
 
+    protected static final int DEFAULT_SETUP_ATTEMPTS = 3;
+
+    private final boolean userContext;
     private final Context usbContext;
     private final LibUsbDeviceSupplier<L> deviceSupplier;
     private final Map<L, LibUsbOpening<L>> openings;
 
-    /**
-     * @param scanIntervalMs the interval in milliseconds between device
-     *                       enumeration scans. This does <i>not</i> cause
-     *                       {@link #seek()} to block. It only prevents a
-     *                       device scan from being performed unless enough
-     *                       time has elapsed between method calls.
-     * @param context        the USB context.
-     * @param deviceSupplier the LibUSB device supplier. This can usually
-     *                       just be {@code LibUsbDevice::new}.
-     * @throws IllegalArgumentException if {@code scanIntervalMs} is less
-     *                                  than {@value #MINIMUM_SCAN_INTERVAL}.
-     * @throws NullPointerException     if {@code context} or
-     *                                  {@code deviceSupplier}
-     *                                  are {@code null}.
-     * @see LibUsbDevice#initContext()
-     */
     @SuppressWarnings("unchecked")
-    public LibUsbDeviceSeeker(long scanIntervalMs,
-                              @NotNull Context context,
-                              @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
+    private LibUsbDeviceSeeker(long scanIntervalMs, boolean userContext,
+                               @NotNull Context context,
+                               @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
         super(scanIntervalMs);
+        this.userContext = userContext;
         this.usbContext = Objects.requireNonNull(context,
                 "default context is forbidden");
 
@@ -73,8 +61,32 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     }
 
     /**
-     * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
-     * {@code context} being a newly initialized LibUSB context.
+     * @param scanIntervalMs the interval in milliseconds between device
+     *                       enumeration scans. This does <i>not</i> cause
+     *                       {@link #seek()} to block. It only prevents a
+     *                       device scan from being performed unless enough
+     *                       time has elapsed between method calls.
+     * @param context        the USB context. Since this was created by the
+     *                       user, {@link #close()} will not exit it.
+     * @param deviceSupplier the LibUSB device supplier. This can usually
+     *                       just be {@code LibUsbDevice::new}.
+     * @throws IllegalArgumentException if {@code scanIntervalMs} is less
+     *                                  than {@value #MINIMUM_SCAN_INTERVAL}.
+     * @throws NullPointerException     if {@code context} or
+     *                                  {@code deviceSupplier}
+     *                                  are {@code null}.
+     * @see LibUsbDevice#initContext()
+     */
+    public LibUsbDeviceSeeker(long scanIntervalMs,
+                              @NotNull Context context,
+                              @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
+        this(scanIntervalMs, true, context, deviceSupplier);
+    }
+
+    /**
+     * Constructs a new {@code LibUsbDeviceSeeker} with the argument
+     * for {@code context} being a newly initialized LibUSB context.
+     * This context will be exited when the seeker is closed.
      *
      * @param scanIntervalMs the interval in milliseconds between device
      *                       enumeration scans. This does <i>not</i> cause
@@ -91,14 +103,15 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      */
     public LibUsbDeviceSeeker(long scanIntervalMs,
                               @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
-        this(scanIntervalMs, LibUsbDevice.initContext(), deviceSupplier);
+        this(scanIntervalMs, false, LibUsbDevice.initContext(), deviceSupplier);
     }
 
     /**
      * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
      * {@code scanIntervalMs} being {@value #MINIMUM_SCAN_INTERVAL}.
      *
-     * @param context        the USB context.
+     * @param context        the USB context. Since this was created by the
+     *                       user, {@link #close()} will not exit it.
      * @param deviceSupplier the LibUSB device supplier. This can usually
      *                       just be {@code LibUsbDevice::new}.
      * @throws NullPointerException if {@code context} or
@@ -107,13 +120,14 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      */
     public LibUsbDeviceSeeker(@NotNull Context context,
                               @NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
-        this(MINIMUM_SCAN_INTERVAL, context, deviceSupplier);
+        this(MINIMUM_SCAN_INTERVAL, true, context, deviceSupplier);
     }
 
     /**
      * Constructs a new {@code LibUsbDeviceSeeker} with the argument for
      * {@code scanIntervalMs} being {@value #MINIMUM_SCAN_INTERVAL} and
-     * {@code context} being a newly initialized LibUSB context.
+     * {@code context} being a newly initialized LibUSB context. This
+     * context will be exited when the seeker is closed.
      *
      * @param deviceSupplier the LibUSB device supplier. This can usually
      *                       just be {@code LibUsbDevice::new}.
@@ -121,20 +135,25 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      * @throws LibUsbException      if LibUSB could not be initialized.
      */
     public LibUsbDeviceSeeker(@NotNull LibUsbDeviceSupplier<?> deviceSupplier) {
-        this(MINIMUM_SCAN_INTERVAL, LibUsbDevice.initContext(), deviceSupplier);
+        this(MINIMUM_SCAN_INTERVAL, false, LibUsbDevice.initContext(),
+                deviceSupplier);
+    }
+
+    /**
+     * By default, this method returns {@value #DEFAULT_SETUP_ATTEMPTS}.
+     *
+     * @param peripheral the peripheral.
+     * @return the amount of attempts {@code peripheral} should be afforded
+     * for connection. Values less than one are redundant, all devices are
+     * afforded one attempt.
+     */
+    protected int getSetupAttempts(@NotNull L peripheral) {
+        return DEFAULT_SETUP_ATTEMPTS;
     }
 
     @Override
     protected final @NotNull ProductId getId(@NotNull L peripheral) {
-        /*
-         * Vendor IDs and product IDs are unsigned shorts. However,
-         * the underlying LibUSB API returns them as a signed Java
-         * short. This converts them to an unsigned value and stores
-         * them as an int so the expected value is returned.
-         */
-        int vendorId = peripheral.usbDescriptor.idVendor() & 0xFFFF;
-        int productId = peripheral.usbDescriptor.idProduct() & 0xFFFF;
-        return new ProductId(vendorId, productId);
+        return peripheral.getProductId();
     }
 
     @Override
@@ -151,7 +170,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
     @MustBeInvokedByOverriders
     protected void setupPeripheral(@NotNull L peripheral) {
         if (!openings.containsKey(peripheral)) {
-            openings.put(peripheral, new LibUsbOpening<>(peripheral, 3));
+            int setupAttempts = this.getSetupAttempts(peripheral);
+            openings.put(peripheral, new LibUsbOpening<>(peripheral,
+                    setupAttempts));
         }
 
         /*
@@ -179,8 +200,8 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
          * the peripheral until it is detached.
          */
         LibUsbOpening<L> queued = openings.get(peripheral);
-        queued.attemptsLeft--;
-        if (queued.attemptsLeft <= 0) {
+        queued.remainingAttempts--;
+        if (queued.remainingAttempts <= 0) {
             openings.remove(peripheral);
             this.blockPeripheral(queued.device, cause, true);
         }
@@ -199,8 +220,18 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         if (this.isClosed()) {
             return;
         }
+
         super.close();
-        LibUsbDevice.exitContext(usbContext);
+
+        /*
+         * If the context was not created by the user, then the seeker
+         * should exit it here (freeing allocated resources). However,
+         * the seeker will not exit a user created context. This so the
+         * user can continue using it after this seeker is closed.
+         */
+        if (!userContext) {
+            LibUsbDevice.exitContext(usbContext);
+        }
     }
 
 }

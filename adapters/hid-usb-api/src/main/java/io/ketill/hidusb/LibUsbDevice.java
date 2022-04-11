@@ -246,9 +246,10 @@ public class LibUsbDevice implements Closeable {
 
     protected final @NotNull Context usbContext;
     protected final @NotNull Device usbDevice;
-    private final long ptr;
-
     protected final @NotNull DeviceDescriptor usbDescriptor;
+
+    private final long ptr;
+    private final @NotNull ProductId productId;
 
     private @Nullable DeviceHandle usbHandle;
     private boolean closed;
@@ -264,29 +265,48 @@ public class LibUsbDevice implements Closeable {
      * for the USB handle can also be opened via {@link #openHandle()} and
      * later retrieved using {@link #getHandle()}.
      *
-     * @param context the context to operate on. A value of
-     *                {@code null} is <i>not</i> permitted,
-     *                the default context is forbidden.
-     * @param device  the USB device to perform I/O on.
+     * @param context   the context to operate on. A value of
+     *                  {@code null} is <i>not</i> permitted,
+     *                  the default context is forbidden.
+     * @param usbDevice the USB device to perform I/O on.
      * @throws NullPointerException if {@code context} or {@code device}
      *                              are {@code null}.
      * @throws LibUsbException      if an error code is returned when
      *                              getting the device descriptor.
      * @see #close()
      */
-    public LibUsbDevice(@NotNull Context context, @NotNull Device device) {
-        this.usbContext = Objects.requireNonNull(context, "default context is forbidden");
-        this.usbDevice = Objects.requireNonNull(device, "device cannot be null");
+    public LibUsbDevice(@NotNull Context context, @NotNull Device usbDevice) {
+        this.usbContext = Objects.requireNonNull(context,
+                "default context is forbidden");
+        this.usbDevice = Objects.requireNonNull(usbDevice,
+                "device cannot be null");
+        this.usbDescriptor = new DeviceDescriptor();
+
+        /* initialize contents of descriptor */
+        requireSuccess(() -> LibUsb.getDeviceDescriptor(usbDevice,
+                usbDescriptor));
+
         this.ptr = usbDevice.getPointer();
 
-        this.usbDescriptor = new DeviceDescriptor();
-        requireSuccess(() -> LibUsb.getDeviceDescriptor(device, usbDescriptor));
+        /*
+         * Vendor IDs and product IDs are unsigned shorts. However,
+         * the underlying LibUSB API returns them as a signed Java
+         * short. This converts them to an unsigned value and stores
+         * them as an int so the expected value is returned.
+         */
+        int vendorId = usbDescriptor.idVendor() & 0xFFFF;
+        int productId = usbDescriptor.idProduct() & 0xFFFF;
+        this.productId = new ProductId(vendorId, productId);
+    }
+
+    public final @NotNull ProductId getProductId() {
+        return this.productId;
     }
 
     /**
      * @return the USB device handle.
-     * @throws IllegalStateException if a call to {@link #openHandle()} was not
-     *                               made before calling this method.
+     * @throws IllegalStateException if a call to {@link #openHandle()} was
+     *                               not made before calling this method.
      */
     protected final @NotNull DeviceHandle getHandle() {
         if (usbHandle == null) {
