@@ -337,7 +337,6 @@ public abstract class IoDevice implements FeatureRegistry {
      *
      * @param registered the registered feature.
      */
-    @SuppressWarnings("unused")
     protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
         /* optional implement */
     }
@@ -358,7 +357,6 @@ public abstract class IoDevice implements FeatureRegistry {
      *
      * @param feature the unregistered feature.
      */
-    @SuppressWarnings("unused")
     protected void featureUnregistered(@NotNull IoFeature<?> feature) {
         /* optional implement */
     }

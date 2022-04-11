@@ -140,7 +140,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the discovered device.
      */
-    @SuppressWarnings("unused")
     protected void deviceDiscovered(@NotNull I device) {
         /* optional implement */
     }
@@ -166,7 +165,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the forgotten device.
      */
-    @SuppressWarnings("unused")
     protected void deviceForgotten(@NotNull I device) {
         /* optional implement */
     }
@@ -207,7 +205,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         return this;
     }
 
-
     /**
      * Called when an error occurs in {@link #seek()}. Overriding this
      * method allows for an I/O device seeker to know when an error has
@@ -215,7 +212,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param cause the cause of the error.
      */
-    @SuppressWarnings("unused")
     protected void seekerError(@NotNull Throwable cause) {
         /* optional implement */
     }
