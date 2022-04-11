@@ -302,6 +302,19 @@ class LibUsbDeviceTest {
     }
 
     @Test
+    void getProductId() {
+        assumeGuineaPigPresent();
+
+        /*
+         * If the underlying product ID is null, that means the
+         * type of device is unknown. This makes it impossible
+         * to detect by instances of LibUsbDeviceSeeker. Assume
+         * something has gone wrong during instantiation.
+         */
+        assertNotNull(guineaPig.getProductId());
+    }
+
+    @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
     void getHandle() {
         assumeGuineaPigPresent();
