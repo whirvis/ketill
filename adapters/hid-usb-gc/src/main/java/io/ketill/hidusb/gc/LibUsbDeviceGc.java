@@ -21,17 +21,6 @@ final class LibUsbDeviceGc extends LibUsbDevice {
 
     private final Map<Transfer, Consumer<ByteBuffer>> pendingTransfers;
 
-    /**
-     * @param context   the context to operate on. A value of
-     *                  {@code null} is <i>not</i> permitted,
-     *                  the default context is forbidden.
-     * @param usbDevice the USB device to perform I/O on.
-     * @throws NullPointerException if {@code context} or {@code usbDevice}
-     *                              are {@code null}.
-     * @throws LibUsbException      if an error code is returned when
-     *                              getting the device descriptor.
-     * @see #close()
-     */
     LibUsbDeviceGc(@NotNull Context context, @NotNull Device usbDevice) {
         super(context, usbDevice);
         this.pendingTransfers = new HashMap<>();
