@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface FeatureRegistry {
+interface FeatureRegistry {
 
     /**
      * @param feature the feature whose registration to check.
@@ -13,7 +13,7 @@ public interface FeatureRegistry {
      * otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    boolean isFeatureRegistered(@NotNull IoFeature<?> feature);
+    boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature);
 
     /**
      * @return the amount of registered features.
@@ -25,17 +25,18 @@ public interface FeatureRegistry {
      * @return all registered features.
      * @see #getFeatureCount()
      */
-    @NotNull Collection<@NotNull RegisteredFeature<?, ?>> getFeatures();
+    @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>> getFeatures();
 
     /**
      * @param feature the feature whose registration to fetch.
+     * @param <Z>     the internal state type.
      * @param <S>     the state container type.
      * @return the feature registration, {@code null} if not registered.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     /* @formatter:off */
-    <S> @Nullable RegisteredFeature<?, S>
-            getFeatureRegistration(@NotNull IoFeature<S> feature);
+    <Z, S> @Nullable RegisteredFeature<?, Z, S>
+            getFeatureRegistration(@NotNull IoFeature<Z, S> feature);
     /* @formatter:on */
 
     /**
@@ -49,13 +50,14 @@ public interface FeatureRegistry {
      * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
-    default <S> @NotNull S getState(@NotNull IoFeature<S> feature) {
-        RegisteredFeature<?, S> registered = this.getFeatureRegistration(feature);
+    default <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
+        RegisteredFeature<?, ?, S> registered =
+                this.getFeatureRegistration(feature);
         if (registered == null) {
             String msg = "no such feature \"" + feature.id + "\"";
             throw new IllegalStateException(msg);
         }
-        return registered.state;
+        return registered.containerState;
     }
 
     /**
@@ -69,21 +71,23 @@ public interface FeatureRegistry {
      * it is not registered.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    default <S> @Nullable S requestState(@NotNull IoFeature<S> feature) {
-        RegisteredFeature<?, S> registered = this.getFeatureRegistration(feature);
-        return registered != null ? registered.state : null;
+    default <S> @Nullable S requestState(@NotNull IoFeature<?, S> feature) {
+        RegisteredFeature<?, ?, S> registered =
+                this.getFeatureRegistration(feature);
+        return registered != null ? registered.containerState : null;
     }
 
     /**
      * @param feature the feature to register.
      * @param <F>     the device feature type.
+     * @param <Z>     the internal state type.
      * @param <S>     the state container type.
      * @return the feature registration.
      * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is already registered.
      */
     /* @formatter:off */
-    <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    <F extends IoFeature<Z, S>, Z, S> @NotNull RegisteredFeature<F, Z, S>
             registerFeature(@NotNull F feature);
     /* @formatter:on */
 
@@ -92,6 +96,6 @@ public interface FeatureRegistry {
      * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
      */
-    void unregisterFeature(@NotNull IoFeature<?> feature);
+    void unregisterFeature(@NotNull IoFeature<?, ?> feature);
 
 }

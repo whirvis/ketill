@@ -3,53 +3,95 @@ package io.ketill;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
-import java.util.function.Supplier;
 
 /**
  * I/O features provide a definition of a capability present on an
- * {@link IoDevice}. Some examples would be a button, an analog stick, a
- * rumble motor, or an LED indicator. Depending on the feature, their state
- * can be either read-only (e.g., button state) or read-write (e.g., rumble
- * motor vibration).
+ * {@link IoDevice}. Examples include (but are not limited to), a
+ * button, an analog stick, a rumble motor, or an LED indicator.
  *
- * @param <S> the state container type.
+ * @param <Z> the internal state type. This is visible to {@link IoDevice},
+ *            {@link IoDeviceAdapter}, and {@link FeatureRegistry}. This
+ *            should remain hidden from the user. It contains sensitive
+ *            data for the purposes of the device and the adapter.
+ * @param <S> the state container type. This is publicly visible. It should
+ *            act as a pass through to the internal state. If the internal
+ *            state contains no sensitive data, they can be the same type.
  * @see IoDevice#registerFeature(IoFeature)
  * @see FeaturePresent
  * @see FeatureState
- * @see AdapterUpdatedField
- * @see UserUpdatedField
  */
-public class IoFeature<S> {
-
-    // TODO: public state and internal state
+public abstract class IoFeature<Z, S> {
 
     public final @NotNull String id;
-    public final @NotNull Supplier<@NotNull S> initialState;
 
     /**
-     * @param id           the feature ID.
-     * @param initialState a supplier for the feature's initial state.
-     * @throws NullPointerException     if {@code id}, {@code initialState} or
-     *                                  the value that {@code initialState}
-     *                                  supplies is {@code null}.
+     * @param id the feature ID.
+     * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public IoFeature(@NotNull String id,
-                     @NotNull Supplier<@NotNull S> initialState) {
+    public IoFeature(@NotNull String id) {
         this.id = Objects.requireNonNull(id, "id cannot be null");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
         } else if (!id.matches("\\S+")) {
             throw new IllegalArgumentException("id cannot contain whitespace");
         }
-
-        /* @formatter:off */
-        this.initialState = Objects.requireNonNull(initialState,
-                "initialState cannot be null");
-        Objects.requireNonNull(initialState.get(),
-                "value supplied by initialState cannot be null");
-        /* @formatter:on */
     }
+
+    /**
+     * Constructs a new {@code StateContainer} containing a newly
+     * instantiated instance of both the internal and container state.
+     *
+     * @return the state container.
+     * @throws NullPointerException          if {@link #getInternalState()} or
+     *                                       {@link #getContainerState(Object)}
+     *                                       return {@code null}.
+     * @throws UnsupportedOperationException if the returned internal state
+     *                                       or container state are instances
+     *                                       of an {@link IoFeature}.
+     */
+    protected final @NotNull StateContainer<Z, S> getState() {
+        Z internalState = this.getInternalState();
+        Objects.requireNonNull(internalState,
+                "getInternalState() cannot return null");
+        if (internalState instanceof IoFeature) {
+            String msg = "internal state cannot be an";
+            msg += " " + this.getClass().getSimpleName();
+            throw new UnsupportedOperationException(msg);
+        }
+
+        S containerState = this.getContainerState(internalState);
+        Objects.requireNonNull(containerState,
+                "getContainerState() cannot return null");
+        if (containerState instanceof IoFeature) {
+            String msg = "container state cannot be an";
+            msg += " " + this.getClass().getSimpleName();
+            throw new UnsupportedOperationException(msg);
+        }
+
+        return new StateContainer<>(internalState, containerState);
+    }
+
+    /**
+     * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
+     * to prevent possible headaches with other methods.
+     *
+     * @return a newly instantiated instance of the internal state. This
+     * method must <i>never</i> return {@code null}.
+     */
+    protected abstract @NotNull Z getInternalState();
+
+    /**
+     * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
+     * to prevent possible headaches with other methods.
+     *
+     * @param internalState the internal state. This can be used to access
+     *                      sensitive data without while limiting the user
+     *                      as necessary (e.g., making it read only).
+     * @return a newly instantiated instance of the container state. This
+     * method must <i>never</i> return {@code null}.
+     */
+    protected abstract @NotNull S getContainerState(@NotNull Z internalState);
 
 }

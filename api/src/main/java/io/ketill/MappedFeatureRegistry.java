@@ -16,8 +16,8 @@ import java.util.Objects;
  */
 public final class MappedFeatureRegistry implements FeatureRegistry {
 
-    private final Map<IoFeature<?>, RegisteredFeature<?, ?>> features;
-    private final Map<IoFeature<?>, MappedFeature<?, ?, ?>> mappings;
+    private final Map<IoFeature<?, ?>, RegisteredFeature<?, ?, ?>> features;
+    private final Map<IoFeature<?, ?>, MappedFeature<?, ?, ?>> mappings;
 
     MappedFeatureRegistry() {
         this.features = new HashMap<>();
@@ -30,7 +30,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * {@code false} otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    public boolean hasMapping(@NotNull IoFeature<?> feature) {
+    public boolean hasMapping(@NotNull IoFeature<?, ?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         return mappings.containsKey(feature);
     }
@@ -46,16 +46,16 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      *                button ID or a file path.
      * @param updater the method to call when updating the state.
      * @param <F>     the I/O feature type.
-     * @param <S>     the state container type.
-     * @param <P>     the mapping parameters type.@throws
+     * @param <Z>     the internal state type.
+     * @param <P>     the mapping parameters type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      * @see MappingMethod
      */
     /* @formatter:off */
-    public <F extends IoFeature<S>, S, P> void
+    public <F extends IoFeature<Z, ?>, Z, P> void
             mapFeature(@NotNull F feature, @Nullable P params,
-                       @NotNull StateUpdater<S, P> updater) {
+                       @NotNull StateUpdater<Z, P> updater) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(updater, "updater cannot be null");
         mappings.put(feature, new MappedFeature<>(params, updater));
@@ -75,15 +75,15 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @param feature the feature to map.
      * @param updater the method to call when updating the state.
      * @param <F>     the I/O feature type.
-     * @param <S>     the state container type.
+     * @param <Z>     the internal state type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      * @see MappingMethod
      */
     /* @formatter:off */
-    public <F extends IoFeature<S>, S> void
+    public <F extends IoFeature<Z, ?>, Z> void
             mapFeature(@NotNull F feature,
-                       @NotNull StateUpdater<S, F> updater) {
+                       @NotNull StateUpdater<Z, F> updater) {
         this.mapFeature(feature, feature, updater);
     }
     /* @formatter:on */
@@ -101,15 +101,15 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * @param feature the feature to map.
      * @param updater the method to call when updating the state.
      * @param <F>     the I/O feature type.
-     * @param <S>     the state container type.
+     * @param <Z>     the internal state type.
      * @throws NullPointerException if {@code feature} or {@code updater} are
      *                              {@code null}.
      * @see MappingMethod
      */
     /* @formatter:off */
-    public <F extends IoFeature<S>, S> void
+    public <F extends IoFeature<Z, ?>, Z> void
             mapFeature(@NotNull F feature,
-                       @NotNull StateUpdater.NoParams<S> updater) {
+                       @NotNull StateUpdater.NoParams<Z> updater) {
         Objects.requireNonNull(updater, "updater cannot be null");
         this.mapFeature(feature, null,
                 (state, params) -> updater.update(state));
@@ -122,13 +122,13 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * {@code false} otherwise.
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
-    public boolean unmapFeature(@NotNull IoFeature<?> feature) {
+    public boolean unmapFeature(@NotNull IoFeature<?, ?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         if (!mappings.containsKey(feature)) {
             return false;
         }
         Object removed = mappings.remove(feature);
-        RegisteredFeature<?, ?> registered = features.get(feature);
+        RegisteredFeature<?, ?, ?> registered = features.get(feature);
         if (registered != null) {
             registered.updater = RegisteredFeature.NO_UPDATER;
         }
@@ -137,8 +137,8 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
     /* @formatter:off */
     @SuppressWarnings("unchecked")
-    private <R extends RegisteredFeature<?, ?>> void
-            updateMapping(@NotNull IoFeature<?> feature) {
+    private <R extends RegisteredFeature<?, ?, ?>> void
+            updateMapping(@NotNull IoFeature<?, ?> feature) {
         R registered = (R) features.get(feature);
         if (registered == null) {
             return;
@@ -155,7 +155,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     @Override
-    public boolean isFeatureRegistered(@NotNull IoFeature<?> feature) {
+    public boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         return features.containsKey(feature);
     }
@@ -167,7 +167,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
     /* @formatter:off */
     @Override
-    public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
+    public @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>>
             getFeatures() {
         return Collections.unmodifiableCollection(features.values());
     }
@@ -176,23 +176,25 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:off */
     @Override
     @SuppressWarnings("unchecked")
-    public <S> @Nullable RegisteredFeature<?, S>
-            getFeatureRegistration(@NotNull IoFeature<S> feature) {
+    public <Z, S> @Nullable RegisteredFeature<?, Z, S>
+            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
-        return (RegisteredFeature<?, S>) features.get(feature);
+        return (RegisteredFeature<?, Z, S>) features.get(feature);
     }
     /* @formatter:on */
 
     /* @formatter:off */
     @Override
-    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    public <F extends IoFeature<Z, S>, Z, S>
+            @NotNull RegisteredFeature<F, Z, S>
             registerFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         if (this.isFeatureRegistered(feature)) {
             throw new IllegalStateException("feature already registered");
         }
 
-        RegisteredFeature<F, S> registered = new RegisteredFeature<>(feature);
+        RegisteredFeature<F, Z, S> registered =
+                new RegisteredFeature<>(feature);
         features.put(feature, registered);
         this.updateMapping(feature);
 
@@ -201,7 +203,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     @Override
-    public void unregisterFeature(@NotNull IoFeature<?> feature) {
+    public void unregisterFeature(@NotNull IoFeature<?, ?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         if (!this.isFeatureRegistered(feature)) {
             throw new IllegalStateException("feature not registered");
@@ -210,7 +212,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     }
 
     void updateFeatures() {
-        for (RegisteredFeature<?, ?> registered : features.values()) {
+        for (RegisteredFeature<?, ?, ?> registered : features.values()) {
             registered.updater.run();
         }
     }

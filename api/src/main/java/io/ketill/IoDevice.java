@@ -41,8 +41,8 @@ public abstract class IoDevice implements FeatureRegistry {
     private boolean registeredFields;
     private boolean connected;
 
-    private @Nullable BiConsumer<IoDevice, IoFeature<?>> registerFeatureCallback;
-    private @Nullable BiConsumer<IoDevice, IoFeature<?>> unregisterFeatureCallback;
+    private @Nullable BiConsumer<IoDevice, IoFeature<?, ?>> registerFeatureCallback;
+    private @Nullable BiConsumer<IoDevice, IoFeature<?, ?>> unregisterFeatureCallback;
     private @Nullable BiConsumer<IoDevice, Throwable> errorCallback;
     private @Nullable Consumer<IoDevice> connectCallback;
     private @Nullable Consumer<IoDevice> disconnectCallback;
@@ -195,7 +195,7 @@ public abstract class IoDevice implements FeatureRegistry {
         try {
             boolean statik = Modifier.isStatic(mods);
             Object obj = field.get(statik ? null : this);
-            IoFeature<?> feature = (IoFeature<?>) obj;
+            IoFeature<?, ?> feature = (IoFeature<?, ?>) obj;
 
             /*
              * There is a chance that this feature was registered before
@@ -219,8 +219,8 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * Returns the feature associated with the given state. If no feature
-     * owning {@code featureState} is registered to this device, {@code null}
-     * is returned and no exception is thrown.
+     * owning {@code featureState} is registered to this device,
+     * {@code null} is returned and no exception is thrown.
      *
      * @param featureState the state of the feature to fetch.
      * @return the {@code feature} which owns {@code featureState},
@@ -230,14 +230,14 @@ public abstract class IoDevice implements FeatureRegistry {
      * @throws UnsupportedOperationException if {@code featureState} is
      *                                       an {@link IoFeature} instance.
      */
-    public IoFeature<?> getFeature(Object featureState) {
+    public IoFeature<?, ?> getFeature(Object featureState) {
         Objects.requireNonNull(featureState, "featureState cannot be null");
-        if (featureState instanceof IoFeature<?>) {
+        if (featureState instanceof IoFeature) {
             String msg = "did you mean getState(IoFeature)?";
             throw new UnsupportedOperationException(msg);
         }
-        for (RegisteredFeature<?, ?> registered : registry.getFeatures()) {
-            if (registered.state == featureState) {
+        for (RegisteredFeature<?, ?, ?> registered : registry.getFeatures()) {
+            if (registered.containerState == featureState) {
                 return registered.feature;
             }
         }
@@ -259,7 +259,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      * @see #isFeatureSupported(Object)
      */
-    public boolean isFeatureSupported(@NotNull IoFeature<?> feature) {
+    public boolean isFeatureSupported(@NotNull IoFeature<?, ?> feature) {
         return registry.hasMapping(feature);
     }
 
@@ -280,12 +280,12 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #isFeatureSupported(IoFeature)
      */
     public boolean isFeatureSupported(@NotNull Object featureState) {
-        IoFeature<?> feature = this.getFeature(featureState);
+        IoFeature<?, ?> feature = this.getFeature(featureState);
         return feature != null && this.isFeatureSupported(feature);
     }
 
     @Override
-    public boolean isFeatureRegistered(@NotNull IoFeature<?> feature) {
+    public boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature) {
         return registry.isFeatureRegistered(feature);
     }
 
@@ -296,7 +296,7 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /* @formatter:off */
     @Override
-    public @NotNull Collection<@NotNull RegisteredFeature<?, ?>>
+    public @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>>
             getFeatures() {
         return registry.getFeatures();
     }
@@ -304,11 +304,43 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /* @formatter:off */
     @Override
-    public <S> @Nullable RegisteredFeature<?, S>
-            getFeatureRegistration(@NotNull IoFeature<S> feature) {
+    public <Z, S> @Nullable RegisteredFeature<?, Z, S>
+            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
         return registry.getFeatureRegistration(feature);
     }
     /* @formatter:on */
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Note:</b> I/O devices needing to access the internal state of
+     * a feature can do so via {@link #getInternalState(IoFeature)}.
+     */
+    public <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
+        return FeatureRegistry.super.getState(feature);
+    }
+
+    /**
+     * This method exists for the benefit of extending classes. The internal
+     * state of an I/O feature should <i>not</i> be publicly accessible.
+     *
+     * @param feature the feature whose state to fetch.
+     * @param <Z>     the internal state type.
+     * @return the internal state of {@code feature}.
+     * @throws NullPointerException  if {@code feature} is {@code null}.
+     * @throws IllegalStateException if {@code feature} is not registered.
+     * @see #getState(IoFeature)
+     */
+    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
+        Objects.requireNonNull(feature, "feature cannot be null");
+        RegisteredFeature<?, Z, ?> registered =
+                this.getFeatureRegistration(feature);
+        if (registered == null) {
+            String msg = "no such feature \"" + feature.id + "\"";
+            throw new IllegalStateException(msg);
+        }
+        return registered.internalState;
+    }
 
     /**
      * {@inheritDoc}
@@ -318,11 +350,14 @@ public abstract class IoDevice implements FeatureRegistry {
      */
     /* @formatter:off */
     @Override
-    public <F extends IoFeature<S>, S> @NotNull RegisteredFeature<F, S>
+    public <F extends IoFeature<Z, S>, Z, S>
+            @NotNull RegisteredFeature<F, Z, S>
             registerFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
-        RegisteredFeature<F, S> registered = registry.registerFeature(feature);
-        this.featureRegistered(registered);
+        RegisteredFeature<F, Z, S> registered =
+                registry.registerFeature(feature);
+
+        this.featureRegistered(registered, registered.internalState);
         if (registerFeatureCallback != null) {
             registerFeatureCallback.accept(this, feature);
         }
@@ -335,14 +370,19 @@ public abstract class IoDevice implements FeatureRegistry {
      * for an I/O device to know when a feature has been registered without
      * needing to set themselves as the callback.
      *
-     * @param registered the registered feature.
+     * @param registered    the registered feature.
+     * @param internalState the internal state of {@code registered}. This
+     *                      should only be made accessible to parts of the
+     *                      program that <i>absolutely</i> require it.
+     * @see #getInternalState(IoFeature)
      */
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
+                                     @NotNull Object internalState) {
         /* optional implement */
     }
 
     @Override
-    public void unregisterFeature(@NotNull IoFeature<?> feature) {
+    public void unregisterFeature(@NotNull IoFeature<?, ?> feature) {
         registry.unregisterFeature(feature);
         this.featureUnregistered(feature);
         if (unregisterFeatureCallback != null) {
@@ -357,7 +397,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *
      * @param feature the unregistered feature.
      */
-    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
         /* optional implement */
     }
 
@@ -367,9 +407,9 @@ public abstract class IoDevice implements FeatureRegistry {
      * will not be called for them. Current features will have to be fetched
      * via {@link #getFeatures()}.
      * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event should
-     * override {@link #featureRegistered(RegisteredFeature)}. The callback
-     * is for users.
+     * <b>Note:</b> Extending classes wishing to listen for this event
+     * should override {@link #featureRegistered(RegisteredFeature, Object)}.
+     * The callback is for users.
      *
      * @param callback the code to execute when a feature is registered. A
      *                 value of {@code null} is permitted, and will result
@@ -377,7 +417,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #registerFeature(IoFeature)
      */
     public final void onRegisterFeature(@Nullable BiConsumer<IoDevice,
-            IoFeature<?>> callback) {
+            IoFeature<?, ?>> callback) {
         this.registerFeatureCallback = callback;
     }
 
@@ -397,7 +437,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #unregisterFeature(IoFeature)
      */
     public final void onUnregisterFeature(@Nullable BiConsumer<IoDevice,
-            IoFeature<?>> callback) {
+            IoFeature<?, ?>> callback) {
         this.unregisterFeatureCallback = callback;
     }
 
