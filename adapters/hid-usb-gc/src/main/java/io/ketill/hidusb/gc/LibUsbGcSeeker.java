@@ -2,7 +2,6 @@ package io.ketill.hidusb.gc;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.gc.GcController;
-import io.ketill.hidusb.ProductId;
 import io.ketill.hidusb.LibUsbDeviceSeeker;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +19,9 @@ public final class LibUsbGcSeeker
     private final Map<AdapterSupplier<?>, GcController> sessions;
 
     /**
-     * @param allowMultiple {@code true} if multiple USB GameCube adapters
-     *                      should be recognized, {@code false} if only the
-     *                      first one discovered should be used.
+     * @param allowMultiple {@code true} if multiple Nintendo Wii U GameCube
+     *                      adapters should be recognized, {@code false} if
+     *                      only the first one connected should be used.
      */
     public LibUsbGcSeeker(boolean allowMultiple) {
         super(LibUsbDeviceGc::new);
@@ -30,13 +29,13 @@ public final class LibUsbGcSeeker
         this.allowMultiple = allowMultiple;
         this.wiiUAdapters = new HashMap<>();
         this.sessions = new HashMap<>();
-        this.targetProduct(new ProductId(VENDOR_NINTENDO,
-                PRODUCT_GC_WIIU_ADAPTER));
+
+        this.targetProduct(VENDOR_NINTENDO, PRODUCT_GC_WIIU_ADAPTER);
     }
 
     /**
-     * Constructs a new {@code UsbGcSeeker} with support for multiple USB
-     * GameCube adapters enabled.
+     * Constructs a new {@code LibUsbGcSeeker} with support for multiple
+     * Nintendo Wii U GameCube adapters enabled.
      */
     public LibUsbGcSeeker() {
         this(true);
@@ -54,7 +53,7 @@ public final class LibUsbGcSeeker
     protected void peripheralDisconnected(@NotNull LibUsbDeviceGc usbDevice) {
         GcWiiUAdapter wiiUAdapter = wiiUAdapters.remove(usbDevice);
         if (wiiUAdapter == null) {
-            return;
+            return; /* adapter not used */
         }
 
         wiiUAdapter.close();
