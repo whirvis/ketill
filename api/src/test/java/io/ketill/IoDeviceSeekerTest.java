@@ -139,8 +139,11 @@ class IoDeviceSeekerTest {
          * wrap the exception it encounters and throw it back. This is to
          * ensure errors do not occur silently.
          */
-        assertFalse(seeker.caughtError);
         assertThrows(KetillException.class, seeker::seek);
+        assertTrue(seeker.caughtError);
+
+        /* reset state for next test */
+        seeker.caughtError = false;
 
         /*
          * Once an error callback is set, the device seeker must not throw
