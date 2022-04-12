@@ -179,9 +179,11 @@ public final class GcWiiUAdapter implements Closeable {
     }
 
     private void handleDataPacket(ByteBuffer packet) {
-        for (GcWiiUSlotState slot : slots) {
-            for (int i = 0; i < slot.data.length; i++) {
-                slot.data[i] = packet.get();
+        synchronized (slots) {
+            for (GcWiiUSlotState slot : slots) {
+                for (int i = 0; i < slot.data.length; i++) {
+                    slot.data[i] = packet.get();
+                }
             }
         }
     }
@@ -231,6 +233,18 @@ public final class GcWiiUAdapter implements Closeable {
                     this::processTransfer, null, 0L);
             usbDevice.submitTransfer(transfer);
             this.requestedData = true;
+        }
+
+        /*
+         * After requesting data, update the slot state with the
+         * current received data. Put this in a synchronized block
+         * just in case data comes in while these controllers are
+         * being updated when new data comes in.
+         */
+        synchronized (slots) {
+            for (GcWiiUSlotState slot : slots) {
+                slot.poll();
+            }
         }
 
         this.sendRumblePacket();

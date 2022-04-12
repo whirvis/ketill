@@ -47,7 +47,7 @@ final class GcWiiUSlotState {
         this.rumbling = rumbling;
     }
 
-    void update() {
+    void poll() {
         int offset = 0;
 
         /*
@@ -84,7 +84,7 @@ final class GcWiiUSlotState {
 
     void reset() {
         Arrays.fill(data, (byte) 0x00);
-        this.update(); /* use zeroed out data */
+        this.poll(); /* use zeroed out data */
         this.setRumbling(false);
     }
 

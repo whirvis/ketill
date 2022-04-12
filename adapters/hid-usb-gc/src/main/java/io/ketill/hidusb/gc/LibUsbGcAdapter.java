@@ -121,7 +121,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
 
     @Override
     protected void pollDevice() {
-        slot.update();
+        slot.poll();
     }
 
     @Override
