@@ -3,6 +3,7 @@ package io.ketill.hidusb.gc;
 import io.ketill.hidusb.LibUsbDevice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.usb4java.BufferUtils;
 import org.usb4java.Context;
 import org.usb4java.Device;
 import org.usb4java.DeviceHandle;
@@ -111,7 +112,7 @@ final class LibUsbDeviceGc extends LibUsbDevice {
         }
         this.requireOpen();
 
-        IntBuffer transferred = IntBuffer.allocate(1);
+        IntBuffer transferred = BufferUtils.allocateIntBuffer();
         requireSuccess(() -> LibUsb.interruptTransfer(getHandle(), endpoint,
                 data, transferred, timeout));
         return transferred.get();
@@ -158,7 +159,7 @@ final class LibUsbDeviceGc extends LibUsbDevice {
         }
         this.requireOpen();
 
-        IntBuffer completed = IntBuffer.allocate(1);
+        IntBuffer completed = BufferUtils.allocateIntBuffer();
         requireSuccess(() -> LibUsb.handleEventsTimeoutCompleted(usbContext,
                 timeout, completed));
         return completed.get();
