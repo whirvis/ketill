@@ -1,12 +1,29 @@
 package io.ketill;
 
+import org.jetbrains.annotations.NotNull;
+
 class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
 
+    boolean discoveredDevice;
+    boolean forgotDevice;
+    boolean caughtError;
     boolean errorOnSeek;
-    private boolean seeked;
+    boolean seeked;
 
-    boolean hasSeeked() {
-        return this.seeked;
+    @Override
+    protected void deviceDiscovered(@NotNull MockIoDevice device) {
+        this.discoveredDevice = true;
+    }
+
+
+    @Override
+    protected void deviceForgotten(@NotNull MockIoDevice device) {
+        this.forgotDevice = true;
+    }
+
+    @Override
+    protected void seekerError(@NotNull Throwable cause) {
+        this.caughtError = true;
     }
 
     @Override

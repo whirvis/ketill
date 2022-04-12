@@ -11,28 +11,39 @@ import static org.junit.jupiter.api.Assertions.*;
 class IoDeviceSeekerTest {
 
     private MockIoDeviceSeeker seeker;
+    private MockIoDevice device;
 
     @BeforeEach
     void setup() {
         this.seeker = new MockIoDeviceSeeker();
+        this.device = new MockIoDevice();
     }
 
     @Test
     void discoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
-        MockIoDevice device = new MockIoDevice();
-
         seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
+
+        /*
+         * When a device is first discovered, the device seeker is expected
+         * to execute the internal hook as well as the callback (assuming
+         * one was set by the user). Failure to do so indicates an error.
+         */
         seeker.discoverDevice(device);
+        assertTrue(seeker.discoveredDevice);
         assertTrue(discovered.get());
+
+        /* reset state for next test */
+        seeker.discoveredDevice = false;
+        discovered.set(false);
 
         /*
          * Once a device has been discovered, it would not make sense for it
          * to be discovered again (unless previously forgotten.) As such, the
          * callback should not be called again.
          */
-        discovered.set(false);
         seeker.discoverDevice(device);
+        assertFalse(seeker.discoveredDevice);
         assertFalse(discovered.get());
 
         /*
@@ -52,20 +63,31 @@ class IoDeviceSeekerTest {
     @Test
     void forgetDevice() {
         AtomicBoolean forgotten = new AtomicBoolean();
-        MockIoDevice device = new MockIoDevice();
-        seeker.discoverDevice(device); /* required to forget */
-
         seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
-        seeker.forgetDevice(device);
-        assertTrue(forgotten.get());
+
+        /* discover device for next test */
+        seeker.discoverDevice(device);
 
         /*
-         * Once a device has been forgotten, it would not make sense for it
-         * to be forgotten again (unless currently discovered.) As such, the
-         * callback should not be called again.
+         * When a discovered device is forgotten, the device seeker is
+         * expected to execute the internal hook as well as the callback
+         * (assuming one was set by the user). Failure to do so indicates
+         * an error.
          */
-        forgotten.set(false);
         seeker.forgetDevice(device);
+        assertTrue(seeker.forgotDevice);
+        assertTrue(forgotten.get());
+
+        /* reset state for next test */
+        seeker.forgotDevice = false;
+        forgotten.set(false);
+
+        /*
+         * If a device has is not discovered, it would not make sense to
+         * forget it. As such, the callback should not be executed.
+         */
+        seeker.forgetDevice(device);
+        assertFalse(seeker.forgotDevice);
         assertFalse(forgotten.get());
 
         /*
@@ -83,6 +105,20 @@ class IoDeviceSeekerTest {
     }
 
     @Test
+    void forEachDevice() {
+        seeker.discoverDevice(device);
+        seeker.forEachDevice(MockIoDevice::executeTask);
+        assertTrue(device.executedTask);
+    }
+
+    @Test
+    void pollDevices() {
+        seeker.discoverDevice(device);
+        seeker.pollDevices();
+        assertTrue(device.polled);
+    }
+
+    @Test
     void seekImpl() {
         /*
          * When the seek() method is called, it must call the seekImpl()
@@ -91,7 +127,7 @@ class IoDeviceSeekerTest {
          * this test however, the implementation throws no exceptions.
          */
         seeker.seek();
-        assertTrue(seeker.hasSeeked());
+        assertTrue(seeker.seeked);
     }
 
     @Test
@@ -103,6 +139,7 @@ class IoDeviceSeekerTest {
          * wrap the exception it encounters and throw it back. This is to
          * ensure errors do not occur silently.
          */
+        assertFalse(seeker.caughtError);
         assertThrows(KetillException.class, seeker::seek);
 
         /*
@@ -113,6 +150,7 @@ class IoDeviceSeekerTest {
         AtomicBoolean caughtError = new AtomicBoolean();
         seeker.onSeekError((s, e) -> caughtError.set(true));
         assertDoesNotThrow(seeker::seek);
+        assertTrue(seeker.caughtError);
         assertTrue(caughtError.get());
 
         /*
@@ -124,15 +162,15 @@ class IoDeviceSeekerTest {
 
     @Test
     void close() {
-        AtomicBoolean forgotten = new AtomicBoolean();
-        MockIoDevice device = new MockIoDevice();
-        seeker.discoverDevice(device); /* required to forget */
+        /* discover device for next test */
+        seeker.discoverDevice(device);
 
         /*
          * When a device seeker is closed, it is expected forget
          * all previously discovered devices. This is because they
          * will (usually) no longer be used.
          */
+        AtomicBoolean forgotten = new AtomicBoolean();
         assertFalse(seeker.isClosed());
         seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
 
