@@ -76,8 +76,10 @@ class MappedFeatureRegistryTest {
          * this scenario), it is still not illegal. As such, no exception
          * should be thrown here.
          */
-        assertDoesNotThrow(() -> registry.mapFeature(feature, null, (f, s) -> {
-        }));
+        /* @formatter:off */
+        assertDoesNotThrow(() -> registry.mapFeature(feature,
+                null, (f, s) -> {}));
+        /* @formatter:on */
 
         /*
          * It makes no sense to map a null feature or map a feature to a
@@ -86,7 +88,7 @@ class MappedFeatureRegistryTest {
          */
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(null, null, (f, s) -> {
-        }));
+                }));
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(feature, feature, null));
     }
@@ -97,7 +99,7 @@ class MappedFeatureRegistryTest {
         MockIoFeature feature = new MockIoFeature();
 
         /* feature must be registered for updates */
-        RegisteredFeature<?, ?> registeredFeature =
+        RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
 
         /*
@@ -128,13 +130,23 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
+    void getFeatureCount() {
+        /*
+         * Since no features have been registered yet, this method should
+         * return a value of zero.
+         */
+        assertEquals(0, registry.getFeatureCount());
+    }
+
+    @Test
     void getFeatures() {
         /*
          * The getFeatures() method provides a read-only view of all registered
          * features in a feature registry. Ensure that it never returns null
          * (even when it is empty) and that is unmodifiable from the outside.
          */
-        Collection<RegisteredFeature<?, ?>> features = registry.getFeatures();
+        Collection<RegisteredFeature<?, ?, ?>> features =
+                registry.getFeatures();
         assertNotNull(features); /* this should never be null, only empty */
         assertThrows(UnsupportedOperationException.class, features::clear);
     }
@@ -149,9 +161,10 @@ class MappedFeatureRegistryTest {
          * registered feature. As such, it should return the same value
          * as the registerFeature() method.
          */
-        RegisteredFeature<?, ?> registeredFeature =
+        RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertSame(registeredFeature, registry.getFeatureRegistration(feature));
+        assertSame(registeredFeature,
+                registry.getFeatureRegistration(feature));
 
         /*
          * It makes no sense to get the registration of a null feature. As
@@ -178,9 +191,10 @@ class MappedFeatureRegistryTest {
          * The value of state inside registeredField must match the
          * value returned by getState(), as it is a shorthand.
          */
-        RegisteredFeature<?, ?> registeredFeature =
+        RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertSame(registeredFeature.state, registry.getState(feature));
+        assertSame(registeredFeature.containerState,
+                registry.getState(feature));
     }
 
     @Test
@@ -208,7 +222,7 @@ class MappedFeatureRegistryTest {
         /* it is convient to test isRegistered() here */
         MockIoFeature feature = new MockIoFeature();
         assertFalse(registry.isFeatureRegistered(feature));
-        RegisteredFeature<?, ?> registeredFeature =
+        RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
         assertTrue(registry.isFeatureRegistered(feature));
 
@@ -219,8 +233,6 @@ class MappedFeatureRegistryTest {
          * registerFeature() did not instantiate registeredFeature correctly.
          */
         assertSame(registeredFeature.feature, feature);
-        assertInstanceOf(registeredFeature.state.getClass(),
-                feature.initialState.get());
         assertSame(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
 
         /*
