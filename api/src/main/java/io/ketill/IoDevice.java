@@ -530,6 +530,17 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
+     * Called when an error occurs in {@link #poll()}. Overriding this
+     * method allows for an I/O device to know when an error has occurred
+     * without needing to set themselves as the callback.
+     *
+     * @param cause the cause of the error.
+     */
+    protected void pollError(@NotNull Throwable cause) {
+        /* optional implement */
+    }
+
+    /**
      * Performs a <i>single</i> query from the device adapter and updates all
      * features registered to the I/O device. It is recommended to call this
      * method once every application update.
@@ -541,6 +552,7 @@ public abstract class IoDevice implements FeatureRegistry {
         try {
             adapter.pollDevice();
         } catch (Throwable cause) {
+            this.pollError(cause);
             if (errorCallback != null) {
                 errorCallback.accept(this, cause);
             } else {
