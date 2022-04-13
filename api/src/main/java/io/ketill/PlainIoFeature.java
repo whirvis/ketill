@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * @see FeaturePresent
  * @see FeatureState
  */
-public class SimpleIoFeature<S> extends IoFeature<S, S> {
+public class PlainIoFeature<S> extends IoFeature<S, S> {
 
     private final @NotNull Supplier<@NotNull S> initialState;
 
@@ -28,8 +28,8 @@ public class SimpleIoFeature<S> extends IoFeature<S, S> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public SimpleIoFeature(@NotNull String id,
-                           @NotNull Supplier<@NotNull S> initialState) {
+    public PlainIoFeature(@NotNull String id,
+                          @NotNull Supplier<@NotNull S> initialState) {
         super(id);
         this.initialState = Objects.requireNonNull(initialState,
                 "initialState cannot be null");
