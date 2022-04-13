@@ -140,10 +140,10 @@ class IoDeviceSeekerTest {
          * ensure errors do not occur silently.
          */
         assertThrows(KetillException.class, seeker::seek);
-        assertTrue(seeker.caughtError);
+        assertTrue(seeker.caughtSeekError);
 
         /* reset state for next test */
-        seeker.caughtError = false;
+        seeker.caughtSeekError = false;
 
         /*
          * Once an error callback is set, the device seeker must not throw
@@ -153,7 +153,7 @@ class IoDeviceSeekerTest {
         AtomicBoolean caughtError = new AtomicBoolean();
         seeker.onSeekError((s, e) -> caughtError.set(true));
         assertDoesNotThrow(seeker::seek);
-        assertTrue(seeker.caughtError);
+        assertTrue(seeker.caughtSeekError);
         assertTrue(caughtError.get());
 
         /*

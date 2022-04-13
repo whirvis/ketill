@@ -6,7 +6,7 @@ class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
 
     boolean discoveredDevice;
     boolean forgotDevice;
-    boolean caughtError;
+    boolean caughtSeekError;
     boolean errorOnSeek;
     boolean seeked;
 
@@ -23,7 +23,7 @@ class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
 
     @Override
     protected void seekerError(@NotNull Throwable cause) {
-        this.caughtError = true;
+        this.caughtSeekError = true;
     }
 
     @Override
