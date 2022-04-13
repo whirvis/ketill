@@ -17,6 +17,7 @@ import java.util.Objects;
  *            act as a pass through to the internal state. If the internal
  *            state contains no sensitive data, they can be the same type.
  * @see IoDevice#registerFeature(IoFeature)
+ * @see SimpleIoFeature
  * @see FeaturePresent
  * @see FeatureState
  */
