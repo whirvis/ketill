@@ -29,6 +29,12 @@ class MockIoDevice extends IoDevice {
     @FeatureState
     public final Object featureState;
 
+    boolean executedTask;
+    boolean featureRegistered, featureUnregistered;
+    boolean deviceConnected, deviceDisconnected;
+    boolean caughtPollError;
+    boolean polled;
+
     MockIoDevice(String id,
                  AdapterSupplier<MockIoDevice> adapterSupplier,
                  boolean registerFields, boolean initAdapter) {
@@ -48,6 +54,42 @@ class MockIoDevice extends IoDevice {
 
     MockIoDevice() {
         this("mock", MockIoDeviceAdapter::new);
+    }
+
+    void executeTask() {
+        this.executedTask = true;
+    }
+
+    @Override
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
+                                     @NotNull Object internalState) {
+        this.featureRegistered = true;
+    }
+
+    @Override
+    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
+        this.featureUnregistered = true;
+    }
+
+    @Override
+    protected void deviceConnected() {
+        this.deviceConnected = true;
+    }
+
+    @Override
+    protected void deviceDisconnected() {
+        this.deviceDisconnected = true;
+    }
+
+    @Override
+    protected void pollError(@NotNull Throwable cause) {
+        this.caughtPollError = true;
+    }
+
+    @Override
+    public void poll() {
+        super.poll();
+        this.polled = true;
     }
 
 }
