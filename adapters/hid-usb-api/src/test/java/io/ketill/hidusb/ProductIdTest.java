@@ -1,13 +1,13 @@
 package io.ketill.hidusb;
 
+import io.ketill.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import java.util.Objects;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("ConstantConditions")
 class ProductIdTest {
 
     @Test
@@ -42,38 +42,14 @@ class ProductIdTest {
     }
 
     @Test
-    void testEquals() {
-        ProductId id = new ProductId(0x1234, 0x5678);
-
-        boolean equalsNull = id.equals(null);
-        assertFalse(equalsNull);
-
-        Object obj = new Object();
-        boolean equalsObj = id.equals(obj);
-        assertFalse(equalsObj);
-
-        ProductId blank = new ProductId(0x0000, 0x0000);
-        boolean equalsBlank = id.equals(blank);
-        assertFalse(equalsBlank);
-
-        @SuppressWarnings("EqualsWithItself")
-        boolean equalsSelf = id.equals(id);
-        assertTrue(equalsSelf);
-
-        ProductId copy = new ProductId(id.vendorId, id.productId);
-        boolean equalsCopy = id.equals(copy);
-        assertTrue(equalsCopy);
+    void verifyEquals() {
+        EqualsVerifier.forClass(ProductId.class).verify();
     }
 
     @Test
-    void testHashCode() {
-        Random random = new Random();
-        int vendorId = random.nextInt(0xFFFF);
-        int productId = random.nextInt(0xFFFF);
-        ProductId id = new ProductId(vendorId, productId);
-
-        int hash = Objects.hash(vendorId, productId);
-        assertEquals(hash, id.hashCode());
+    void verifyToString() {
+        ProductId id = new ProductId(0x0000, 0x0000);
+        ToStringVerifier.forClass(ProductId.class, id).verify();
     }
 
 }

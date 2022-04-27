@@ -1,5 +1,6 @@
 package io.ketill.hidusb;
 
+import io.ketill.ToStringVerifier;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.opentest4j.TestAbortedException;
 import org.usb4java.Context;
+import org.usb4java.DescriptorUtils;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 
@@ -240,6 +242,26 @@ class LibUsbDeviceTest {
         }
     }
 
+    @Test
+    void getClassName() {
+        /*
+         * Since the name of the USB class is known, this method should
+         * return exactly what is returned by the DescriptorUtils method.
+         */
+        assertEquals(DescriptorUtils.getUSBClassName(LibUsb.CLASS_HID),
+                LibUsbDevice.getClassName(LibUsb.CLASS_HID, false));
+
+        /*
+         * Since the USB class here is unknown. As such, this method should
+         * return the USB class as a hexadecimal string when requested. If
+         * not requested, a value of null should be returned.
+         */
+        byte manufacturer = (byte) 0x38;
+        assertEquals(String.format("0x%02x", manufacturer),
+                LibUsbDevice.getClassName(manufacturer, true));
+        assertNull(LibUsbDevice.getClassName(manufacturer));
+    }
+
     private LibUsbDevice guineaPig;
 
     private void assumeGuineaPigPresent() {
@@ -341,6 +363,22 @@ class LibUsbDeviceTest {
     }
 
     @Test
+    void getString() {
+        assumeGuineaPigPresent();
+
+        /*
+         * Since the handle has not been opened, it will not be possible to
+         * get any strings descriptors from the device. As such, this method
+         * should return the index as a hexadecimal string when requested.
+         * If not requested, a value of null should be returned.
+         */
+        byte manufacturer = (byte) 0x38;
+        assertEquals(String.format("0x%02x", manufacturer),
+                guineaPig.getString(manufacturer, true));
+        assertNull(guineaPig.getString(manufacturer));
+    }
+
+    @Test
     void close() {
         assumeGuineaPigPresent();
 
@@ -374,21 +412,29 @@ class LibUsbDeviceTest {
 
     @Test
     @SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself"})
-    void testEquals() {
+    void verifyEquals() {
         assumeGuineaPigPresent();
+
+        /*
+         * Originally, this test was going to utilize the EqualsVerifier
+         * class. However, it was found to cause the JVM to crash due to
+         * some error in the LibUSB native libraries.
+         */
 
         assertFalse(guineaPig.equals(null));
         assertFalse(guineaPig.equals(new Object()));
         assertFalse(guineaPig.equals(mock(LibUsbDevice.class)));
-        assertTrue(guineaPig.equals(guineaPig));
-    }
 
-    @Test
-    void testHashCode() {
-        assumeGuineaPigPresent();
+        assertTrue(guineaPig.equals(guineaPig));
 
         long ptr = guineaPig.usbDevice.getPointer();
         assertEquals(Objects.hash(ptr), guineaPig.hashCode());
+    }
+
+    @Test
+    void verifyToString() {
+        assumeGuineaPigPresent();
+        ToStringVerifier.forClass(LibUsbDevice.class, guineaPig).verify();
     }
 
     @AfterAll
