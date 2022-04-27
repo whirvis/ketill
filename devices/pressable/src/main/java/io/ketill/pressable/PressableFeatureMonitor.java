@@ -25,14 +25,14 @@ import java.util.function.Supplier;
  * poll the monitor right after polling the device.
  *
  * @param <F> the I/O feature type.
- * @param <S> the state container type.
+ * @param <Z> the internal state type.
  * @see MonitorUpdatedField
  */
-public abstract class PressableFeatureMonitor<F extends IoFeature<S>, S> {
+public abstract class PressableFeatureMonitor<F extends IoFeature<Z, ?>, Z> {
 
     public final @NotNull IoDevice device;
     public final @NotNull F feature;
-    public final @NotNull S state;
+    public final @NotNull Z internalState;
 
     private final @NotNull PressableFeatureSupport support;
     private final @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier;
@@ -48,28 +48,37 @@ public abstract class PressableFeatureMonitor<F extends IoFeature<S>, S> {
      *
      * @param device           the device which owns {@code feature}.
      * @param feature          the feature to monitor.
+     * @param internalState    the internal state of {@code feature}.
      * @param callbackSupplier the callback supplier. This can usually just
      *                         be {@code () -> pressableCallback}.
      * @param <I>              the I/O device type, which must also
      *                         implement {@link PressableFeatureSupport}.
-     * @throws NullPointerException if {@code device}, {@code feature},
-     *                              or {@code callbackSupplier} are
-     *                              {@code null}.
+     * @throws NullPointerException     if {@code device}, {@code feature},
+     *                                  or {@code callbackSupplier} are
+     *                                  {@code null}.
+     * @throws IllegalStateException    if {@code feature} is not registered
+     *                                  to {@code device}.
+     * @throws IllegalArgumentException if {@code internalState} does not
+     *                                  belong to {@code feature}.
      */
     /* @formatter:off */
     public <I extends IoDevice & PressableFeatureSupport>
             PressableFeatureMonitor(@NotNull I device, @NotNull F feature,
+                                    @NotNull Z internalState,
                                     @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
         this.device = Objects.requireNonNull(device,
                 "device cannot be null");
         this.feature = Objects.requireNonNull(feature,
                 "feature cannot be null");
+        this.internalState = Objects.requireNonNull(internalState,
+                "internalState cannot be null");
 
-        if (!device.isFeatureRegistered(feature)) {
-            throw new IllegalStateException(
-                    "feature must be registered to device");
-        } else {
-            this.state = device.getState(feature);
+        if(!device.isFeatureRegistered(feature)) {
+            String msg = "feature must be registered to device";
+            throw new IllegalStateException(msg);
+        } else if(device.getFeature(internalState) != feature) {
+            String msg = "internalState must belong to feature";
+            throw new IllegalArgumentException(msg);
         }
 
         this.support = device;

@@ -4,9 +4,9 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Trigger1fc;
+import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -33,7 +33,7 @@ public class Ps5Controller extends PsxController {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             share = this.getState(BUTTON_SHARE),
             options = this.getState(BUTTON_OPTIONS),
             ps = this.getState(BUTTON_PS),
@@ -41,7 +41,7 @@ public class Ps5Controller extends PsxController {
             mute = this.getState(BUTTON_MUTE);
 
     @FeatureState
-    public final @NotNull Trigger1fc
+    public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
     /* @formatter:on */

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing the cursor of a {@link Mouse}.
  */
-public class Cursor extends IoFeature<CursorState> {
+public class Cursor extends IoFeature<CursorStateZ, CursorState> {
 
     /**
      * @param id the mouse cursor ID.
@@ -15,7 +15,17 @@ public class Cursor extends IoFeature<CursorState> {
      *                                  whitespace.
      */
     public Cursor(@NotNull String id) {
-        super(id, CursorState::new);
+        super(id);
+    }
+
+    @Override
+    protected @NotNull CursorStateZ getInternalState() {
+        return new CursorStateZ();
+    }
+
+    @Override
+    protected @NotNull CursorState getContainerState(@NotNull CursorStateZ internalState) {
+        return new CursorState(internalState);
     }
 
 }

@@ -10,7 +10,7 @@ class MockIoFeature extends IoFeature<Object, Object> {
     MockIoFeature(@NotNull String id) {
         super(id);
         this.internalState = new Object();
-        this.containerState = internalState;
+        this.containerState = new Object();
     }
 
     MockIoFeature() {

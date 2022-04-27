@@ -1,7 +1,7 @@
 package io.ketill.glfw.psx;
 
 import io.ketill.MappedFeatureRegistry;
-import io.ketill.controller.Trigger1f;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.psx.Ps5Controller;
 import org.jetbrains.annotations.NotNull;
@@ -71,11 +71,11 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
     }
 
     @Override
-    protected void updateTrigger(@NotNull Trigger1f trigger, int glfwAxis) {
-        super.updateTrigger(trigger, glfwAxis);
+    protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
+        super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
-            trigger.force += 1.0F;
-            trigger.force /= 2.0F;
+            state.force += 1.0F;
+            state.force /= 2.0F;
         }
     }
 

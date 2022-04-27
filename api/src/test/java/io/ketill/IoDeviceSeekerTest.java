@@ -47,8 +47,8 @@ class IoDeviceSeekerTest {
         assertFalse(discovered.get());
 
         /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the seeker.
+         * A null value is allowed when setting a callback. This should have
+         * the effect of removing the callback from the seeker.
          */
         assertDoesNotThrow(() -> seeker.onDiscoverDevice(null));
 
@@ -71,8 +71,7 @@ class IoDeviceSeekerTest {
         /*
          * When a discovered device is forgotten, the device seeker is
          * expected to execute the internal hook as well as the callback
-         * (assuming one was set by the user). Failure to do so indicates
-         * an error.
+         * (assuming one was set by the user).
          */
         seeker.forgetDevice(device);
         assertTrue(seeker.forgotDevice);
@@ -169,9 +168,9 @@ class IoDeviceSeekerTest {
         seeker.discoverDevice(device);
 
         /*
-         * When a device seeker is closed, it is expected forget
-         * all previously discovered devices. This is because they
-         * will (usually) no longer be used.
+         * When a device seeker is closed, it is expected forget all
+         * previously discovered devices. This is because they will
+         * (usually) no longer be used.
          */
         AtomicBoolean forgotten = new AtomicBoolean();
         assertFalse(seeker.isClosed());
@@ -183,10 +182,9 @@ class IoDeviceSeekerTest {
         assertTrue(seeker.isClosed());
 
         /*
-         * It would not make sense to set any callbacks after the
-         * device seeker has been closed. None of them will ever
-         * be executed. As such, assume this was a mistake by the
-         * user and thrown an exception.
+         * It would not make sense to set any callbacks after the device
+         * seeker has been closed. None of them will ever be executed. As
+         * such, assume this was a user mistake and thrown an exception.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.onDiscoverDevice(null));
@@ -196,10 +194,9 @@ class IoDeviceSeekerTest {
                 () -> seeker.onSeekError(null));
 
         /*
-         * It would not make sense to discover a device, forget
-         * a device, or perform a device scan after the device
-         * seeker has been closed. Assume this was mistake by
-         * the user and throw an exception.
+         * It would not make sense to discover a device, forget a device, or
+         * perform a device scan after the device seeker has been closed.
+         * Assume this was mistake by the user and throw an exception.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.discoverDevice(device));
@@ -208,9 +205,9 @@ class IoDeviceSeekerTest {
         assertThrows(IllegalStateException.class, seeker::seek);
 
         /*
-         * It is legal to call close() on an I/O device seeker after
-         * it has originally been closed. This is to fall in line
-         * with the Closeable interface as provided by Java.
+         * It is legal to call close() on an I/O device seeker after it has
+         * originally been closed. This is to fall in line with the Closeable
+         * interface as provided by Java.
          */
         assertDoesNotThrow(seeker::close);
     }

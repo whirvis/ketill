@@ -222,7 +222,8 @@ public abstract class IoDevice implements FeatureRegistry {
      * owning {@code featureState} is registered to this device,
      * {@code null} is returned and no exception is thrown.
      *
-     * @param featureState the state of the feature to fetch.
+     * @param featureState the state of the feature to fetch. This can be
+     *                     either the internal state of the container state.
      * @return the {@code feature} which owns {@code featureState},
      * {@code null} if no such feature is currently registered.
      * @throws NullPointerException          if {@code featureState}
@@ -237,7 +238,8 @@ public abstract class IoDevice implements FeatureRegistry {
             throw new UnsupportedOperationException(msg);
         }
         for (RegisteredFeature<?, ?, ?> registered : registry.getFeatures()) {
-            if (registered.containerState == featureState) {
+            if (registered.internalState == featureState ||
+                    registered.containerState == featureState) {
                 return registered.feature;
             }
         }
@@ -272,7 +274,8 @@ public abstract class IoDevice implements FeatureRegistry {
      * state (or the last value before being unmapped.) If the state of a
      * feature is writable, any writes will effectively be a no-op.
      *
-     * @param featureState the state of the feature to check.
+     * @param featureState the state of the feature to check. This can be
+     *                     either the internal state of the container state.
      * @return {@code true} if the feature which instantiated
      * {@code featureState} is supported, {@code false} otherwise.
      * @throws NullPointerException if {@code featureState} is {@code null}.

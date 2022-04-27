@@ -6,13 +6,13 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1b;
+import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Trigger1f;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.MotorVibration;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.gc.GcController;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import static io.ketill.gc.GcController.*;
 
@@ -97,25 +97,25 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @FeatureAdapter
-    private void updateButton(@NotNull Button1b button, int gcButton) {
-        button.pressed = slot.isPressed(gcButton);
+    private void updateButton(@NotNull ButtonStateZ state, int gcButton) {
+        state.pressed = slot.isPressed(gcButton);
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f pos,
+    private void updateStick(@NotNull StickPosZ pos,
                              @NotNull StickMapping mapping) {
         pos.x = this.getNormalizedAxis(mapping.xAxis);
         pos.y = this.getNormalizedAxis(mapping.yAxis);
     }
 
     @FeatureAdapter
-    private void updateTrigger(@NotNull Trigger1f trigger,
+    private void updateTrigger(@NotNull TriggerStateZ state,
                                @NotNull AxisMapping mapping) {
-        trigger.force = (this.getNormalizedAxis(mapping) + 1.0F) / 2.0F;
+        state.force = (this.getNormalizedAxis(mapping) + 1.0F) / 2.0F;
     }
 
     @FeatureAdapter
-    private void updateMotor(@NotNull Vibration1f vibration) {
+    private void updateMotor(@NotNull MotorVibration vibration) {
         slot.setRumbling(vibration.getStrength() > 0.0F);
     }
 

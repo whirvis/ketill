@@ -37,10 +37,10 @@ class GlfwNxLeftJoyConAdapterTest {
 
     @Test
     void ensureAllFeaturesSupported() {
-        List<IoFeature<?>> unsupported = new ArrayList<>();
+        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
         unsupported.add(NxLeftJoyCon.FEATURE_LED);
 
-        for (RegisteredFeature<?, ?> rf : joycon.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : joycon.getFeatures()) {
             if (!unsupported.contains(rf.feature)) {
                 assertTrue(joycon.isFeatureSupported(rf.feature));
             }

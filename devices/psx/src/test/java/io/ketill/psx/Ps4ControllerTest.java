@@ -16,7 +16,7 @@ class Ps4ControllerTest {
 
     private Ps4Controller ps4;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, ps4.getState(feature));
     }
 

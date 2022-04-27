@@ -11,7 +11,7 @@ class GcControllerTest {
 
     private GcController gc;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, gc.getState(feature));
     }
 

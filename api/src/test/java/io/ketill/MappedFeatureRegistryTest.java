@@ -167,8 +167,8 @@ class MappedFeatureRegistryTest {
                 registry.getFeatureRegistration(feature));
 
         /*
-         * It makes no sense to get the registration of a null feature. As
-         * such, assume this was a mistake by the user and throw an exception.
+         * It makes no sense to get the registration of a null feature.
+         * Assume this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> registry.getFeatureRegistration(null));
@@ -188,8 +188,8 @@ class MappedFeatureRegistryTest {
                 () -> registry.getState(feature));
 
         /*
-         * The value of state inside registeredField must match the
-         * value returned by getState(), as it is a shorthand.
+         * The value of state inside registeredField must match the value
+         * returned by getState(), as it is a shorthand.
          */
         RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
@@ -203,16 +203,15 @@ class MappedFeatureRegistryTest {
 
         /*
          * It makes no sense to retrieve the state of a null feature.
-         * As such, assume this was a mistake by the user and throw
-         * an exception.
+         * Assume this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class, () -> registry.getState(null));
         assertThrows(IllegalStateException.class,
                 () -> registry.getState(feature));
 
         /*
-         * Unlike getState(), requestState() simply returns null if
-         * the feature is not currently registered.
+         * Unlike getState(), requestState() simply returns null if the
+         * feature is not currently registered.
          */
         assertNull(registry.requestState(feature));
     }
@@ -244,6 +243,40 @@ class MappedFeatureRegistryTest {
                 () -> registry.registerFeature(null));
         assertThrows(IllegalStateException.class,
                 () -> registry.registerFeature(feature));
+
+        /*
+         * These states will be used to simulate the situation in which a
+         * feature being registered shares an internal state and container
+         * state with a previously registered feature.
+         */
+        MockIoFeature crewmate = new MockIoFeature();
+        MockIoFeature imposter = new MockIoFeature();
+        registry.registerFeature(crewmate);
+
+        /*
+         * The internal state of a feature cannot be the internal state or
+         * container state of a previously registered feature.
+         */
+        imposter.internalState = crewmate.internalState;
+        assertThrows(IllegalStateException.class,
+                () -> registry.registerFeature(imposter));
+        imposter.internalState = crewmate.containerState;
+        assertThrows(IllegalStateException.class,
+                () -> registry.registerFeature(imposter));
+
+        /* use fresh internal state for next test */
+        imposter.internalState = new Object();
+
+        /*
+         * The container state of a feature cannot be the internal state or
+         * container state of a previously registered feature.
+         */
+        imposter.containerState = crewmate.internalState;
+        assertThrows(IllegalStateException.class,
+                () -> registry.registerFeature(imposter));
+        imposter.containerState = crewmate.containerState;
+        assertThrows(IllegalStateException.class,
+                () -> registry.registerFeature(imposter));
     }
 
     @Test

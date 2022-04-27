@@ -1,8 +1,8 @@
 package io.ketill.pressable;
 
-import io.ketill.IoFeature;
+import io.ketill.PlainIoFeature;
 
-class MockIoFeature extends IoFeature<Object> {
+class MockIoFeature extends PlainIoFeature<Object> {
 
     MockIoFeature() {
         super("mock", Object::new);

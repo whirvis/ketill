@@ -11,7 +11,7 @@ class NxJoyConTest {
 
     private MockNxJoyCon nxJoyCon;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, nxJoyCon.getState(feature));
     }
 

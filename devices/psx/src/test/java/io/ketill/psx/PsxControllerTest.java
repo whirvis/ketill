@@ -11,7 +11,7 @@ class PsxControllerTest {
 
     private PsxController psx;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, psx.getState(feature));
     }
 

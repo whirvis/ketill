@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * @see DeviceButton
  * @see AnalogStick
  */
-public class AnalogTrigger extends IoFeature<Trigger1f> {
+public class AnalogTrigger extends IoFeature<TriggerStateZ, TriggerState> {
 
     private static final float TRIGGER_PRESS = 2.0F / 3.0F;
 
@@ -29,7 +29,17 @@ public class AnalogTrigger extends IoFeature<Trigger1f> {
      *                                  whitespace.
      */
     public AnalogTrigger(@NotNull String id) {
-        super(id, Trigger1f::new);
+        super(id);
+    }
+
+    @Override
+    protected @NotNull TriggerStateZ getInternalState() {
+        return new TriggerStateZ();
+    }
+
+    @Override
+    protected @NotNull TriggerState getContainerState(@NotNull TriggerStateZ internalState) {
+        return new TriggerState(internalState);
     }
 
 }

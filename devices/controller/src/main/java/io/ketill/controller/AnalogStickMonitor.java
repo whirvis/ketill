@@ -12,19 +12,20 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class AnalogStickMonitor
-        extends PressableFeatureMonitor<AnalogStick, Stick3f> {
+        extends PressableFeatureMonitor<AnalogStick, StickPosZ> {
 
     private final Direction direction;
-    private final Button1b directionState;
+    private final ButtonStateZ directionState;
 
     /* @formatter:off */
     <I extends IoDevice & PressableFeatureSupport>
             AnalogStickMonitor(@NotNull I device,
                                @NotNull AnalogStick stick,
+                               @NotNull StickPosZ state,
                                @NotNull Direction direction,
-                               @NotNull Button1b directionState,
+                               @NotNull ButtonStateZ directionState,
                                @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, stick, callbackSupplier);
+        super(device, stick, state, callbackSupplier);
         this.direction = direction;
         this.directionState = directionState;
     }
@@ -53,7 +54,7 @@ final class AnalogStickMonitor
 
     @Override
     protected boolean isPressed() {
-        return AnalogStick.isPressed(state, direction);
+        return AnalogStick.isPressed(internalState, direction);
     }
 
 }

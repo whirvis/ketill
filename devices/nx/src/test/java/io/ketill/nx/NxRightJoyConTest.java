@@ -11,7 +11,7 @@ class NxRightJoyConTest {
 
     private NxRightJoyCon nxRightJoyCon;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, nxRightJoyCon.getState(feature));
     }
 

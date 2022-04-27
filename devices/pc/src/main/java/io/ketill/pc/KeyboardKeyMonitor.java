@@ -11,14 +11,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class KeyboardKeyMonitor
-        extends PressableFeatureMonitor<KeyboardKey, Key1b> {
+        extends PressableFeatureMonitor<KeyboardKey, KeyPressZ> {
 
     /* @formatter:off */
     <I extends IoDevice & PressableFeatureSupport>
             KeyboardKeyMonitor(@NotNull I device,
                                @NotNull KeyboardKey key,
+                               @NotNull KeyPressZ press,
                                @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, key, callbackSupplier);
+        super(device, key, press, callbackSupplier);
     }
     /* @formatter:on */
 
@@ -26,17 +27,17 @@ final class KeyboardKeyMonitor
     protected void eventFired(@NotNull PressableFeatureEvent event) {
         switch (event.type) {
             case HOLD:
-                state.held = true;
+                internalState.held = true;
                 break;
             case RELEASE:
-                state.held = false;
+                internalState.held = false;
                 break;
         }
     }
 
     @Override
     protected boolean isPressed() {
-        return state.isPressed();
+        return internalState.pressed;
     }
 
 }

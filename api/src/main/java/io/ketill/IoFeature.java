@@ -52,7 +52,7 @@ public abstract class IoFeature<Z, S> {
      *                                       or container state are instances
      *                                       of an {@link IoFeature}.
      */
-    protected final @NotNull StateContainer<Z, S> getState() {
+    protected final @NotNull StatePair<Z, S> getState() {
         Z internalState = this.getInternalState();
         Objects.requireNonNull(internalState,
                 "getInternalState() cannot return null");
@@ -71,7 +71,7 @@ public abstract class IoFeature<Z, S> {
             throw new UnsupportedOperationException(msg);
         }
 
-        return new StateContainer<>(internalState, containerState);
+        return new StatePair<>(internalState, containerState);
     }
 
     /**

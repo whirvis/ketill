@@ -16,6 +16,11 @@ import java.util.Objects;
  */
 public final class MappedFeatureRegistry implements FeatureRegistry {
 
+    /* @formatter:off */
+    private static final String DSE_MSG = "%s cannot be the %s" +
+            " of a previously registered feature";
+    /* @formatter:on */
+
     private final Map<IoFeature<?, ?>, RegisteredFeature<?, ?, ?>> features;
     private final Map<IoFeature<?, ?>, MappedFeature<?, ?, ?>> mappings;
 
@@ -195,6 +200,28 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
         RegisteredFeature<F, Z, S> registered =
                 new RegisteredFeature<>(feature);
+
+        /*
+         * The feature being registered must not have any states that are
+         * the same as the state of a previously registered feature. This
+         * would cause confusion and break methods.
+         */
+        for(RegisteredFeature<?, ?, ?> rf : features.values()) {
+            if(registered.internalState == rf.internalState) {
+                throw new IllegalStateException(String.format(DSE_MSG,
+                        "internalState", "internalState"));
+            } else if(registered.internalState == rf.containerState) {
+                throw new IllegalStateException(String.format(DSE_MSG,
+                        "internalState", "containerState"));
+            } else if(registered.containerState == rf.internalState) {
+                throw new IllegalStateException(String.format(DSE_MSG,
+                        "containerState", "internalState"));
+            } else if(registered.containerState == rf.containerState) {
+                throw new IllegalStateException(String.format(DSE_MSG,
+                        "containerState", "containerState"));
+            }
+        }
+
         features.put(feature, registered);
         this.updateMapping(feature);
 

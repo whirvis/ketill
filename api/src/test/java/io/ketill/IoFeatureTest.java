@@ -78,10 +78,10 @@ class IoFeatureTest {
          * container returned should contain the states provided by the
          * extending class.
          */
-        StateContainer<?, ?> container = feature.getState();
-        assertNotNull(container);
-        assertSame(container.internal, feature.internalState);
-        assertSame(container.container, feature.containerState);
+        StatePair<?, ?> pair = feature.getState();
+        assertNotNull(pair);
+        assertSame(pair.internal, feature.internalState);
+        assertSame(pair.container, feature.containerState);
     }
 
 }

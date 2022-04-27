@@ -5,8 +5,8 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
 import io.ketill.glfw.WranglerMethod;
-import io.ketill.pc.Click1b;
-import io.ketill.pc.CursorState;
+import io.ketill.pc.MouseClickZ;
+import io.ketill.pc.CursorStateZ;
 import io.ketill.pc.Mouse;
 import io.ketill.pc.MouseButton;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
      * @param glfwButton the GLFW button to map {@code button} to.
      * @throws NullPointerException     if {@code button} is {@code null}.
      * @throws IllegalArgumentException if {@code glfwButton} is negative.
-     * @see #updateButton(Click1b, int)
+     * @see #updateButton(MouseClickZ, int)
      */
     @MappingMethod
     protected void mapButton(@NotNull MouseButton button, int glfwButton) {
@@ -88,14 +88,15 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @FeatureAdapter
-    protected void updateButton(@NotNull Click1b button, int glfwButton) {
+    protected void updateButton(@NotNull MouseClickZ click, int glfwButton) {
         int status = glfwGetMouseButton(ptr_glfwWindow, glfwButton);
-        button.clicked = status >= GLFW_PRESS;
+        click.pressed = status >= GLFW_PRESS;
     }
 
     @FeatureAdapter
-    protected void updateCursor(@NotNull CursorState cursor) {
-        Vector2fc requested = cursor.getRequestedPos();
+    protected void updateCursor(@NotNull CursorStateZ cursor) {
+        Vector2fc requested = cursor.requestedPos;
+        cursor.requestedPos = null;
         if (requested != null) {
             cursor.currentPos.set(requested);
             glfwSetCursorPos(ptr_glfwWindow, requested.x(), requested.y());
@@ -104,10 +105,10 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
             cursor.currentPos.y = (float) this.yPos[0];
         }
 
-        if (!wasVisible && cursor.isVisible()) {
+        if (!wasVisible && cursor.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             this.wasVisible = true;
-        } else if (wasVisible && !cursor.isVisible()) {
+        } else if (wasVisible && !cursor.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             this.wasVisible = false;
         }

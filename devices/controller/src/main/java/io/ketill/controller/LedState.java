@@ -6,7 +6,7 @@ package io.ketill.controller;
  * @see #setNumber(int)
  * @see #setPattern(int)
  */
-public class Led1i {
+public class LedState {
 
     public static final int MODE_NUMBER = 0;
     public static final int MODE_PATTERN = 1;
@@ -18,14 +18,14 @@ public class Led1i {
     /**
      * @param number the initial player number.
      */
-    public Led1i(int number) {
+    public LedState(int number) {
         this.setNumber(number);
     }
 
     /**
      * Constructs a new {@code PlayerLed1i} with a player number of {@code 1}.
      */
-    public Led1i() {
+    public LedState() {
         this(1);
     }
 
@@ -44,8 +44,8 @@ public class Led1i {
     }
 
     /**
-     * Sets the player number for the LED. This has the LED of the
-     * device enabled or disabled depending on the player number.
+     * Sets the player number for the LEDs. This results in the LEDs of the
+     * device being enabled or disabled depending on the player number.
      *
      * @param number the player number.
      * @see #setPattern(int)
@@ -56,10 +56,9 @@ public class Led1i {
     }
 
     /**
-     * Sets the bit pattern for the LED. This has the LED of the
+     * Sets the bit pattern for the LED. This results in the LEDs of the
      * device enabled or disabled based on the bits of {@code pattern}.
-     * Bit 0 is LED 1, bit 1 is LED 2, and so on. If a bit is set,
-     * the corresponding LED will be activated (and vice versa).
+     * Bit 0 is LED 1, bit 1 is LED 2, and so on.
      *
      * @param pattern the bit pattern.
      * @see #setNumber(int)

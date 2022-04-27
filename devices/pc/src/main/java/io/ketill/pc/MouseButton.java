@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing a button on a {@link Mouse}.
  */
-public class MouseButton extends IoFeature<Click1b> {
+public class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
 
     /**
      * @param id the mouse button ID.
@@ -15,7 +15,17 @@ public class MouseButton extends IoFeature<Click1b> {
      *                                  whitespace.
      */
     public MouseButton(@NotNull String id) {
-        super(id, Click1b::new);
+        super(id);
+    }
+
+    @Override
+    protected @NotNull MouseClickZ getInternalState() {
+        return new MouseClickZ();
+    }
+
+    @Override
+    protected @NotNull MouseClick getContainerState(@NotNull MouseClickZ internalState) {
+        return new MouseClick(internalState);
     }
 
 }

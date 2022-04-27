@@ -6,11 +6,11 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1b;
+import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Led1i;
-import io.ketill.controller.Trigger1f;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.LedState;
+import io.ketill.controller.TriggerStateZ;
+import io.ketill.controller.MotorVibration;
 import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -155,7 +155,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateButton(@NotNull Button1b button,
+    private void updateButton(@NotNull ButtonStateZ button,
                               @NotNull ButtonMapping mapping) {
         button.pressed = this.isPressed(mapping.byteOffset, mapping.bitIndex);
     }
@@ -188,13 +188,13 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateTrigger(@NotNull Trigger1f trigger, int byteOffset) {
+    private void updateTrigger(@NotNull TriggerStateZ trigger, int byteOffset) {
         int value = input.get(byteOffset) & 0xFF;
         trigger.force = (value / 255.0F);
     }
 
     @FeatureAdapter
-    private void updateWeakMotor(@NotNull Vibration1f vibration,
+    private void updateWeakMotor(@NotNull MotorVibration vibration,
                                  int byteOffset) {
         byte rumbleWeak = (byte) (vibration.getStrength() > 0.0F ? 0x01 : 0x00);
         if (rumbleWeak != this.rumbleWeak) {
@@ -205,7 +205,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateStrongMotor(@NotNull Vibration1f vibration,
+    private void updateStrongMotor(@NotNull MotorVibration vibration,
                                    int byteOffset) {
         byte rumbleStrong = (byte) (vibration.getStrength() * 255.0F);
         if (rumbleStrong != this.rumbleStrong) {
@@ -216,16 +216,16 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateLed(@NotNull Led1i led, int byteOffset) {
+    private void updateLed(@NotNull LedState led, int byteOffset) {
         byte ledByte = 0x00; /* default to off */
 
         int mode = led.getMode();
-        if (mode == Led1i.MODE_NUMBER) {
+        if (mode == LedState.MODE_NUMBER) {
             int index = led.getValue();
             if (index >= 0 && index < LED_PATTERNS.length) {
                 ledByte = LED_PATTERNS[index];
             }
-        } else if (mode == Led1i.MODE_PATTERN) {
+        } else if (mode == LedState.MODE_PATTERN) {
             ledByte = (byte) led.getValue();
         }
 

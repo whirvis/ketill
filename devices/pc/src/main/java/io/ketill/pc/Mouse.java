@@ -47,7 +47,7 @@ public class Mouse extends IoDevice
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Click1bc
+    public final @NotNull MouseClick
             m1 = this.getState(BUTTON_M1),
             m2 = this.getState(BUTTON_M2),
             m3 = this.getState(BUTTON_M3),
@@ -61,7 +61,7 @@ public class Mouse extends IoDevice
      * Aliases for {@link #m1}, {@link #m2}, and {@link #m3}.
      */
     @FeatureState
-    public final @NotNull Click1bc
+    public final @NotNull MouseClick
             left = m1,
             right = m2,
             middle = m3;
@@ -88,7 +88,8 @@ public class Mouse extends IoDevice
     }
 
     @Override
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
+                                     @NotNull Object internalState) {
         /*
          * Due to the order of class initialization, the monitors list must
          * be initialized here (otherwise, it would be final and initialized
@@ -102,15 +103,16 @@ public class Mouse extends IoDevice
         if (registered.feature instanceof MouseButton) {
             synchronized (monitors) {
                 MouseButton button = (MouseButton) registered.feature;
+                MouseClickZ click = (MouseClickZ) internalState;
                 monitors.add(new MouseButtonMonitor(this, button,
-                        () -> pressableCallback));
+                        click, () -> pressableCallback));
             }
         }
     }
 
     @Override
     @MustBeInvokedByOverriders
-    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
         monitors.removeIf(monitor -> monitor.feature == feature);
     }
 

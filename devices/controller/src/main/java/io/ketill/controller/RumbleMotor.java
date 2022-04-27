@@ -1,12 +1,12 @@
 package io.ketill.controller;
 
-import io.ketill.IoFeature;
+import io.ketill.PlainIoFeature;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An I/O feature representing a rumble motor on a {@link Controller}.
  */
-public class RumbleMotor extends IoFeature<Vibration1f> {
+public class RumbleMotor extends PlainIoFeature<MotorVibration> {
 
     /**
      * @param id the rumble motor ID.
@@ -15,7 +15,7 @@ public class RumbleMotor extends IoFeature<Vibration1f> {
      *                                  whitespace.
      */
     public RumbleMotor(@NotNull String id) {
-        super(id, Vibration1f::new);
+        super(id, MotorVibration::new);
     }
 
 }

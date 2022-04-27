@@ -157,7 +157,7 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
 
     /* @formatter:off */
     @FeatureState /* printable keys */
-    public final @NotNull Key1bc
+    public final @NotNull KeyPress
             space = this.getState(KEY_SPACE),
             apostrophe = this.getState(KEY_APOSTROPHE),
             comma = this.getState(KEY_COMMA),
@@ -210,7 +210,7 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
             world2 = this.getState(KEY_WORLD_2);
 
     @FeatureState /* method keys */
-    public final @NotNull Key1bc
+    public final @NotNull KeyPress
             escape = this.getState(KEY_ESCAPE),
             enter = this.getState(KEY_ENTER),
             tab = this.getState(KEY_TAB),
@@ -300,7 +300,8 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
     }
 
     @Override
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
+                                     @NotNull Object internalState) {
         /*
          * Due to the order of class initialization, the monitors list must
          * be initialized here (otherwise, it would be final and initialized
@@ -313,16 +314,17 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
 
         if (registered.feature instanceof KeyboardKey) {
             KeyboardKey key = (KeyboardKey) registered.feature;
+            KeyPressZ press = (KeyPressZ) internalState;
             synchronized (monitors) {
                 monitors.add(new KeyboardKeyMonitor(this, key,
-                        () -> pressableCallback));
+                        press, () -> pressableCallback));
             }
         }
     }
 
     @Override
     @MustBeInvokedByOverriders
-    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
         monitors.removeIf(monitor -> monitor.feature == feature);
     }
 

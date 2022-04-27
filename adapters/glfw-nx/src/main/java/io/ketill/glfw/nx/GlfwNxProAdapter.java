@@ -4,13 +4,13 @@ import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Trigger1f;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxProController;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import static io.ketill.nx.NxProController.*;
 
@@ -108,7 +108,7 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     }
 
     @Override
-    protected void updateStick(@NotNull Vector3f pos,
+    protected void updateStick(@NotNull StickPosZ pos,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(pos, mapping);
         if (mapping == MAPPING_LS) {
@@ -121,11 +121,12 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     }
 
     @FeatureAdapter
-    private void updateProTrigger(@NotNull Trigger1f trigger, int glfwButton) {
+    private void updateProTrigger(@NotNull TriggerStateZ state,
+                                  int glfwButton) {
         if (this.isPressed(glfwButton)) {
-            trigger.force = 1.0F;
+            state.force = 1.0F;
         } else {
-            trigger.force = 0.0F;
+            state.force = 0.0F;
         }
     }
 

@@ -11,14 +11,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class DeviceButtonMonitor
-        extends PressableFeatureMonitor<DeviceButton, Button1b> {
+        extends PressableFeatureMonitor<DeviceButton, ButtonStateZ> {
 
     /* @formatter:off */
     <I extends IoDevice & PressableFeatureSupport>
             DeviceButtonMonitor(@NotNull I device,
                                 @NotNull DeviceButton button,
+                                @NotNull ButtonStateZ state,
                                 @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, button, callbackSupplier);
+        super(device, button, state, callbackSupplier);
     }
     /* @formatter:on */
 
@@ -26,17 +27,17 @@ final class DeviceButtonMonitor
     protected void eventFired(@NotNull PressableFeatureEvent event) {
         switch (event.type) {
             case HOLD:
-                state.held = true;
+                internalState.held = true;
                 break;
             case RELEASE:
-                state.held = false;
+                internalState.held = false;
                 break;
         }
     }
 
     @Override
     protected boolean isPressed() {
-        return state.isPressed();
+        return internalState.pressed;
     }
 
 }

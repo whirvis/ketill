@@ -1,13 +1,13 @@
 package io.ketill.controller;
 
-import io.ketill.IoFeature;
+import io.ketill.PlainIoFeature;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An I/O feature representing a Player LED indicator on a
  * {@link Controller}.
  */
-public class PlayerLed extends IoFeature<Led1i> {
+public class PlayerLed extends PlainIoFeature<LedState> {
 
     public final int ledCount;
 
@@ -19,7 +19,7 @@ public class PlayerLed extends IoFeature<Led1i> {
      *                                  less than or equal to zero.
      */
     public PlayerLed(@NotNull String id, int ledCount) {
-        super(id, Led1i::new);
+        super(id, LedState::new);
         if (ledCount <= 0) {
             throw new IllegalArgumentException("ledCount <= 0");
         }

@@ -5,10 +5,10 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Stick3fc;
-import io.ketill.controller.Trigger1fc;
+import io.ketill.controller.StickPos;
+import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -42,7 +42,7 @@ public class NxLeftJoyCon extends NxJoyCon {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             left = this.getState(BUTTON_LEFT),
             down = this.getState(BUTTON_DOWN),
             up = this.getState(BUTTON_UP),
@@ -54,11 +54,11 @@ public class NxLeftJoyCon extends NxJoyCon {
             zl = this.getState(BUTTON_ZL);
 
     @FeatureState
-    public final @NotNull Stick3fc
+    public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls);
 
     @FeatureState
-    public final @NotNull Trigger1fc
+    public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt);
     /* @formatter:on */
 

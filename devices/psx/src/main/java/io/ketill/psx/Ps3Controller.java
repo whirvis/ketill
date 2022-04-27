@@ -4,13 +4,13 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Led1i;
+import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.RumbleMotor;
-import io.ketill.controller.Trigger1fc;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.TriggerState;
+import io.ketill.controller.MotorVibration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -43,22 +43,22 @@ public class Ps3Controller extends PsxController {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             select = this.getState(BUTTON_SELECT),
             start = this.getState(BUTTON_START);
 
     @FeatureState
-    public final @NotNull Trigger1fc
+    public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
-    public final @NotNull Vibration1f
+    public final @NotNull MotorVibration
             rumbleStrong = this.getState(MOTOR_STRONG),
             rumbleWeak = this.getState(MOTOR_WEAK);
 
     @FeatureState
-    public final @NotNull Led1i
+    public final @NotNull LedState
             led = this.getState(FEATURE_LED);
     /* @formatter:on */
 

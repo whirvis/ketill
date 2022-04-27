@@ -3,6 +3,7 @@ package io.ketill.glfw.pc;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.RegisteredFeature;
 import io.ketill.pc.Mouse;
+import org.joml.Vector2f;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class GlfwMouseAdapterTest {
 
     @Test
     void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?> rf : mouse.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : mouse.getFeatures()) {
             assertTrue(mouse.isFeatureSupported(rf.feature));
         }
     }
@@ -62,12 +63,12 @@ class GlfwMouseAdapterTest {
             glfw.when(() -> glfwGetMouseButton(ptr_glfwWindow,
                     GLFW_MOUSE_BUTTON_1)).thenReturn(GLFW_PRESS);
             mouse.poll(); /* update mouse buttons */
-            assertTrue(mouse.m1.isClicked());
+            assertTrue(mouse.m1.isPressed());
 
             glfw.when(() -> glfwGetMouseButton(ptr_glfwWindow,
                     GLFW_MOUSE_BUTTON_1)).thenReturn(GLFW_RELEASE);
             mouse.poll(); /* update mouse buttons */
-            assertFalse(mouse.m1.isClicked());
+            assertFalse(mouse.m1.isPressed());
         }
     }
 
@@ -87,12 +88,13 @@ class GlfwMouseAdapterTest {
              * the mouse on screen as reported by GLFW.
              */
             mouse.poll(); /* update mouse cursor */
-            assertEquals(1.23F, mouse.cursor.currentPos.x());
-            assertEquals(4.56F, mouse.cursor.currentPos.y());
+            assertEquals(1.23F, mouse.cursor.getX());
+            assertEquals(4.56F, mouse.cursor.getY());
 
             /* incorrectly set cursor position */
-            mouse.cursor.currentPos.x = 0.00F;
-            mouse.cursor.currentPos.y = 0.00F;
+            Vector2f cursorPos = (Vector2f) mouse.cursor.getPosition();
+            cursorPos.x = 0.00F;
+            cursorPos.y = 0.00F;
 
             /*
              * When the mouse cursor position is set incorrectly
@@ -102,8 +104,8 @@ class GlfwMouseAdapterTest {
              * to move the mouse cursor somewhere else.
              */
             mouse.poll(); /* update mouse cursor */
-            assertEquals(1.23F, mouse.cursor.currentPos.x());
-            assertEquals(4.56F, mouse.cursor.currentPos.y());
+            assertEquals(1.23F, mouse.cursor.getX());
+            assertEquals(4.56F, mouse.cursor.getY());
             glfw.verify(() -> glfwSetCursorPos(ptr_glfwWindow,
                     0.00F, 0.00F), never());
 
@@ -117,8 +119,8 @@ class GlfwMouseAdapterTest {
              * to equal the requested position.
              */
             mouse.poll(); /* update mouse cursor */
-            assertEquals(7.89F, mouse.cursor.currentPos.x());
-            assertEquals(1.01F, mouse.cursor.currentPos.y());
+            assertEquals(7.89F, mouse.cursor.getX());
+            assertEquals(1.01F, mouse.cursor.getY());
             glfw.verify(() -> glfwSetCursorPos(ptr_glfwWindow,
                     7.89F, 1.01F));
 
@@ -130,8 +132,8 @@ class GlfwMouseAdapterTest {
              * it was set to at the beginning of this test.
              */
             mouse.poll(); /* update mouse cursor */
-            assertEquals(1.23F, mouse.cursor.currentPos.x());
-            assertEquals(4.56F, mouse.cursor.currentPos.y());
+            assertEquals(1.23F, mouse.cursor.getX());
+            assertEquals(4.56F, mouse.cursor.getY());
             glfw.verify(() -> glfwSetCursorPos(ptr_glfwWindow,
                     7.89, 1.01F), never());
 

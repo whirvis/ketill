@@ -7,12 +7,12 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1b;
+import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Trigger1f;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -25,7 +25,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * which specialize in mapping data from GLFW joysticks. An assortment
  * of utility methods are provided for mapping features.
  * <p>
- * Feature adapters like {@link #updateStick(Vector3f, GlfwStickMapping)}
+ * Feature adapters like {@link #updateStick(StickPosZ, GlfwStickMapping)}
  * can also be overridden to modify data returned from GLFW. An example of
  * this would be switching the polarity of an axis. This is done in the
  * {@code glfw.psx} module, and can be seen in {@code GlfwPs4Adapter}.
@@ -87,7 +87,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @param glfwButton the GLFW button to map {@code button} to.
      * @throws NullPointerException     if {@code button} is {@code null}.
      * @throws IllegalArgumentException if {@code glfwButton} is negative.
-     * @see #updateButton(Button1b, int)
+     * @see #updateButton(ButtonStateZ, int)
      */
     @MappingMethod
     protected void mapButton(@NotNull DeviceButton button, int glfwButton) {
@@ -103,7 +103,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @param mapping the GLFW stick mapping for {@code stick}.
      * @throws NullPointerException if {@code stick} or {@code mapping}
      *                              are {@code null}.
-     * @see #updateStick(Vector3f, GlfwStickMapping)
+     * @see #updateStick(StickPosZ, GlfwStickMapping)
      */
     @MappingMethod
     protected void mapStick(@NotNull AnalogStick stick,
@@ -118,7 +118,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @param glfwAxis the GLFW axis to map {@code trigger} to.
      * @throws NullPointerException     if {@code trigger} is {@code null}.
      * @throws IllegalArgumentException if {@code glfwAxis} is negative.
-     * @see #updateTrigger(Trigger1f, int)
+     * @see #updateTrigger(TriggerStateZ, int)
      */
     @MappingMethod
     protected void mapTrigger(@NotNull AnalogTrigger trigger, int glfwAxis) {
@@ -185,23 +185,23 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * Updater for buttons mapped via
      * {@link #mapButton(DeviceButton, int)}.
      *
-     * @param button     the button state.
+     * @param state      the button state.
      * @param glfwButton the GLFW button.
      */
     @FeatureAdapter
-    protected void updateButton(@NotNull Button1b button, int glfwButton) {
-        button.pressed = this.isPressed(glfwButton);
+    protected void updateButton(@NotNull ButtonStateZ state, int glfwButton) {
+        state.pressed = this.isPressed(glfwButton);
     }
 
     /**
      * Updater for analog sticks mapped via
      * {@link #mapStick(AnalogStick, GlfwStickMapping)}.
      *
-     * @param stick   the stick position.
+     * @param pos     the analog stick position.
      * @param mapping the GLFW stick mapping.
      */
     @FeatureAdapter
-    protected void updateStick(@NotNull Vector3f pos,
+    protected void updateStick(@NotNull StickPosZ pos,
                                @NotNull GlfwStickMapping mapping) {
         pos.x = this.getAxis(mapping.glfwXAxis);
         pos.y = this.getAxis(mapping.glfwYAxis);
@@ -217,12 +217,12 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * Updater for analog triggers mapped via
      * {@link #mapTrigger(AnalogTrigger, int)}.
      *
-     * @param trigger  the trigger force.
+     * @param state    the analog trigger state.
      * @param glfwAxis the GLFW axis.
      */
     @FeatureAdapter
-    protected void updateTrigger(@NotNull Trigger1f trigger, int glfwAxis) {
-        trigger.force = this.getAxis(glfwAxis);
+    protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
+        state.force = this.getAxis(glfwAxis);
     }
 
     @Override

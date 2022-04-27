@@ -17,8 +17,9 @@ class MockIoFeatureMonitor
     <I extends IoDevice & PressableFeatureSupport>
     MockIoFeatureMonitor(@NotNull I device,
                          @NotNull MockIoFeature feature,
+                         @NotNull Object internalState,
                          @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, feature, callbackSupplier);
+        super(device, feature, internalState, callbackSupplier);
     }
     /* @formatter:on */
 

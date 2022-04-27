@@ -6,16 +6,17 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1b;
+import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
-import io.ketill.controller.Trigger1f;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
+import io.ketill.psx.LightbarColor;
 import io.ketill.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 import org.joml.Vector4fc;
 
 import java.util.Arrays;
@@ -217,19 +218,19 @@ abstract class HidPs4Adapter extends IoDeviceAdapter<Ps4Controller> {
     }
 
     @FeatureAdapter
-    void updateDpad(@NotNull Button1b button, @NotNull DpadMapping mapping) {
+    void updateDpad(@NotNull ButtonStateZ state, @NotNull DpadMapping mapping) {
         int bits = this.inputReport[mapping.byteOffset] & 0xFF;
-        button.pressed = mapping.hasPattern(bits);
+        state.pressed = mapping.hasPattern(bits);
     }
 
     @FeatureAdapter
-    void updateButton(@NotNull Button1b button,
+    void updateButton(@NotNull ButtonStateZ state,
                       @NotNull ButtonMapping mapping) {
-        button.pressed = this.isPressed(mapping.byteOffset, mapping.bitIndex);
+        state.pressed = this.isPressed(mapping.byteOffset, mapping.bitIndex);
     }
 
     @FeatureAdapter
-    void updateStick(@NotNull Vector3f pos, @NotNull StickMapping mapping) {
+    void updateStick(@NotNull StickPosZ pos, @NotNull StickMapping mapping) {
         int posX = this.inputReport[mapping.byteOffsetX] & 0xFF;
         int posY = this.inputReport[mapping.byteOffsetY] & 0xFF;
 
@@ -255,23 +256,24 @@ abstract class HidPs4Adapter extends IoDeviceAdapter<Ps4Controller> {
     }
 
     @FeatureAdapter
-    void updateTrigger(@NotNull Trigger1f trigger, int byteOffset) {
+    void updateTrigger(@NotNull TriggerStateZ state, int byteOffset) {
         int pos = this.inputReport[byteOffset] & 0xFF;
-        trigger.force = pos / 255.0F;
+        state.force = pos / 255.0F;
     }
 
     @FeatureAdapter
-    void updateMotor(@NotNull Vibration1f vibration, int byteOffset) {
+    void updateMotor(@NotNull MotorVibration vibration, int byteOffset) {
         byte forceByte = (byte) (vibration.getStrength() * 0xFF);
         this.outputReport[byteOffset] = forceByte;
     }
 
     @FeatureAdapter
-    void updateLightbar(@NotNull Vector4fc color, int byteOffset) {
-        float alpha = color.w() * 0xFF;
-        this.outputReport[byteOffset] = (byte) (color.x() * alpha);
-        this.outputReport[byteOffset + 1] = (byte) (color.y() * alpha);
-        this.outputReport[byteOffset + 2] = (byte) (color.z() * alpha);
+    void updateLightbar(@NotNull LightbarColor color, int byteOffset) {
+        Vector4fc vector = color.getVector();
+        float alpha = vector.w() * 0xFF;
+        this.outputReport[byteOffset] = (byte) (vector.x() * alpha);
+        this.outputReport[byteOffset + 1] = (byte) (vector.y() * alpha);
+        this.outputReport[byteOffset + 2] = (byte) (vector.z() * alpha);
     }
 
     @Override

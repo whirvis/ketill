@@ -11,14 +11,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class AnalogTriggerMonitor
-        extends PressableFeatureMonitor<AnalogTrigger, Trigger1f> {
+        extends PressableFeatureMonitor<AnalogTrigger, TriggerStateZ> {
 
     /* @formatter:off */
     <I extends IoDevice & PressableFeatureSupport>
             AnalogTriggerMonitor(@NotNull I device,
                                  @NotNull AnalogTrigger trigger,
+                                 @NotNull TriggerStateZ state,
                                  @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, trigger, callbackSupplier);
+        super(device, trigger, state, callbackSupplier);
     }
     /* @formatter:on */
 
@@ -26,21 +27,21 @@ final class AnalogTriggerMonitor
     protected void eventFired(@NotNull PressableFeatureEvent event) {
         switch (event.type) {
             case PRESS:
-                state.button.pressed = true;
+                internalState.pressed = true;
                 break;
             case HOLD:
-                state.button.held = true;
+                internalState.held = true;
                 break;
             case RELEASE:
-                state.button.pressed = false;
-                state.button.held = false;
+                internalState.pressed = false;
+                internalState.held = false;
                 break;
         }
     }
 
     @Override
     protected boolean isPressed() {
-        return AnalogTrigger.isPressed(state.getForce());
+        return AnalogTrigger.isPressed(internalState.force);
     }
 
 }

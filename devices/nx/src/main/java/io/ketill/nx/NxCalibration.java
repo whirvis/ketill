@@ -1,12 +1,12 @@
 package io.ketill.nx;
 
-import io.ketill.IoFeature;
+import io.ketill.PlainIoFeature;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An I/O feature representing the calibration of an {@link NxProController}.
  */
-public final class NxCalibration extends IoFeature<NxCalibrationConfig> {
+public final class NxCalibration extends PlainIoFeature<NxCalibrationConfig> {
 
     /**
      * @param id the feature ID.

@@ -1,92 +1,71 @@
 package io.ketill.pc;
 
-import io.ketill.AdapterUpdatedField;
-import io.ketill.UserUpdatedField;
+import io.ketill.StateContainer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
 import java.util.Objects;
 
 /**
- * Contains the state of a {@link Cursor}.
- *
- * @see #setPosition(Vector2fc)
+ * Read-only view of a mouse's cursor.
  */
-public class CursorState {
-
-    @UserUpdatedField
-    private boolean visible;
-
-    @UserUpdatedField
-    @AdapterUpdatedField
-    private Vector2fc requestedPos;
+public class CursorState extends StateContainer<CursorStateZ> {
 
     /**
-     * The current position of the mouse on the screen. The fields of this
-     * vector should be treated as read only. Changing their values will
-     * <i>not</i> change the position of the mouse on screen!
-     *
-     * @see #setPosition(Vector2fc)
+     * @param internalState the internal state.
+     * @throws NullPointerException if {@code internalState} is {@code null}.
      */
-    public final Vector2f currentPos;
-
-    /**
-     * @param visible the initial visibility.
-     */
-    public CursorState(boolean visible) {
-        this.visible = visible;
-        this.currentPos = new Vector2f();
-    }
-
-    /**
-     * Constructs a new {@code Cursor2f} with visibility enabled.
-     */
-    public CursorState() {
-        this(true);
+    public CursorState(CursorStateZ internalState) {
+        super(internalState);
     }
 
     /**
      * @return {@code true} if the mouse cursor is currently visible,
      * {@code false} otherwise.
      */
-    @UserUpdatedField
     public boolean isVisible() {
-        return this.visible;
+        return internalState.visible;
     }
 
     /**
      * @param visible {@code true} if the mouse cursor should be visible,
-     *                {@code false otherwise}.
+     *                {@code false} otherwise.
      */
-    @UserUpdatedField
     public void setVisible(boolean visible) {
-        this.visible = visible;
+        internalState.visible = visible;
     }
 
     /**
-     * Calling this method clears the internal {@code requestedPos} field,
-     * setting it to {@code null}. As such, only the adapter which fulfills the
-     * duty of moving the cursor to the requested position should call this.
-     *
-     * @return the requested cursor position, {@code null} if none.
+     * @return the position of the cursor.
      */
-    @AdapterUpdatedField
-    public @Nullable Vector2fc getRequestedPos() {
-        Vector2fc pos = this.requestedPos;
-        this.requestedPos = null;
-        return pos;
+    public @NotNull Vector2fc getPosition() {
+        return internalState.currentPos;
+    }
+
+    /**
+     * @return the X-axis position of the cursor.
+     * @see #getPosition()
+     */
+    public final float getX() {
+        return this.getPosition().x();
+    }
+
+    /**
+     * @return the Y-axis position of the cursor.
+     * @see #getPosition()
+     */
+    public final float getY() {
+        return this.getPosition().y();
     }
 
     /**
      * @param pos the position to set the cursor to.
      * @throws NullPointerException if {@code pos} is {@code null}.
      */
-    @UserUpdatedField
     public void setPosition(@NotNull Vector2fc pos) {
         Objects.requireNonNull(pos, "pos");
-        this.requestedPos = pos;
+        internalState.requestedPos = pos;
     }
 
     /**
@@ -94,7 +73,6 @@ public class CursorState {
      * @param yPos the Y-axis position to set the cursor to.
      * @see #setPosition(Vector2fc)
      */
-    @UserUpdatedField
     public final void setPosition(float xPos, float yPos) {
         this.setPosition(new Vector2f(xPos, yPos));
     }

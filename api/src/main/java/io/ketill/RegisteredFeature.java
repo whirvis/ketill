@@ -38,9 +38,9 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
     RegisteredFeature(@NotNull F feature) {
         this.feature = feature;
 
-        StateContainer<Z, S> state = feature.getState();
-        this.containerState = state.container;
-        this.internalState = state.internal;
+        StatePair<Z, S> pair = feature.getState();
+        this.containerState = pair.container;
+        this.internalState = pair.internal;
 
         this.updater = NO_UPDATER;
     }

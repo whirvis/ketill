@@ -144,12 +144,14 @@ class IoDeviceTest {
         assertNull(device.getFeature(new Object()));
 
         /*
-         * When getting the feature from its container state, the feature
-         * returned should match the one which owns the state. Otherwise,
-         * this method is broken.
+         * When getting the feature from its internal state or container
+         * state, the feature returned should match the one which owns the
+         * state. Otherwise, this method is broken.
          */
-        assertEquals(MockIoDevice.FEATURE,
-                device.getFeature(device.featureState));
+        assertSame(MockIoDevice.FEATURE,
+                device.getFeature(device.featureInternalState));
+        assertSame(MockIoDevice.FEATURE,
+                device.getFeature(device.featureContainerState));
     }
 
     @Test
@@ -180,7 +182,8 @@ class IoDeviceTest {
          * takes in a feature. No exception should be thrown if the feature
          * owning the specified container state cannot be identified.
          */
-        assertTrue(device.isFeatureSupported(device.featureState));
+        assertTrue(device.isFeatureSupported(device.featureInternalState));
+        assertTrue(device.isFeatureSupported(device.featureContainerState));
         assertFalse(device.isFeatureSupported(new Object()));
     }
 

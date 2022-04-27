@@ -27,7 +27,7 @@ class MockIoDevice extends IoDevice {
             FEATURE = new MockIoFeature();
 
     @FeatureState
-    public final Object featureState;
+    public final Object featureContainerState, featureInternalState;
 
     boolean executedTask;
     boolean featureRegistered, featureUnregistered;
@@ -40,16 +40,19 @@ class MockIoDevice extends IoDevice {
                  boolean registerFields, boolean initAdapter) {
         super(id, adapterSupplier, registerFields, initAdapter);
         if (registerFields) {
-            this.featureState = this.getState(FEATURE);
+            this.featureContainerState = this.getState(FEATURE);
+            this.featureInternalState = this.getInternalState(FEATURE);
         } else {
-            this.featureState = null;
+            this.featureContainerState = null;
+            this.featureInternalState = null;
         }
     }
 
     MockIoDevice(@NotNull String id,
                  @NotNull AdapterSupplier<MockIoDevice> adapterSupplier) {
         super(id, adapterSupplier);
-        this.featureState = this.getState(FEATURE);
+        this.featureContainerState = this.getState(FEATURE);
+        this.featureInternalState = this.getInternalState(FEATURE);
     }
 
     MockIoDevice() {

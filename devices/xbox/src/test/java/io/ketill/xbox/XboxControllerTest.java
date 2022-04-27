@@ -11,7 +11,7 @@ class XboxControllerTest {
     
     private XboxController xbox;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, xbox.getState(feature));
     }
     

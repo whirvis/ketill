@@ -19,10 +19,11 @@ public final class PressableFeatureEvent {
     /**
      * The I/O feature which triggered this event.
      */
-    public final @NotNull IoFeature<?> feature;
+    public final @NotNull IoFeature<?, ?> feature;
 
     /**
-     * The current state of {@code feature}.
+     * The current state of {@code feature}. This is the state returned by
+     * {@link IoDevice#getState(IoFeature)}.
      */
     public final @NotNull Object state;
 
@@ -55,8 +56,8 @@ public final class PressableFeatureEvent {
      */
     public PressableFeatureEvent(@NotNull PressableFeatureEventType type,
                                  @NotNull IoDevice device,
-                                 @NotNull IoFeature<?> feature, boolean held,
-                                 @Nullable Object data) {
+                                 @NotNull IoFeature<?, ?> feature,
+                                 boolean held, @Nullable Object data) {
         this.type = Objects.requireNonNull(type,
                 "type cannot be null");
         this.device = Objects.requireNonNull(device,

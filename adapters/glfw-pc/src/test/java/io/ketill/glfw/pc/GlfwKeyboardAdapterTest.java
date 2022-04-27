@@ -51,7 +51,7 @@ class GlfwKeyboardAdapterTest {
 
     @Test
     void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?> rf : keyboard.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : keyboard.getFeatures()) {
             assertTrue(keyboard.isFeatureSupported(rf.feature));
         }
     }

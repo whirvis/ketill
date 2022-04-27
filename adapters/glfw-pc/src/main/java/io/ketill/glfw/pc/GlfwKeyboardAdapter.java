@@ -5,7 +5,7 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
 import io.ketill.glfw.WranglerMethod;
-import io.ketill.pc.Key1b;
+import io.ketill.pc.KeyPressZ;
 import io.ketill.pc.Keyboard;
 import io.ketill.pc.KeyboardKey;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
      * @param glfwKey the GLFW key to map {@code key} to.
      * @throws NullPointerException     if {@code key} is {@code null}.
      * @throws IllegalArgumentException if {@code glfwKey} is negative.
-     * @see #updateKey(Key1b, int)
+     * @see #updateKey(KeyPressZ, int)
      */
     @MappingMethod
     protected void mapKey(@NotNull KeyboardKey key, int glfwKey) {
@@ -197,7 +197,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     @FeatureAdapter
-    protected void updateKey(@NotNull Key1b key, int glfwKey) {
+    protected void updateKey(@NotNull KeyPressZ key, int glfwKey) {
         int status = glfwGetKey(ptr_glfwWindow, glfwKey);
         key.pressed = status >= GLFW_PRESS;
     }

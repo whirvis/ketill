@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 public abstract class Controller extends IoDevice
         implements PressableFeatureSupport {
 
-    private final @NotNull Map<RumbleMotor, Vibration1f> rumbleMotors;
+    private final @NotNull Map<RumbleMotor, MotorVibration> rumbleMotors;
     private final @NotNull List<PressableFeatureMonitor<?, ?>> monitors;
     private @NotNull PressableFeatureConfigView pressableConfig;
 
@@ -43,13 +43,13 @@ public abstract class Controller extends IoDevice
      * The left and right analog sticks of the controller.<br>
      * These may not be present, and as such may be {@code null}.
      */
-    public final @Nullable Stick3fc ls, rs;
+    public final @Nullable StickPos ls, rs;
 
     /**
      * The left and right analog triggers of the controller.<br>
      * These may not be present, and as such may be {@code null}.
      */
-    public final @Nullable Trigger1fc lt, rt;
+    public final @Nullable TriggerState lt, rt;
 
     /**
      * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
@@ -147,7 +147,7 @@ public abstract class Controller extends IoDevice
      */
     /* @formatter:off */
     private <S> @Nullable S
-            registerAndGetState(@Nullable IoFeature<S> feature) {
+            registerAndGetState(@Nullable IoFeature<?, S> feature) {
         if (feature == null) {
             return null;
         }
@@ -160,38 +160,41 @@ public abstract class Controller extends IoDevice
 
     @Override
     @MustBeInvokedByOverriders
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
+                                     @NotNull Object internalState) {
         if (registered.feature instanceof DeviceButton) {
             DeviceButton button = (DeviceButton) registered.feature;
+            ButtonStateZ state = (ButtonStateZ) internalState;
             synchronized (monitors) {
                 monitors.add(new DeviceButtonMonitor(this, button,
-                        () -> pressableCallback));
+                        state, () -> pressableCallback));
             }
         } else if (registered.feature instanceof AnalogStick) {
             AnalogStick stick = (AnalogStick) registered.feature;
-            Stick3f pos = (Stick3f) registered.state;
+            StickPosZ pos = (StickPosZ) internalState;
 
             /* @formatter:off */
             synchronized (monitors) {
-                monitors.add(new AnalogStickMonitor(this, stick,
+                monitors.add(new AnalogStickMonitor(this, stick, pos,
                         Direction.UP, pos.up, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick,
+                monitors.add(new AnalogStickMonitor(this, stick, pos,
                         Direction.DOWN, pos.down, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick,
+                monitors.add(new AnalogStickMonitor(this, stick, pos,
                         Direction.LEFT, pos.left, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick,
+                monitors.add(new AnalogStickMonitor(this, stick, pos,
                         Direction.RIGHT, pos.right, () -> pressableCallback));
             }
             /* @formatter:on */
         } else if (registered.feature instanceof AnalogTrigger) {
             AnalogTrigger trigger = (AnalogTrigger) registered.feature;
+            TriggerStateZ state = (TriggerStateZ) internalState;
             synchronized (monitors) {
                 monitors.add(new AnalogTriggerMonitor(this, trigger,
-                        () -> pressableCallback));
+                        state, () -> pressableCallback));
             }
         } else if (registered.feature instanceof RumbleMotor) {
             RumbleMotor motor = (RumbleMotor) registered.feature;
-            Vibration1f vibration = (Vibration1f) registered.state;
+            MotorVibration vibration = (MotorVibration) internalState;
             synchronized (rumbleMotors) {
                 rumbleMotors.put(motor, vibration);
             }
@@ -200,11 +203,11 @@ public abstract class Controller extends IoDevice
 
     @Override
     @MustBeInvokedByOverriders
-    protected void featureUnregistered(@NotNull IoFeature<?> feature) {
+    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
         monitors.removeIf(monitor -> monitor.feature == feature);
         if (feature instanceof RumbleMotor) {
             synchronized (rumbleMotors) {
-                Vibration1f vibration = rumbleMotors.remove(feature);
+                MotorVibration vibration = rumbleMotors.remove(feature);
                 vibration.setStrength(0.0F);
             }
         }
@@ -219,7 +222,7 @@ public abstract class Controller extends IoDevice
      */
     public void rumble(float strength) {
         synchronized (rumbleMotors) {
-            for (Vibration1f vibration : rumbleMotors.values()) {
+            for (MotorVibration vibration : rumbleMotors.values()) {
                 vibration.setStrength(strength);
             }
         }

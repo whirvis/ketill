@@ -83,8 +83,13 @@ interface FeatureRegistry {
      * @param <Z>     the internal state type.
      * @param <S>     the state container type.
      * @return the feature registration.
-     * @throws NullPointerException  if {@code feature} is {@code null}.
-     * @throws IllegalStateException if {@code feature} is already registered.
+     * @throws NullPointerException  if {@code feature} is
+     *                               {@code null}.
+     * @throws IllegalStateException if {@code feature} is already registered;
+     *                               if the {@code internalState} or
+     *                               {@code containerState} supplied by
+     *                               {@code feature} belong to a previously
+     *                               registered feature.
      */
     /* @formatter:off */
     <F extends IoFeature<Z, S>, Z, S> @NotNull RegisteredFeature<F, Z, S>

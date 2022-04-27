@@ -6,10 +6,10 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Stick3fc;
+import io.ketill.controller.StickPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +54,7 @@ public abstract class PsxController extends Controller {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             square = this.getState(BUTTON_SQUARE),
             cross = this.getState(BUTTON_CROSS),
             circle = this.getState(BUTTON_CIRCLE),
@@ -71,7 +71,7 @@ public abstract class PsxController extends Controller {
             left = this.getState(BUTTON_LEFT);
 
     @FeatureState
-    public final @NotNull Stick3fc
+    public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
     /* @formatter:on */

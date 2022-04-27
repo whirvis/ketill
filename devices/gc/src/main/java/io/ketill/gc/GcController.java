@@ -6,13 +6,13 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.RumbleMotor;
-import io.ketill.controller.Stick3fc;
-import io.ketill.controller.Trigger1fc;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.StickPos;
+import io.ketill.controller.TriggerState;
+import io.ketill.controller.MotorVibration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -55,7 +55,7 @@ public class GcController extends Controller {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             a = this.getState(BUTTON_A),
             b = this.getState(BUTTON_B),
             x = this.getState(BUTTON_X),
@@ -70,17 +70,17 @@ public class GcController extends Controller {
             l = this.getState(BUTTON_L);
 
     @FeatureState
-    public final @NotNull Stick3fc
+    public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 
     @FeatureState
-    public final @NotNull Trigger1fc
+    public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
-    public final @NotNull Vibration1f
+    public final @NotNull MotorVibration
             rumble = this.getState(MOTOR_RUMBLE);
     /* @formatter:on */
 

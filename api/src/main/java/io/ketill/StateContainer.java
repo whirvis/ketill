@@ -2,14 +2,25 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
-final class StateContainer<I, U> {
+import java.util.Objects;
 
-    final @NotNull I internal;
-    final @NotNull U container;
+/**
+ * A utility class for classes which contain the internal state of an
+ * {@link IoFeature}.
+ *
+ * @param <Z> the internal state type.
+ */
+public abstract class StateContainer<Z> {
 
-    StateContainer(@NotNull I internal, @NotNull U user) {
-        this.container = user;
-        this.internal = internal;
+    protected final @NotNull Z internalState;
+
+    /**
+     * @param internalState the internal state.
+     * @throws NullPointerException if {@code internalState} is {@code null}.
+     */
+    public StateContainer(Z internalState) {
+        this.internalState = Objects.requireNonNull(internalState,
+                "internalState cannot be null");
     }
 
 }

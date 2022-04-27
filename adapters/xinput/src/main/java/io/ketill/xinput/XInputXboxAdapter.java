@@ -11,15 +11,15 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1b;
+import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
+import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
-import io.ketill.controller.Trigger1f;
-import io.ketill.controller.Vibration1f;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.xbox.XboxController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.util.Objects;
 
@@ -109,13 +109,13 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateButton(@NotNull Button1b state,
+    private void updateButton(@NotNull ButtonStateZ state,
                               @NotNull XInputButton button) {
         state.pressed = button.isPressed(buttons);
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f pos,
+    private void updateStick(@NotNull StickPosZ pos,
                              @NotNull StickMapping mapping) {
         pos.x = axes.get(mapping.xAxis);
         pos.y = axes.get(mapping.yAxis);
@@ -129,13 +129,13 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateTrigger(@NotNull Trigger1f trigger,
+    private void updateTrigger(@NotNull TriggerStateZ state,
                                @NotNull XInputAxis axis) {
-        trigger.force = axes.get(axis);
+        state.force = axes.get(axis);
     }
 
     @FeatureAdapter
-    private void updateMotor(@NotNull Vibration1f vibration,
+    private void updateMotor(@NotNull MotorVibration vibration,
                              @NotNull RumbleMotor motor) {
         /*
          * The X-input API will throw an exception if it receives a motor

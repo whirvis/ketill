@@ -5,10 +5,10 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Button1bc;
+import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.DeviceButton;
-import io.ketill.controller.Led1i;
+import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,12 +34,12 @@ public abstract class NxJoyCon extends Controller {
 
     /* @formatter:off */
     @FeatureState
-    public final @NotNull Button1bc
+    public final @NotNull ButtonState
             sl = this.getState(BUTTON_SL),
             sr = this.getState(BUTTON_SR);
 
     @FeatureState
-    public final @NotNull Led1i
+    public final @NotNull LedState
             led = this.getState(FEATURE_LED);
     /* @formatter:on */
 

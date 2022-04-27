@@ -15,6 +15,7 @@ class PressableFeatureMonitorTest {
 
     private MockIoDevice device;
     private MockIoFeature feature;
+    private Object state;
     private Consumer<PressableFeatureEvent> callback;
     private Supplier<Consumer<PressableFeatureEvent>> supplier;
     private MockIoFeatureMonitor monitor;
@@ -54,25 +55,48 @@ class PressableFeatureMonitorTest {
     void setup() {
         this.device = new MockIoDevice();
         this.feature = new MockIoFeature();
+
         device.registerFeature(feature);
 
+        this.state = device.getState(feature);
         this.supplier = () -> callback;
-        this.monitor = new MockIoFeatureMonitor(device, feature, supplier);
+        this.monitor = new MockIoFeatureMonitor(device, feature,
+                state, supplier);
     }
 
     @Test
     void init() {
         /*
          * It would not make sense for the device, feature,
-         * or callback supplier to be null. As such, assume
-         * this was a user mistake and throw an exception.
+         * internal state, or callback supplier to be null.
+         * As such, assume this was a mistake by the user
+         * and throw an exception.
          */
+        /* @formatter:off */
         assertThrows(NullPointerException.class,
-                () -> new MockIoFeatureMonitor(null, feature, supplier));
+                () -> new MockIoFeatureMonitor(null, feature, state,
+                        supplier));
         assertThrows(NullPointerException.class,
-                () -> new MockIoFeatureMonitor(device, null, supplier));
+                () -> new MockIoFeatureMonitor(device, null, state,
+                        supplier));
         assertThrows(NullPointerException.class,
-                () -> new MockIoFeatureMonitor(device, feature, null));
+                () -> new MockIoFeatureMonitor(device, feature, null,
+                        supplier));
+        assertThrows(NullPointerException.class,
+                () -> new MockIoFeatureMonitor(device, feature, state,
+                        null));
+        /* @formatter:on */
+
+        /*
+         * It would not make sense to supply an internal state
+         * which does not belong to the feature. Assume this
+         * was a mistake by the user and throw an exception.
+         */
+        /* @formatter:off */
+        assertThrows(IllegalArgumentException.class,
+                () -> new MockIoFeatureMonitor(device, feature,
+                        new Object(), supplier));
+        /* @formatter:on */
 
         /* unregister feature for next test */
         device.unregisterFeature(feature);
@@ -83,8 +107,11 @@ class PressableFeatureMonitorTest {
          * As such, assume this was a mistake by the user and
          * throw an exception.
          */
+        /* @formatter:off */
         assertThrows(IllegalStateException.class,
-                () -> new MockIoFeatureMonitor(device, feature, supplier));
+                () -> new MockIoFeatureMonitor(device, feature,
+                        state, supplier));
+        /* @formatter:on */
     }
 
     @Test

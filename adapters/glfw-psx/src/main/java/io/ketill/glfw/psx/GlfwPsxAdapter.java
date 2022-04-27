@@ -1,12 +1,12 @@
 package io.ketill.glfw.psx;
 
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.StickPosZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.psx.PsxController;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 import static io.ketill.psx.PsxController.*;
 
@@ -68,7 +68,7 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
     }
 
     @Override
-    protected void updateStick(@NotNull Vector3f pos,
+    protected void updateStick(@NotNull StickPosZ pos,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(pos, mapping);
         if (mapping == MAPPING_LS || mapping == MAPPING_RS) {

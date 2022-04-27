@@ -43,10 +43,10 @@ class GlfwNxProAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?>> unsupported = new ArrayList<>();
+        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
         unsupported.add(NxProController.FEATURE_LED);
 
-        for (RegisteredFeature<?, ?> rf : controller.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
             if (!unsupported.contains(rf.feature)) {
                 assertTrue(controller.isFeatureSupported(rf.feature));
             }

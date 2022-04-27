@@ -11,7 +11,7 @@ class NxProControllerTest {
 
     private NxProController nxPro;
 
-    private void assertStateIsFeature(Object state, IoFeature<?> feature) {
+    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
         assertSame(state, nxPro.getState(feature));
     }
 

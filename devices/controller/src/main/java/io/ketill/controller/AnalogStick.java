@@ -16,7 +16,7 @@ import java.util.Objects;
  * @see AnalogTrigger
  * @see #isPressed(Vector3fc, Direction)
  */
-public class AnalogStick extends IoFeature<Stick3f> {
+public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
 
     private static final float STICK_PRESS = 2.0F / 3.0F;
 
@@ -57,7 +57,7 @@ public class AnalogStick extends IoFeature<Stick3f> {
      *                                  whitespace.
      */
     public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton) {
-        super(id, Stick3f::new);
+        super(id);
         this.zButton = zButton;
     }
 
@@ -71,6 +71,16 @@ public class AnalogStick extends IoFeature<Stick3f> {
      */
     public AnalogStick(@NotNull String id) {
         this(id, null);
+    }
+
+    @Override
+    protected @NotNull StickPosZ getInternalState() {
+        return new StickPosZ();
+    }
+
+    @Override
+    protected @NotNull StickPos getContainerState(@NotNull StickPosZ internalState) {
+        return new StickPos(internalState);
     }
 
 }

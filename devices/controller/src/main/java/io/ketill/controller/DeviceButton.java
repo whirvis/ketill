@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @see AnalogStick
  * @see AnalogTrigger
  */
-public class DeviceButton extends IoFeature<Button1b> {
+public class DeviceButton extends IoFeature<ButtonStateZ, ButtonState> {
 
     public final @Nullable Direction direction;
 
@@ -25,7 +25,7 @@ public class DeviceButton extends IoFeature<Button1b> {
      *                                  whitespace.
      */
     public DeviceButton(@NotNull String id, @Nullable Direction direction) {
-        super(id, Button1b::new);
+        super(id);
         this.direction = direction;
     }
 
@@ -37,6 +37,16 @@ public class DeviceButton extends IoFeature<Button1b> {
      */
     public DeviceButton(@NotNull String id) {
         this(id, null);
+    }
+
+    @Override
+    protected @NotNull ButtonStateZ getInternalState() {
+        return new ButtonStateZ();
+    }
+
+    @Override
+    protected @NotNull ButtonState getContainerState(@NotNull ButtonStateZ internalState) {
+        return new ButtonState(internalState);
     }
 
 }

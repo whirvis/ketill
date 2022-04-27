@@ -5,7 +5,7 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
-import io.ketill.controller.Trigger1f;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.nx.NxJoyCon;
 import org.jetbrains.annotations.NotNull;
@@ -73,12 +73,12 @@ abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
     }
 
     @FeatureAdapter
-    private void updateJoyConTrigger(@NotNull Trigger1f trigger,
+    private void updateJoyConTrigger(@NotNull TriggerStateZ state,
                                      int glfwButton) {
         if (this.isPressed(glfwButton)) {
-            trigger.force = 1.0F;
+            state.force = 1.0F;
         } else {
-            trigger.force = 0.0F;
+            state.force = 0.0F;
         }
     }
 
