@@ -37,7 +37,7 @@ class GlfwPs5AdapterTest {
 
     @Test
     void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?> rf : controller.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
             assertTrue(controller.isFeatureSupported(rf.feature));
         }
     }

@@ -40,12 +40,12 @@ class GlfwPs4AdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?>> unsupported = new ArrayList<>();
+        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
         unsupported.add(Ps4Controller.MOTOR_STRONG);
         unsupported.add(Ps4Controller.MOTOR_WEAK);
         unsupported.add(Ps4Controller.FEATURE_LIGHTBAR);
 
-        for (RegisteredFeature<?, ?> rf : controller.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
             if (!unsupported.contains(rf.feature)) {
                 assertTrue(controller.isFeatureSupported(rf.feature));
             }

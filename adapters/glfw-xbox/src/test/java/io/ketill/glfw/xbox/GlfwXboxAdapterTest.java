@@ -40,11 +40,11 @@ class GlfwXboxAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?>> unsupported = new ArrayList<>();
+        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
         unsupported.add(XboxController.MOTOR_COARSE);
         unsupported.add(XboxController.MOTOR_FINE);
 
-        for (RegisteredFeature<?, ?> rf : controller.getFeatures()) {
+        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
             if (!unsupported.contains(rf.feature)) {
                 assertTrue(controller.isFeatureSupported(rf.feature));
             }
