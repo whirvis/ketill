@@ -46,16 +46,17 @@ class AnalogStickTest {
         assertTrue(AnalogStick.isPressed(pos, Direction.RIGHT));
     }
 
+    @Test
+    void __init__() {
+        assertThrows(NullPointerException.class,
+                () -> new AnalogStick(null));
+    }
+
     private AnalogStick stick;
 
     @BeforeEach
     void setup() {
         this.stick = new AnalogStick("stick");
-    }
-
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class, () -> new AnalogStick(null));
     }
 
     @Test
