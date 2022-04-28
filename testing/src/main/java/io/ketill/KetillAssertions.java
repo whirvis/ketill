@@ -10,8 +10,12 @@ public class KetillAssertions {
      * Asserts that a state object is owned by an I/O feature. For this
      * assertion to pass, the following must be true:
      * <pre>
-     *     state == device.getState(feature)
+     *     device.getFeature(state) == feature
      * </pre>
+     * {@link IoDevice#getState(IoFeature)} is not used here as it returns
+     * the <i>container</i> state of an I/O feature. Using the inverse of
+     * this method enables this assertion to work for both internal and
+     * container states.
      *
      * @param device  the device which owns {@code feature}.
      * @param state   the state which {@code feature} should own.
@@ -28,7 +32,7 @@ public class KetillAssertions {
         Objects.requireNonNull(state, "state cannot be null");
         Objects.requireNonNull(feature, "feature cannot be null");
 
-        if (state != device.getState(feature)) {
+        if (device.getFeature(state) != feature) {
             String msg = "feature with ID \"" + feature.id + "\"";
             msg += " does not own provided state";
             throw new AssertionError(msg);
