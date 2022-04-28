@@ -22,11 +22,11 @@ class AnalogStickMonitorTest {
 
         /*
          * These mock the functionality required for the pressable feature
-         * monitor to instantiate without  any exceptions being thrown. At
+         * monitor to instantiate without any exceptions being thrown. At
          * construction, the monitor ensures the feature is registered and
          * that it owns the state supplied by the user.
          */
-        when(controller.isFeatureRegistered(stick)).thenReturn(true);
+        doReturn(true).when(controller).isFeatureRegistered(stick);
         doReturn(stick).when(controller).getFeature(state);
 
         this.monitor = new AnalogStickMonitor(controller, stick, state,
@@ -43,22 +43,22 @@ class AnalogStickMonitorTest {
     @Test
     void eventFired() {
         /*
-         * When the PRESS event is fired, the analog stick monitor must set
-         * the state of the button it was assigned to be considered pressed.
+         * When the PRESS event is fired, the analog stick monitor must
+         * set the state of the button it was assigned to be pressed.
          */
         fireSimulatedEvent(PressableFeatureEventType.PRESS);
         assertTrue(state.up.pressed);
 
         /*
-         * When the HOLD event is fired, the analog stick monitor must set
-         * the state of the button it was assigned to be held down.
+         * When the HOLD event is fired, the analog stick monitor must
+         * set the state of the button it was assigned to be held down.
          */
         fireSimulatedEvent(PressableFeatureEventType.HOLD);
         assertTrue(state.up.held);
 
         /*
-         * When the RELEASE event is fired, the analog stick monitor must set
-         * the state of the button it was assigned to no longer be considered
+         * When the RELEASE event is fired, the analog stick monitor must
+         * set the state of the button it was assigned to not be considered
          * pressed or held down.
          */
         fireSimulatedEvent(PressableFeatureEventType.RELEASE);
