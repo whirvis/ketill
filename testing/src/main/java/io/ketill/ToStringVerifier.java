@@ -12,7 +12,7 @@ import java.util.Objects;
  * contract is as follows:
  * <ul>
  *     <li>The class must override {@code toString()}.</li>
- *     <li>It must not return {@code super.toString()}.</li>
+ *     <li>It must not return {@link Object#toString()}.</li>
  * </ul>
  * <p>
  * Using a {@code ToStringVerifier} is as follows:
@@ -24,6 +24,12 @@ import java.util.Objects;
  * determine if the requirements for the contract are met.
  */
 public class ToStringVerifier<T> {
+
+    private static @NotNull String superToString(@NotNull Object obj) {
+        String clazzName = obj.getClass().getName();
+        String hashCode = Integer.toHexString(obj.hashCode());
+        return clazzName + "@" + hashCode;
+    }
 
     /**
      * Factory method for a {@code toString()} verifier. This method exists
@@ -73,8 +79,7 @@ public class ToStringVerifier<T> {
                 throw new AssertionError(msg);
             }
 
-            String prefix = clazz.getName() + "@";
-            if (obj.toString().startsWith(prefix)) {
+            if (obj.toString().equals(superToString(obj))) {
                 String msg = "toString() must not return super.toString()";
                 throw new AssertionError(msg);
             }
