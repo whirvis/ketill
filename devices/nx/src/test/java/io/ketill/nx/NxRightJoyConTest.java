@@ -1,19 +1,15 @@
 package io.ketill.nx;
 
-import io.ketill.IoFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.nx.NxRightJoyCon.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NxRightJoyConTest {
 
     private NxRightJoyCon nxRightJoyCon;
-
-    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
-        assertSame(state, nxRightJoyCon.getState(feature));
-    }
 
     @BeforeEach
     void setup() {
@@ -22,21 +18,21 @@ class NxRightJoyConTest {
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(nxRightJoyCon.a, BUTTON_A);
-        assertStateIsFeature(nxRightJoyCon.x, BUTTON_X);
-        assertStateIsFeature(nxRightJoyCon.b, BUTTON_B);
-        assertStateIsFeature(nxRightJoyCon.y, BUTTON_Y);
-        assertStateIsFeature(nxRightJoyCon.sl, BUTTON_SL);
-        assertStateIsFeature(nxRightJoyCon.sr, BUTTON_SR);
-        assertStateIsFeature(nxRightJoyCon.plus, BUTTON_PLUS);
-        assertStateIsFeature(nxRightJoyCon.rThumb, BUTTON_R_THUMB);
-        assertStateIsFeature(nxRightJoyCon.home, BUTTON_HOME);
-        assertStateIsFeature(nxRightJoyCon.r, BUTTON_R);
-        assertStateIsFeature(nxRightJoyCon.zr, BUTTON_ZR);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.a, BUTTON_A);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.x, BUTTON_X);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.b, BUTTON_B);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.y, BUTTON_Y);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.sl, BUTTON_SL);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.sr, BUTTON_SR);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.plus, BUTTON_PLUS);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rThumb, BUTTON_R_THUMB);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.home, BUTTON_HOME);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.r, BUTTON_R);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.zr, BUTTON_ZR);
 
-        assertStateIsFeature(nxRightJoyCon.rs, STICK_RS);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rs, STICK_RS);
 
-        assertStateIsFeature(nxRightJoyCon.rt, TRIGGER_ZR);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rt, TRIGGER_ZR);
     }
 
     @Test

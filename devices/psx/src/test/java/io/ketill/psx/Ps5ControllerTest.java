@@ -1,19 +1,14 @@
 package io.ketill.psx;
 
-import io.ketill.IoFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.psx.Ps5Controller.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class Ps5ControllerTest {
 
     private Ps5Controller ps5;
-
-    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
-        assertSame(state, ps5.getState(feature));
-    }
 
     @BeforeEach
     void setup() {
@@ -22,14 +17,14 @@ class Ps5ControllerTest {
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(ps5.share, BUTTON_SHARE);
-        assertStateIsFeature(ps5.options, BUTTON_OPTIONS);
-        assertStateIsFeature(ps5.ps, BUTTON_PS);
-        assertStateIsFeature(ps5.tpad, BUTTON_TPAD);
-        assertStateIsFeature(ps5.mute, BUTTON_MUTE);
+        assertFeatureOwnsState(ps5, ps5.share, BUTTON_SHARE);
+        assertFeatureOwnsState(ps5, ps5.options, BUTTON_OPTIONS);
+        assertFeatureOwnsState(ps5, ps5.ps, BUTTON_PS);
+        assertFeatureOwnsState(ps5, ps5.tpad, BUTTON_TPAD);
+        assertFeatureOwnsState(ps5, ps5.mute, BUTTON_MUTE);
 
-        assertStateIsFeature(ps5.lt, TRIGGER_LT);
-        assertStateIsFeature(ps5.rt, TRIGGER_RT);
+        assertFeatureOwnsState(ps5, ps5.lt, TRIGGER_LT);
+        assertFeatureOwnsState(ps5, ps5.rt, TRIGGER_RT);
     }
 
 }

@@ -1,19 +1,14 @@
 package io.ketill.gc;
 
-import io.ketill.IoFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.gc.GcController.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class GcControllerTest {
 
     private GcController gc;
-
-    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
-        assertSame(state, gc.getState(feature));
-    }
 
     @BeforeEach
     void setup() {
@@ -22,26 +17,26 @@ class GcControllerTest {
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(gc.a, BUTTON_A);
-        assertStateIsFeature(gc.b, BUTTON_B);
-        assertStateIsFeature(gc.x, BUTTON_X);
-        assertStateIsFeature(gc.y, BUTTON_Y);
-        assertStateIsFeature(gc.left, BUTTON_LEFT);
-        assertStateIsFeature(gc.right, BUTTON_RIGHT);
-        assertStateIsFeature(gc.down, BUTTON_DOWN);
-        assertStateIsFeature(gc.up, BUTTON_UP);
-        assertStateIsFeature(gc.start, BUTTON_START);
-        assertStateIsFeature(gc.z, BUTTON_Z);
-        assertStateIsFeature(gc.r, BUTTON_R);
-        assertStateIsFeature(gc.l, BUTTON_L);
+        assertFeatureOwnsState(gc, gc.a, BUTTON_A);
+        assertFeatureOwnsState(gc, gc.b, BUTTON_B);
+        assertFeatureOwnsState(gc, gc.x, BUTTON_X);
+        assertFeatureOwnsState(gc, gc.y, BUTTON_Y);
+        assertFeatureOwnsState(gc, gc.left, BUTTON_LEFT);
+        assertFeatureOwnsState(gc, gc.right, BUTTON_RIGHT);
+        assertFeatureOwnsState(gc, gc.down, BUTTON_DOWN);
+        assertFeatureOwnsState(gc, gc.up, BUTTON_UP);
+        assertFeatureOwnsState(gc, gc.start, BUTTON_START);
+        assertFeatureOwnsState(gc, gc.z, BUTTON_Z);
+        assertFeatureOwnsState(gc, gc.r, BUTTON_R);
+        assertFeatureOwnsState(gc, gc.l, BUTTON_L);
 
-        assertStateIsFeature(gc.ls, STICK_LS);
-        assertStateIsFeature(gc.rs, STICK_RS);
+        assertFeatureOwnsState(gc, gc.ls, STICK_LS);
+        assertFeatureOwnsState(gc, gc.rs, STICK_RS);
 
-        assertStateIsFeature(gc.lt, TRIGGER_LT);
-        assertStateIsFeature(gc.rt, TRIGGER_RT);
+        assertFeatureOwnsState(gc, gc.lt, TRIGGER_LT);
+        assertFeatureOwnsState(gc, gc.rt, TRIGGER_RT);
 
-        assertStateIsFeature(gc.rumble, MOTOR_RUMBLE);
+        assertFeatureOwnsState(gc, gc.rumble, MOTOR_RUMBLE);
     }
 
 }

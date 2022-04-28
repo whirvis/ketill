@@ -1,19 +1,15 @@
 package io.ketill.nx;
 
-import io.ketill.IoFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.nx.NxJoyCon.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NxJoyConTest {
 
     private MockNxJoyCon nxJoyCon;
-
-    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
-        assertSame(state, nxJoyCon.getState(feature));
-    }
 
     @BeforeEach
     void setup() {
@@ -22,10 +18,10 @@ class NxJoyConTest {
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(nxJoyCon.sl, BUTTON_SL);
-        assertStateIsFeature(nxJoyCon.sr, BUTTON_SR);
+        assertFeatureOwnsState(nxJoyCon, nxJoyCon.sl, BUTTON_SL);
+        assertFeatureOwnsState(nxJoyCon, nxJoyCon.sr, BUTTON_SR);
 
-        assertStateIsFeature(nxJoyCon.led, FEATURE_LED);
+        assertFeatureOwnsState(nxJoyCon, nxJoyCon.led, FEATURE_LED);
     }
 
     @Test

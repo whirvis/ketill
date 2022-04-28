@@ -1,19 +1,14 @@
 package io.ketill.nx;
 
-import io.ketill.IoFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.nx.NxProController.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class NxProControllerTest {
 
     private NxProController nxPro;
-
-    private void assertStateIsFeature(Object state, IoFeature<?, ?> feature) {
-        assertSame(state, nxPro.getState(feature));
-    }
 
     @BeforeEach
     void setup() {
@@ -22,36 +17,36 @@ class NxProControllerTest {
 
     @Test
     void ensureAllStatesValid() {
-        assertStateIsFeature(nxPro.b, BUTTON_B);
-        assertStateIsFeature(nxPro.a, BUTTON_A);
-        assertStateIsFeature(nxPro.y, BUTTON_Y);
-        assertStateIsFeature(nxPro.x, BUTTON_X);
-        assertStateIsFeature(nxPro.l, BUTTON_L);
-        assertStateIsFeature(nxPro.r, BUTTON_R);
-        assertStateIsFeature(nxPro.zl, BUTTON_ZL);
-        assertStateIsFeature(nxPro.zr, BUTTON_ZR);
-        assertStateIsFeature(nxPro.minus, BUTTON_MINUS);
-        assertStateIsFeature(nxPro.plus, BUTTON_PLUS);
-        assertStateIsFeature(nxPro.lThumb, BUTTON_L_THUMB);
-        assertStateIsFeature(nxPro.rThumb, BUTTON_R_THUMB);
-        assertStateIsFeature(nxPro.home, BUTTON_HOME);
-        assertStateIsFeature(nxPro.screenshot, BUTTON_SCREENSHOT);
-        assertStateIsFeature(nxPro.bumper, BUTTON_BUMPER);
-        assertStateIsFeature(nxPro.zBumper, BUTTON_Z_BUMPER);
-        assertStateIsFeature(nxPro.up, BUTTON_UP);
-        assertStateIsFeature(nxPro.right, BUTTON_RIGHT);
-        assertStateIsFeature(nxPro.down, BUTTON_DOWN);
-        assertStateIsFeature(nxPro.left, BUTTON_LEFT);
+        assertFeatureOwnsState(nxPro, nxPro.b, BUTTON_B);
+        assertFeatureOwnsState(nxPro, nxPro.a, BUTTON_A);
+        assertFeatureOwnsState(nxPro, nxPro.y, BUTTON_Y);
+        assertFeatureOwnsState(nxPro, nxPro.x, BUTTON_X);
+        assertFeatureOwnsState(nxPro, nxPro.l, BUTTON_L);
+        assertFeatureOwnsState(nxPro, nxPro.r, BUTTON_R);
+        assertFeatureOwnsState(nxPro, nxPro.zl, BUTTON_ZL);
+        assertFeatureOwnsState(nxPro, nxPro.zr, BUTTON_ZR);
+        assertFeatureOwnsState(nxPro, nxPro.minus, BUTTON_MINUS);
+        assertFeatureOwnsState(nxPro, nxPro.plus, BUTTON_PLUS);
+        assertFeatureOwnsState(nxPro, nxPro.lThumb, BUTTON_L_THUMB);
+        assertFeatureOwnsState(nxPro, nxPro.rThumb, BUTTON_R_THUMB);
+        assertFeatureOwnsState(nxPro, nxPro.home, BUTTON_HOME);
+        assertFeatureOwnsState(nxPro, nxPro.screenshot, BUTTON_SCREENSHOT);
+        assertFeatureOwnsState(nxPro, nxPro.bumper, BUTTON_BUMPER);
+        assertFeatureOwnsState(nxPro, nxPro.zBumper, BUTTON_Z_BUMPER);
+        assertFeatureOwnsState(nxPro, nxPro.up, BUTTON_UP);
+        assertFeatureOwnsState(nxPro, nxPro.right, BUTTON_RIGHT);
+        assertFeatureOwnsState(nxPro, nxPro.down, BUTTON_DOWN);
+        assertFeatureOwnsState(nxPro, nxPro.left, BUTTON_LEFT);
 
-        assertStateIsFeature(nxPro.ls, STICK_LS);
-        assertStateIsFeature(nxPro.rs, STICK_RS);
+        assertFeatureOwnsState(nxPro, nxPro.ls, STICK_LS);
+        assertFeatureOwnsState(nxPro, nxPro.rs, STICK_RS);
 
-        assertStateIsFeature(nxPro.lt, TRIGGER_LT);
-        assertStateIsFeature(nxPro.rt, TRIGGER_RT);
+        assertFeatureOwnsState(nxPro, nxPro.lt, TRIGGER_LT);
+        assertFeatureOwnsState(nxPro, nxPro.rt, TRIGGER_RT);
 
-        assertStateIsFeature(nxPro.led, FEATURE_LED);
+        assertFeatureOwnsState(nxPro, nxPro.led, FEATURE_LED);
 
-        assertStateIsFeature(nxPro.calibration, FEATURE_CALIBRATION);
+        assertFeatureOwnsState(nxPro, nxPro.calibration, FEATURE_CALIBRATION);
     }
 
 }
