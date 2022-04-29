@@ -75,7 +75,7 @@ class KetillAssertionsTest {
     }
 
     @Test
-    void assertStateOwnsFeature() {
+    void testAssertFeatureOwnsState() {
         IoDevice device = mock(IoDevice.class);
         MockIoFeature feature = new MockIoFeature();
         Object state = new Object();
