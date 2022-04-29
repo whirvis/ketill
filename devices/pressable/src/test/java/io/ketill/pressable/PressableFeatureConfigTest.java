@@ -19,9 +19,8 @@ class PressableFeatureConfigTest {
     @Test
     void getHoldTime() {
         /*
-         * Since this configuration was created using with
-         * the default constructor, the hold time should be
-         * equal to the default value.
+         * Since this configuration was created with the default constructor,
+         * the hold time should be equal to the default value.
          */
         assertEquals(PressableFeatureConfig.DEFAULT_HOLD_TIME,
                 config.getHoldTime());
@@ -37,17 +36,14 @@ class PressableFeatureConfigTest {
     @Test
     void isHoldEnabled() {
         /*
-         * Since this configuration was created using the
-         * default constructor, feature holding should be
-         * enabled already.
+         * Since this configuration was created with the default constructor,
+         * feature holding should be enabled already.
          */
         assertTrue(config.isHoldEnabled());
 
         /*
-         * After setting the hold time to the provided disable
-         * value, the configuration should report that feature
-         * holding is disabled. Otherwise, it means either the
-         * method is broken or the value is incorrect.
+         * After setting the hold time to the provided disable value, the
+         * configuration should report that feature holding is disabled.
          */
         config.setHoldTime(PressableFeatureConfig.DISABLE_HOLD);
         assertFalse(config.isHoldEnabled());
@@ -56,9 +52,8 @@ class PressableFeatureConfigTest {
     @Test
     void getHoldPressInterval() {
         /*
-         * Since this configuration was created using with
-         * the default constructor, the hold press interval
-         * should be equal to the default value.
+         * Since this configuration was created with the default constructor,
+         *  the hold press interval should be the default value.
          */
         assertEquals(PressableFeatureConfig.DEFAULT_HOLD_PRESS_INTERVAL,
                 config.getHoldPressInterval());
@@ -74,18 +69,16 @@ class PressableFeatureConfigTest {
     @Test
     void isHoldPressEnabled() {
         /*
-         * Since this configuration was created using the
-         * default constructor, virtual feature pressing
-         * should already be enabled.
+         * Since this configuration was created with the default constructor,
+         * virtual feature pressing should be enabled.
          */
         assertTrue(config.isHoldPressEnabled());
 
         /*
-         * After setting the hold press interval to the
-         * provided disable value, the configuration should
-         * report that virtual feature pressing is disabled.
-         * Otherwise, it means either the method is broken
-         * or the value is incorrect.
+         * After setting the hold press interval to the provided disable
+         * value, the configuration should report that virtual feature
+         * pressing is disabled. Otherwise, it means either the method
+         * is broken or the value is incorrect.
          */
         config.setHoldPressInterval(PressableFeatureConfig.DISABLE_HOLD_PRESS);
         assertFalse(config.isHoldPressEnabled());
@@ -94,16 +87,14 @@ class PressableFeatureConfigTest {
     @Test
     void valueOf() {
         /*
-         * When the provided configuration is not null, the
-         * valueOf() method must return the given value. Not
-         * doing so would negate its purpose.
+         * When the provided configuration is not null, the valueOf()
+         * method must return the given value.
          */
         assertSame(config, PressableFeatureConfig.valueOf(config));
 
         /*
-         * When the provided configuration is indeed null,
-         * the valueOf() method must return the default config
-         * instance. Not doing so would negate its purpose.
+         * When the provided configuration is indeed null, the valueOf()
+         * method must return the default config instance.
          */
         assertSame(PressableFeatureConfig.DEFAULT,
                 PressableFeatureConfig.valueOf(null));

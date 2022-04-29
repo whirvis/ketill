@@ -60,17 +60,16 @@ class PressableFeatureMonitorTest {
 
         this.state = device.getState(feature);
         this.supplier = () -> callback;
-        this.monitor = new MockIoFeatureMonitor(device, feature,
-                state, supplier);
+        this.monitor = new MockIoFeatureMonitor(device, feature, state,
+                supplier);
     }
 
     @Test
     void init() {
         /*
-         * It would not make sense for the device, feature,
-         * internal state, or callback supplier to be null.
-         * As such, assume this was a mistake by the user
-         * and throw an exception.
+         * It would not make sense for the device, feature, internal state,
+         * or callback supplier to be null. assume this was a mistake by
+         * the user and throw an exception.
          */
         /* @formatter:off */
         assertThrows(NullPointerException.class,
@@ -88,46 +87,39 @@ class PressableFeatureMonitorTest {
         /* @formatter:on */
 
         /*
-         * It would not make sense to supply an internal state
-         * which does not belong to the feature. Assume this
-         * was a mistake by the user and throw an exception.
+         * It would not make sense to supply an internal state which does
+         * not belong to the feature. Assume this was a user mistake and
+         * throw an exception.
          */
-        /* @formatter:off */
         assertThrows(IllegalArgumentException.class,
-                () -> new MockIoFeatureMonitor(device, feature,
-                        new Object(), supplier));
-        /* @formatter:on */
+                () -> new MockIoFeatureMonitor(device, feature, new Object(),
+                        supplier));
 
         /* unregister feature for next test */
         device.unregisterFeature(feature);
 
         /*
-         * It would not make sense to monitor a feature which
-         * has not been registered to the specified device.
-         * As such, assume this was a mistake by the user and
-         * throw an exception.
+         * It would not make sense to monitor a feature which has not been
+         * registered to the specified device. As such, assume this was a
+         * mistake by the user and throw an exception.
          */
-        /* @formatter:off */
         assertThrows(IllegalStateException.class,
-                () -> new MockIoFeatureMonitor(device, feature,
-                        state, supplier));
-        /* @formatter:on */
+                () -> new MockIoFeatureMonitor(device, feature, state,
+                        supplier));
     }
 
     @Test
     void firePressEvents() {
         /*
-         * When a feature is first pressed, the feature
-         * monitor is expected to fire a PRESS type event.
-         * Failure to do so here indicates an error.
+         * When a feature is first pressed, the feature monitor should
+         * fire a PRESS type event. Failure to do so indicates an error.
          */
         monitor.pressed = true;
         assertFired(PressableFeatureEventType.PRESS, false);
 
         /*
-         * When a feature is finally released, the feature
-         * monitor is expected to fire a RELEASE type event.
-         * Failure to do so here indicates an error.
+         * When a feature is finally released, the feature monitor should
+         * fire a RELEASE type event. Failure to do so indicates an error.
          */
         monitor.pressed = false;
         assertFired(PressableFeatureEventType.RELEASE, false);
@@ -139,11 +131,9 @@ class PressableFeatureMonitorTest {
         device.usePressableConfig(config);
 
         /*
-         * After a feature is held down for a time greater
-         * than or equal to the hold time of the device's
-         * pressable config, the monitor is expected to
-         * fire a HOLD type event. Failure to do so here
-         * indicates an error.
+         * After a feature is held down for a time greater than or equal to
+         * the hold time of the pressable config, the monitor should fire a
+         * HOLD type event.
          */
         monitor.pressed = true;
         monitor.poll(); /* tell monitor feature is pressed */
@@ -151,14 +141,11 @@ class PressableFeatureMonitorTest {
         assertFired(PressableFeatureEventType.HOLD, true);
 
         /*
-         * When a feature is held down, the feature monitor
-         * is expected to fire a PRESS type event periodically
-         * in accordance to the pressable config's hold press
-         * interval. Failure to do so here indicates an error.
-         *
-         * Furthermore, if the configured time has not elapsed,
-         * the feature monitor is not expected to fire a PRESS
-         * type event. If this occurs, it indicates an error.
+         * When a feature is held down, the feature monitor should fire a
+         * PRESS type event periodically in accordance to the pressable
+         * config's hold press interval. Furthermore, if the configured
+         * time has not elapsed, feature monitor should not fire a PRESS
+         * type event.
          */
         Thread.sleep(config.getHoldPressInterval());
         assertFired(PressableFeatureEventType.PRESS, true);
@@ -166,11 +153,10 @@ class PressableFeatureMonitorTest {
         assertNotFired(PressableFeatureEventType.PRESS, true);
 
         /*
-         * If feature holding is disabled, the feature monitor
-         * is not expected to fire PRESS type events. This is
-         * because a feature must be held down before periodic
-         * feature presses can occur (even if they are enabled).
-         * If it occurs here, it indicates an error.
+         * If feature holding is disabled, the feature monitor should not
+         * fire PRESS type events. This is because a feature must be held
+         * down before periodic feature presses can occur (even if they
+         * are enabled).
          */
         config.setHoldTime(PressableFeatureConfig.DISABLE_HOLD);
         Thread.sleep(config.getHoldPressInterval());

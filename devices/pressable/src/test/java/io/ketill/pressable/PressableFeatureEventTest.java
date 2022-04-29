@@ -19,9 +19,8 @@ class PressableFeatureEventTest {
         Object data = new Object();
 
         /*
-         * It would not make sense to fire an event with
-         * a null type, device, or feature. Assume these
-         * were user mistakes and throw an exception.
+         * It would not make sense to fire an event with a null type, device,
+         * or feature. Assume these were user mistakes and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> new PressableFeatureEvent(null, device, feature, held,
@@ -34,10 +33,9 @@ class PressableFeatureEventTest {
                         data));
 
         /*
-         * The PressableFeatureEvent constructor grabs the
-         * state of the given feature from the device. As
-         * such, it must be mocked to prevent an exception
-         * from being thrown by the constructor.
+         * The PressableFeatureEvent constructor grabs the state of the given
+         * feature from the device. As such, it must be mocked to prevent an
+         * exception from being thrown by the constructor.
          */
         when(device.getState(feature)).thenReturn(state);
 
@@ -45,9 +43,8 @@ class PressableFeatureEventTest {
                 feature, held, data);
 
         /*
-         * Ensure that all fields are the same arguments
-         * that were passed during construction. This is
-         * more or less just a sanity check.
+         * Ensure that all fields are the same arguments that were passed
+         * during construction. This is more or less just a sanity check.
          */
         assertSame(event.type, type);
         assertSame(event.device, device);

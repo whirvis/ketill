@@ -20,9 +20,8 @@ class NxCalibrationConfigTest {
     @Test
     void setLsBounds() {
         /*
-         * It would not make sense to set the upper or lower
-         * bounds to a null vector. As such, assume this was
-         * a mistake by the user and throw an exception.
+         * It would not make sense to set the upper or lower bounds to a null
+         * vector. Assume this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> config.setLsBounds(null, new Vector2f()));
@@ -30,9 +29,9 @@ class NxCalibrationConfigTest {
                 () -> config.setLsBounds(new Vector2f(), null));
 
         /*
-         * If the upper bound is smaller than the lower bound,
-         * the calibration will not be applied correctly. As
-         * such, discard the bounds and throw an exception.
+         * If the value of the upper bound is smaller than the value of
+         * the lower bound, the calibration will not be applied correctly.
+         * Discard the bounds and throw an exception.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> config.setLsBounds(new Vector2f(1.0F, 1.0F),
@@ -45,9 +44,9 @@ class NxCalibrationConfigTest {
     @Test
     void applyLs() {
         /*
-         * It would not make sense to apply the calibration for
-         * the left analog stick to a null vector. Assume this
-         * was a mistake by the user and throw an exception.
+         * It would not make sense to apply the calibration for the left
+         * analog stick to a null vector. Assume this was a mistake by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class, () -> config.applyLs(null));
 
@@ -75,9 +74,8 @@ class NxCalibrationConfigTest {
     @Test
     void setRsBounds() {
         /*
-         * It would not make sense to set the upper or lower
-         * bounds to a null vector. As such, assume this was
-         * a mistake by the user and throw an exception.
+         * It would not make sense to set the upper or lower bounds to a null
+         * vector. Assume this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> config.setRsBounds(null, new Vector2f()));
@@ -85,9 +83,9 @@ class NxCalibrationConfigTest {
                 () -> config.setRsBounds(new Vector2f(), null));
 
         /*
-         * If the upper bound is smaller than the lower bound,
-         * the calibration will not be applied correctly. As
-         * such, discard the bounds and throw an exception.
+         * If the value of the upper bound is smaller than the value of
+         * the lower bound, the calibration will not be applied correctly.
+         * Discard the bounds and throw an exception.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> config.setRsBounds(new Vector2f(1.0F, 1.0F),
@@ -100,9 +98,9 @@ class NxCalibrationConfigTest {
     @Test
     void applyRs() {
         /*
-         * It would not make sense to apply the calibration for
-         * the right analog stick to a null vector. Assume this
-         * was a mistake by the user and throw an exception.
+         * It would not make sense to apply the calibration for the right
+         * analog stick to a null vector. Assume this was a mistake by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class, () -> config.applyRs(null));
 
