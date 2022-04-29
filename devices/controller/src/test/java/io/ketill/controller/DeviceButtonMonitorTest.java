@@ -41,8 +41,8 @@ class DeviceButtonMonitorTest {
     @Test
     void eventFired() {
         /*
-         * When the PRESS event is fired, the device button monitor must
-         * set the state of the button it was assigned to be pressed.
+         * When the HOLD event is fired, the device button monitor must
+         * set the state of the button it was assigned to be held down.
          */
         fireSimulatedEvent(PressableFeatureEventType.HOLD);
         assertTrue(state.held);
@@ -50,7 +50,7 @@ class DeviceButtonMonitorTest {
 
         /*
          * When the RELEASE event is fired, the device button monitor must
-         * set the state of the button it was assigned to not be pressed.
+         * set the state of the button it was assigned to not be held down.
          */
         fireSimulatedEvent(PressableFeatureEventType.RELEASE);
         assertFalse(state.held);
@@ -59,8 +59,8 @@ class DeviceButtonMonitorTest {
     /*
      * For some reason, IntelliJ says that the code below has a redundant
      * assignment. Furthermore, it says monitor.isPressed() is simplifiable
-     * to true. This seems to be a bug in the IDE. These warnings are both
-     * wrong (IDE bug perhaps?). As such, I had them suppressed.
+     * to true. These warnings are both wrong (IDE bug perhaps?). As such,
+     * I had them suppressed.
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
