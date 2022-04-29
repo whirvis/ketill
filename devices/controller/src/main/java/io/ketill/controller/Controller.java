@@ -158,6 +158,11 @@ public abstract class Controller extends IoDevice
     }
     /* @formatter:on */
 
+    @Override /* overridden for visibility in ControllerTest */
+    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
+        return super.getInternalState(feature);
+    }
+
     @Override
     @MustBeInvokedByOverriders
     protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
