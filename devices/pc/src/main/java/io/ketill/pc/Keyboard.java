@@ -298,6 +298,11 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
         this.pressableConfig = PressableFeatureConfig.DEFAULT;
     }
 
+    @Override /* overridden for visibility in KeyboardTest */
+    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
+        return super.getInternalState(feature);
+    }
+
     @Override
     protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
                                      @NotNull Object internalState) {
