@@ -12,6 +12,8 @@ class PlayerLedTest {
     void __init__() {
         assertThrows(NullPointerException.class,
                 () -> new PlayerLed(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> new PlayerLed("led", -1));
     }
 
     private PlayerLed led;
