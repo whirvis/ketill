@@ -67,8 +67,8 @@ class AnalogTriggerMonitorTest {
     /*
      * For some reason, IntelliJ says that the code below has a redundant
      * assignment. Furthermore, it says monitor.isPressed() is simplifiable
-     * to true. This seems to be a bug in the IDE. These warnings are both
-     * wrong (IDE bug perhaps?). As such, I had them suppressed.
+     * to true. These warnings are both wrong (IDE bug perhaps?). As such,
+     * I had them suppressed.
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
