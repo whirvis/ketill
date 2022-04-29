@@ -1,7 +1,6 @@
 package io.ketill.glfw.pc;
 
 import io.ketill.MappedFeatureRegistry;
-import io.ketill.RegisteredFeature;
 import io.ketill.pc.Keyboard;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
 import org.mockito.MockedStatic;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -50,10 +50,8 @@ class GlfwKeyboardAdapterTest {
     }
 
     @Test
-    void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?, ?> rf : keyboard.getFeatures()) {
-            assertTrue(keyboard.isFeatureSupported(rf.feature));
-        }
+    void ensureIntendedFeaturesSupported() {
+        assertAllFeaturesSupported(keyboard);
     }
 
     @Test

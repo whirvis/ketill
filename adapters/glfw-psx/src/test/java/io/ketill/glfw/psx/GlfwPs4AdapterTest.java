@@ -1,7 +1,5 @@
 package io.ketill.glfw.psx;
 
-import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
 import io.ketill.psx.Ps4Controller;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +8,9 @@ import org.lwjgl.glfw.GLFW;
 import org.mockito.MockedStatic;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,16 +37,8 @@ class GlfwPs4AdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
-        unsupported.add(Ps4Controller.MOTOR_STRONG);
-        unsupported.add(Ps4Controller.MOTOR_WEAK);
-        unsupported.add(Ps4Controller.FEATURE_LIGHTBAR);
-
-        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
-            if (!unsupported.contains(rf.feature)) {
-                assertTrue(controller.isFeatureSupported(rf.feature));
-            }
-        }
+        assertAllFeaturesSupported(controller, Ps4Controller.MOTOR_STRONG,
+                Ps4Controller.MOTOR_WEAK, Ps4Controller.FEATURE_LIGHTBAR);
     }
 
     @Test

@@ -1,7 +1,5 @@
 package io.ketill.glfw.nx;
 
-import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
 import io.ketill.nx.NxLeftJoyCon;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +8,8 @@ import org.lwjgl.glfw.GLFW;
 import org.mockito.MockedStatic;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
+import static io.ketill.KetillAssertions.*;
 import static io.ketill.glfw.nx.GlfwNxLeftJoyConAdapter.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -36,15 +33,8 @@ class GlfwNxLeftJoyConAdapterTest {
     }
 
     @Test
-    void ensureAllFeaturesSupported() {
-        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
-        unsupported.add(NxLeftJoyCon.FEATURE_LED);
-
-        for (RegisteredFeature<?, ?, ?> rf : joycon.getFeatures()) {
-            if (!unsupported.contains(rf.feature)) {
-                assertTrue(joycon.isFeatureSupported(rf.feature));
-            }
-        }
+    void ensureIntendedFeaturesSupported() {
+        assertAllFeaturesSupported(joycon, NxLeftJoyCon.FEATURE_LED);
     }
 
     @Test

@@ -1,7 +1,6 @@
 package io.ketill.glfw.pc;
 
 import io.ketill.MappedFeatureRegistry;
-import io.ketill.RegisteredFeature;
 import io.ketill.pc.Mouse;
 import org.joml.Vector2f;
 import org.junit.jupiter.api.AfterEach;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
 import org.mockito.MockedStatic;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -51,10 +51,8 @@ class GlfwMouseAdapterTest {
     }
 
     @Test
-    void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?, ?> rf : mouse.getFeatures()) {
-            assertTrue(mouse.isFeatureSupported(rf.feature));
-        }
+    void ensureIntendedFeaturesSupported() {
+        assertAllFeaturesSupported(mouse);
     }
 
     @Test

@@ -1,7 +1,5 @@
 package io.ketill.glfw.nx;
 
-import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
 import io.ketill.nx.NxProController;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.AfterEach;
@@ -12,10 +10,9 @@ import org.mockito.MockedStatic;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -43,14 +40,7 @@ class GlfwNxProAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
-        unsupported.add(NxProController.FEATURE_LED);
-
-        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
-            if (!unsupported.contains(rf.feature)) {
-                assertTrue(controller.isFeatureSupported(rf.feature));
-            }
-        }
+        assertAllFeaturesSupported(controller, NxProController.FEATURE_LED);
     }
 
     @Test

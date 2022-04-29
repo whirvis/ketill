@@ -2,9 +2,77 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class KetillAssertions {
+
+    /**
+     * Asserts than I/O device supports all features registered to it when
+     * this method is called.
+     *
+     * @param device      the device to check whose features to check.
+     * @param unsupported unsupported features that are registered to
+     *                    the device. Take note that the test will fail
+     *                    if a feature is not registered to {@code device}
+     *                    or actually is supported.
+     * @throws NullPointerException if {@code device}, {@code unsupported}
+     *                              are {@code null}; if {@code unsupported}
+     *                              contains a {@code null} element.
+     * @throws AssertionError       if an element of {@code unsupported}
+     *                              is not registered to {@code device};
+     *                              if a feature marked as unsupported is
+     *                              actually supported by {@code device};
+     *                              if {@code device} does not support a
+     *                              feature not marked as unsupported.
+     */
+    public static void assertAllFeaturesSupported(@NotNull IoDevice device,
+                                                  @NotNull IoFeature<?, ?> @NotNull ... unsupported) {
+        Objects.requireNonNull(device, "device cannot be null");
+        Objects.requireNonNull(unsupported, "unsupported cannot be null");
+
+        for (IoFeature<?, ?> feature : unsupported) {
+            Objects.requireNonNull(feature, "unsupported cannot contain null");
+
+            /*
+             * It would not make sense to pass an unsupported feature which
+             * isn't registered to the device in the first place. As such,
+             * assume this was a user mistake and throw an exception.
+             */
+            if (!device.isFeatureRegistered(feature)) {
+                String msg = "feature with ID \"" + feature.id + "\"";
+                msg += " marked as unsupported but not registered";
+                throw new AssertionError(msg);
+            }
+        }
+
+        List<IoFeature<?, ?>> unsupportedList = Arrays.asList(unsupported);
+        for (RegisteredFeature<?, ?, ?> registered : device.getFeatures()) {
+            IoFeature<?, ?> feature = registered.feature;
+
+            if (unsupportedList.contains(feature)) {
+                /*
+                 * It would not make sense to pass an unsupported feature
+                 * which is supported by the device. As such, assume this
+                 * was a user mistake and throw an exception.
+                 */
+                if (device.isFeatureSupported(feature)) {
+                    String msg = "feature with ID \"" + feature.id + "\"";
+                    msg += " supported when marked as unsupported";
+                    throw new AssertionError(msg);
+                } else {
+                    continue;
+                }
+            }
+
+            if (!device.isFeatureSupported(feature)) {
+                String msg = "feature with ID \"" + feature.id + "\"";
+                msg += " not supported as expected";
+                throw new AssertionError(msg);
+            }
+        }
+    }
 
     /**
      * Asserts that a state object is owned by an I/O feature. For this

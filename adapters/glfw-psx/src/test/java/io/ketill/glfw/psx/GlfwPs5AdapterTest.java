@@ -11,6 +11,7 @@ import org.mockito.MockedStatic;
 import java.nio.FloatBuffer;
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -36,10 +37,8 @@ class GlfwPs5AdapterTest {
     }
 
     @Test
-    void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
-            assertTrue(controller.isFeatureSupported(rf.feature));
-        }
+    void ensureIntendedFeaturesSupported() {
+        assertAllFeaturesSupported(controller);
     }
 
     @Test

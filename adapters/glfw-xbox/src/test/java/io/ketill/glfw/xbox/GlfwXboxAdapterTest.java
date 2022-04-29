@@ -1,7 +1,5 @@
 package io.ketill.glfw.xbox;
 
-import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,10 +8,9 @@ import org.lwjgl.glfw.GLFW;
 import org.mockito.MockedStatic;
 
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,15 +37,8 @@ class GlfwXboxAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
-        unsupported.add(XboxController.MOTOR_COARSE);
-        unsupported.add(XboxController.MOTOR_FINE);
-
-        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
-            if (!unsupported.contains(rf.feature)) {
-                assertTrue(controller.isFeatureSupported(rf.feature));
-            }
-        }
+        assertAllFeaturesSupported(controller, XboxController.MOTOR_COARSE,
+                XboxController.MOTOR_FINE);
     }
 
     @Test
