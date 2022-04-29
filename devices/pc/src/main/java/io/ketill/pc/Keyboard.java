@@ -24,7 +24,6 @@ import java.util.function.Consumer;
  *
  * @see Mouse
  */
-@SuppressWarnings("SynchronizeOnNonFinalField")
 public class Keyboard extends IoDevice implements PressableFeatureSupport {
 
     /* @formatter:off */
@@ -315,10 +314,8 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
         if (registered.feature instanceof KeyboardKey) {
             KeyboardKey key = (KeyboardKey) registered.feature;
             KeyPressZ press = (KeyPressZ) internalState;
-            synchronized (monitors) {
-                monitors.add(new KeyboardKeyMonitor(this, key,
-                        press, () -> pressableCallback));
-            }
+            monitors.add(new KeyboardKeyMonitor(this, key,
+                    press, () -> pressableCallback));
         }
     }
 
@@ -357,10 +354,8 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
     @MustBeInvokedByOverriders
     public void poll() {
         super.poll();
-        synchronized (monitors) {
-            for (PressableFeatureMonitor<?, ?> monitor : monitors) {
-                monitor.poll();
-            }
+        for (PressableFeatureMonitor<?, ?> monitor : monitors) {
+            monitor.poll();
         }
     }
 
