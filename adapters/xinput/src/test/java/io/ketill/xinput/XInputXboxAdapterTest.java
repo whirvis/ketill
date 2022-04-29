@@ -56,9 +56,9 @@ class XInputXboxAdapterTest {
     @Test
     void updateButton() {
         /*
-         * While there are far more than two buttons, it would be
-         * redundant to check all of them here. Two buttons should
-         * enough to ensure full functionality via mocking.
+         * While there are far more than two buttons, it would be redundant
+         * to check all of them here. Two buttons should enough to ensure
+         * full functionality via mocking.
          */
         xButtons.a = true;
         xButtons.b = false;

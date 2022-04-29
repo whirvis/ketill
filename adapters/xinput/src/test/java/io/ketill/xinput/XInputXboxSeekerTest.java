@@ -23,9 +23,9 @@ class XInputXboxSeekerTest {
     @BeforeEach
     void setup() {
         /*
-         * For these tests, the earliest version of X-input available on
-         * this machine will be used. This mock prevents the seeker from
-         * detecting that X-input 1.4 is available.
+         * For these tests, the earliest version of X-input available on this
+         * machine will be used. This mock prevents the seeker from detecting
+         * that X-input 1.4 is available.
          */
         try (MockedStatic<XInputDevice14> x14 =
                      mockStatic(XInputDevice14.class)) {
@@ -38,9 +38,9 @@ class XInputXboxSeekerTest {
     void seek() {
         try (MockedStatic<XInputDevice> x = mockStatic(XInputDevice.class)) {
             /*
-             * Only one device is going to be considered connected for
-             * this test. As such, a disconnected device must be mocked
-             * so device seeker doesn't get a null device instance.
+             * Only one device is going to be considered connected for this
+             * test. As such, a disconnected device must be mocked so device
+             * seeker doesn't get a null device instance.
              */
             XInputDevice xDisconnected = mock(XInputDevice.class);
             when(xDisconnected.isConnected()).thenReturn(false);
@@ -48,9 +48,9 @@ class XInputXboxSeekerTest {
                     .thenReturn(xDisconnected);
 
             /*
-             * The connected device is mocked to stimulate the device
-             * seeker into discovering a device. This allows for the
-             * functionality of its discovery to be tested.
+             * The connected device is mocked to stimulate the device seeker
+             * into discovering a device. This allows for the functionality
+             * of its discovery to be tested.
              */
             XInputDevice xDevice = mock(XInputDevice.class);
             when(xDevice.isConnected()).thenReturn(true);
@@ -62,10 +62,10 @@ class XInputXboxSeekerTest {
             assertTrue(discovered.get());
 
             /*
-             * All but one of the mocked devices are considered to be
-             * disconnected. As such, the seeker should have invoked
-             * poll() for each disconnected device. Polling a device
-             * is required to determine its connection status.
+             * All but one of the mocked devices are currently considered
+             * to be disconnected. As such, the seeker should have invoked
+             * poll() for each of them. Polling a device is required to
+             * determine its connection status.
              */
             int disconnectedCount = XInputConstants.MAX_PLAYERS - 1;
             verify(xDisconnected, times(disconnectedCount)).poll();

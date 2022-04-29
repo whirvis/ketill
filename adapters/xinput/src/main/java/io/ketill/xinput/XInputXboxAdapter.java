@@ -176,10 +176,9 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     @Override
     protected boolean isDeviceConnected() {
         /*
-         * isDeviceConnected() promises to return an up-to-date
-         * connection status, regardless of whether pollDevice()
-         * was previously called. As such, the X-input device
-         * must be polled here.
+         * isDeviceConnected() promises to return an up-to-date connection
+         * status, regardless of whether pollDevice() was previously called.
+         * As such, the X-input device must be polled here.
          */
         synchronized (xDevice) {
             xDevice.poll();
