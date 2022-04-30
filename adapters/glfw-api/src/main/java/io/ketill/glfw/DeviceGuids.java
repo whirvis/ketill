@@ -42,10 +42,10 @@ public abstract class DeviceGuids {
 
     private static final OsDeterminant LINUX_DETERMINANT = () -> {
         /*
-         * Android devices run on Linux. Just to be safe, ensure
-         * that the current operating system is not Android before
-         * returning if its Linux. Otherwise, two of the default
-         * determinants could report they are the current system.
+         * Android devices run on Linux. Just to be safe, ensure that the
+         * current operating system is not Android before returning if it's
+         * Linux. Otherwise, two of the default determinants could report
+         * they are the current system.
          */
         if (ANDROID_DETERMINANT.isCurrentOs()) {
             return false;

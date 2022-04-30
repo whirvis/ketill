@@ -40,9 +40,9 @@ class GlfwMouseAdapterTest {
                 registry, ptr_glfwWindow);
 
         /*
-         * It would not make sense to map a null key or for a key
-         * to be mapped to a negative index. Assume these were a
-         * mistake by the user and throw an exception.
+         * It would not make sense to map a null button or for a button
+         * to be mapped to a negative index. Assume these were mistakes
+         * by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapButton(null, GLFW_MOUSE_BUTTON_1));
@@ -81,9 +81,9 @@ class GlfwMouseAdapterTest {
             });
 
             /*
-             * When polled, the mouse adapter should set the value
-             * of the currentPos vector to the current position of
-             * the mouse on screen as reported by GLFW.
+             * When polled, the mouse adapter should set the value of the
+             * currentPos vector to the current position of the mouse on
+             * screen as reported by GLFW.
              */
             mouse.poll(); /* update mouse cursor */
             assertEquals(1.23F, mouse.cursor.getX());
@@ -95,11 +95,10 @@ class GlfwMouseAdapterTest {
             cursorPos.y = 0.00F;
 
             /*
-             * When the mouse cursor position is set incorrectly
-             * by the user, the device adapter should just write
-             * over the incorrectly set position. The user must
-             * make use of setPosition() in CursorState in order
-             * to move the mouse cursor somewhere else.
+             * When the position of the mouse cursor is set incorrectly by
+             * the user, the device adapter should write over the data and
+             * do nothing else. The user must make use of use setPosition()
+             * found in CursorState to move the cursor somewhere else.
              */
             mouse.poll(); /* update mouse cursor */
             assertEquals(1.23F, mouse.cursor.getX());
@@ -111,10 +110,10 @@ class GlfwMouseAdapterTest {
             mouse.cursor.setPosition(7.89F, 1.01F);
 
             /*
-             * When the position of the mouse cursor is properly
-             * set, the device adapter should move the cursor to
-             * the requested position and update the currentPos
-             * to equal the requested position.
+             * When the position of the mouse cursor is set correctly by
+             * the user, the device adapter should fulfill the request on
+             * the next poll. Furthermore, it should update the value of
+             * currentPos to equal the requested position.
              */
             mouse.poll(); /* update mouse cursor */
             assertEquals(7.89F, mouse.cursor.getX());
@@ -123,11 +122,10 @@ class GlfwMouseAdapterTest {
                     7.89F, 1.01F));
 
             /*
-             * Until the user requests to change the mouse cursor
-             * position again, the device adapter should not move
-             * the mouse cursor. As such, after polling the mouse,
-             * the currentPos vector should be reset to the values
-             * it was set to at the beginning of this test.
+             * Until the user requests to change the mouse cursor position
+             * again, the device adapter should not update its position.
+             * After polling the mouse, the currentPos vector should equal
+             * the value it was set to at the beginning of this test.
              */
             mouse.poll(); /* update mouse cursor */
             assertEquals(1.23F, mouse.cursor.getX());
@@ -136,9 +134,8 @@ class GlfwMouseAdapterTest {
                     7.89, 1.01F), never());
 
             /*
-             * When the user sets the mouse to no longer be
-             * visible, the device adapter must complete that
-             * request on the next poll.
+             * When the user sets the mouse to no longer be visible, the
+             * device adapter must complete that request on the next poll.
              */
             mouse.cursor.setVisible(false);
             mouse.poll(); /* update mouse cursor */
@@ -146,19 +143,17 @@ class GlfwMouseAdapterTest {
                     GLFW_CURSOR_HIDDEN));
 
             /*
-             * If the user doesn't change the state of mouse
-             * visibility, the adapter must not fulfill the
-             * request again. This is done in an attempt to
-             * increase performance.
+             * If the user doesn't change the state of mouse visibility, the
+             * adapter must not fulfill the request again. This is done in an
+             * attempt to increase performance.
              */
             mouse.poll(); /* update mouse cursor */
             glfw.verify(() -> glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR,
                     GLFW_CURSOR_HIDDEN), times(1));
 
             /*
-             * When the user sets the mouse to now be visible
-             * at this moment, the device adapter must complete
-             * that request on the next poll.
+             * When the user sets the mouse to now be visible at this moment,
+             * the device adapter must complete that request on the next poll.
              */
             mouse.cursor.setVisible(true);
             mouse.poll(); /* update mouse cursor */
@@ -166,10 +161,9 @@ class GlfwMouseAdapterTest {
                     GLFW_CURSOR_NORMAL));
 
             /*
-             * If the user doesn't change the state of mouse
-             * visibility, the adapter must not fulfill the
-             * request again. This is done in an attempt to
-             * increase performance.
+             * If the user doesn't change the state of mouse visibility, the
+             * adapter must not fulfill the request again. This is done in an
+             * attempt to increase performance.
              */
             mouse.poll(); /* update mouse cursor */
             glfw.verify(() -> glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR,
@@ -189,9 +183,8 @@ class GlfwMouseAdapterTest {
     @Test
     void isDeviceConnected() {
         /*
-         * For simplicity, mice are assumed to always be
-         * connected to the computer. As a result, this
-         * method should always return true.
+         * For simplicity, mice are assumed to always be connected to the
+         * computer. As such, this method should always return true.
          */
         assertTrue(mouse.isConnected());
     }

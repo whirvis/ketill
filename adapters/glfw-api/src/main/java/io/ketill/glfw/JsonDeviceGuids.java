@@ -79,9 +79,9 @@ public class JsonDeviceGuids extends DeviceGuids {
         InputStreamReader isr = new InputStreamReader(in);
 
         /*
-         * The root JSON element is expected to be a JSON object.
-         * This is so GSON can load the contained "guids" object
-         * and convert it to a Java map instance.
+         * The root JSON element is expected to be a JSON object. This
+         * enables GSON to load the contained "guids" object and convert
+         * it to a Java map instance.
          */
         JsonElement json = JsonParser.parseReader(isr);
         if (!json.isJsonObject()) {
@@ -89,9 +89,9 @@ public class JsonDeviceGuids extends DeviceGuids {
         }
 
         /*
-         * If the GUIDs container has no systems... what is it
-         * doing here? This was likely user oversight. Throw an
-         * exception in hopes of preventing an annoying bug.
+         * If the GUIDs container has no systems... what is it doing here?
+         * This was likely user oversight. Throw an exception in hopes of
+         * preventing an annoying bug.
          */
         JsonObject jsonObj = json.getAsJsonObject();
         if (jsonObj.entrySet().isEmpty()) {
@@ -100,9 +100,9 @@ public class JsonDeviceGuids extends DeviceGuids {
 
         for (String systemId : jsonObj.keySet()) {
             /*
-             * Each system must contain one or more GUIDs for the
-             * device. For simplicity, require each system store
-             * their GUIDs in a JSON array.
+             * Each system must contain one or more GUIDs for the device.
+             * For simplicity, require each system store their GUIDs in a
+             * JSON array.
              */
             JsonElement systemGuids = jsonObj.get(systemId);
             if (!systemGuids.isJsonArray()) {
@@ -110,9 +110,9 @@ public class JsonDeviceGuids extends DeviceGuids {
             }
 
             /*
-             * If the system has no specified GUIDs... what is it
-             * doing here? This was likely a user oversight. Throw
-             * an exception in hope of preventing an annoying bug.
+             * If the system has no specified GUIDs... what is it doing here?
+             * This was likely a user oversight. Throw an exception in hopes
+             * of preventing an annoying bug.
              */
             JsonArray systemGuidsArr = systemGuids.getAsJsonArray();
             if (systemGuidsArr.isEmpty()) {
@@ -121,9 +121,9 @@ public class JsonDeviceGuids extends DeviceGuids {
             }
 
             /*
-             * Each element in this JSON array must be a string.
-             * Different value types indicates the user likely
-             * has a misunderstanding of how GUIDs are stored.
+             * Each element in this JSON array must be a string. Different
+             * value types indicates the user likely has a misunderstanding
+             * of how GUIDs are stored.
              */
             List<String> systemGuidsList = new ArrayList<>();
             for (int i = 0; i < systemGuidsArr.size(); i++) {

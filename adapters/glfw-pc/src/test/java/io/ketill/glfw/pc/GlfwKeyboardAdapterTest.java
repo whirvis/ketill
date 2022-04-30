@@ -39,9 +39,9 @@ class GlfwKeyboardAdapterTest {
                 registry, ptr_glfwWindow);
 
         /*
-         * It would not make sense to map a null key or for a key
-         * to be mapped to a negative index. Assume these were a
-         * mistake by the user and throw an exception.
+         * It would not make sense to map a null key or for a key to be
+         * mapped to a negative index. Assume these were mistakes by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapKey(null, GLFW_KEY_SPACE));
@@ -72,9 +72,8 @@ class GlfwKeyboardAdapterTest {
     @Test
     void isDeviceConnected() {
         /*
-         * For simplicity, keyboards are assumed to always
-         * be connected to the computer. As a result, this
-         * method should always return true.
+         * For simplicity, keyboards are assumed to always be connected to
+         * the computer. As such, this method should always return true.
          */
         assertTrue(keyboard.isConnected());
     }

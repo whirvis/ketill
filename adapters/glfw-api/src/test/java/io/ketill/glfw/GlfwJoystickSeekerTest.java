@@ -26,10 +26,9 @@ class GlfwJoystickSeekerTest {
     @BeforeAll
     static void __init__() {
         /*
-         * For a GLFW joystick seeker to function, a valid
-         * window pointer must be provided. As such, throw an
-         * exception if the pointer is NULL or does not point
-         * to a valid GLFW window.
+         * For a GLFW joystick seeker to function, a valid window pointer
+         * must be provided. As such, throw an exception if the pointer is
+         * NULL or does not point to a valid GLFW window.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwJoystickSeeker(0x00));
@@ -40,9 +39,9 @@ class GlfwJoystickSeekerTest {
             mockGlfwWindow(glfw, 0x01);
 
             /*
-             * The class constructed below has an invalid use of
-             * the @RelativeGuidPath annotation. As a result, an
-             * exception should be thrown here.
+             * The class constructed below has an invalid use of the
+             * @RelativeGuidPath annotation. As a result, an exception
+             * should be thrown here.
              */
             /* @formatter:off */
             assertThrows(KetillException.class,
@@ -54,9 +53,9 @@ class GlfwJoystickSeekerTest {
             /* @formatter:on */
 
             /*
-             * It would not make sense for the device type of GLFW
-             * joystick seeker to be a null class. Assume this was
-             * a mistake by the user and throw an exception.
+             * It would not make sense for the device type of GLFW joystick
+             * seeker to be a null class. Assume this was a mistake by the
+             * user and throw an exception.
              */
             assertThrows(NullPointerException.class,
                     () -> new MockGlfwJoystickSeeker(null, 0x01));
@@ -78,10 +77,9 @@ class GlfwJoystickSeekerTest {
         this.wrangler = (g, w) -> device;
 
         /*
-         * Any valid, randomly chosen pointer and GLFW joystick
-         * should suffice for the following tests. The randomly
-         * chosen pointer will be mocked so a mock GLFW joystick
-         * seeker can be created.
+         * Any valid, randomly chosen pointer and GLFW joystick should
+         * suffice for the following tests. The randomly chosen pointer
+         * will be mocked so a mock GLFW joystick seeker can be created.
          */
         this.ptr_glfwWindow = RANDOM.nextLong();
         this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
@@ -95,18 +93,18 @@ class GlfwJoystickSeekerTest {
     @Test
     void loadJsonGuids() {
         /*
-         * It would not make sense to try loading a JSON device
-         * GUIDs container from a null path. Assume this was a
-         * mistake by the user and throw an exception.
+         * It would not make sense to try loading a JSON device GUIDs
+         * container from a null path. Assume this was a mistake by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.loadJsonGuids(null));
 
         /*
-         * There are no files located at io/ketill/glfw/ in the
-         * classpath. The class also has no @RelativeGuidPath to
-         * redirect the base path. As a result, this file should
-         * fail to load and an exception should be thrown.
+         * There are no files located at io/ketill/glfw/ in the classpath.
+         * The class also has no @RelativeGuidPath to redirect the base.
+         * As a result, this file should fail to load and an exception
+         * should be thrown.
          */
         assertThrows(KetillException.class,
                 () -> seeker.loadJsonGuids("valid.json"));
@@ -136,10 +134,9 @@ class GlfwJoystickSeekerTest {
         /* @formatter:on */
 
         /*
-         * This file loads successfully, however there are no
-         * known systems in this container. An exception must
-         * be thrown when this occurs, as it means there won't
-         * be any GUIDs to wrangle for a joystick.
+         * This file loads successfully, however there are no known systems
+         * in this container. An exception must be thrown when this occurs,
+         * as it means there won't be any GUIDs to wrangle for a joystick.
          */
         assertThrows(KetillException.class, () -> seeker.loadJsonGuids(
                 "/json_device_guids/alien_system.json"));
@@ -148,16 +145,15 @@ class GlfwJoystickSeekerTest {
     @Test
     void isWrangling() {
         /*
-         * It would not make sense to check if a null GUID is
-         * currently being wrangled. As such, assume this was
-         * a mistake by the user and throw an exception.
+         * It would not make sense to check if a null GUID is currently being
+         * wrangled. Assume this was user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isWrangling(null));
 
         /*
-         * Since the GLFW joystick seeker has not been told to
-         * wrangle any GUIDs yet, this should return false.
+         * Since the GLFW joystick seeker has not been told to wrangle any
+         * GUIDs yet, this should return false.
          */
         assertFalse(seeker.isWrangling(guid));
     }
@@ -165,11 +161,10 @@ class GlfwJoystickSeekerTest {
     @Test
     void isWranglingWith() {
         /*
-         * It would not make sense to check if a null GUID
-         * is currently being wrangled. It also makes no
-         * sense to check if a GUID is being wrangled with
-         * a null wrangler. Assume these were mistakes by
-         * the user and throw an exception.
+         * It would not make sense to check if a null GUID is currently being
+         * wrangled. It also makes no sense to check if such a GUID is being
+         * wrangled with a null wrangler. Assume these were mistakes by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isWranglingWith(null, wrangler));
@@ -177,8 +172,8 @@ class GlfwJoystickSeekerTest {
                 () -> seeker.isWranglingWith(guid, null));
 
         /*
-         * Since the GLFW joystick seeker has not been told to
-         * wrangle any GUIDs yet, this should return false.
+         * Since the GLFW joystick seeker has not been told to wrangle any
+         * GUIDs yet, this should return false.
          */
         assertFalse(seeker.isWranglingWith(guid, wrangler));
     }
@@ -186,10 +181,10 @@ class GlfwJoystickSeekerTest {
     @Test
     void wrangleGuid() {
         /*
-         * It would not make sense to wrangle a null GUID or
-         * to use a null wrangler. As such, assume this was a
-         * mistake by the user and throw an exception. Empty
-         * GUID strings are allowed in case of oddballs.
+         * It would not make sense to wrangle a null GUID or to use a null
+         * wrangler. As a result, assume this was a mistake by the user and
+         * throw an exception. However, empty GUID strings are allowed in
+         * case of oddballs.
          */
         Collection<String> guids = Collections.singletonList(guid);
         Collection<String> nullGuids = Collections.singletonList(null);
@@ -217,9 +212,8 @@ class GlfwJoystickSeekerTest {
         assertTrue(seeker.isWranglingWith(guid, wrangler));
 
         /*
-         * If the GLFW joystick seeker is told to wrangle one
-         * or more GUIDs with the same wrangler as previous,
-         * then it should do nothing.
+         * If the GLFW joystick seeker is told to wrangle one or more GUIDs
+         * with the same wrangler as previous, then it should do nothing.
          */
         wrangled.set(false);
         seeker.wrangledGuid = false;
@@ -228,8 +222,8 @@ class GlfwJoystickSeekerTest {
         assertFalse(seeker.wrangledGuid);
 
         /*
-         * A null value is allowed when setting a callback.
-         * This should have the effect of removing the callback.
+         * A null value is allowed when setting a callback. This should have
+         * the effect of removing the callback.
          */
         assertDoesNotThrow(() -> seeker.onWrangleGuid(null));
 
@@ -238,11 +232,10 @@ class GlfwJoystickSeekerTest {
                     .thenReturn(guid);
 
             /*
-             * If a GLFW joystick wrangler returns a null device,
-             * it has broken the promise it made to never return
-             * a null value (if something went wrong, it should
-             * have thrown an exception.) As such, the internal
-             * seekImpl() method must throw an exception.
+             * If a GLFW joystick wrangler returns a null device, it has
+             * broken the promise to never return a null value (it should
+             * have thrown an exception if something went wrong.) As such,
+             * the internal seekImpl() method must throw an exception.
              */
             seeker.wrangleGuid(guid, (g, w) -> null);
             assertThrows(KetillException.class, seeker::seek);
@@ -251,8 +244,8 @@ class GlfwJoystickSeekerTest {
             seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
 
             /*
-             * Now that a valid wrangler has been registered, the
-             * device should be discovered after a call to seek().
+             * Now that a valid wrangler has been registered, the device
+             * should be discovered after a call to seek().
              */
             seeker.wrangleGuid(guid, wrangler);
             seeker.seek(); /* trigger device wrangling */
@@ -265,10 +258,10 @@ class GlfwJoystickSeekerTest {
             seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
-             * When the wrangler for a GUID is re-assigned, the
-             * GUID in question must first be released before it
-             * can be given a new wrangler. This is to ensure
-             * the proper state handling of joysticks.
+             * When the wrangler for a GUID is re-assigned, the GUID in
+             * question must first be released before it is given a new
+             * wrangler. This is to ensure the proper state handling of
+             * joysticks.
              */
             seeker.wrangleGuid(guid, (g, w) -> device);
             assertTrue(released.get());
@@ -281,9 +274,8 @@ class GlfwJoystickSeekerTest {
     @Test
     void releaseGuid() {
         /*
-         * It would not make sense to release a null GUID.
-         * As such, assume  this was a mistake by the user
-         * and throw an exception.
+         * It would not make sense to release a null GUID. As such, assume
+         * this was a mistake by the user and throw an exception.
          */
         Collection<String> nullGuids = Collections.singletonList(null);
         assertThrows(NullPointerException.class,
@@ -309,10 +301,10 @@ class GlfwJoystickSeekerTest {
             seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
-             * When a GUID is released, the seeker must forget all
-             * currently connected joysticks with a matching GUID.
-             * Failing to do so would result in unwanted joysticks
-             * lingering until they disconnect themselves.
+             * When a GUID is released, the seeker must forget all currently
+             * connected joysticks with a matching GUID. Not doing so would
+             * result in unwanted joysticks lingering until they disconnect
+             * by themselves.
              */
             seeker.releaseGuid(guid);
             assertTrue(released.get());
@@ -322,8 +314,8 @@ class GlfwJoystickSeekerTest {
             assertFalse(seeker.isWranglingWith(guid, wrangler));
 
             /*
-             * If a GUID that is not being wrangled is released, then
-             * the GLFW joystick seeker should do nothing.
+             * If a GUID that is not being wrangled is released, then the
+             * GLFW joystick seeker should do nothing.
              */
             released.set(false);
             seeker.releasedGuid = false;
@@ -333,8 +325,8 @@ class GlfwJoystickSeekerTest {
         }
 
         /*
-         * A null value is allowed when setting a callback.
-         * This should have the effect of removing the callback.
+         * A null value is allowed when setting a callback. This should have
+         * the effect of removing the callback.
          */
         assertDoesNotThrow(() -> seeker.onReleaseGuid(null));
     }
@@ -349,9 +341,9 @@ class GlfwJoystickSeekerTest {
             seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
 
             /*
-             * When the GUID for a joystick is not equal to null,
-             * that means it is currently connected. As such, it
-             * should be wrangled and discovered as a device.
+             * When the GUID for a joystick is not equal to null, that means
+             * it is currently connected. As such, it should be wrangled and
+             * discovered as a device.
              */
             glfw.when(() -> glfwGetJoystickGUID(glfwJoystick))
                     .thenReturn(guid);
@@ -362,9 +354,9 @@ class GlfwJoystickSeekerTest {
             seeker.onForgetDevice((s, d) -> forgot.set(d == device));
 
             /*
-             * When the GUID for a joystick is equal to null,
-             * that means it is no longer connected. As such,
-             * it should be forgotten by the seeker.
+             * When the GUID for a joystick is equal to null, that means
+             * it is no longer connected. As such, it should be forgotten
+             * by the seeker.
              */
             glfw.when(() -> glfwGetJoystickGUID(glfwJoystick))
                     .thenReturn(null);
@@ -378,10 +370,10 @@ class GlfwJoystickSeekerTest {
             forgot.set(false);
 
             /*
-             * However, it is possible the joystick may indicate
-             * that it is no longer connected (even though GLFW
-             * says its GUID is not null). When this occurs, the
-             * seeker should forget the device anyway.
+             * However, it is possible the joystick may indicate that it
+             * is no longer connected (even though GLFW says its GUID is
+             * not null). When this occurs, the seeker should forget the
+             * device anyway.
              */
             when(device.isConnected()).thenReturn(false);
             seeker.seek();

@@ -70,60 +70,58 @@ class JsonDeviceGuidsTest {
     @Test
     void load() throws IOException {
         /*
-         * It would not make sense to attempt loading a JSON device
-         * GUIDs container from a null input stream. As such, assume
-         * this was a mistake by the user and thrown an exception.
+         * It would not make sense to attempt loading a JSON device GUIDs
+         * container from a null input stream. As such, assume this was a
+         * mistake by the user and thrown an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> JsonDeviceGuids.load(null));
 
         /*
-         * The root JSON element is expected to be a JSON object.
-         * This is so GSON can load the contained "guids" object
-         * and convert it to a Java map instance.
+         * The root JSON element is expected to be a JSON object. This enables
+         * GSON to load the contained "guids" object and convert it to a Java
+         * map instance.
          */
         assertResourceThrows("illegal_root_type.json");
 
         /*
-         * If the GUIDs container has no systems... what is it
-         * doing here? This was likely user oversight. Throw an
-         * exception in hopes of preventing an annoying bug.
+         * If the GUIDs container has no systems... what is it doing here?
+         * This was likely user oversight. Throw an exception in hopes of
+         * preventing an annoying bug.
          */
         assertResourceThrows("no_systems.json");
 
         /*
-         * Each system must contain one or more GUIDs for the
-         * device. For simplicity, require each system store
-         * their GUIDs in a JSON array.
+         * Each system must contain one or more GUIDs for the device. For
+         * simplicity, require each system store their GUIDs in an array.
          */
         assertResourceThrows("illegal_system_type.json");
 
         /*
-         * If the system has no specified GUIDs... what is it
-         * doing here? This was likely a user oversight. Throw
-         * an exception in hope of preventing an annoying bug.
+         * If the system has no specified GUIDs... what is it doing here?
+         * This was likely a user oversight. Throw an exception in hope of
+         * preventing an annoying bug.
          */
         assertResourceThrows("no_device_guids.json");
 
         /*
-         * Each element in this JSON array must be a string.
-         * Different value types indicates the user likely
-         * has a misunderstanding of how GUIDs are stored.
+         * Each element in this JSON array must be a string. Different
+         * value types indicates the user likely has a misunderstanding
+         * of how GUIDs are stored.
          */
         assertResourceThrows("illegal_guid_type.json");
 
         /*
-         * Now that each invalid scenario has been confirmed
-         * to throw an exception (as it should), ensure that
-         * a valid JSON device GUID container does not cause
-         * an exception to be thrown.
+         * Now that each invalid scenario has been confirmed to throw an
+         * exception (as it should), ensure that a valid JSON device GUID
+         * container does not cause an exception to be thrown.
          */
         DeviceGuids guids = loadValid();
 
         /*
-         * When a requested system is not present in the JSON
-         * device GUIDs container, null must be returned. This
-         * is to comply with DeviceGuids specs.
+         * When a requested system is not present in the JSON device
+         * GUIDs container, null must be returned. This is to comply
+         * with DeviceGuids specs.
          */
         assertNull(guids.getGuids("ios"));
     }
@@ -170,18 +168,18 @@ class JsonDeviceGuidsTest {
     @Test
     void loadResource() {
         /*
-         * It would not make sense to attempt loading a JSON device
-         * GUIDs container from a null resource. Assume this was a
-         * mistake by the user and throw an exception.
+         * It would not make sense to attempt loading a JSON device GUIDs
+         * container from a null resource. Assume this was a mistake by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> JsonDeviceGuids.loadResource(null));
 
         /*
-         * However, if the resource does not exist, an IOException
-         * should be thrown. NullPointerException is not thrown in
-         * this instance as it leads the user to think a variable
-         * is null (when in reality a resource is not present).
+         * However, if the resource does not exist, an IOException should be
+         * thrown. NullPointerException is not thrown in this instance as it
+         * leads the user to think a variable is null (when in reality a
+         * resource is not present).
          */
         assertThrows(IOException.class, () -> JsonDeviceGuids.loadResource(
                 "not_exist.json"));
@@ -195,9 +193,9 @@ class JsonDeviceGuidsTest {
     @Test
     void loadFile() throws IOException {
         /*
-         * It would not make sense to attempt loading a JSON device
-         * GUIDs container from a null file (or file path). Assume
-         * this was a mistake by the user and throw an exception.
+         * It would not make sense to attempt loading a JSON device GUIDs
+         * container from a null file (or file path). Assume this was a
+         * mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> JsonDeviceGuids.loadFile((File) null));

@@ -12,9 +12,9 @@ class MockGlfw {
     static void mockGlfwWindow(@NotNull MockedStatic<GLFW> glfw,
                                long ptr_glfwWindow) {
         /*
-         * Mocking this specific GLFW method is required for
-         * a mock GLFW joystick seeker to be created. It is
-         * used to validate a pointer to a GLFW window.
+         * Mocking this specific GLFW method is required for a mock GLFW
+         * joystick seeker to be created. It is used to validate a pointer
+         * to a GLFW window.
          */
         glfw.when(() -> glfwGetWindowSize(eq(ptr_glfwWindow),
                 (int[]) any(), any())).thenAnswer(a -> {

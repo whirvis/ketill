@@ -51,10 +51,9 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         String path;
 
         /*
-         * Always return via the "path" variable, as it provides
-         * checks even for default values. This is done as unit
-         * testing failed to catch a bug caused by typo, which
-         * was left unchecked as it was returned directly.
+         * Always return via the "path" variable, as it provides checks even
+         * for default values. This is done as unit testing failed to catch
+         * a bug caused by typo, which was left unchecked.
          */
         RelativeGuidPath guidResourcePath =
                 clazz.getAnnotation(RelativeGuidPath.class);
@@ -221,11 +220,10 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         Objects.requireNonNull(wrangler, "wrangler");
 
         /*
-         * Not checking for the current wrangler assigned to GUID
-         * would lead to some weird side effects. For example, if
-         * another wrangler was previously assigned to the GUID.
-         * If a joystick was discovered with that wrangler, it
-         * would linger on with an outdated wrangler.
+         * Not checking for the current wrangler assigned to GUID would lead
+         * to some weird side effects. For example, if another wrangler was
+         * previously assigned to the GUID. If a joystick was discovered with
+         * that wrangler, it would linger on with an outdated wrangler.
          */
         GlfwJoystickWrangler<I> currentWrangler = wranglers.get(guid);
         if (currentWrangler != null) {
@@ -303,15 +301,14 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         Objects.requireNonNull(toRelease, "toRelease");
 
         /*
-         * Since access to the joysticks array is not synchronized,
-         * the seekImpl() method could be invoked while this method
-         * is still being executed. If this method forgets a device
-         * while seekImpl() is still running, the joystick could be
-         * rediscovered in error.
+         * Since access to the joysticks array is not synchronized, the
+         * seekImpl() method could be invoked while this method is still
+         * being executed. If this method forgets a device while seekImpl()
+         * is still running, the joystick could be rediscovered in error.
          *
-         * To prevent this occurring, simply remove the associated
-         * wrangler from each GUID to drop before forgetting them.
-         * This ensures seekImpl() will not rediscover them.
+         * To prevent this occurring, simply remove the associated wrangler
+         * from each GUID to drop before forgetting them. This ensures they
+         * will not be rediscovered by seekImpl().
          */
         for (String guid : toRelease) {
             Objects.requireNonNull(guid, "guid");
@@ -325,17 +322,16 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         }
 
         /*
-         * If a joystick's GUID matches one of the dropped GUIDs,
-         * it must be unregistered here. It makes no sense for a
-         * joystick that would no longer be registered to linger.
+         * If a joystick's GUID matches one of the dropped GUIDs, it must be
+         * unregistered here. It makes no sense for a joystick that would no
+         *  longer be registered to linger.
          */
         for (int i = 0; i < joysticks.length; i++) {
             /*
-             * In rare occasions (so far, this has been observed
-             * only on unit testing), an undiscovered joystick
-             * with have a GUID that is due to be released. As
-             * such, joysticks which have yet to be discovered
-             * must be skipped over.
+             * In rare occasions (so far, this has been observed only in
+             * unit testing), an undiscovered joystick with have a GUID
+             * that is due to be released. As such, joysticks which have
+             * yet to be discovered must be skipped over.
              */
             if (joysticks[i] == null) {
                 continue;
@@ -390,11 +386,10 @@ public class GlfwJoystickSeeker<I extends IoDevice>
             I joystick = this.joysticks[i];
             if (joystick != null) {
                 /*
-                 * Although joystick.isConnected() is generally
-                 * trusted, this test against a null GUID ensures
-                 * a zombie adapter cannot hold a newer joystick
-                 * hostage if it decides to return true even when
-                 * it is not actually connected.
+                 * Although joystick.isConnected() is generally trusted, this
+                 * test against a null GUID ensures a zombie adapter cannot
+                 * hold a newer joystick hostage if it decides to return true
+                 * even when it is not actually connected.
                  */
                 if (guid == null || !joystick.isConnected()) {
                     this.forgetDevice(joystick);
@@ -404,9 +399,8 @@ public class GlfwJoystickSeeker<I extends IoDevice>
             }
 
             /*
-             * If not present, glfwGetJoystickGUID() returns
-             * null or the joystick GUID. This makes a call
-             * to glfwJoystickPresent() redundant.
+             * If not present, glfwGetJoystickGUID() returns null for the
+             * GUID. This makes a call to glfwJoystickPresent() redundant.
              */
             if (guid != null && this.isWrangling(guid)) {
                 GlfwJoystickWrangler<I> wrangler = wranglers.get(guid);

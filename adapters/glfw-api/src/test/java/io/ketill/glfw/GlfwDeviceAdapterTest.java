@@ -15,10 +15,9 @@ class GlfwDeviceAdapterTest {
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
 
         /*
-         * For a GLFW device adapter to function, a valid window
-         * pointer must be provided. As such, throw an exception
-         * if the pointer is NULL or does not point to a valid
-         * GLFW window.
+         * For a GLFW device adapter to function, a valid window pointer must
+         * be provided. As such, throw an exception if the pointer is NULL or
+         * does not point to a valid GLFW window.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwDeviceAdapter(device, registry, 0x00));

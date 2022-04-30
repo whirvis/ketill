@@ -1,5 +1,8 @@
 package io.ketill.glfw.nx;
 
+import io.ketill.MappingType;
+
+@MappingType
 final class JoyConStickMapping {
 
     final int glfwUp, glfwDown;

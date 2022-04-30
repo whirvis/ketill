@@ -37,10 +37,9 @@ class GlfwJoystickAdapterTest {
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
 
         /*
-         * For a GLFW joystick adapter to function, a valid
-         * window pointer must be provided. As such, throw an
-         * exception if the pointer is NULL or does not point
-         * to a valid GLFW window.
+         * For a GLFW joystick adapter to function, a valid window pointer
+         * must be provided. As such, throw an exception if the pointer is
+         * NULL or does not point to a valid GLFW window.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwJoystickAdapter(device, registry,
@@ -53,9 +52,9 @@ class GlfwJoystickAdapterTest {
             mockGlfwWindow(glfw, 0x01);
 
             /*
-             * For a GLFW joystick adapter to function, a valid
-             * joystick must be provided. Throw an exception if
-             * the joystick is not within bounds.
+             * For a GLFW joystick adapter to function, a valid joystick
+             * must be provided. Throw an exception if the joystick is not
+             * within bounds.
              */
             assertThrows(IllegalArgumentException.class,
                     () -> new MockGlfwJoystickAdapter(device, registry,
@@ -69,10 +68,9 @@ class GlfwJoystickAdapterTest {
     @BeforeEach
     void setup() {
         /*
-         * Any valid, randomly chosen pointer and GLFW joystick
-         * should suffice for the following tests. The randomly
-         * chosen pointer will be mocked so a mock GLFW adapter
-         * can be created.
+         * Any valid, randomly chosen pointer and GLFW joystick should
+         * suffice for the following tests. The randomly chosen pointer
+         * will be mocked so a mock GLFW adapter can be created.
          */
         this.ptr_glfwWindow = RANDOM.nextLong();
         this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
@@ -99,9 +97,9 @@ class GlfwJoystickAdapterTest {
     @Test
     void mapButton() {
         /*
-         * It would not make sense to map a null button or for a
-         * button to be mapped to a negative index. Assume these
-         * were a mistake by the user and throw an exception.
+         * It would not make sense to map a null button or for a button to
+         * be mapped to a negative index. Assume these were a mistake by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapButton(null, 0));
@@ -113,9 +111,9 @@ class GlfwJoystickAdapterTest {
         adapter.mapButton(MockJoystick.BUTTON, glfwButton);
 
         /*
-         * Now that a randomly chosen button has been mapped,
-         * poll the device to ensure that it properly updates
-         * this button with its assigned adapter.
+         * Now that a randomly chosen button has been mapped, poll the
+         * device to ensure that it properly updates this button with
+         * its assigned adapter.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickButtons(glfwJoystick))
@@ -134,9 +132,9 @@ class GlfwJoystickAdapterTest {
     @Test
     void mapStick() {
         /*
-         * It would not make sense to map a null stick or for a
-         * stick to be given a null mapping. Assume these were a
-         * mistake by the user and throw an exception.
+         * It would not make sense to map a null stick or for a stick to be
+         * given a null mapping. Assume these were a mistake by the user and
+         * throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapStick(null, new GlfwStickMapping(0, 0)));
@@ -149,9 +147,8 @@ class GlfwJoystickAdapterTest {
         adapter.mapStick(MockJoystick.STICK, mapping);
 
         /*
-         * Now that a pre-determined stick has been mapped,
-         * poll the device to ensure that it properly updates
-         * this stick with its assigned adapter.
+         * Now that a pre-determined stick has been mapped, poll the device
+         * to ensure that it properly updates this stick its adapter.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
@@ -174,9 +171,8 @@ class GlfwJoystickAdapterTest {
         adapter.mapStick(MockJoystick.STICK, mapping);
 
         /*
-         * Now that a stick with a Z-button has been mapped,
-         * poll the device to ensure that it properly updates
-         * this stick with its assigned adapter.
+         * Now that a stick with a Z-button has been mapped, poll the device
+         * to ensure that it properly updates this stick with its adapter.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickButtons(glfwJoystick))
@@ -195,9 +191,9 @@ class GlfwJoystickAdapterTest {
     @Test
     void mapTrigger() {
         /*
-         * It would not make sense to map a null trigger or for a
-         * trigger to be mapped to a negative index. Assume these
-         * were a mistake by the user and throw an exception.
+         * It would not make sense to map a null trigger or for a trigger to
+         * be mapped to a negative index. Assume these were mistakes by the
+         * user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapTrigger(null, 0));
@@ -209,9 +205,9 @@ class GlfwJoystickAdapterTest {
         adapter.mapTrigger(MockJoystick.TRIGGER, glfwAxis);
 
         /*
-         * Now that a randomly chosen trigger has been mapped,
-         * poll the device to ensure that it properly updates
-         * this trigger with its assigned adapter.
+         * Now that a randomly chosen trigger has been mapped, poll the
+         * device to ensure that it properly updates this trigger with its
+         * assigned adapter.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
@@ -230,17 +226,15 @@ class GlfwJoystickAdapterTest {
     @Test
     void getButtonCount() {
         /*
-         * Since the internal buttons buffer has yet to be set,
-         * the device adapter must return -1. This  prevents an
-         * exception from being thrown, and lets the user know
-         * the device has yet to be polled.
+         * Since the internal buttons buffer has yet to be set, the device
+         * adapter must return -1. This  prevents an exception from being
+         * thrown, and lets the user know the device has yet to be polled.
          */
         assertEquals(-1, adapter.getButtonCount());
 
         /*
-         * After polling the device, the getButtonCount() method
-         * must return a value equal to the limit of the buttons
-         * buffer that has been supplied to it.
+         * After polling the device, getButtonCount() must return a value
+         * equal to the limit of the buttons buffer supplied to it.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickButtons(glfwJoystick))
@@ -253,18 +247,18 @@ class GlfwJoystickAdapterTest {
     @Test
     void isPressed() {
         /*
-         * It would not make sense to get the value of a button
-         * with a negative index. Assume this was a mistake by
-         * the user and throw an exception.
+         * It would not make sense to get the value of a button with a
+         * negative index. As such, assume this was a user mistake and
+         * throw an exception.
          */
         assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.isPressed(-1));
 
         /*
-         * If the internal buttons buffer has yet to be set, return
-         * a value of 0.0F. This will correct itself to a current
-         * value after the first poll. This is to prevent the user
-         * from having to check the current state of the adapter.
+         * If the internal buttons buffer has yet to be set, return a value
+         * of 0.0F. This will correct itself to a current value after the
+         * first poll. This is to prevent the user from having to check the
+         * current state of the adapter.
          */
         assertFalse(adapter.isPressed(0));
 
@@ -273,9 +267,9 @@ class GlfwJoystickAdapterTest {
         buttons.put(glfwButton, (byte) GLFW_PRESS);
 
         /*
-         * The adapter must first be polled for it to update the
-         * internal buttons to the updated state. If the state is
-         * not correct after polling, something has gone wrong.
+         * The adapter must first be polled for it to update the internal
+         * buttons to the updated state. If the state is not correct after
+         * polling, something has gone wrong.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickButtons(glfwJoystick))
@@ -285,11 +279,10 @@ class GlfwJoystickAdapterTest {
         }
 
         /*
-         * Since the device has been polled (meaning the buttons
-         * buffer has been set), the adapter can check if a given
-         * index is out of bounds for the joystick's axes. When
-         * this occurs, assume it was a mistake by the user and
-         * throw an exception.
+         * Since the device has been polled (meaning the buttons buffer has
+         * been set), the adapter can check if a given index is out of bounds
+         * for the joystick's axes. When this occurs, assume it was a mistake
+         * by the user and throw an exception.
          */
         assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.isPressed(buttons.limit()));
@@ -298,17 +291,16 @@ class GlfwJoystickAdapterTest {
     @Test
     void getAxisCount() {
         /*
-         * Since the internal axes buffer has yet to be set, the
-         * device adapter must return -1. This is to prevent an
-         * exception from being thrown, and lets the user know
-         * the device has yet to be polled.
+         * Since the internal axes buffer has yet to be set, the device
+         * adapter must return a value of -1. This prevents an exception
+         * from being thrown, and lets the user know the device has yet
+         * to be polled.
          */
         assertEquals(-1, adapter.getAxisCount());
 
         /*
-         * After polling the device, the getAxisCount() method
-         * must return a value equal to the limit of the axes
-         * buffer that has been supplied to it.
+         * After polling the device, the getAxisCount() must return a value
+         * equal to the limit of the axes buffer that it has been supplied.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
@@ -321,18 +313,18 @@ class GlfwJoystickAdapterTest {
     @Test
     void getAxis() {
         /*
-         * It would not make sense to get the value of an axis
-         * with a negative index. Assume this was a mistake by
-         * the user and throw an exception.
+         * It would not make sense to get the current value of an axis with a
+         * negative index. As such, assume this was a mistake by the user and
+         * throw an exception.
          */
         assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.getAxis(-1));
 
         /*
-         * If the internal axes buffer has yet to be set, return
-         * a value of 0.0F. This will correct itself to a current
-         * value after the first poll. This is to prevent the user
-         * from having to check the current state of the adapter.
+         * If the internal axes buffer has yet to be set, return a value of
+         * 0.0F. This will correct itself to a current value after the first
+         * poll. This is to prevent the user from having to check the current
+         * state of the adapter.
          */
         assertEquals(0.0F, adapter.getAxis(0));
 
@@ -341,9 +333,9 @@ class GlfwJoystickAdapterTest {
         axes.put(glfwAxis, 1.23F);
 
         /*
-         * The adapter must first be polled for it to update the
-         * internal axes to the updated value. If the value is
-         * not correct after polling, something has gone wrong.
+         * The adapter must first be polled for it to update the internal
+         * axes to the updated value. If the value is not correct after
+         * polling, something has gone wrong.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
@@ -353,11 +345,10 @@ class GlfwJoystickAdapterTest {
         }
 
         /*
-         * Since the device has been polled (meaning the axes
-         * buffer has been set), the adapter can check if an
-         * index is out of bounds for the joystick's axes. When
-         * this occurs, assume it was a mistake by the user and
-         * throw an exception.
+         * Since the device has been polled (meaning the axes buffer has been
+         * set), the adapter can check if an index is out of bounds for the
+         * joystick's axes. When this occurs, assume it was a mistake by the
+         * user and throw an exception.
          */
         assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.getAxis(axes.limit()));
@@ -366,9 +357,8 @@ class GlfwJoystickAdapterTest {
     @Test
     void pollDevice() {
         /*
-         * When polled, the GLFW joystick adapter is expected to
-         * update its internal buttons and axes by fetching their
-         * current state from GLFW.
+         * When polled, the GLFW joystick adapter should update its internal
+         * buttons and axes by fetching their current state from GLFW.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             adapter.pollDevice();
@@ -380,10 +370,10 @@ class GlfwJoystickAdapterTest {
     @Test
     void isDeviceConnected() {
         /*
-         * When checking if the joystick is connected, the adapter
-         * is expected to ask GLFW directly on each call. This is
-         * ensured by verifying the adapter returns true and then
-         * returns false, in that order, using mocking.
+         * When checking if the joystick is connected, the adapter is
+         * expected to ask GLFW directly on each call. This is ensured
+         * by verifying the adapter returns true and then returns false,
+         * in that order, using mocking.
          */
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwJoystickPresent(glfwJoystick))

@@ -1,6 +1,5 @@
 package io.ketill.glfw.psx;
 
-import io.ketill.RegisteredFeature;
 import io.ketill.psx.Ps5Controller;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

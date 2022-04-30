@@ -9,11 +9,10 @@ class GlfwStickMappingTest {
     @Test
     void __init__() {
         /*
-         * It would not make sense to pass a negative index for the
-         * axes or the Z-button (when specifying it, at least.) Any
-         * negative value is guaranteed to result in an exception
-         * when querying joystick axis or button data in GLFW. As
-         * such, assume this was an error by the user.
+         * It would not make sense to pass a negative index for the axes or
+         * the Z-button (when specifying it, at least.) Any negative value is
+         * guaranteed to result in an exception when querying joystick axis
+         * or button data in GLFW. Assume this was an error by the user.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> new GlfwStickMapping(-1, 0, 0));
@@ -23,9 +22,9 @@ class GlfwStickMappingTest {
                 () -> new GlfwStickMapping(0, 0, -1));
 
         /*
-         * When a Z-button is not specified, it is allowed to have
-         * a negative value. It is expected of the adapter to make
-         * sure a Z-button is present before querying for it.
+         * When a Z-button is not specified, they may have negative value.
+         * It is expected of the adapter to ensure a Z-button is present
+         * before querying its current state.
          */
         GlfwStickMapping noZButton = new GlfwStickMapping(0, 0);
         assertTrue(noZButton.glfwZButton < 0);
