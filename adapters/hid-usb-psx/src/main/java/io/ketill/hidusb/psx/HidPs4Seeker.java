@@ -2,6 +2,8 @@ package io.ketill.hidusb.psx;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.hidusb.HidDeviceSeeker;
+import io.ketill.psx.PsxAmbiguityCallback;
+import io.ketill.psx.PsxAmbiguityCandidate;
 import io.ketill.psx.Ps4Controller;
 import org.hid4java.HidDevice;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
+public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller>
+        implements PsxAmbiguityCandidate<Ps4Controller> {
 
     private static final int VENDOR_SONY = 0x054C;
     private static final int PRODUCT_DS4 = 0x05C4;
@@ -20,7 +23,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
     private final Map<HidDevice, HidPs4Session> sessions;
     private boolean ambiguous;
 
-    private @Nullable HidPs4AmbiguityCallback ambiguityCallback;
+    private @Nullable PsxAmbiguityCallback<Ps4Controller> ambiguityCallback;
 
     /**
      * If both USB and Bluetooth controllers are allowed, there exists a
@@ -43,7 +46,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      *                                  if both{@code allowUsb} and
      *                                  {@code allowBt} are {@code false}.
      * @see #isAmbiguous()
-     * @see #onAmbiguity(HidPs4AmbiguityCallback)
+     * @see #onAmbiguity(PsxAmbiguityCallback)
      */
     public HidPs4Seeker(long scanIntervalMs, boolean allowUsb,
                         boolean allowBt) {
@@ -79,7 +82,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * @throws IllegalArgumentException if both {@code allowUsb} and
      *                                  {@code allowBt} are {@code false}.
      * @see #isAmbiguous()
-     * @see #onAmbiguity(HidPs4AmbiguityCallback)
+     * @see #onAmbiguity(PsxAmbiguityCallback)
      */
     public HidPs4Seeker(boolean allowUsb, boolean allowBt) {
         this(MINIMUM_SCAN_INTERVAL, allowUsb, allowBt);
@@ -107,7 +110,7 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      *                                  if {@code scanIntervalMs} is greater
      *                                  than {@value Integer#MAX_VALUE}.
      * @see #isAmbiguous()
-     * @see #onAmbiguity(HidPs4AmbiguityCallback)
+     * @see #onAmbiguity(PsxAmbiguityCallback)
      */
     public HidPs4Seeker(long scanIntervalMs) {
         this(scanIntervalMs, true, true);
@@ -123,38 +126,19 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
      * USB controller and Bluetooth controller.
      *
      * @see #isAmbiguous()
-     * @see #onAmbiguity(HidPs4AmbiguityCallback)
+     * @see #onAmbiguity(PsxAmbiguityCallback)
      */
     public HidPs4Seeker() {
         this(MINIMUM_SCAN_INTERVAL);
     }
 
-    /**
-     * When both USB and Bluetooth controllers are allowed, there exists a
-     * possibility a single PS4 controller will report itself as a USB and
-     * Bluetooth controller <i>at the same time.</i> There is no known way
-     * to determine if a USB and Bluetooth PS4 controller are the same
-     * physical device.
-     *
-     * @return {@code true} if there is currently ambiguity between PS4
-     * controllers, {@code false} otherwise.
-     * @see #onAmbiguity(HidPs4AmbiguityCallback)
-     */
+    @Override
     public boolean isAmbiguous() {
         return this.ambiguous;
     }
 
-    /**
-     * Sets the callback for when ambiguity between PS4 controllers is
-     * detected or resolved. If this callback was set <i>after</i> the
-     * ambiguity was detected, it will not be called. The status of
-     * ambiguity will have to be fetched via {@link #isAmbiguous()}.
-     *
-     * @param callback the code execute when ambiguity is detected. A value
-     *                 of {@code null} is permitted, and will result in
-     *                 nothing being executed.
-     */
-    public void onAmbiguity(@Nullable HidPs4AmbiguityCallback callback) {
+    @Override
+    public void onAmbiguity(@Nullable PsxAmbiguityCallback<Ps4Controller> callback) {
         this.ambiguityCallback = callback;
     }
 
@@ -174,12 +158,12 @@ public final class HidPs4Seeker extends HidDeviceSeeker<Ps4Controller> {
         boolean nowAmbiguous = hasUsb && hasBt;
         if (!this.ambiguous && nowAmbiguous) {
             if (ambiguityCallback != null) {
-                ambiguityCallback.execute(true);
+                ambiguityCallback.execute(this, true);
             }
             this.ambiguous = true;
         } else if (this.ambiguous && !nowAmbiguous) {
             if (ambiguityCallback != null) {
-                ambiguityCallback.execute(false);
+                ambiguityCallback.execute(this, false);
             }
             this.ambiguous = false;
         }
