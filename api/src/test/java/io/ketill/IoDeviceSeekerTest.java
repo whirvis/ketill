@@ -32,6 +32,7 @@ class IoDeviceSeekerTest {
         seeker.discoverDevice(device);
         assertTrue(seeker.discoveredDevice);
         assertTrue(discovered.get());
+        assertEquals(1, seeker.getDeviceCount());
 
         /* reset state for next test */
         seeker.discoveredDevice = false;
@@ -76,6 +77,7 @@ class IoDeviceSeekerTest {
         seeker.forgetDevice(device);
         assertTrue(seeker.forgotDevice);
         assertTrue(forgotten.get());
+        assertEquals(0, seeker.getDeviceCount());
 
         /* reset state for next test */
         seeker.forgotDevice = false;
@@ -101,6 +103,11 @@ class IoDeviceSeekerTest {
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.forgetDevice(null));
+    }
+
+    @Test
+    void getDeviceCount() {
+        assertEquals(0, seeker.getDeviceCount());
     }
 
     @Test
