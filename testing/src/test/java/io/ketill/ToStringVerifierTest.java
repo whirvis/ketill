@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ToStringVerifierTest {
 
     @Test
-    void forClass() {
+    void testForClass() {
         /*
          * It would not make sense to verify the toString() method for a
          * null class or a null instance of a class. As such, assume this
@@ -37,7 +37,7 @@ public class ToStringVerifierTest {
     }
 
     @Test
-    void verify() {
+    void testVerify() {
         /*
          * The verifier requires that the toString() method to be overridden
          * by the given class. The class below does not do this. As a result,
