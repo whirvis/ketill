@@ -26,7 +26,7 @@ class XInputXboxAdapterTest {
     private XInputXboxAdapter adapter;
 
     @BeforeEach
-    void setup() {
+    void createAdapter() {
         assertTrue(XInputStatus.isAvailable());
         assertDoesNotThrow(XInputStatus::requireAvailable);
 
@@ -54,7 +54,7 @@ class XInputXboxAdapterTest {
     }
 
     @Test
-    void updateButton() {
+    void testUpdateButton() {
         /*
          * While there are far more than two buttons, it would be redundant
          * to check all of them here. Two buttons should enough to ensure
@@ -70,7 +70,7 @@ class XInputXboxAdapterTest {
     }
 
     @Test
-    void updateStick() {
+    void testUpdateStick() {
         when(xAxes.get(XInputAxis.LEFT_THUMBSTICK_X)).thenReturn(0.123F);
         when(xAxes.get(XInputAxis.LEFT_THUMBSTICK_Y)).thenReturn(0.456F);
         xButtons.lThumb = false;
@@ -91,7 +91,7 @@ class XInputXboxAdapterTest {
     }
 
     @Test
-    void updateTrigger() {
+    void testUpdateTrigger() {
         when(xAxes.get(XInputAxis.LEFT_TRIGGER)).thenReturn(0.123F);
         when(xAxes.get(XInputAxis.RIGHT_TRIGGER)).thenReturn(0.456F);
 
@@ -102,7 +102,7 @@ class XInputXboxAdapterTest {
     }
 
     @Test
-    void updateMotor() {
+    void testUpdateMotor() {
         controller.rumbleCoarse.setStrength(0.125F);
         controller.rumbleFine.setStrength(0.875F);
 
@@ -138,7 +138,7 @@ class XInputXboxAdapterTest {
     }
 
     @Test
-    void isDeviceConnected() {
+    void testIsDeviceConnected() {
         when(xDevice.isConnected()).thenReturn(true);
         controller.poll(); /* update connection status */
         assertTrue(controller.isConnected());

@@ -21,7 +21,7 @@ class XInputXboxSeekerTest {
     private XInputXboxSeeker seeker;
 
     @BeforeEach
-    void setup() {
+    void createSeeker() {
         /*
          * For these tests, the earliest version of X-input available on this
          * machine will be used. This mock prevents the seeker from detecting
@@ -35,7 +35,7 @@ class XInputXboxSeekerTest {
     }
 
     @Test
-    void seek() {
+    void testSeekImpl() {
         try (MockedStatic<XInputDevice> x = mockStatic(XInputDevice.class)) {
             /*
              * Only one device is going to be considered connected for this

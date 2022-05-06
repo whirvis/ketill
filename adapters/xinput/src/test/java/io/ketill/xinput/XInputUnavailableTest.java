@@ -14,22 +14,22 @@ import static org.mockito.Mockito.*;
 class XInputUnavailableTest {
 
     @BeforeEach
-    void setup() {
+    void ensureXInputIsUnavailable() {
         assertFalse(XInputStatus.isAvailable());
         assertThrows(XInputException.class, XInputStatus::requireAvailable);
     }
 
-    /**
+    /*
      * Since X-input is unavailable on this system, the XInputXboxSeeker
      * class is expected to throw an exception at construction. There is
      * nothing it can do if it can't use X-input!
      */
     @Test
-    void createSeeker() {
+    void testInitSeeker() {
         assertThrows(XInputException.class, XInputXboxSeeker::new);
     }
 
-    /**
+    /*
      * Since X-input is unavailable on this system, the XInputXboxAdapter
      * class is expected to throw an exception at construction. Since the
      * check for the presence of X-input occurs before validating xDevice
@@ -37,7 +37,7 @@ class XInputUnavailableTest {
      */
     @Test
     @SuppressWarnings("ConstantConditions")
-    void createAdapter() {
+    void testInitAdapter() {
         XboxController controller = mock(XboxController.class);
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
         assertThrows(XInputException.class,
