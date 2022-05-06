@@ -2,6 +2,7 @@ package io.ketill.glfw;
 
 import io.ketill.IoDevice;
 import io.ketill.KetillException;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,8 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.ketill.glfw.MockGlfw.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.mockito.Mockito.*;
 
@@ -23,75 +24,66 @@ class GlfwJoystickSeekerTest {
 
     private static final Random RANDOM = new Random();
 
+    private static long ptr_glfwWindow;
+    private static int glfwJoystick;
+
+    /*
+     * For the next tests to successfully execute, GLFW must initialize
+     * successfully. If it fails to do so, that is fine. It just means
+     * the current machine does not have access to GLFW.
+     */
     @BeforeAll
-    static void __init__() {
-        /*
-         * For a GLFW joystick seeker to function, a valid window pointer
-         * must be provided. As such, throw an exception if the pointer is
-         * NULL or does not point to a valid GLFW window.
-         */
-        assertThrows(NullPointerException.class,
-                () -> new MockGlfwJoystickSeeker(0x00));
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwJoystickSeeker(0x01));
-
-        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            mockGlfwWindow(glfw, 0x01);
-
-            /*
-             * The class constructed below has an invalid use of the
-             * @RelativeGuidPath annotation. As a result, an exception
-             * should be thrown here.
-             */
-            /* @formatter:off */
-            assertThrows(KetillException.class,
-                    () -> new MockGlfwJoystickSeeker
-                            .WithInvalidPath0(0x01));
-            assertThrows(KetillException.class,
-                    () -> new MockGlfwJoystickSeeker
-                            .WithInvalidPath1(0x01));
-            /* @formatter:on */
-
-            /*
-             * It would not make sense for the device type of GLFW joystick
-             * seeker to be a null class. Assume this was a mistake by the
-             * user and throw an exception.
-             */
-            assertThrows(NullPointerException.class,
-                    () -> new MockGlfwJoystickSeeker(null, 0x01));
-        }
+    static void initGlfw() {
+        assumeTrue(glfwInit());
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+        glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
     }
 
     private IoDevice device;
     private String guid;
     private GlfwJoystickWrangler<IoDevice> wrangler;
-
-    private long ptr_glfwWindow;
-    private int glfwJoystick;
     private MockGlfwJoystickSeeker seeker;
 
     @BeforeEach
-    void setup() {
+    void createSeeker() {
         this.device = mock(IoDevice.class);
         this.guid = Integer.toHexString(RANDOM.nextInt());
         this.wrangler = (g, w) -> device;
-
-        /*
-         * Any valid, randomly chosen pointer and GLFW joystick should
-         * suffice for the following tests. The randomly chosen pointer
-         * will be mocked so a mock GLFW joystick seeker can be created.
-         */
-        this.ptr_glfwWindow = RANDOM.nextLong();
-        this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
-
-        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            mockGlfwWindow(glfw, ptr_glfwWindow);
-            this.seeker = new MockGlfwJoystickSeeker(ptr_glfwWindow);
-        }
+        this.seeker = new MockGlfwJoystickSeeker(ptr_glfwWindow);
     }
 
     @Test
-    void loadJsonGuids() {
+    void testInit() {
+        /*
+         * For a GLFW joystick seeker to function, a valid window pointer must
+         * be provided by the user. The GlfwJoystickSeeker class should make a
+         * call to GlfwUtils.requireWindow(). Since a NULL pointer was passed
+         * here, a NullPointerException should be thrown.
+         */
+        assertThrows(NullPointerException.class,
+                () -> new MockGlfwJoystickSeeker(0x00));
+
+        /*
+         * The classes constructed below use the @RelativeGuidPath annotation
+         * incorrectly. As such, they should both throw an exception.
+         */
+        assertThrows(KetillException.class, () -> new MockGlfwJoystickSeeker
+                .WithInvalidPath0(ptr_glfwWindow));
+        assertThrows(KetillException.class, () -> new MockGlfwJoystickSeeker
+                .WithInvalidPath1(ptr_glfwWindow));
+
+        /*
+         * It makes no sense for the device type of GLFW joystick seeker to
+         * be a null class. Assume this was a mistake by the user and throw
+         * an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> new MockGlfwJoystickSeeker(null, ptr_glfwWindow));
+    }
+
+    @Test
+    void testLoadJsonGuids() {
         /*
          * It would not make sense to try loading a JSON device GUIDs
          * container from a null path. Assume this was a mistake by the
@@ -103,35 +95,28 @@ class GlfwJoystickSeekerTest {
         /*
          * There are no files located at io/ketill/glfw/ in the classpath.
          * The class also has no @RelativeGuidPath to redirect the base.
-         * As a result, this file should fail to load and an exception
-         * should be thrown.
+         * As such, this file should fail to load.
          */
         assertThrows(KetillException.class,
                 () -> seeker.loadJsonGuids("valid.json"));
 
-        /* @formatter:off */
-        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            mockGlfwWindow(glfw, ptr_glfwWindow);
-            MockGlfwJoystickSeeker relative = new MockGlfwJoystickSeeker
-                    .WithRelativePath(ptr_glfwWindow);
+        MockGlfwJoystickSeeker relative = new MockGlfwJoystickSeeker
+                .WithRelativePath(ptr_glfwWindow);
 
-            /* ensure correct value for root path */
-            assertEquals("/", RelativeGuidPath.ROOT);
+        /* ensure correct value for root path */
+        assertEquals("/", RelativeGuidPath.ROOT);
 
-            /*
-             * To test @RelativeGuidPath, load the same file from
-             * a GlfwJoystickSeeker which uses the annotation. It
-             * has set the relative path to the folder containing
-             * the file loaded via absolute path. As such, their
-             * contents should match exactly.
-             */
-            Collection<String> guidsViaAbs =
-                    seeker.loadJsonGuids("/json_device_guids/valid.json");
-            Collection<String> guidsViaRelative =
-                    relative.loadJsonGuids("valid.json");
-            assertIterableEquals(guidsViaAbs, guidsViaRelative);
-        }
-        /* @formatter:on */
+        /*
+         * To test the  @RelativeGuidPath annotation, load the same file
+         * from a GlfwJoystickSeeker which uses the annotation. It has set
+         * the relative path to the folder containing the file loaded via
+         * absolute path. As such, their contents should match exactly.
+         */
+        Collection<String> guidsViaAbs =
+                seeker.loadJsonGuids("/json_device_guids/valid.json");
+        Collection<String> guidsViaRelative =
+                relative.loadJsonGuids("valid.json");
+        assertIterableEquals(guidsViaAbs, guidsViaRelative);
 
         /*
          * This file loads successfully, however there are no known systems
@@ -143,7 +128,7 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
-    void isWrangling() {
+    void testIsWrangling() {
         /*
          * It would not make sense to check if a null GUID is currently being
          * wrangled. Assume this was user mistake and throw an exception.
@@ -159,7 +144,7 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
-    void isWranglingWith() {
+    void testIsWranglingWith() {
         /*
          * It would not make sense to check if a null GUID is currently being
          * wrangled. It also makes no sense to check if such a GUID is being
@@ -179,7 +164,7 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
-    void wrangleGuid() {
+    void testWrangleGuid() {
         /*
          * It would not make sense to wrangle a null GUID or to use a null
          * wrangler. As a result, assume this was a mistake by the user and
@@ -198,7 +183,6 @@ class GlfwJoystickSeekerTest {
                 () -> seeker.wrangleGuids(nullGuids, wrangler));
         assertThrows(NullPointerException.class,
                 () -> seeker.wrangleGuids(guids, null));
-
 
         AtomicBoolean wrangled = new AtomicBoolean();
         seeker.onWrangleGuid((s, g, w) ->
@@ -272,7 +256,7 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
-    void releaseGuid() {
+    void testReleaseGuid() {
         /*
          * It would not make sense to release a null GUID. As such, assume
          * this was a mistake by the user and throw an exception.
@@ -332,7 +316,7 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
-    void seekImpl() {
+    void testSeekImpl() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             /* wrangle GUID for next tests */
             seeker.wrangleGuid(guid, wrangler);
@@ -379,6 +363,12 @@ class GlfwJoystickSeekerTest {
             seeker.seek();
             assertTrue(forgot.get());
         }
+    }
+
+    @AfterAll
+    static void terminateGlfw() {
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
 }

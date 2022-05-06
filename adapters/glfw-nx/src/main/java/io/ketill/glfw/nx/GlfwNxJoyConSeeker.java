@@ -20,9 +20,7 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
      *                           Joy-Cons, {@code false} otherwise.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if both {@code seekNxLeftJoyCons}
+     * @throws IllegalArgumentException if both {@code seekNxLeftJoyCons}
      *                                  and {@code seekNxRightJoyCons} are
      *                                  {@code false}.
      */
@@ -53,8 +51,6 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer.
      */
     public GlfwNxJoyConSeeker(long ptr_glfwWindow) {
         this(ptr_glfwWindow, true, true);

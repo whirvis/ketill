@@ -217,6 +217,13 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
+     * @return the amount of currently discovered devices.
+     */
+    public final int getDeviceCount() {
+        return devices.size();
+    }
+
+    /**
      * Performs the given action for each device discovered by this device
      * seeker until they have all been processed or {@code action} throws
      * an exception. Exceptions thrown by the action are relayed to the
@@ -282,7 +289,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
          * devices list is a CopyOnWriteArrayList. However, using this
          * allows a different type to be used without breaking close().
          */
-        while(!devices.isEmpty()) {
+        while (!devices.isEmpty()) {
             I discovered = devices.get(0);
             this.forgetDevice(discovered);
         }

@@ -18,13 +18,13 @@ class DeviceGuidsTest {
     private MockDeviceGuids noGuids;
 
     @BeforeEach
-    void setup() {
+    void createContainer() {
         this.defaultGuids = new MockDeviceGuids();
         this.noGuids = new MockDeviceGuids(false);
     }
 
     @Test
-    void supportsSystem() {
+    void testSupportsSystem() {
         /*
          * It makes no sense for a system with a null ID to be supported by
          * a set of device GUIDs. As such, assume this was a mistake by the
@@ -61,7 +61,7 @@ class DeviceGuidsTest {
     }
 
     @Test
-    void addSystem() {
+    void testAddSystem() {
         /*
          * It would not make sense to add an operating system with a null ID
          * or a null determinant. As such, assume these were mistakes by the
@@ -97,7 +97,7 @@ class DeviceGuidsTest {
     }
 
     @Test
-    void removeSystem() {
+    void testRemoveSystem() {
         /*
          * It would not make sense to remove an operating system with a
          * null ID. As such, assume this was a mistake by the user and
@@ -116,7 +116,7 @@ class DeviceGuidsTest {
     }
 
     @Test
-    void getGuids() {
+    void testGetGuids() {
         /*
          * It would not make sense to fetch the GUIDs for an operating
          * system with a null ID. Assume this was a mistake by the user
@@ -146,8 +146,8 @@ class DeviceGuidsTest {
         defaultGuids.currentSystemId = systemIdStr;
 
         /*
-         * Ensure that all randomly generated IDs for the random system ID
-         * are returned. If any are missing, something has gone wrong.
+         * Ensure that all randomly generated IDs for the random system
+         * ID are returned. If any are missing, something has gone wrong.
          */
         Collection<String> fetched = defaultGuids.getGuids(systemIdStr);
         assertNotNull(fetched);
@@ -156,14 +156,14 @@ class DeviceGuidsTest {
         }
 
         /*
-         * Modifying the returned GUID container is illegal. If the user
-         * attempts to do so, an exception should be thrown.
+         * The user should not be able to modify the returned GUID container.
+         * If they attempt to do so, an exception should be thrown.
          */
         assertThrows(UnsupportedOperationException.class, fetched::clear);
     }
 
     @Test
-    void getSystemGuids() {
+    void testGetSystemGuids() {
         noGuids.currentSystemId = "dummy";
         noGuids.currentGuids = new String[0];
 
@@ -190,55 +190,39 @@ class DeviceGuidsTest {
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
-    void getSystemGuidsWindows() {
-        /*
-         * When running on Windows, ensure that getSystemGuids() results in
-         * the GUIDs for Windows being requested.
-         */
-        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+    void testGetSystemGuidsOnWindows() {
+        defaultGuids.getSystemGuids(); /* sets guids.lastRequestedOs */
         assertEquals(DeviceGuids.ID_WINDOWS, defaultGuids.lastRequestedOs);
     }
 
     @Test
     @EnabledOnOs(OS.MAC)
-    void getSystemGuidsMacOSX() {
-        /*
-         * When running on Mac OSX, ensure that getSystemGuids() results in
-         * the GUIDs for Mac OSX being requested.
-         */
-        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+    void testGetSystemGuidsOnMacOSX() {
+        defaultGuids.getSystemGuids(); /* sets guids.lastRequestedOs */
         assertEquals(DeviceGuids.ID_MAC_OSX, defaultGuids.lastRequestedOs);
     }
 
     @Test
     @EnabledOnOs(OS.LINUX)
-    void getSystemGuidsLinux() {
-        /*
-         * When running on Linux, ensure that getSystemGuids() results in
-         * the GUIDs for Linux being requested.
-         */
-        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+    void testGetSystemGuidsOnLinux() {
+        defaultGuids.getSystemGuids(); /* sets guids.lastRequestedOs */
         assertEquals(DeviceGuids.ID_LINUX, defaultGuids.lastRequestedOs);
     }
 
     @Test
     @EnabledOnOs(OS.LINUX)
-    void getSystemGuidsAndroid() {
+    void testGetSystemGuidsOnAndroid() {
         /*
-         * Android runs on Linux, however that is not specific enough for
-         * the GUID container (since devices have different GUIDs on Android
-         * than they do on Linux). This ensures that the unit test is running
-         * in an Android environment before continuing.
+         * Android runs on Linux, however that is not specific enough for the
+         * GUID container (since devices have different GUIDs on Android than
+         * they do on Linux). This ensures the test is running in an Android
+         * environment before continuing.
          */
         String runtimeName = System.getProperty("java.runtime.name");
         assumeTrue(runtimeName != null);
         assumeTrue(runtimeName.toLowerCase().contains("android"));
 
-        /*
-         * When running on Android, ensure that getSystemGuids() results in
-         * the GUIDs for Android being requested.
-         */
-        defaultGuids.getSystemGuids(); /* set guids.lastRequestedOs */
+        defaultGuids.getSystemGuids(); /* sets guids.lastRequestedOs */
         assertEquals(DeviceGuids.ID_ANDROID, defaultGuids.lastRequestedOs);
     }
 

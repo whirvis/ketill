@@ -27,9 +27,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
      * @return the wrangled XBOX controller.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     /* @formatter:off */
@@ -50,9 +48,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     public GlfwXboxAdapter(@NotNull XboxController controller,

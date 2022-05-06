@@ -21,9 +21,7 @@ public interface GlfwJoystickWrangler<I extends IoDevice> {
      * @return the wrangled device.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     @NotNull I wrangleDevice(long ptr_glfwWindow, int glfwJoystick);

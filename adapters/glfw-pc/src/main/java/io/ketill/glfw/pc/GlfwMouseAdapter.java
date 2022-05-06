@@ -24,8 +24,6 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
      * @return the wrangled mouse.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer.
      */
     @WranglerMethod
     public static @NotNull Mouse wrangle(long ptr_glfwWindow) {
@@ -45,8 +43,6 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer.
      */
     public GlfwMouseAdapter(@NotNull Mouse mouse,
                             @NotNull MappedFeatureRegistry registry,

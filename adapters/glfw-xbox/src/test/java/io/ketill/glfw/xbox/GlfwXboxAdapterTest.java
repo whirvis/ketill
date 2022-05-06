@@ -1,7 +1,8 @@
 package io.ketill.glfw.xbox;
 
 import io.ketill.xbox.XboxController;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
@@ -20,18 +21,21 @@ class GlfwXboxAdapterTest {
 
     private static final Random RANDOM = new Random();
 
-    private long ptr_glfwWindow;
-    private int glfwJoystick;
+    private static long ptr_glfwWindow;
+    private static int glfwJoystick;
+
+    @BeforeAll
+    static void initGlfw() {
+        assumeTrue(glfwInit());
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+        glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
+    }
+
     private XboxController controller;
 
     @BeforeEach
-    void setup() {
-        assumeTrue(glfwInit());
-
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        this.ptr_glfwWindow = glfwCreateWindow(1024, 768, "", 0L, 0L);
-        this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
-
+    void wrangleJoystick() {
         this.controller = GlfwXboxAdapter.wrangle(ptr_glfwWindow, glfwJoystick);
     }
 
@@ -42,11 +46,10 @@ class GlfwXboxAdapterTest {
     }
 
     @Test
-    void updateStick() {
+    void testUpdateStick() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
-                    .thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
 
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
@@ -64,11 +67,10 @@ class GlfwXboxAdapterTest {
     }
 
     @Test
-    void updateTrigger() {
+    void testUpdateTrigger() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
-                    .thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
 
             /* generate axis values for next test */
             float ltValue = RANDOM.nextFloat();
@@ -85,12 +87,10 @@ class GlfwXboxAdapterTest {
         }
     }
 
-    @AfterEach
-    void shutdown() {
-        if (ptr_glfwWindow != 0x00) {
-            glfwDestroyWindow(ptr_glfwWindow);
-            glfwTerminate();
-        }
+    @AfterAll
+    static void terminateGlfw() {
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
 }

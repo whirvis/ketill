@@ -23,9 +23,7 @@ public class GlfwNxLeftJoyConAdapter
      * @return the wrangled Switch left Joy-Con.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     /* @formatter:off */
@@ -46,9 +44,7 @@ public class GlfwNxLeftJoyConAdapter
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     public GlfwNxLeftJoyConAdapter(@NotNull NxLeftJoyCon joycon,

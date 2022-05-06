@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GlfwStickMappingTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         /*
          * It would not make sense to pass a negative index for the axes or
          * the Z-button (when specifying it, at least.) Any negative value is

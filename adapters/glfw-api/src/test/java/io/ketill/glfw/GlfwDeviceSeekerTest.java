@@ -7,16 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class GlfwDeviceSeekerTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         /*
-         * For a GLFW device seeker to function, a valid window pointer must
-         * be provided. As such, throw an exception if the pointer is NULL or
-         * does not point to a valid GLFW window.
+         * For a GLFW device adapter to function, a valid window pointer must
+         * be provided by the user. The GlfwDeviceSeeker class should make a
+         * call to GlfwUtils.requireWindow(). Since a NULL pointer was passed
+         * here, a NullPointerException should be thrown.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwDeviceSeeker(0x00));
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwDeviceSeeker(0x01));
     }
 
 }

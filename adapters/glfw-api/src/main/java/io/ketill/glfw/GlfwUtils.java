@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 class GlfwUtils {
 
     private static final long NULL_PTR = 0L;
+    private static final int[] WINDOW_SIZE = new int[1];
 
     static long requireWindow(long ptr_glfwWindow) {
         if (ptr_glfwWindow == NULL_PTR) {
@@ -12,15 +13,12 @@ class GlfwUtils {
         }
 
         /*
-         * If glfwGetWindowSize() sets X and Y to zero, it means an
-         * error has occurred. When this occurs, it can be inferred
-         * that the window pointer is not valid.
+         * Attempt to grab the window size. If an invalid pointer was passed,
+         * this will likely cause the program to crash. This is good, as it
+         * ensures the program will crash sooner than later (in turn, making
+         * finding the bug easier.)
          */
-        int[] x = new int[1], y = new int[1];
-        glfwGetWindowSize(ptr_glfwWindow, x, y);
-        if (x[0] == 0 || y[0] == 0) {
-            throw new IllegalArgumentException("invalid GLFW window pointer");
-        }
+        glfwGetWindowSize(ptr_glfwWindow, WINDOW_SIZE, WINDOW_SIZE);
 
         return ptr_glfwWindow;
     }

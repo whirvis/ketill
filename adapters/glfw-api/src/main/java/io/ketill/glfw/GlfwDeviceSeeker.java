@@ -9,8 +9,8 @@ import java.util.function.BiConsumer;
  * GLFW device seekers scan for I/O devices currently connected to a
  * GLFW window. When a device is connected to the window, the appropriate
  * {@code IoDevice} instance and adapter will be created. Devices must be
- * polled manually after creation using {@link IoDevice#poll()}. They can
- * be retrieved from {@link #discoveredDevices}.
+ * polled manually after creation using {@link IoDevice#poll()}. This can
+ * be done using {@link #pollDevices()}.
  * <p>
  * Implementations should call {@link #discoverDevice(IoDevice)} when a
  * device is discovered and {@link #forgetDevice(IoDevice)} when a device
@@ -36,8 +36,6 @@ public abstract class GlfwDeviceSeeker<I extends IoDevice>
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer.
      */
     public GlfwDeviceSeeker(long ptr_glfwWindow) {
         this.ptr_glfwWindow = GlfwUtils.requireWindow(ptr_glfwWindow);

@@ -1,7 +1,8 @@
 package io.ketill.glfw.nx;
 
 import io.ketill.nx.NxLeftJoyCon;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
@@ -18,16 +19,19 @@ import static org.mockito.Mockito.*;
 
 class GlfwNxLeftJoyConAdapterTest {
 
-    private long ptr_glfwWindow;
+    private static long ptr_glfwWindow;
+
+    @BeforeAll
+    static void initGlfw() {
+        assumeTrue(glfwInit());
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+    }
+
     private NxLeftJoyCon joycon;
 
     @BeforeEach
-    void setup() {
-        assumeTrue(glfwInit());
-
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        this.ptr_glfwWindow = glfwCreateWindow(1024, 768, "", 0L, 0L);
-
+    void wrangleJoystick() {
         this.joycon = GlfwNxLeftJoyConAdapter.wrangle(ptr_glfwWindow,
                 GLFW_JOYSTICK_1);
     }
@@ -38,7 +42,7 @@ class GlfwNxLeftJoyConAdapterTest {
     }
 
     @Test
-    void updateJoyConStick() {
+    void testUpdateJoyConStick() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             ByteBuffer buttons = ByteBuffer.allocate(32);
             glfw.when(() -> glfwGetJoystickButtons(GLFW_JOYSTICK_1))
@@ -73,7 +77,7 @@ class GlfwNxLeftJoyConAdapterTest {
     }
 
     @Test
-    void updateJoyConTrigger() {
+    void testUpdateJoyConTrigger() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             ByteBuffer buttons = ByteBuffer.allocate(32);
             glfw.when(() -> glfwGetJoystickButtons(GLFW_JOYSTICK_1))
@@ -89,12 +93,10 @@ class GlfwNxLeftJoyConAdapterTest {
         }
     }
 
-    @AfterEach
-    void shutdown() {
-        if (ptr_glfwWindow != 0x00) {
-            glfwDestroyWindow(ptr_glfwWindow);
-            glfwTerminate();
-        }
+    @AfterAll
+    static void terminateGlfw() {
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
 }

@@ -3,6 +3,7 @@ package io.ketill.glfw;
 import io.ketill.AdapterSupplier;
 import io.ketill.IoDevice;
 import io.ketill.MappedFeatureRegistry;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,8 @@ import java.nio.FloatBuffer;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.ketill.glfw.MockGlfw.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.mockito.Mockito.*;
 
@@ -24,78 +25,74 @@ class GlfwJoystickAdapterTest {
 
     private static final Random RANDOM = new Random();
 
-    private long ptr_glfwWindow;
-    private int glfwJoystick;
+    private static long ptr_glfwWindow;
+    private static int glfwJoystick;
+
+    /*
+     * For the next tests to successfully execute, GLFW must initialize
+     * successfully. If it fails to do so, that is fine. It just means
+     * the current machine does not have access to GLFW.
+     */
+    @BeforeAll
+    static void initGlfw() {
+        assumeTrue(glfwInit());
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+        glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
+    }
+
     private ByteBuffer buttons;
     private FloatBuffer axes;
     private MockJoystick joystick;
     private MockGlfwJoystickAdapter adapter;
 
-    @BeforeAll
-    static void __init__() {
+    @BeforeEach
+    void createAdapter() {
+        this.buttons = ByteBuffer.allocate(16);
+        this.axes = FloatBuffer.allocate(4);
+
+        AtomicReference<MockGlfwJoystickAdapter> adapter =
+                new AtomicReference<>();
+        AdapterSupplier<IoDevice> adapterSupplier = (c, r) -> {
+            adapter.set(new MockGlfwJoystickAdapter(c, r,
+                    ptr_glfwWindow, glfwJoystick));
+            return adapter.get();
+        };
+
+        this.joystick = new MockJoystick(adapterSupplier);
+        this.adapter = adapter.get();
+    }
+
+    @Test
+    void testInit() {
         IoDevice device = mock(IoDevice.class);
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
 
         /*
          * For a GLFW joystick adapter to function, a valid window pointer
-         * must be provided. As such, throw an exception if the pointer is
-         * NULL or does not point to a valid GLFW window.
+         * must be provided by the user. The GlfwJoystickAdapter class should
+         * make a call to GlfwUtils.requireWindow(). Since a NULL pointer was
+         * passed here, a NullPointerException should be thrown.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwJoystickAdapter(device, registry,
-                        0x00, 0));
+                        0x00, glfwJoystick));
+
+        /*
+         * For a GLFW joystick adapter to function, a valid joystick must
+         * be provided by the user. If an invalid joystick is passed, an
+         * IllegalArgumentException should be thrown.
+         */
         assertThrows(IllegalArgumentException.class,
                 () -> new MockGlfwJoystickAdapter(device, registry,
-                        0x01, 0));
-
-        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            mockGlfwWindow(glfw, 0x01);
-
-            /*
-             * For a GLFW joystick adapter to function, a valid joystick
-             * must be provided. Throw an exception if the joystick is not
-             * within bounds.
-             */
-            assertThrows(IllegalArgumentException.class,
-                    () -> new MockGlfwJoystickAdapter(device, registry,
-                            0x01, GLFW_JOYSTICK_LAST + 1));
-            assertThrows(IllegalArgumentException.class,
-                    () -> new MockGlfwJoystickAdapter(device, registry,
-                            0x01, GLFW_JOYSTICK_1 - 1));
-        }
-    }
-
-    @BeforeEach
-    void setup() {
-        /*
-         * Any valid, randomly chosen pointer and GLFW joystick should
-         * suffice for the following tests. The randomly chosen pointer
-         * will be mocked so a mock GLFW adapter can be created.
-         */
-        this.ptr_glfwWindow = RANDOM.nextLong();
-        this.glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
-
-        this.buttons = ByteBuffer.allocate(16);
-        this.axes = FloatBuffer.allocate(4);
-
-        try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
-            mockGlfwWindow(glfw, ptr_glfwWindow);
-
-            AtomicReference<MockGlfwJoystickAdapter> adapter =
-                    new AtomicReference<>();
-            AdapterSupplier<IoDevice> adapterSupplier = (c, r) -> {
-                adapter.set(new MockGlfwJoystickAdapter(c, r,
-                        ptr_glfwWindow, glfwJoystick));
-                return adapter.get();
-            };
-
-            this.joystick = new MockJoystick(adapterSupplier);
-            this.adapter = adapter.get();
-        }
+                        ptr_glfwWindow, GLFW_JOYSTICK_1 - 1));
+        assertThrows(IllegalArgumentException.class,
+                () -> new MockGlfwJoystickAdapter(device, registry,
+                        ptr_glfwWindow, GLFW_JOYSTICK_LAST + 1));
     }
 
     @Test
-    void mapButton() {
+    void testMapButton() {
         /*
          * It would not make sense to map a null button or for a button to
          * be mapped to a negative index. Assume these were a mistake by the
@@ -130,7 +127,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void mapStick() {
+    void testMapStick() {
         /*
          * It would not make sense to map a null stick or for a stick to be
          * given a null mapping. Assume these were a mistake by the user and
@@ -189,7 +186,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void mapTrigger() {
+    void testMapTrigger() {
         /*
          * It would not make sense to map a null trigger or for a trigger to
          * be mapped to a negative index. Assume these were mistakes by the
@@ -224,7 +221,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void getButtonCount() {
+    void testGetButtonCount() {
         /*
          * Since the internal buttons buffer has yet to be set, the device
          * adapter must return -1. This  prevents an exception from being
@@ -245,7 +242,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         /*
          * It would not make sense to get the value of a button with a
          * negative index. As such, assume this was a user mistake and
@@ -289,7 +286,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void getAxisCount() {
+    void testGetAxisCount() {
         /*
          * Since the internal axes buffer has yet to be set, the device
          * adapter must return a value of -1. This prevents an exception
@@ -311,7 +308,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void getAxis() {
+    void testGetAxis() {
         /*
          * It would not make sense to get the current value of an axis with a
          * negative index. As such, assume this was a mistake by the user and
@@ -355,7 +352,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void pollDevice() {
+    void testPollDevice() {
         /*
          * When polled, the GLFW joystick adapter should update its internal
          * buttons and axes by fetching their current state from GLFW.
@@ -368,7 +365,7 @@ class GlfwJoystickAdapterTest {
     }
 
     @Test
-    void isDeviceConnected() {
+    void testIsDeviceConnected() {
         /*
          * When checking if the joystick is connected, the adapter is
          * expected to ask GLFW directly on each call. This is ensured
@@ -384,6 +381,12 @@ class GlfwJoystickAdapterTest {
                     .thenReturn(false);
             assertFalse(adapter.isDeviceConnected());
         }
+    }
+
+    @AfterAll
+    static void terminateGlfw() {
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
 }

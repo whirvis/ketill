@@ -18,9 +18,7 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
      * @return the wrangled PlayStation 4 controller.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     /* @formatter:off */
@@ -41,9 +39,7 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer;
-     *                                  if {@code glfwJoystick} is not a
+     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
     public GlfwPs4Adapter(@NotNull Ps4Controller controller,

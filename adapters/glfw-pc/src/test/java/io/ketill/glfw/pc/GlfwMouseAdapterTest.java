@@ -3,7 +3,8 @@ package io.ketill.glfw.pc;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.pc.Mouse;
 import org.joml.Vector2f;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.glfw.GLFW;
@@ -18,21 +19,24 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("ConstantConditions")
 class GlfwMouseAdapterTest {
 
-    private long ptr_glfwWindow;
+    private static long ptr_glfwWindow;
+
+    @BeforeAll
+    static void initGlfw() {
+        assumeTrue(glfwInit());
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+    }
+
     private Mouse mouse;
 
     @BeforeEach
-    void setup() {
-        assumeTrue(glfwInit());
-
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        this.ptr_glfwWindow = glfwCreateWindow(1024, 768, "", 0L, 0L);
-
+    void wrangleMouse() {
         this.mouse = GlfwMouseAdapter.wrangle(ptr_glfwWindow);
     }
 
     @Test
-    void mapButton() {
+    void testMapButton() {
         /* create adapter from mocks for next test */
         Mouse mouse = mock(Mouse.class);
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
@@ -56,7 +60,7 @@ class GlfwMouseAdapterTest {
     }
 
     @Test
-    void updateButton() {
+    void testUpdateButton() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetMouseButton(ptr_glfwWindow,
                     GLFW_MOUSE_BUTTON_1)).thenReturn(GLFW_PRESS);
@@ -71,7 +75,7 @@ class GlfwMouseAdapterTest {
     }
 
     @Test
-    void updateCursor() {
+    void testUpdateCursor() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetCursorPos(eq(ptr_glfwWindow),
                     (double[]) any(), any())).thenAnswer((a) -> {
@@ -172,7 +176,7 @@ class GlfwMouseAdapterTest {
     }
 
     @Test
-    void pollDevice() {
+    void testPollDevice() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             mouse.poll(); /* update mouse cursor */
             glfw.verify(() -> glfwGetCursorPos(eq(ptr_glfwWindow),
@@ -181,7 +185,7 @@ class GlfwMouseAdapterTest {
     }
 
     @Test
-    void isDeviceConnected() {
+    void testIsDeviceConnected() {
         /*
          * For simplicity, mice are assumed to always be connected to the
          * computer. As such, this method should always return true.
@@ -189,12 +193,10 @@ class GlfwMouseAdapterTest {
         assertTrue(mouse.isConnected());
     }
 
-    @AfterEach
-    void shutdown() {
-        if (ptr_glfwWindow != 0x00) {
-            glfwDestroyWindow(ptr_glfwWindow);
-            glfwTerminate();
-        }
+    @AfterAll
+    static void terminateGlfw() {
+        glfwDestroyWindow(ptr_glfwWindow);
+        glfwTerminate();
     }
 
 }

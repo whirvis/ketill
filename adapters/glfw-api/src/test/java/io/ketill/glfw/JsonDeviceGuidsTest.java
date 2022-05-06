@@ -47,28 +47,28 @@ class JsonDeviceGuidsTest {
     private static File copyResource(String path) throws IOException {
         InputStream in = getResource(path);
 
-        /* generate random name for temp file */
+        /* generate random name for temporary file */
         Random random = new Random();
         String name = Integer.toHexString(random.nextInt());
-        File temp = new File(name + ".temp");
-        FileOutputStream tempOut = new FileOutputStream(temp);
+        File tmp = new File(name + ".tmp");
+        FileOutputStream tmpOut = new FileOutputStream(tmp);
 
         /* copying in chunks is faster */
         int read;
         byte[] buf = new byte[1024];
         while ((read = in.read(buf)) > 0) {
-            tempOut.write(buf, 0, read);
+            tmpOut.write(buf, 0, read);
         }
 
         /* prevent memory leak */
         in.close();
-        tempOut.close();
+        tmpOut.close();
 
-        return temp;
+        return tmp;
     }
 
     @Test
-    void load() throws IOException {
+    void testLoad() throws IOException {
         /*
          * It would not make sense to attempt loading a JSON device GUIDs
          * container from a null input stream. As such, assume this was a
@@ -128,7 +128,7 @@ class JsonDeviceGuidsTest {
 
     @Test
     @EnabledOnOs(OS.WINDOWS)
-    void loadWindows() throws IOException {
+    void testLoadOnWindows() throws IOException {
         DeviceGuids guids = loadValid();
 
         List<String> windowsGuids = new ArrayList<>();
@@ -141,7 +141,7 @@ class JsonDeviceGuidsTest {
 
     @Test
     @EnabledOnOs(OS.MAC)
-    void loadMacOSX() throws IOException {
+    void testLoadMacOnOSX() throws IOException {
         DeviceGuids guids = loadValid();
 
         List<String> macGuids = new ArrayList<>();
@@ -154,7 +154,7 @@ class JsonDeviceGuidsTest {
 
     @Test
     @EnabledOnOs(OS.LINUX)
-    void loadLinux() throws IOException {
+    void testLoadOnLinux() throws IOException {
         DeviceGuids guids = loadValid();
 
         List<String> linuxGuids = new ArrayList<>();
@@ -166,7 +166,7 @@ class JsonDeviceGuidsTest {
     }
 
     @Test
-    void loadResource() {
+    void testLoadResource() {
         /*
          * It would not make sense to attempt loading a JSON device GUIDs
          * container from a null resource. Assume this was a mistake by the
@@ -191,7 +191,7 @@ class JsonDeviceGuidsTest {
     }
 
     @Test
-    void loadFile() throws IOException {
+    void testLoadFile() throws IOException {
         /*
          * It would not make sense to attempt loading a JSON device GUIDs
          * container from a null file (or file path). Assume this was a

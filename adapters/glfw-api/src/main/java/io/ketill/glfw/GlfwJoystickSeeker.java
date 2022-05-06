@@ -86,8 +86,6 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @throws NullPointerException     if {@code type} is {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
      *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code ptr_glfwWindow} is not a
-     *                                  valid GLFW window pointer.
      * @see #loadJsonGuids(String)
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */

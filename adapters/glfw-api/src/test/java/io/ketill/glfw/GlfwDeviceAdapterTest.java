@@ -10,19 +10,18 @@ import static org.mockito.Mockito.*;
 class GlfwDeviceAdapterTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         IoDevice device = mock(IoDevice.class);
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
 
         /*
          * For a GLFW device adapter to function, a valid window pointer must
-         * be provided. As such, throw an exception if the pointer is NULL or
-         * does not point to a valid GLFW window.
+         * be provided by the user. The GlfwDeviceAdapter class should make a
+         * call to GlfwUtils.requireWindow(). Since a NULL pointer was passed
+         * here, a NullPointerException should be thrown.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockGlfwDeviceAdapter(device, registry, 0x00));
-        assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwDeviceAdapter(device, registry, 0x01));
     }
 
 }
