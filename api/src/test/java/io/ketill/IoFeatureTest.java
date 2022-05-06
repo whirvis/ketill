@@ -8,8 +8,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class IoFeatureTest {
 
+    private MockIoFeature feature;
+
+    @BeforeEach
+    void createFeature() {
+        this.feature = new MockIoFeature();
+    }
+
     @Test
-    void __init__() {
+    void testInit() {
         /*
          * It makes no sense for the feature's ID to be null or blank.
          * Furthermore, any whitespace in an ID is illegal.
@@ -22,15 +29,8 @@ class IoFeatureTest {
                 () -> new MockIoFeature("\t"));
     }
 
-    private MockIoFeature feature;
-
-    @BeforeEach
-    void setup() {
-        this.feature = new MockIoFeature();
-    }
-
     @Test
-    void getState() {
+    void testGetState() {
         /*
          * It would not make sense for the internal state of an I/O
          * feature to be null. As such, assume this was a mistake by

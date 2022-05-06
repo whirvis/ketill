@@ -8,8 +8,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class PlainIoFeatureTest {
 
+    private MockPlainIoFeature feature;
+
+    @BeforeEach
+    void createFeature() {
+        this.feature = new MockPlainIoFeature(Object::new);
+    }
+
     @Test
-    void __init__() {
+    void testInit() {
         /*
          * Plain I/O features must have a supplier to create an instance of
          * the state. As such, null suppliers, and null values given by the
@@ -21,15 +28,8 @@ class PlainIoFeatureTest {
                 () -> new MockPlainIoFeature(() -> null));
     }
 
-    private MockPlainIoFeature feature;
-
-    @BeforeEach
-    void setup() {
-        this.feature = new MockPlainIoFeature(Object::new);
-    }
-
     @Test
-    void getState() {
+    void testGetState() {
         /*
          * The purpose of a plain I/O feature is to generate a state with
          * an identical internal and container state. Neither state should

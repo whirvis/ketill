@@ -14,13 +14,13 @@ class IoDeviceSeekerTest {
     private MockIoDevice device;
 
     @BeforeEach
-    void setup() {
+    void createSeeker() {
         this.seeker = new MockIoDeviceSeeker();
         this.device = new MockIoDevice();
     }
 
     @Test
-    void discoverDevice() {
+    void testDiscoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
         seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
 
@@ -61,7 +61,7 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void forgetDevice() {
+    void testForgetDevice() {
         AtomicBoolean forgotten = new AtomicBoolean();
         seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
 
@@ -104,21 +104,21 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void forEachDevice() {
+    void testForEachDevice() {
         seeker.discoverDevice(device);
         seeker.forEachDevice(MockIoDevice::executeTask);
         assertTrue(device.executedTask);
     }
 
     @Test
-    void pollDevices() {
+    void testPollDevices() {
         seeker.discoverDevice(device);
         seeker.pollDevices();
         assertTrue(device.polled);
     }
 
     @Test
-    void seekImpl() {
+    void testSeek() {
         /*
          * When the seek() method is called, it must call the seekImpl()
          * method which is implemented by extending classes. This wrapping
@@ -130,7 +130,7 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void seekerError() {
+    void testSeekerError() {
         seeker.errorOnSeek = true;
 
         /*
@@ -163,7 +163,7 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void close() {
+    void testClose() {
         /* discover device for next test */
         seeker.discoverDevice(device);
 

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DirectionTest {
 
     @Test
-    void aliases() {
+    void ensureAccurateAliases() {
         assertSame(Direction.NORTH, Direction.UP);
         assertSame(Direction.SOUTH, Direction.DOWN);
         assertSame(Direction.WEST, Direction.LEFT);
@@ -15,7 +15,7 @@ class DirectionTest {
     }
 
     @Test
-    void fromId() {
+    void testFromId() {
         assertThrows(IllegalArgumentException.class,
                 () -> Direction.fromId(-1));
         for (Direction value : Direction.values()) {

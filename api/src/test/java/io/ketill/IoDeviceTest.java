@@ -15,8 +15,20 @@ class IoDeviceTest {
     private MockIoDevice device;
     private MockIoDeviceAdapter adapter;
 
-    @BeforeAll
-    static void __init__() {
+    @BeforeEach
+    void createDevice() {
+        AtomicReference<MockIoDeviceAdapter> adapter = new AtomicReference<>();
+        AdapterSupplier<MockIoDevice> adapterSupplier = (d, r) -> {
+            adapter.set(new MockIoDeviceAdapter(d, r));
+            return adapter.get();
+        };
+
+        this.device = new MockIoDevice("mock", adapterSupplier);
+        this.adapter = adapter.get();
+    }
+
+    @Test
+    void testInit() {
         /*
          * The device must be identifiable and have an adapter to poll for
          * input information. As such, null IDs, null adapter suppliers, and
@@ -60,20 +72,8 @@ class IoDeviceTest {
         assertFalse(adapter.get().isInitialized());
     }
 
-    @BeforeEach
-    void setup() {
-        AtomicReference<MockIoDeviceAdapter> adapter = new AtomicReference<>();
-        AdapterSupplier<MockIoDevice> adapterSupplier = (d, r) -> {
-            adapter.set(new MockIoDeviceAdapter(d, r));
-            return adapter.get();
-        };
-
-        this.device = new MockIoDevice("mock", adapterSupplier);
-        this.adapter = adapter.get();
-    }
-
     @Test
-    void initAdapter() {
+    void testInitAdapter() {
         /*
          * The MockInputDevice constructed in setup() uses the default
          * arguments. As such, it should have initialized its adapter.
@@ -89,7 +89,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void registerFields() {
+    void testRegisterFields() {
         /*
          * The MockInputDevice constructed in setup() uses the default
          * arguments. As such, it should have registered the FEATURE
@@ -119,7 +119,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getFeature() {
+    void testGetFeature() {
         /*
          * It does not make sense to get a feature from a null container
          * state. As such, assume this was a mistake by the user and throw
@@ -155,7 +155,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void isFeatureSupported() {
+    void testIsFeatureSupported() {
         /*
          * It would not make sense to check if a null feature is supported.
          * As such, assume this was a user mistake and throw an exception.
@@ -188,7 +188,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void isFeatureRegistered() {
+    void testIsFeatureRegistered() {
         /*
          * The isRegistered() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
@@ -202,7 +202,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getFeatureCount() {
+    void testGetFeatureCount() {
         /*
          * Since a single feature is declared and annotated with
          * @FeaturePresent in the MockIoFeature class, this should
@@ -212,7 +212,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getFeatures() {
+    void testGetFeatures() {
         /*
          * The getFeatures() method is an accessor to getFeatures() in
          * MappedFeatureRegistry. As such, their results should be equal.
@@ -222,7 +222,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getFeatureRegistration() {
+    void testGetFeatureRegistration() {
         /*
          * The getFeatureRegistration() method in IoDevice is an accessor
          * method to the same method implemented in MappedFeatureRegistry.
@@ -233,7 +233,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getState() {
+    void testGetState() {
         /*
          * The getState() method in IoDevice is an accessor method to the
          * same method implemented in MappedFeatureRegistry. As a result,
@@ -244,7 +244,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void getInternalState() {
+    void testGetInternalState() {
         /*
          * It would not make sense to get the internal state of a null
          * feature or a feature which has not yet been registered. As
@@ -266,7 +266,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void registerFeature() {
+    void testRegisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean registered = new AtomicBoolean();
         device.onRegisterFeature((d, f) -> registered.set(f == feature));
@@ -294,7 +294,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void unregisterFeature() {
+    void testUnregisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean unregistered = new AtomicBoolean();
         device.onUnregisterFeature((d, f) -> unregistered.set(f == feature));
@@ -325,7 +325,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void isConnected() {
+    void testIsConnected() {
         AtomicBoolean connected = new AtomicBoolean();
         device.onConnect((d) -> connected.set(true));
         device.onDisconnect((d) -> connected.set(false));
@@ -357,7 +357,7 @@ class IoDeviceTest {
     }
 
     @Test
-    void pollError() {
+    void testPollError() {
         adapter.errorOnPoll = true;
 
         /*

@@ -15,12 +15,12 @@ class MappedFeatureRegistryTest {
     private MappedFeatureRegistry registry;
 
     @BeforeEach
-    void setup() {
+    void createRegistry() {
         this.registry = new MappedFeatureRegistry();
     }
 
     @Test
-    void hasMapping() {
+    void testHasMapping() {
         /*
          * It makes no sense for a null feature to be mapped. As such, assume
          * this was a mistake by the user and throw an exception.
@@ -30,7 +30,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void mapFeature() {
+    void testMapFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean updated = new AtomicBoolean();
 
@@ -94,7 +94,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void unmapFeature() {
+    void testUnmapFeature() {
         AtomicBoolean updated = new AtomicBoolean();
         MockIoFeature feature = new MockIoFeature();
 
@@ -130,7 +130,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void getFeatureCount() {
+    void testGetFeatureCount() {
         /*
          * Since no features have been registered yet, this method should
          * return a value of zero.
@@ -139,7 +139,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void getFeatures() {
+    void testGetFeatures() {
         /*
          * The getFeatures() method provides a read-only view of all registered
          * features in a feature registry. Ensure that it never returns null
@@ -152,7 +152,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void getFeatureRegistration() {
+    void testGetFeatureRegistration() {
         MockIoFeature feature = new MockIoFeature();
         assertNull(registry.getFeatureRegistration(feature));
 
@@ -175,7 +175,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void getState() {
+    void testGetState() {
         MockIoFeature feature = new MockIoFeature();
 
         /*
@@ -198,7 +198,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void requestState() {
+    void testRequestState() {
         MockIoFeature feature = new MockIoFeature();
 
         /*
@@ -217,7 +217,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void registerFeature() {
+    void testRegisterFeature() {
         /* it is convient to test isRegistered() here */
         MockIoFeature feature = new MockIoFeature();
         assertFalse(registry.isFeatureRegistered(feature));
@@ -280,7 +280,7 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
-    void unregisterFeature() {
+    void testUnregisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         registry.registerFeature(feature); /* required to unregister */
 
