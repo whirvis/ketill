@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PressableFeatureEventTypeTest {
 
     @Test
-    void fromId() {
+    void testFromId() {
         /*
          * It would not make sense to get a feature event type from an
          * ID for a type that does not exist. As such, assume this was

@@ -52,7 +52,7 @@ class PressableFeatureMonitorTest {
     }
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         this.device = new MockIoDevice();
         this.feature = new MockIoFeature();
 
@@ -65,7 +65,7 @@ class PressableFeatureMonitorTest {
     }
 
     @Test
-    void init() {
+    void testInit() {
         /*
          * It would not make sense for the device, feature, internal state,
          * or callback supplier to be null. assume this was a mistake by
@@ -109,7 +109,7 @@ class PressableFeatureMonitorTest {
     }
 
     @Test
-    void firePressEvents() {
+    void testPressEvents() {
         /*
          * When a feature is first pressed, the feature monitor should
          * fire a PRESS type event. Failure to do so indicates an error.
@@ -126,7 +126,7 @@ class PressableFeatureMonitorTest {
     }
 
     @Test
-    void fireHoldEvents() throws InterruptedException {
+    void testHoldEvents() throws InterruptedException {
         PressableFeatureConfig config = new PressableFeatureConfig();
         device.usePressableConfig(config);
 

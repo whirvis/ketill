@@ -12,7 +12,7 @@ class PsxControllerTest {
     private PsxController psx;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.psx = new MockPsxController(MockPsxAdapter::new);
     }
 

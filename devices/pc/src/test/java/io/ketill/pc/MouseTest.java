@@ -17,7 +17,7 @@ class MouseTest {
     private Mouse mouse;
 
     @BeforeEach
-    void setup() {
+    void createMouse() {
         this.mouse = new Mouse(MockPcAdapter::new);
     }
 
@@ -40,7 +40,7 @@ class MouseTest {
     }
 
     @Test
-    void onMouseButtonEvent() {
+    void testMouseButtonEvents() {
         /* set callback for next test */
         AtomicBoolean notified = new AtomicBoolean();
         mouse.onPressableEvent(e -> notified.set(true));
@@ -70,12 +70,12 @@ class MouseTest {
     }
 
     @Test
-    void getPressableCallback() {
+    void testGetPressableCallback() {
         assertNull(mouse.getPressableCallback());
     }
 
     @Test
-    void usePressableCallback() {
+    void testUsePressableCallback() {
         /* @formatter:off */
         Consumer<PressableFeatureEvent> callback = (e) -> {};
         mouse.onPressableEvent(callback);
@@ -84,7 +84,7 @@ class MouseTest {
     }
 
     @Test
-    void usePressableConfig() {
+    void testUsePressableConfig() {
         PressableFeatureConfig config = new PressableFeatureConfig();
         mouse.usePressableConfig(config);
         assertSame(config, mouse.getPressableConfig());
@@ -99,7 +99,7 @@ class MouseTest {
     }
 
     @Test
-    void getPressableConfig() {
+    void testGetPressableConfig() {
         assertSame(PressableFeatureConfig.DEFAULT,
                 mouse.getPressableConfig());
     }

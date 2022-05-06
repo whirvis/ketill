@@ -12,19 +12,19 @@ class TriggerStateTest {
     private TriggerState container;
 
     @BeforeEach
-    void setup() {
+    void createState() {
         this.internal = new TriggerStateZ();
         this.container = new TriggerState(internal);
     }
 
     @Test
-    void __init__() {
+    void testInit() {
         assertThrows(NullPointerException.class,
                 () -> new TriggerState(null));
     }
 
     @Test
-    void getForce() {
+    void testGetForce() {
         internal.force = 1.0F;
         assertEquals(1.0f, container.getForce());
         internal.force = 0.0F;
@@ -32,7 +32,7 @@ class TriggerStateTest {
     }
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         internal.pressed = true;
         assertTrue(container.isPressed());
         internal.pressed = false;
@@ -40,7 +40,7 @@ class TriggerStateTest {
     }
 
     @Test
-    void isHeld() {
+    void testIsHeld() {
         internal.held = true;
         assertTrue(container.isHeld());
         internal.held = false;

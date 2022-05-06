@@ -8,23 +8,23 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class PlayerLedTest {
 
+    private PlayerLed led;
+
+    @BeforeEach
+    void createLed() {
+        this.led = new PlayerLed("led");
+    }
+
     @Test
-    void __init__() {
+    void testInit() {
         assertThrows(NullPointerException.class,
                 () -> new PlayerLed(null));
         assertThrows(IllegalArgumentException.class,
                 () -> new PlayerLed("led", -1));
     }
 
-    private PlayerLed led;
-
-    @BeforeEach
-    void setup() {
-        this.led = new PlayerLed("led");
-    }
-
     @Test
-    void ledCount() {
+    void testLedCount() {
         assertEquals(4, led.ledCount);
     }
 

@@ -9,26 +9,26 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnalogTriggerTest {
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         assertFalse(AnalogTrigger.isPressed(0.0F));
         assertTrue(AnalogTrigger.isPressed(1.0F));
-    }
-
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new AnalogTrigger(null));
     }
 
     private AnalogTrigger trigger;
 
     @BeforeEach
-    void setup() {
+    void createTrigger() {
         this.trigger = new AnalogTrigger("trigger");
     }
 
     @Test
-    void getState() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new AnalogTrigger(null));
+    }
+
+    @Test
+    void testGetState() {
         TriggerStateZ internal = trigger.getInternalState();
         assertNotNull(internal);
         TriggerState container = trigger.getContainerState(internal);

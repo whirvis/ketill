@@ -19,7 +19,7 @@ class ControllerTest {
     private MockController controller;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.ls = new AnalogStick("ls");
         this.lt = new AnalogTrigger("lt");
         this.controller = new MockController(MockControllerAdapter::new,
@@ -27,7 +27,7 @@ class ControllerTest {
     }
 
     @Test
-    void providedFeatures() {
+    void ensureProvidedFeaturesMatch() {
         /*
          * Analog sticks and triggers provided at construction should be
          * automatically registered and their state accessible via fields.
@@ -44,7 +44,7 @@ class ControllerTest {
     }
 
     @Test
-    void rumble() {
+    void testRumble() {
         /* register rumble motor for next test */
         RumbleMotor motor = new RumbleMotor("rumble");
         MotorVibration vibration =
@@ -68,7 +68,7 @@ class ControllerTest {
     }
 
     @Test
-    void onDeviceButtonEvent() {
+    void testDeviceButtonEvents() {
         /* set callback for next test */
         AtomicBoolean notified = new AtomicBoolean();
         controller.onPressableEvent(e -> notified.set(true));
@@ -98,7 +98,7 @@ class ControllerTest {
     }
 
     @Test
-    void onAnalogStickEvent() {
+    void testAnalogStickEvents() {
         /* set callback for next test */
         /* @formatter:off */
         AtomicBoolean
@@ -170,7 +170,7 @@ class ControllerTest {
     }
 
     @Test
-    void onAnalogTriggerEvent() {
+    void testAnalogTriggerEvents() {
         /* set callback for next test */
         AtomicBoolean notified = new AtomicBoolean();
         controller.onPressableEvent(e -> notified.set(true));
@@ -200,12 +200,12 @@ class ControllerTest {
     }
 
     @Test
-    void getPressableCallback() {
+    void testGetPressableCallback() {
         assertNull(controller.getPressableCallback());
     }
 
     @Test
-    void usePressableCallback() {
+    void testUsePressableCallback() {
         /* @formatter:off */
         Consumer<PressableFeatureEvent> callback = (e) -> {};
         controller.onPressableEvent(callback);
@@ -214,7 +214,7 @@ class ControllerTest {
     }
 
     @Test
-    void usePressableConfig() {
+    void testUsePressableConfig() {
         PressableFeatureConfig config = new PressableFeatureConfig();
         controller.usePressableConfig(config);
         assertSame(config, controller.getPressableConfig());
@@ -229,7 +229,7 @@ class ControllerTest {
     }
 
     @Test
-    void getPressableConfig() {
+    void testGetPressableConfig() {
         assertSame(PressableFeatureConfig.DEFAULT,
                 controller.getPressableConfig());
     }

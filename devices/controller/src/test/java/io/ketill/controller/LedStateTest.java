@@ -10,29 +10,29 @@ class LedStateTest {
     private LedState state;
 
     @BeforeEach
-    void setup() {
+    void createState() {
         this.state = new LedState();
     }
 
     @Test
-    void getMode() {
+    void testGetMode() {
         assertEquals(LedState.MODE_NUMBER, state.getMode());
     }
 
     @Test
-    void getValue() {
+    void testGetValue() {
         assertEquals(1, state.getValue());
     }
 
     @Test
-    void setNumber() {
+    void testSetNumber() {
         state.setNumber(4);
         assertEquals(4, state.getValue());
         assertEquals(LedState.MODE_NUMBER, state.getMode());
     }
 
     @Test
-    void setPattern() {
+    void testSetPattern() {
         state.setPattern(0b1111);
         assertEquals(0b1111, state.getValue());
         assertEquals(LedState.MODE_PATTERN, state.getMode());

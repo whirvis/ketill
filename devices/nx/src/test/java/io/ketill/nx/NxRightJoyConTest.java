@@ -36,14 +36,14 @@ class NxRightJoyConTest {
     }
 
     @Test
-    void leftJoyCon() {
+    void ensureIsNotLeftJoyCon() {
         assertFalse(nxRightJoyCon.isLeftJoyCon());
         assertThrows(UnsupportedOperationException.class,
                 nxRightJoyCon::asLeftJoyCon);
     }
 
     @Test
-    void rightJoyCon() {
+    void ensureIsRightJoyCon() {
         assertTrue(nxRightJoyCon.isRightJoyCon());
         assertSame(nxRightJoyCon, nxRightJoyCon.asRightJoyCon());
     }

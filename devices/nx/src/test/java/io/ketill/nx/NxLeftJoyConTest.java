@@ -12,7 +12,7 @@ class NxLeftJoyConTest {
     private NxLeftJoyCon nxLeftJoyCon;
 
     @BeforeEach
-    void setup() {
+    void createJoyCon() {
         this.nxLeftJoyCon = new NxLeftJoyCon(MockNxAdapter::new);
     }
 
@@ -36,13 +36,13 @@ class NxLeftJoyConTest {
     }
 
     @Test
-    void leftJoyCon() {
+    void ensureIsLeftJoyCon() {
         assertTrue(nxLeftJoyCon.isLeftJoyCon());
         assertSame(nxLeftJoyCon, nxLeftJoyCon.asLeftJoyCon());
     }
 
     @Test
-    void rightJoyCon() {
+    void ensureIsNotRightJoyCon() {
         assertFalse(nxLeftJoyCon.isRightJoyCon());
         assertThrows(UnsupportedOperationException.class,
                 nxLeftJoyCon::asRightJoyCon);

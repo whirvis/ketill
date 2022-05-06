@@ -17,7 +17,7 @@ class KeyboardTest {
     private Keyboard keyboard;
 
     @BeforeEach
-    void setup() {
+    void createKeyboard() {
         this.keyboard = new Keyboard(MockPcAdapter::new);
     }
 
@@ -151,7 +151,7 @@ class KeyboardTest {
     }
 
     @Test
-    void onKeyboardKeyEvent() {
+    void testKeyboardKeyEvents() {
         /* set callback for next test */
         AtomicBoolean notified = new AtomicBoolean();
         keyboard.onPressableEvent(e -> notified.set(true));
@@ -181,12 +181,12 @@ class KeyboardTest {
     }
 
     @Test
-    void getPressableCallback() {
+    void testGetPressableCallback() {
         assertNull(keyboard.getPressableCallback());
     }
 
     @Test
-    void usePressableCallback() {
+    void testUsePressableCallback() {
         /* @formatter:off */
         Consumer<PressableFeatureEvent> callback = (e) -> {};
         keyboard.onPressableEvent(callback);
@@ -195,7 +195,7 @@ class KeyboardTest {
     }
 
     @Test
-    void usePressableConfig() {
+    void testUsePressableConfig() {
         PressableFeatureConfig config = new PressableFeatureConfig();
         keyboard.usePressableConfig(config);
         assertSame(config, keyboard.getPressableConfig());
@@ -210,7 +210,7 @@ class KeyboardTest {
     }
 
     @Test
-    void getPressableConfig() {
+    void testGetPressableConfig() {
         assertSame(PressableFeatureConfig.DEFAULT,
                 keyboard.getPressableConfig());
     }

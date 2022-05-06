@@ -17,13 +17,13 @@ class LightbarColorTest {
     private Vector4fc vector;
 
     @BeforeEach
-    void setup() {
+    void createLightbar() {
         this.color = new LightbarColor();
         this.vector = color.getVector();
     }
 
     @Test
-    void setLightbarColor4f() {
+    void testSetLightbarColor4f() {
         float r = RANDOM.nextFloat();
         float g = RANDOM.nextFloat();
         float b = RANDOM.nextFloat();
@@ -68,7 +68,7 @@ class LightbarColorTest {
     }
 
     @Test
-    void setLightbarColorRgba() {
+    void testSetLightbarColorRgba() {
         int rgba = 0xF3C94F88;
 
         /*
@@ -95,7 +95,7 @@ class LightbarColorTest {
     }
 
     @Test
-    void setLightbarColorAwt() {
+    void testSetLightbarColorAwt() {
         int r = RANDOM.nextInt(0x100);
         int g = RANDOM.nextInt(0x100);
         int b = RANDOM.nextInt(0x100);

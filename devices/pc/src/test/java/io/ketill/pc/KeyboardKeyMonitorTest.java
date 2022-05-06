@@ -14,7 +14,7 @@ class KeyboardKeyMonitorTest {
     private KeyboardKeyMonitor monitor;
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         Keyboard keyboard = mock(Keyboard.class);
         KeyboardKey key = new KeyboardKey("key");
         this.state = new KeyPressZ();
@@ -39,7 +39,7 @@ class KeyboardKeyMonitorTest {
     }
 
     @Test
-    void eventFired() {
+    void testEvents() {
         /*
          * When the HOLD event is fired, the keyboard key monitor must
          * set the state of the key it was assigned to be held down.
@@ -63,7 +63,7 @@ class KeyboardKeyMonitorTest {
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
-    void isPressed() {
+    void testIsPressed() {
         state.pressed = true;
         assertTrue(monitor.isPressed());
         state.pressed = false;

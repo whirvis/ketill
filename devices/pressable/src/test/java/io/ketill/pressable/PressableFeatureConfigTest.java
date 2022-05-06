@@ -12,12 +12,12 @@ class PressableFeatureConfigTest {
     private PressableFeatureConfig config;
 
     @BeforeEach
-    void setup() {
+    void createConfig() {
         this.config = new PressableFeatureConfig();
     }
 
     @Test
-    void getHoldTime() {
+    void testGetHoldTime() {
         /*
          * Since this configuration was created with the default constructor,
          * the hold time should be equal to the default value.
@@ -27,14 +27,14 @@ class PressableFeatureConfigTest {
     }
 
     @Test
-    void setHoldTime() {
+    void testSetHoldTime() {
         long holdTime = new Random().nextLong();
         config.setHoldTime(holdTime);
         assertEquals(holdTime, config.getHoldTime());
     }
 
     @Test
-    void isHoldEnabled() {
+    void testIsHoldEnabled() {
         /*
          * Since this configuration was created with the default constructor,
          * feature holding should be enabled already.
@@ -50,7 +50,7 @@ class PressableFeatureConfigTest {
     }
 
     @Test
-    void getHoldPressInterval() {
+    void testGetHoldPressInterval() {
         /*
          * Since this configuration was created with the default constructor,
          *  the hold press interval should be the default value.
@@ -60,14 +60,14 @@ class PressableFeatureConfigTest {
     }
 
     @Test
-    void setHoldPressInterval() {
+    void testSetHoldPressInterval() {
         long holdPressInterval = new Random().nextLong();
         config.setHoldPressInterval(holdPressInterval);
         assertEquals(holdPressInterval, config.getHoldPressInterval());
     }
 
     @Test
-    void isHoldPressEnabled() {
+    void testIsHoldPressEnabled() {
         /*
          * Since this configuration was created with the default constructor,
          * virtual feature pressing should be enabled.
@@ -85,7 +85,7 @@ class PressableFeatureConfigTest {
     }
 
     @Test
-    void valueOf() {
+    void testValueOf() {
         /*
          * When the provided configuration is not null, the valueOf()
          * method must return the given value.

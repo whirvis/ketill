@@ -12,17 +12,17 @@ class MotorVibrationTest {
     private MotorVibration vibration;
 
     @BeforeEach
-    void setup() {
+    void createState() {
         this.vibration = new MotorVibration();
     }
 
     @Test
-    void getStrength() {
+    void testGetStrength() {
         assertEquals(0.0F, vibration.getStrength());
     }
 
     @Test
-    void setStrength() {
+    void testSetStrength() {
         assertSame(vibration, vibration.setStrength(0.0F));
 
         /*

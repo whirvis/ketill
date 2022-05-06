@@ -11,7 +11,7 @@ class NxProControllerTest {
     private NxProController nxPro;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.nxPro = new NxProController(MockNxAdapter::new);
     }
 

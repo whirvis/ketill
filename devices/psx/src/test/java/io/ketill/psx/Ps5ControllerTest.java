@@ -11,7 +11,7 @@ class Ps5ControllerTest {
     private Ps5Controller ps5;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.ps5 = new Ps5Controller(MockPsxAdapter::new);
     }
 

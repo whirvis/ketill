@@ -8,21 +8,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class KeyboardKeyTest {
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new KeyboardKey(null));
-    }
-
     private KeyboardKey key;
 
     @BeforeEach
-    void setup() {
+    void createKey() {
         this.key = new KeyboardKey("key");
     }
 
     @Test
-    void getState() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new KeyboardKey(null));
+    }
+
+    @Test
+    void testGetState() {
         KeyPressZ internal = key.getInternalState();
         assertNotNull(internal);
         KeyPress container = key.getContainerState(internal);

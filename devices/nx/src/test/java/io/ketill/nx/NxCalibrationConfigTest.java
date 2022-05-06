@@ -13,12 +13,12 @@ class NxCalibrationConfigTest {
     private NxCalibrationConfig config;
 
     @BeforeEach
-    void setup() {
+    void createConfig() {
         this.config = new NxCalibrationConfig();
     }
 
     @Test
-    void setLsBounds() {
+    void testSetLsBounds() {
         /*
          * It would not make sense to set the upper or lower bounds to a null
          * vector. Assume this was a user mistake and throw an exception.
@@ -42,7 +42,7 @@ class NxCalibrationConfigTest {
     }
 
     @Test
-    void applyLs() {
+    void testApplyLs() {
         /*
          * It would not make sense to apply the calibration for the left
          * analog stick to a null vector. Assume this was a mistake by the
@@ -72,7 +72,7 @@ class NxCalibrationConfigTest {
     }
 
     @Test
-    void setRsBounds() {
+    void testSetRsBounds() {
         /*
          * It would not make sense to set the upper or lower bounds to a null
          * vector. Assume this was a user mistake and throw an exception.
@@ -96,7 +96,7 @@ class NxCalibrationConfigTest {
     }
 
     @Test
-    void applyRs() {
+    void testApplyRs() {
         /*
          * It would not make sense to apply the calibration for the right
          * analog stick to a null vector. Assume this was a mistake by the

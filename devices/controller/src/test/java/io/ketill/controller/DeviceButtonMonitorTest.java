@@ -14,7 +14,7 @@ class DeviceButtonMonitorTest {
     private DeviceButtonMonitor monitor;
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         Controller controller = mock(Controller.class);
         DeviceButton button = new DeviceButton("button");
         this.state = new ButtonStateZ();
@@ -39,7 +39,7 @@ class DeviceButtonMonitorTest {
     }
 
     @Test
-    void eventFired() {
+    void testEvents() {
         /*
          * When the HOLD event is fired, the device button monitor must
          * set the state of the button it was assigned to be held down.
@@ -64,7 +64,7 @@ class DeviceButtonMonitorTest {
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
-    void isPressed() {
+    void testIsPressed() {
         state.pressed = true;
         assertTrue(monitor.isPressed());
         state.pressed = false;

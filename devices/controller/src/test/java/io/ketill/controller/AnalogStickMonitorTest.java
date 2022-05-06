@@ -15,7 +15,7 @@ class AnalogStickMonitorTest {
     private AnalogStickMonitor monitor;
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         Controller controller = mock(Controller.class);
         AnalogStick stick = new AnalogStick("stick");
         this.state = new StickPosZ();
@@ -41,7 +41,7 @@ class AnalogStickMonitorTest {
     }
 
     @Test
-    void eventFired() {
+    void testEvents() {
         /*
          * When the PRESS event is fired, the analog stick monitor must
          * set the state of the button it was assigned to be pressed.
@@ -67,7 +67,7 @@ class AnalogStickMonitorTest {
     }
 
     @Test
-    void getEventData() {
+    void testGetEventData() {
         /*
          * The event data of an analog stick monitor is the direction of the
          * analog stick being monitored. This allows for the event listener
@@ -78,7 +78,7 @@ class AnalogStickMonitorTest {
     }
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         state.y = 1.0F; /* facing upwards */
         assertTrue(monitor.isPressed());
         state.y = 0.0F; /* facing center */

@@ -11,7 +11,7 @@ class GcControllerTest {
     private GcController gc;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.gc = new GcController(MockGcAdapter::new);
     }
 

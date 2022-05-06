@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RumbleMotorTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         assertThrows(NullPointerException.class,
                 () -> new RumbleMotor(null));
     }

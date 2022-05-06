@@ -8,26 +8,26 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class DeviceButtonTest {
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new DeviceButton(null));
-    }
-
     private DeviceButton button;
 
     @BeforeEach
-    void setup() {
+    void createButton() {
         this.button = new DeviceButton("button");
     }
 
     @Test
-    void direction() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new DeviceButton(null));
+    }
+
+    @Test
+    void ensureNullDirection() {
         assertNull(button.direction);
     }
 
     @Test
-    void getState() {
+    void testGetState() {
         ButtonStateZ internal = button.getInternalState();
         assertNotNull(internal);
         ButtonState container = button.getContainerState(internal);

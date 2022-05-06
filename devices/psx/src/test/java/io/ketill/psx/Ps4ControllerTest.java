@@ -11,7 +11,7 @@ class Ps4ControllerTest {
     private Ps4Controller ps4;
 
     @BeforeEach
-    void setup() {
+    void createController() {
         this.ps4 = new Ps4Controller(MockPsxAdapter::new);
     }
 

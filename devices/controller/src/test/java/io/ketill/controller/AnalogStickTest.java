@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnalogStickTest {
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         Vector3f pos = new Vector3f();
 
         /*
@@ -46,26 +46,26 @@ class AnalogStickTest {
         assertTrue(AnalogStick.isPressed(pos, Direction.RIGHT));
     }
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new AnalogStick(null));
-    }
-
     private AnalogStick stick;
 
     @BeforeEach
-    void setup() {
+    void createStick() {
         this.stick = new AnalogStick("stick");
     }
 
     @Test
-    void zButton() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new AnalogStick(null));
+    }
+
+    @Test
+    void ensureNullZButton() {
         assertNull(stick.zButton);
     }
 
     @Test
-    void getState() {
+    void testGetState() {
         StickPosZ internal = stick.getInternalState();
         assertNotNull(internal);
         StickPos container = stick.getContainerState(internal);

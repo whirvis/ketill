@@ -11,7 +11,7 @@ class XboxControllerTest {
     private XboxController xbox;
     
     @BeforeEach
-    void setup() {
+    void createController() {
         this.xbox = new XboxController(MockXboxAdapter::new);
     }
     

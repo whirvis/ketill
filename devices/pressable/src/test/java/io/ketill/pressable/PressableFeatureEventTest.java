@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 class PressableFeatureEventTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         PressableFeatureEventType type = PressableFeatureEventType.PRESS;
         IoDevice device = mock(IoDevice.class);
         MockIoFeature feature = new MockIoFeature();

@@ -14,7 +14,7 @@ class AnalogTriggerMonitorTest {
     private AnalogTriggerMonitor monitor;
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         Controller controller = mock(Controller.class);
         AnalogTrigger trigger = new AnalogTrigger("trigger");
         this.state = new TriggerStateZ();
@@ -39,7 +39,7 @@ class AnalogTriggerMonitorTest {
     }
 
     @Test
-    void eventFired() {
+    void testEvents() {
         /*
          * When the PRESS event is fired, the analog trigger monitor must
          * set the state of the button it was assigned to be pressed.
@@ -72,7 +72,7 @@ class AnalogTriggerMonitorTest {
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
-    void isPressed() {
+    void testIsPressed() {
         state.force = 1.0F; /* fully pressed */
         assertTrue(monitor.isPressed());
         state.force = 0.0F; /* fully released */

@@ -8,20 +8,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class CursorTest {
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class, () -> new Cursor(null));
-    }
-
     private Cursor cursor;
 
     @BeforeEach
-    void setup() {
+    void createCursor() {
         this.cursor = new Cursor("cursor");
     }
 
     @Test
-    void getState() {
+    void testInit() {
+        assertThrows(NullPointerException.class, () -> new Cursor(null));
+    }
+
+    @Test
+    void testGetState() {
         CursorStateZ internal = cursor.getInternalState();
         assertNotNull(internal);
         CursorState container = cursor.getContainerState(internal);

@@ -14,12 +14,6 @@ class CursorStateTest {
 
     private static final Random RANDOM = new Random();
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new CursorState(null));
-    }
-
     private CursorStateZ internal;
     private CursorState container;
 
@@ -30,7 +24,13 @@ class CursorStateTest {
     }
 
     @Test
-    void isVisible() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new CursorState(null));
+    }
+
+    @Test
+    void testIsVisible() {
         internal.visible = true;
         assertTrue(container.isVisible());
         internal.visible = false;
@@ -38,7 +38,7 @@ class CursorStateTest {
     }
 
     @Test
-    void setVisible() {
+    void testSetVisible() {
         container.setVisible(true);
         assertTrue(internal.visible);
         container.setVisible(false);
@@ -46,7 +46,7 @@ class CursorStateTest {
     }
 
     @Test
-    void getPosition() {
+    void testGetPosition() {
         Vector2f currentPos = internal.currentPos;
         currentPos.x = RANDOM.nextFloat();
         currentPos.y = RANDOM.nextFloat();
@@ -57,21 +57,21 @@ class CursorStateTest {
     }
 
     @Test
-    void getX() {
+    void testGetX() {
         Vector2f currentPos = internal.currentPos;
         currentPos.x = RANDOM.nextFloat();
         assertEquals(currentPos.x, container.getX());
     }
 
     @Test
-    void getY() {
+    void testGetY() {
         Vector2f currentPos = internal.currentPos;
         currentPos.y = RANDOM.nextFloat();
         assertEquals(currentPos.y, container.getY());
     }
 
     @Test
-    void setPosition() {
+    void testSetPosition() {
         assertThrows(NullPointerException.class,
                 () -> container.setPosition(null));
 

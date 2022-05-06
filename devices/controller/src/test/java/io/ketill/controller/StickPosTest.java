@@ -13,13 +13,13 @@ class StickPosTest {
     private StickPos container;
 
     @BeforeEach
-    void setup() {
+    void createState() {
         this.internal = spy(new StickPosZ());
         this.container = new StickPos(internal);
     }
 
     @Test
-    void __init__() {
+    void testInit() {
         assertThrows(NullPointerException.class,
                 () -> new StickPos(null));
     }

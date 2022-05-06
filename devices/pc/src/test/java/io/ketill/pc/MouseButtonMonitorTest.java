@@ -14,7 +14,7 @@ class MouseButtonMonitorTest {
     private MouseButtonMonitor monitor;
 
     @BeforeEach
-    void setup() {
+    void createMonitor() {
         Mouse mouse = mock(Mouse.class);
         MouseButton button = new MouseButton("button");
         this.state = new MouseClickZ();
@@ -39,7 +39,7 @@ class MouseButtonMonitorTest {
     }
 
     @Test
-    void eventFired() {
+    void testEvents() {
         /*
          * When the HOLD event is fired, the mouse button monitor must
          * set the state of the button it was assigned to be held down.
@@ -63,7 +63,7 @@ class MouseButtonMonitorTest {
      */
     @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
-    void isPressed() {
+    void testIsPressed() {
         state.pressed = true;
         assertTrue(monitor.isPressed());
         state.pressed = false;

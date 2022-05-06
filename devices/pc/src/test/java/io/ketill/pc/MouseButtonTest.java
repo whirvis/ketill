@@ -8,21 +8,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class MouseButtonTest {
 
-    @Test
-    void __init__() {
-        assertThrows(NullPointerException.class,
-                () -> new MouseButton(null));
-    }
-
     private MouseButton key;
 
     @BeforeEach
-    void setup() {
+    void createButton() {
         this.key = new MouseButton("button");
     }
 
     @Test
-    void getState() {
+    void testInit() {
+        assertThrows(NullPointerException.class,
+                () -> new MouseButton(null));
+    }
+
+    @Test
+    void testGetState() {
         MouseClickZ internal = key.getInternalState();
         assertNotNull(internal);
         MouseClick container = key.getContainerState(internal);

@@ -12,19 +12,19 @@ class ButtonStateTest {
     private ButtonState container;
 
     @BeforeEach
-    void setup() {
+    void createState() {
         this.internal = new ButtonStateZ();
         this.container = new ButtonState(internal);
     }
 
     @Test
-    void __init__() {
+    void testInit() {
         assertThrows(NullPointerException.class,
                 () -> new ButtonState(null));
     }
 
     @Test
-    void isPressed() {
+    void testIsPressed() {
         internal.pressed = true;
         assertTrue(container.isPressed());
         internal.pressed = false;
@@ -32,7 +32,7 @@ class ButtonStateTest {
     }
 
     @Test
-    void isHeld() {
+    void testIsHeld() {
         internal.held = true;
         assertTrue(container.isHeld());
         internal.held = false;
