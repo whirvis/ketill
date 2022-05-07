@@ -365,9 +365,9 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
         targeted.remove(id);
 
         /*
-         * Disconnect all connected peripherals with a matching
-         * product ID. This must be done before detaching them to
-         * preserve the natural order of peripheral operations.
+         * Disconnect all connected peripherals with a matching product ID.
+         * This must be done before detaching them to preserve the natural
+         * order of peripheral operations.
          */
         Iterator<P> connectedI = connected.iterator();
         while (connectedI.hasNext()) {
@@ -636,19 +636,19 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
         }
 
         /*
-         * Its possible the peripheral somehow got blocked while setting
-         * it up. As such, check if the peripheral is blocked again. If
-         * that turns out to be the case, do not finish connection.
+         * Its possible the peripheral somehow got blocked while setting up.
+         * As such, check if the peripheral is blocked again. If that turns
+         * out to be the case, do not finish connection.
          */
         if (this.isPeripheralBlocked(peripheral)) {
             return;
         }
 
         /*
-         * Only connect the peripheral if setup was successful. If setup
-         * fails for any reason, proper communication will likely not be
-         * possible. Furthermore, the user can listen for setup failure
-         * by implementing the peripheralSetupFailed() method.
+         * Only connect the peripheral if setup was successful. If it fails
+         * for any reason, proper communication will likely not be possible.
+         * Furthermore, the user can listen for setup failure by overriding
+         * the peripheralSetupFailed() method.
          */
         if (setupSuccessful) {
             connected.add(peripheral);
@@ -728,10 +728,10 @@ public abstract class PeripheralSeeker<I extends IoDevice, P>
             this.shutdownPeripheral(peripheral);
         } catch (Throwable cause) {
             /*
-             * Only notify the peripheral seeker an error has occurred
-             * when detaching a peripheral. Do not block it! That would
-             * resolve nothing since communication has already ended.
-             * If the user desires, they can block it themselves.
+             * Only notify the peripheral seeker an error has occurred when
+             * detaching a peripheral. Do not block it! Blocking it would
+             * resolve nothing, as communication has already ended. If the
+             * user desires, they can block it themselves.
              */
             this.peripheralShutdownFailed(peripheral, cause);
         }

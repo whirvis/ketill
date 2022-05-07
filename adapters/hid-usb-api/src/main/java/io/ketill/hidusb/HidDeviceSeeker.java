@@ -34,11 +34,10 @@ public abstract class HidDeviceSeeker<I extends IoDevice>
     private boolean startedServices;
 
     /*
-     * Because the callback methods of HidServicesListener drop any
-     * exceptions thrown into the void, all of their code is wrapped
-     * into a try catch all block. If they experience any exceptions,
-     * they will store them into this variable. Afterwards, seekImpl()
-     * will throw it on their behalf.
+     * Because the callback methods of HidServicesListener drop exceptions
+     * and throw them into the void, all of their code is wrapped in a try
+     * catch block. If they experience any exceptions, they will be stored
+     * in this field. Afterwards, seekImpl() will throw it on their behalf.
      */
     private Exception hidException;
 

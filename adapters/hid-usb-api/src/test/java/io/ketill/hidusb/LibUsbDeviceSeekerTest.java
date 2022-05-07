@@ -9,6 +9,7 @@ import org.usb4java.LibUsbException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,16 +17,31 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("ConstantConditions")
 class LibUsbDeviceSeekerTest {
 
+    private ProductId productId;
+    private LibUsbDevice peripheral;
+    private MockLibUsbDeviceSeeker seeker;
+
+    @BeforeEach
+    void createSeeker() {
+        LibUsbDeviceSeeker.scanWaitDisabled = true;
+
+        this.productId = new ProductId(0x1234, 0x5678);
+        this.peripheral = mock(LibUsbDevice.class);
+        when(peripheral.getProductId()).thenReturn(productId);
+
+        this.seeker = new MockLibUsbDeviceSeeker(LibUsbDevice::new);
+        seeker.targetProduct(productId);
+    }
+
     @Test
-    void __init__() {
+    void testInit() {
         long scanIntervalMs = LibUsbDeviceSeeker.MINIMUM_SCAN_INTERVAL;
         Context context = mock(Context.class);
 
         /*
-         * In LibUSB, NULL signifies the default context.
-         * Using the default context in the LibUSB device
-         * seeker is forbidden. As such, assume this was
-         * a user mistake and throw an exception.
+         * In LibUSB, NULL signifies the default context. Using the default
+         * context in the LibUSB device seeker is forbidden. As such, assume
+         * this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockLibUsbDeviceSeeker(scanIntervalMs, null,
@@ -34,11 +50,9 @@ class LibUsbDeviceSeekerTest {
                 () -> new MockLibUsbDeviceSeeker(null, LibUsbDevice::new));
 
         /*
-         * The device supplier is used by the libUSB device
-         * seeker to instantiate LibUsbDevice instances when
-         * scanning the system. Using a null device supplier
-         * would make this impossible. As such, assume this
-         * was a user mistake and throw an exception.
+         * The device supplier is used by the device seeker to instantiate
+         * LibUsbDevice instances when scanning the system. Having a null
+         * device supplier would make this impossible.
          */
         assertThrows(NullPointerException.class,
                 () -> new MockLibUsbDeviceSeeker(scanIntervalMs, context,
@@ -55,78 +69,38 @@ class LibUsbDeviceSeekerTest {
             libUsbDevice.when(LibUsbDevice::initContext).thenReturn(context);
 
             /*
-             * The context returned by LibUsbDevice.initContext()
-             * is a mock here. As such, these seekers don't need
-             * to be closed (there's no resources to free).
+             * The context returned by LibUsbDevice.initContext() is a mock
+             * here. As such, these seekers do not need to be closed (there
+             * are no resources to free.)
              */
             new MockLibUsbDeviceSeeker(scanIntervalMs, LibUsbDevice::new);
             new MockLibUsbDeviceSeeker(LibUsbDevice::new);
 
             /*
-             * The two constructors above do not take a parameter
-             * for the LibUSB context. They are both expected to
-             * initialize their own context and use that instead.
+             * The two constructors above do not take a parameter for the
+             * LibUSB context. They are both expected to initialize their
+             * own context and use that instead.
              */
             libUsbDevice.verify(LibUsbDevice::initContext, times(2));
         }
     }
 
-    private ProductId productId;
-    private LibUsbDevice peripheral;
-    private MockLibUsbDeviceSeeker seeker;
-
-    @BeforeEach
-    void setup() {
-        LibUsbDeviceSeeker.scanWaitDisabled = true;
-
-        this.productId = new ProductId(0x1234, 0x5678);
-        this.peripheral = mock(LibUsbDevice.class);
-        when(peripheral.getProductId()).thenReturn(productId);
-
-        this.seeker = new MockLibUsbDeviceSeeker(LibUsbDevice::new);
-        seeker.targetProduct(productId);
+    @Test
+    void testGetId() {
+        assertEquals(productId, seeker.getId(peripheral));
     }
 
     @Test
-    void minimumScanInterval() {
+    void testGetHash() {
+        assertEquals(peripheral.hashCode(), seeker.getHash(peripheral));
+    }
+
+    @Test
+    void testScanPeripherals() {
         /*
-         * Since the mock LibUsbDeviceSeeker uses the super
-         * constructor, it should be using the default scan
-         * interval, which is the minimum value allowed.
-         */
-        assertEquals(LibUsbDeviceSeeker.MINIMUM_SCAN_INTERVAL,
-                seeker.scanIntervalMs);
-    }
-
-    @Test
-    void defaultSetupAttempts() {
-        /*
-         * Since the mock LibUsbDeviceSeeker does not override
-         * the getSetupAttempts() method, it should return the
-         * default value.
-         */
-        assertEquals(LibUsbDeviceSeeker.DEFAULT_SETUP_ATTEMPTS,
-                seeker.getSetupAttempts(peripheral));
-    }
-
-    @Test
-    void getId() {
-        ProductId id = seeker.getId(peripheral);
-        assertEquals(productId, id);
-    }
-
-    @Test
-    void getHash() {
-        int hash = seeker.getHash(peripheral);
-        assertEquals(peripheral.hashCode(), hash);
-    }
-
-    @Test
-    void scanPeripherals() {
-        /*
-         * The LibUSB device seeker should get the currently
-         * connected devices using the LibUsbDevice class.
-         * It is verified to work via the LibUsbDeviceTest.
+         * The LibUSB device seeker should get currently connected devices
+         * using the LibUsbDevice class. This method is verified to work in
+         * the LibUsbDeviceTest class.
          */
         try (MockedStatic<LibUsbDevice> libUsbDevice =
                      mockStatic(LibUsbDevice.class)) {
@@ -136,7 +110,7 @@ class LibUsbDeviceSeekerTest {
     }
 
     @Test
-    void setupPeripheral() {
+    void testSetupPeripheral() {
         try (MockedStatic<LibUsbDevice> libUsbDevice =
                      mockStatic(LibUsbDevice.class)) {
             /* mock connection for next test */
@@ -148,10 +122,9 @@ class LibUsbDeviceSeekerTest {
             /* @formatter:on */
 
             /*
-             * When a LibUSB device is attached and setup, the
-             * LibUSB device seeker is expected to open a handle
-             * before connecting the peripheral. If this fails,
-             * the corrective measures can be taken before the
+             * When a LibUSB device is attached and setup, the LibUSB device
+             * seeker should open a handle before connecting the peripheral
+             * If this fails, corrective measures can be taken before the
              * peripheral is finally connected.
              */
             seeker.seek(); /* trigger peripheral setup */
@@ -161,7 +134,7 @@ class LibUsbDeviceSeekerTest {
     }
 
     @Test
-    void setupPeripheralFailed() {
+    void testSetupPeripheralFailed() {
         try (MockedStatic<LibUsbDevice> libUsbDevice =
                      mockStatic(LibUsbDevice.class)) {
             /* mock connection for next test */
@@ -173,11 +146,10 @@ class LibUsbDeviceSeekerTest {
             /* @formatter:on */
 
             /*
-             * If a non LibUSB error occurs while attempting to
-             * open the handle for a LibUSB device, the LibUSB
-             * device seeker should call the super. This should
-             * result in the peripheral being blocked, as that
-             * is the default behavior for setup failure.
+             * If a non LibUSB error occurs while attempting to open the
+             * handle for a LibUSB device, the device seeker should call
+             * the super. This should cause the peripheral to be blocked,
+             * as that is the default behavior for setup failure.
              */
             doThrow(RuntimeException.class).when(peripheral).openHandle();
             seeker.seek(); /* trigger failed setup */
@@ -187,12 +159,15 @@ class LibUsbDeviceSeekerTest {
             /* unblock peripheral for next test */
             seeker.unblockPeripheral(peripheral);
 
+            AtomicBoolean unblockAfterDetach = new AtomicBoolean();
+            seeker.onBlockPeripheral((d, b) ->
+                    unblockAfterDetach.set(b.unblockAfterDetach));
+
             /*
-             * When a LibUSB error occurs while attempting to
-             * open the handle for a device, the device seeker
-             * should decrement the remaining attempts for the
-             * device to connect. When no more attempts remain,
-             * the LibUSB device should be blocked.
+             * If a LibUSB error occurs while attempting to open the handle
+             * for a LibUSB device, the device seeker should decrement the
+             * remaining attempts for connection. When no attempts remain,
+             * the device should be blocked until it is detached.
              */
             doThrow(LibUsbException.class).when(peripheral).openHandle();
             int attempts = seeker.getSetupAttempts(peripheral);
@@ -200,13 +175,16 @@ class LibUsbDeviceSeekerTest {
                 seeker.seek(); /* trigger failed setup */
                 boolean blocked = seeker.isPeripheralBlocked(peripheral);
                 assertEquals(i + 1 >= attempts, blocked);
+                if (blocked) {
+                    assertTrue(unblockAfterDetach.get());
+                }
             }
             assertFalse(seeker.connectedPeripheral);
         }
     }
 
     @Test
-    void shutdownPeripheral() {
+    void testShutdownPeripheral() {
         try (MockedStatic<LibUsbDevice> libUsbDevice =
                      mockStatic(LibUsbDevice.class)) {
             /* mock connection for next test */
@@ -221,9 +199,8 @@ class LibUsbDeviceSeekerTest {
             seeker.seek(); /* trigger attach */
 
             /*
-             * When a device is disconnected and shutdown, the
-             * LibUSB device seeker is considered responsible
-             * for closing the LibUSB device. This is done to
+             * When a LibUSB device is disconnected and shutdown, the device
+             * seeker is responsible for closing the device. This is done to
              * prevent memory leaks.
              */
             connected.remove(peripheral);
@@ -234,14 +211,13 @@ class LibUsbDeviceSeekerTest {
     }
 
     @Test
-    void close() {
+    void testClose() {
         try (MockedStatic<LibUsbDevice> libUsbDevice =
                      mockStatic(LibUsbDevice.class)) {
             /*
-             * When a LibUsbDeviceSeeker is closed with a context
-             * that it generated, it is expected to automatically
-             * exit it. This is to free up resources that the user
-             * does not have access to.
+             * When a LibUsbDeviceSeeker is closed with a context that it
+             * generated, it is expected to automatically exit it. This is
+             * to free up resources the user is not in control of.
              */
             seeker.close(); /* trigger exiting of context */
             libUsbDevice.verify(() -> LibUsbDevice.exitContext(any()),
@@ -253,10 +229,9 @@ class LibUsbDeviceSeekerTest {
                     new MockLibUsbDeviceSeeker(context, LibUsbDevice::new);
 
             /*
-             * However, if a LibUsbDeviceSeeker is closed with a
-             * context that the user provided, do not close it!
-             * The user is the one who owns it (and is therefore
-             * responsible for it). Furthermore, they may desire
+             * However, if a LibUsbDeviceSeeker is closed with a context that
+             * the user provided, do not close it! The user is the owner, and
+             * is therefore responsible for it. Furthermore, they may desire
              * to continue using that context.
              */
             providedContext.close();

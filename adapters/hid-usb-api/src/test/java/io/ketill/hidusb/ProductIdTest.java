@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProductIdTest {
 
     @Test
-    void __init__() {
+    void testInit() {
         /*
-         * Vendor IDs are an unsigned short. Any value outside
-         * the range of 0x0000 to 0xFFFF is out of bounds.
+         * Vendor IDs are an unsigned short. Any value outside the range
+         * of 0x0000 to 0xFFFF is out of bounds.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> new ProductId(Integer.MIN_VALUE, 0x0000));
@@ -22,8 +22,8 @@ class ProductIdTest {
                 () -> new ProductId(Integer.MAX_VALUE, 0x0000));
 
         /*
-         * Product IDs are an unsigned short. Any value outside
-         * the range of 0x0000 to 0xFFFF is out of bounds.
+         * Product IDs are an unsigned short. Any value outside the range
+         * of 0x0000 to 0xFFFF is out of bounds.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> new ProductId(0x0000, Integer.MIN_VALUE));
@@ -31,9 +31,9 @@ class ProductIdTest {
                 () -> new ProductId(0x0000, Integer.MAX_VALUE));
 
         /*
-         * Any randomly generated number within a range 0x0000 to
-         * 0xFFFF should not result in an exception being thrown
-         * when constructing an instance of DeviceInfo.
+         * Any randomly generated number within a range 0x0000 to 0xFFFF
+         * should not result in an exception when constructing instances
+         * of DeviceInfo.
          */
         Random random = new Random();
         int vendorId = random.nextInt(0xFFFF);

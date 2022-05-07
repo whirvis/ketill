@@ -13,26 +13,26 @@ class HidDeviceListenerTest {
     private HidDeviceListener listener;
 
     @BeforeEach
-    void setup() {
+    void createListener() {
         this.event = mock(HidServicesEvent.class);
         this.seeker = mock(MockHidDeviceSeeker.class);
         this.listener = new HidDeviceListener(seeker);
     }
 
     @Test
-    void hidDeviceAttached() {
+    void testHidDeviceAttached() {
         listener.hidDeviceAttached(event);
         verify(seeker).hidDeviceAttached(event);
     }
 
     @Test
-    void hidDeviceDetached() {
+    void testHidDeviceDetached() {
         listener.hidDeviceDetached(event);
         verify(seeker).hidDeviceDetached(event);
     }
 
     @Test
-    void hidFailure() {
+    void testHidFailure() {
         listener.hidFailure(event);
         verify(seeker).hidFailure(event);
     }

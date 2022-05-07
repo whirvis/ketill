@@ -146,8 +146,10 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
      * @return the amount of attempts {@code peripheral} should be afforded
      * for connection. Values less than one are redundant, all devices are
      * afforded one attempt.
+     * @throws NullPointerException if {@code peripheral} is {@code null}.
      */
     protected int getSetupAttempts(@NotNull L peripheral) {
+        Objects.requireNonNull(peripheral, "peripheral cannot be null");
         return DEFAULT_SETUP_ATTEMPTS;
     }
 
@@ -176,9 +178,9 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         }
 
         /*
-         * Attempt to open the handle here. If no exception is thrown
-         * here, the peripheral will be removed the opening tracker.
-         * Otherwise, the setup failure handle will take over.
+         * Attempt to open the handle here. If no exception is thrown here,
+         * the peripheral can be removed the opening tracker. If this fails,
+         * the setup failure handler will take care of it.
          */
         peripheral.openHandle();
         openings.remove(peripheral);
@@ -193,11 +195,11 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         }
 
         /*
-         * Sometimes, opening a device handle fails (for no discernable
-         * reason). When this happens, decrement the amount of remaining
-         * attempts. If any attempts remain, setup will be attempted once
-         * more on the next peripheral scan. If no attempts remain, block
-         * the peripheral until it is detached.
+         * Sometimes, opening a device handle will fail for no discernable
+         * reason. When this happens, decrement the remaining attempt count.
+         * If any attempts remain, setup will be attempted once more on the
+         * next peripheral scan. If no attempts remain, block the peripheral
+         * until it is detached.
          */
         LibUsbOpening<L> queued = openings.get(peripheral);
         queued.remainingAttempts--;
@@ -224,10 +226,11 @@ public abstract class LibUsbDeviceSeeker<I extends IoDevice,
         super.close();
 
         /*
-         * If the context was not created by the user, then the seeker
-         * should exit it here (freeing allocated resources). However,
-         * the seeker will not exit a user created context. This so the
-         * user can continue using it after this seeker is closed.
+         * If the LibUSB context being used was not created by the user, the
+         * seeker should exit it here; thus freeing allocated resources. The
+         * seeker must not exit a user created context, as it is considered
+         * to be the responsibility of the user. Furthermore, it allows them
+         * to continue using it after this seeker has been closed.
          */
         if (!userContext) {
             LibUsbDevice.exitContext(usbContext);

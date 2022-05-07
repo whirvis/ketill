@@ -11,44 +11,31 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class PeripheralSeekerTest {
 
+    private MockPeripheralSeeker seeker;
+
+    @BeforeEach
+    void createSeeker() {
+        PeripheralSeeker.scanWaitDisabled = true;
+        this.seeker = new MockPeripheralSeeker();
+    }
+
     @Test
-    void __init__() {
+    void testInit() {
         /*
-         * For stability, creating a peripheral seeker with
-         * a scan interval less than 1000ms is not allowed.
-         * Testing done by hand has shown intervals lower
-         * than 1000ms introduce bugs that are simply not
+         * For stability, creating a peripheral seeker with a scan interval
+         * less than 1000ms is not allowed. Testing done by hand has shown
+         * intervals lower than 1000ms introduce bugs that are simply not
          * worth the time fixing.
          */
         assertThrows(IllegalArgumentException.class,
                 () -> new MockPeripheralSeeker(0L));
     }
 
-    private MockPeripheralSeeker seeker;
-
-    @BeforeEach
-    void setup() {
-        PeripheralSeeker.scanWaitDisabled = true;
-        this.seeker = new MockPeripheralSeeker();
-    }
-
     @Test
-    void minimumScanInterval() {
+    void testIsTargetingProduct() {
         /*
-         * Since the mock PeripheralSeeker uses the super
-         * constructor, it should be using the default scan
-         * interval, which is the minimum value allowed.
-         */
-        assertEquals(PeripheralSeeker.MINIMUM_SCAN_INTERVAL,
-                seeker.scanIntervalMs);
-    }
-
-    @Test
-    void isTargetingProduct() {
-        /*
-         * It would not make sense to see if a null product
-         * ID is currently being targeted. As such, assume
-         * this was a user mistake and throw an exception.
+         * It would not make sense to see if a null product ID is currently
+         * being targeted. As such, assume this was a mistake by the user.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isTargetingProduct(null));
@@ -62,11 +49,10 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void isTargetingPeripheral() {
+    void testIsTargetingPeripheral() {
         /*
-         * It makes no sense to check if a null peripheral
-         * is currently being targeted. Assume this was a
-         * mistake by the user and throw an exception.
+         * It makes no sense to check if a null peripheral is currently
+         * being targeted. Assume this was a mistake by the user.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isTargetingPeripheral(null));
@@ -75,10 +61,9 @@ class PeripheralSeekerTest {
         MockPeripheral peripheral = new MockPeripheral();
 
         /*
-         * If a PeripheralSeeker implementations returns a
-         * null value for the ID of a peripheral, it has not
-         * been implemented correctly. Let the user know the
-         * implementation they are using has a bug.
+         * If a PeripheralSeeker implementations returns a null value for
+         * the ID of a peripheral, it has not been implemented correctly.
+         * Let the user know the implementation they are using has a bug.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isTargetingPeripheral(peripheral));
@@ -91,11 +76,10 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void targetProduct() {
+    void testTargetProduct() {
         /*
-         * It would not make sense to target a peripheral
-         * with a null product ID. Assume this was a mistake
-         * by the user and throw an exception.
+         * It makes no sense to target a peripheral with a null product ID.
+         * Assume this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.targetProduct(null));
@@ -109,11 +93,10 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void dropProduct() {
+    void testDropProduct() {
         /*
-         * It would not make sense to drop a product with a
-         * null product ID. As such, assume this was a user
-         * mistake and throw an exception.
+         * It makes no sense to drop a product with a null product ID.
+         * As such, assume this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.dropProduct(null));
@@ -122,8 +105,8 @@ class PeripheralSeekerTest {
         peripheral.id = new ProductId(0x1234, 0x5678);
 
         /*
-         * When dropping a product that has not yet been
-         * targeted, this method should do nothing.
+         * When dropping a product that has not yet been targeted, this
+         * method should do nothing.
          */
         seeker.dropProduct(peripheral.id);
         assertFalse(seeker.disconnectedPeripheral);
@@ -137,9 +120,8 @@ class PeripheralSeekerTest {
         seeker.onDropProduct((s, p) -> dropped.set(true));
 
         /*
-         * It would not make sense for peripherals of a
-         * certain product to linger after their product
-         * has been dropped. As such, the peripheral
+         * It would not make sense for peripherals of a certain product to
+         * linger after their product is dropped. As such, the peripheral
          * seeker should detach and disconnect them.
          */
         seeker.dropProduct(peripheral.id);
@@ -150,11 +132,11 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void isPeripheralBlocked() {
+    void testIsPeripheralBlocked() {
         /*
-         * It makes no sense to check if a null peripheral
-         * is currently blocked. As such, assume this was a
-         * mistake by the user and throw an exception.
+         * It would not make sense to check if a null peripheral is currently
+         * blocked. As such, assume this was a mistake by the user and throw
+         * an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isPeripheralBlocked(null));
@@ -165,11 +147,10 @@ class PeripheralSeekerTest {
         assertTrue(seeker.isPeripheralBlocked(peripheral));
 
         /*
-         * Peripherals with the same hash code are assumed
-         * to be the same physical device. This is due to
-         * the fact new object instances are often created
-         * for the physical device, usually after one is
-         * detached and then re-attached to the system.
+         * Peripherals with the same hash code are assumed to be the same
+         * physical device. This is because new object instances are often
+         * for the same physical device, usually after one is detached and
+         * then re-attached to the system.
          */
         MockPeripheral duplicate = new MockPeripheral(0x1234);
         assertTrue(seeker.isPeripheralBlocked(duplicate));
@@ -179,20 +160,18 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void blockPeripheral() {
+    void testBlockPeripheral() {
         /*
-         * It makes no sense to block a null peripheral.
-         * As such, assume this was a mistake by the user
-         * and throw an exception.
+         * It makes no sense to block a null peripheral. As such, assume
+         * this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.blockPeripheral(null, true));
 
         /*
-         * Create a peripheral to block for the following
-         * tests. This will share the hash code of another
-         * peripheral instance, by intention. This fact will
-         * be used for a later test.
+         * Create a peripheral to block for the following tests. This will
+         * share the hash code of another peripheral instance, by intention.
+         * This fact will be used for a later test.
          */
         MockPeripheral peripheral = new MockPeripheral(0x1234);
         peripheral.id = new ProductId(0x1234, 0x5678);
@@ -205,36 +184,32 @@ class PeripheralSeekerTest {
         AtomicBoolean afterDisconnect = new AtomicBoolean();
         seeker.onBlockPeripheral((s, b) ->
                 /*
-                 * If seeker.disconnectedPeripherals equals
-                 * true when this callback is executed, that
-                 * means it was executed after the peripheral
-                 * was disconnected (as it should be).
+                 * If seeker.disconnectedPeripherals is true when this
+                 * callback is executed, that means it was executed after
+                 * the peripheral was disconnected (as it should be).
                  */
                 afterDisconnect.set(seeker.disconnectedPeripheral));
 
         seeker.blockPeripheral(peripheral, true);
 
         /*
-         * If two peripheral instances share a hash code,
-         * that means they are the same physical device in
-         * the real world. This ensures peripheral blocking
-         * functions even if a new instance is created for a
-         * physical device. It usually occurs when a device
-         * is unplugged and then plugged back in.
+         * If two peripheral instances share a hash code, it means they are
+         * the same physical device in the real world. This ensures blocking
+         * peripherals will function even when a new instance is created for
+         * the same physical device. This usually occurs when a device is
+         * unplugged from the system and then plugged back in.
          */
         int hashCopy = peripheral.hashCode;
         MockPeripheral peripheralCopy = new MockPeripheral(hashCopy);
         assertTrue(seeker.isPeripheralBlocked(peripheralCopy));
 
         /*
-         * Once the peripheral has been blocked, it cannot be
-         * blocked again unless previously unblocked. This is
-         * to prevent blocking arguments from being silently
-         * overridden on accident.
+         * Once the peripheral has been blocked, it cannot be blocked again
+         * unless previously unblocked. This is to prevent blocking arguments
+         * from being silently overridden on accident.
          *
-         * Furthermore, the peripheral copy should result in
-         * an exception as it is considered to be the same
-         * peripheral as the original.
+         * Furthermore, the peripheral copy should result in an exception as
+         * it is considered to be the same peripheral as the original.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.blockPeripheral(peripheral, true));
@@ -242,9 +217,8 @@ class PeripheralSeekerTest {
                 () -> seeker.blockPeripheral(peripheralCopy, true));
 
         /*
-         * Since the peripheral was already connected when
-         * it was blocked, it should have been immediately
-         * disconnected by the peripheral seeker.
+         * Since the peripheral was already connected when it was blocked,
+         * it should have been disconnected by the peripheral seeker.
          */
         assertTrue(seeker.blockedPeripheral);
         assertTrue(seeker.shutdownPeripheral);
@@ -253,11 +227,10 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void unblockPeripheral() {
+    void testUnblockPeripheral() {
         /*
-         * It makes no sense to unblock a null peripheral.
-         * As such, assume this was a mistake by the user
-         * and throw an exception.
+         * It makes no sense to unblock a null peripheral. As such, assume
+         * this was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.unblockPeripheral(null));
@@ -269,9 +242,8 @@ class PeripheralSeekerTest {
         seeker.onUnblockPeripheral((s, b) -> unblocked.set(true));
 
         /*
-         * It makes no sense to unblock a peripheral if
-         * it was not already blocked beforehand. As such,
-         * the callback should not be executed.
+         * It makes no sense to unblock a peripheral if it was not connected
+         * beforehand. As such, the callback should not be executed.
          */
         seeker.unblockPeripheral(peripheral);
         assertFalse(seeker.unblockedPeripheral);
@@ -286,15 +258,15 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void attachPeripheral() {
+    void testAttachPeripheral() {
         /* attach peripheral for next test */
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
 
         /*
-         * Although the mock peripheral has been attached,
-         * it is not currently targeted by the peripheral.
-         * seeker. As such, it should not be attached.
+         * Although the mock peripheral has been attached, it has not been
+         * targeted by the peripheral seeker. As such, it should the seeker
+         * should not connect it.
          */
         seeker.reset();
         seeker.targetProduct(0x0000, 0x0000);
@@ -302,9 +274,9 @@ class PeripheralSeekerTest {
         assertFalse(seeker.setupPeripheral);
 
         /*
-         * The product of the peripheral is now targeted.
-         * The peripheral seeker should now connect it on
-         * the first peripheral scan that it is detected.
+         * The product of the peripheral is now targeted. As a result, the
+         * peripheral seeker should now connect it on the first peripheral
+         * scan that it is detected.
          */
         seeker.reset();
         seeker.targetProduct(peripheral.id);
@@ -313,9 +285,9 @@ class PeripheralSeekerTest {
         assertTrue(seeker.connectedPeripheral);
 
         /*
-         * Once a peripheral has been attached, it should
-         * not be re-attached on the next scan. They should
-         * only be re-attached if previously detached.
+         * Once a peripheral has been attached, it should not be re-attached
+         * on the next scan. Peripherals should only be re-attached if they
+         * were previously detached.
          */
         seeker.reset();
         seeker.attachMock(peripheral);
@@ -328,9 +300,8 @@ class PeripheralSeekerTest {
         seeker.blockPeripheral(blockedPeripheral, false);
 
         /*
-         * When a peripheral is blocked, it should not be
-         * attached by the seeker even if detected on the
-         * next peripheral scan.
+         * When a peripheral is blocked, it should not be attached by the
+         * seeker even if it is detected on the next peripheral scan.
          */
         seeker.reset();
         seeker.attachMock(blockedPeripheral);
@@ -341,10 +312,9 @@ class PeripheralSeekerTest {
         brokenPeripheral.id = peripheral.id;
 
         /*
-         * If an error occurs while attaching a peripheral,
-         * the peripheral seeker should block the peripheral
-         * until it is detached. This allows for connection
-         * to be re-attempted and prevents a seeker crash.
+         * If an error occurs while attaching a peripheral, the peripheral
+         * seeker should block it until detached. This allows for connection
+         * to be re-attempted and prevents the seeker from crashing.
          */
         seeker.reset();
         seeker.errorOnSetup = true;
@@ -357,10 +327,8 @@ class PeripheralSeekerTest {
         seeker.unblockPeripheral(blockedPeripheral);
 
         /*
-         * It is possible for peripheral to be blocked while
-         * it is being connected. The peripheral seeker must
-         * be aware of this. If this occurs, the seeker must
-         * not connect the peripheral.
+         * It is possible for peripheral to be blocked during connection.
+         * If this occurs, the seeker must not connect the peripheral.
          */
         seeker.reset();
         seeker.blockOnSetup = true;
@@ -370,7 +338,7 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void detachPeripheral() {
+    void testDetachPeripheral() {
         MockPeripheral peripheral = new MockPeripheral();
         peripheral.id = new ProductId(0x1234, 0x5678);
         seeker.targetProduct(peripheral.id);
@@ -379,9 +347,9 @@ class PeripheralSeekerTest {
         seeker.attachMock(peripheral);
 
         /*
-         * When blocking a peripheral, the user can specify
-         * for it to be unblocked after it is detached. This
-         * ensures that functionality is operational.
+         * When blocking a peripheral, the user can specify that the device
+         * should be unblocked after it is detached. This test ensures that
+         * functionality is operational.
          */
         seeker.reset();
         seeker.blockPeripheral(peripheral, true);
@@ -392,11 +360,10 @@ class PeripheralSeekerTest {
         seeker.attachMock(peripheral);
 
         /*
-         * If a peripheral causes an exception to be thrown
-         * while being detached, the extending class must be
-         * notified. The peripheral, on the other hand, will
-         * not be blocked. This is because communication is
-         * already over, so blocking it would do nothing.
+         * If a peripheral causes an exception to be thrown while being
+         * detached, the extending class must be notified. However, the
+         * peripheral will not be blocked. This is because communication
+         * has already ended, so blocking it would do nothing.
          */
         seeker.reset();
         seeker.errorOnShutdown = true;
@@ -409,10 +376,9 @@ class PeripheralSeekerTest {
         seeker.attachMock(peripheral);
 
         /*
-         * It is possible for peripheral to be blocked while
-         * it is being disconnected. The peripheral seeker
-         * must be able to handle this event. If this occurs,
-         * the peripheral will still be disconnected.
+         * It is possible a peripheral will be blocked during disconnection.
+         * The peripheral seeker must know how to handle this event. If this
+         * occurs, the peripheral must still be disconnected.
          */
         seeker.reset();
         seeker.blockOnShutdown = true;
@@ -422,11 +388,10 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void isPeripheralConnected() {
+    void testIsPeripheralConnected() {
         /*
-         * It makes no sense to check if a null peripheral
-         * is connected. As such, assume this was a mistake
-         * by the user and throw an exception.
+         * It makes no sense to check if a null peripheral is connected.
+         * As such, assume this was a user mistake and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.isPeripheralConnected(null));
@@ -443,11 +408,11 @@ class PeripheralSeekerTest {
     }
 
     @Test
-    void seek() throws InterruptedException {
+    void testSeek() throws InterruptedException {
         /*
-         * It makes no sense to seek for peripherals when
-         * no products are being targeted. Assume this was
-         * a mistake by the user and throw an exception.
+         * It makes no sense to seek for peripherals when no products are
+         * being targeted. As such, assume this was a mistake by the user
+         * and throw an exception.
          */
         assertThrows(KetillException.class, () -> seeker.seek());
 
@@ -456,11 +421,10 @@ class PeripheralSeekerTest {
         seeker.targetProduct(0x0000, 0x0000);
 
         /*
-         * In production mode, peripheral seekers will only
-         * perform scans after enough time has passed since
-         * the last scan. The code below calls seek() twice
-         * in succession. As such, the seeker should only
-         * perform a single peripheral scan.
+         * In production, peripheral seekers will only perform peripheral
+         * scans once enough time has elapsed. This is done for stability
+         * reasons. Since the code below calls seek() twice in succession,
+         * the seeker should only perform a single peripheral scan.
          */
         seeker.seek().seek();
         assertEquals(1, seeker.peripheralScanCount);
@@ -469,33 +433,31 @@ class PeripheralSeekerTest {
         Thread.sleep(seeker.scanIntervalMs);
 
         /*
-         * After sleeping a long enough time to satisfy the
-         * scan interval cool down, running the same code
-         * should cause the peripheral seeker to perform
-         * just one more scan.
+         * After sleeping a long enough time to satisfy the cool down for
+         * a peripheral scan, running the same code as above should cause
+         * the peripheral seeker to perform exactly one more scan.
          */
         seeker.seek().seek();
         assertEquals(2, seeker.peripheralScanCount);
     }
 
     @Test
-    void close() {
+    void testClose() {
         MockPeripheral peripheral = new MockPeripheral();
 
         /*
-         * When a peripheral seeker is closed, it is expected
-         * to drop all currently targeted products. This is
-         * because they are no longer being targeted.
+         * When a peripheral seeker is closed, it is expected to drop all
+         * currently targeted products. This is because they are no longer
+         * being targeted.
          */
         AtomicBoolean dropped = new AtomicBoolean();
         seeker.onDropProduct((s, p) -> dropped.set(true));
         seeker.targetProduct(0x0000, 0x0000);
 
         /*
-         * WHen a peripheral seeker is closed, it is expected
-         * to unblock all currently blocked peripherals. This
-         * is because the seeker no longer actively refuses
-         * to attach them.
+         * When a peripheral seeker is closed, it should unblock all blocked
+         * peripherals. This is because the peripheral seeker will no longer
+         * actively refuse to attach them.
          */
         AtomicBoolean unblocked = new AtomicBoolean();
         seeker.onUnblockPeripheral((s, b) -> unblocked.set(true));
@@ -507,11 +469,10 @@ class PeripheralSeekerTest {
         assertTrue(unblocked.get());
 
         /*
-         * It would not make sense to target a product, drop
-         * a product, block or unblock a peripheral, connect
-         * a peripheral, or disconnect a peripheral after the
-         * peripheral seeker has been closed. Assume this was
-         * a mistake by the user and throw an exception.
+         * Once a peripheral seeker has been closed, it would make no sense
+         * to target a product, drop a product, block or unblock a peripheral,
+         * connect a peripheral, or disconnect a peripheral. As such, assume
+         * this was a mistake by the user and throw an exception.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.targetProduct(0x0000, 0x0000));
@@ -523,10 +484,9 @@ class PeripheralSeekerTest {
                 () -> seeker.unblockPeripheral(peripheral));
 
         /*
-         * It would not make sense to set any callbacks after
-         * the peripheral seeker has been closed. None of them
-         * will ever be executed. Assume this was a mistake by
-         * the user and throw an exception.
+         * It would not make sense to set any callbacks after the peripheral
+         * seeker has been closed. None of them will ever be executed. Assume
+         * this was a mistake by the user and throw an exception.
          */
         assertThrows(IllegalStateException.class,
                 () -> seeker.onBlockPeripheral(null));

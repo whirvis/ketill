@@ -100,11 +100,10 @@ public class LibUsbDevice implements Closeable {
      */
     public static void exitContext(@NotNull Context context) {
         /*
-         * Although LibUSB accepts a null for the default context,
-         * this method is used to de-initialize a context created
-         * by initContext() (which never returns a null value.) As
-         * such, it is assumed to be an error by the user if they
-         * provide null context.
+         * LibUSB uses null to represent the default context. However, this
+         * method is used to de-initialize contexts created by initContext(),
+         * which never returns a null value. As such, it is assumed to be an
+         * error by the user if they provide a null context.
          */
         Objects.requireNonNull(context, "default context is forbidden");
         LibUsb.exit(context);
@@ -172,12 +171,9 @@ public class LibUsbDevice implements Closeable {
         }
 
         /*
-         * Now that the devices have been transferred to garbage
-         * collected memory, free the list handle (but keep each
-         * device handle.) The argument for the second parameter
-         * must be false. When true, it decreases the reference
-         * count by one. That would release them from memory too
-         * early in this situation.
+         * Each device is now stored in garbage collected memory. As such,
+         * the list containing them can be freed. However, the device list
+         * must be freed without unreferencing the contained devices.
          */
         LibUsb.freeDeviceList(devices, false);
 
@@ -319,10 +315,10 @@ public class LibUsbDevice implements Closeable {
         this.ptr = usbDevice.getPointer();
 
         /*
-         * Vendor IDs and product IDs are unsigned shorts. However,
-         * the underlying LibUSB API returns them as a signed Java
-         * short. This converts them to an unsigned value and stores
-         * them as an int so the expected value is returned.
+         * Vendor IDs and IDs are unsigned shorts. However, the underlying
+         * LibUSB API returns them as a signed Java short. This converts
+         * them to an unsigned short and stores them inside an int field
+         * so the expected value is returned.
          */
         int vendorId = usbDescriptor.idVendor() & 0xFFFF;
         int productId = usbDescriptor.idProduct() & 0xFFFF;
