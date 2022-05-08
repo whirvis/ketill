@@ -5,11 +5,11 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.StickPosZ;
 import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.nx.NxJoyCon;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
         extends GlfwJoystickAdapter<I> {
@@ -45,7 +45,7 @@ abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
     }
 
     @FeatureAdapter
-    private void updateJoyConStick(@NotNull Vector3f pos,
+    private void updateJoyConStick(@NotNull StickPosZ pos,
                                    @NotNull JoyConStickMapping mapping) {
         if (this.isPressed(mapping.glfwLeft)) {
             pos.x = -1.0F;
