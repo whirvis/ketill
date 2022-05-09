@@ -110,11 +110,20 @@ class GcWiiUSlotStateTest {
     }
 
     @Test
+    void testPoll() {
+        /*
+         * Other tests like testIsButtonPressed() and testGetAnalogAxis()
+         * verify that this method works properly as a side effect. As a
+         * result, there isn't really much to test here.
+         */
+        assertDoesNotThrow(() -> slot.poll());
+    }
+
+    @Test
     void testReset() {
         /* fill slot data for next test */
         Arrays.fill(slot.data, (byte) 0xFF);
         slot.setRumbling(true);
-        slot.poll(); /* update fields */
 
         slot.reset();
 
