@@ -80,7 +80,12 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
         this.mapButton(BUTTON_M6, GLFW_MOUSE_BUTTON_6);
         this.mapButton(BUTTON_M7, GLFW_MOUSE_BUTTON_7);
         this.mapButton(BUTTON_M8, GLFW_MOUSE_BUTTON_8);
+
         registry.mapFeature(FEATURE_CURSOR, this::updateCursor);
+
+        CursorStateZ cursor = registry.getInternalState(FEATURE_CURSOR);
+        cursor.adapterCanSetVisible = true;
+        cursor.adapterCanSetPosition = true;
     }
 
     @FeatureAdapter

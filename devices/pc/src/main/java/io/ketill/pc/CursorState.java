@@ -21,6 +21,22 @@ public class CursorState extends StateContainer<CursorStateZ> {
     }
 
     /**
+     * @return {@code true} if the adapter has the ability to update the
+     * cursor's visibility, {@code false} otherwise.
+     */
+    public boolean canSetVisible() {
+        return internalState.adapterCanSetVisible;
+    }
+
+    /**
+     * @return {@code true} if the adapter has the ability to update the
+     * cursor's current position, {@code false} otherwise.
+     */
+    public boolean canSetPosition() {
+        return internalState.adapterCanSetPosition;
+    }
+
+    /**
      * @return {@code true} if the mouse cursor is currently visible,
      * {@code false} otherwise.
      */
@@ -31,9 +47,38 @@ public class CursorState extends StateContainer<CursorStateZ> {
     /**
      * @param visible {@code true} if the mouse cursor should be visible,
      *                {@code false} otherwise.
+     * @throws UnsupportedOperationException if the internal state of this
+     *                                       state indicates that the adapter
+     *                                       does not have the ability to set
+     *                                       the cursor's visibility.
+     * @see #canSetVisible()
+     * @see #trySetVisible(boolean)
      */
     public void setVisible(boolean visible) {
+        if (!this.canSetVisible()) {
+            String msg = "cannot set visibility with current adapter";
+            msg += ", did it forget to set adapterCanSetVisible";
+            msg += " to true in the internal state?";
+            throw new UnsupportedOperationException(msg);
+        }
         internalState.visible = visible;
+    }
+
+    /**
+     * Alternative to {@link #setVisible(boolean)} which only sets the
+     * cursor's visibility if the adapter has the ability to do so.
+     *
+     * @param visible {@code true} if the mouse cursor should be visible,
+     *                {@code false} otherwise.
+     * @return {@code true} if the cursor visibility was successfully
+     * updated, {@code false} otherwise.
+     */
+    public boolean trySetVisible(boolean visible) {
+        if (!this.canSetVisible()) {
+            return false;
+        }
+        this.setVisible(visible);
+        return true;
     }
 
     /**
@@ -61,20 +106,68 @@ public class CursorState extends StateContainer<CursorStateZ> {
 
     /**
      * @param pos the position to set the cursor to.
-     * @throws NullPointerException if {@code pos} is {@code null}.
+     * @throws NullPointerException          if {@code pos} is {@code null}.
+     * @throws UnsupportedOperationException if the internal state of this
+     *                                       state indicates that the adapter
+     *                                       does not have the ability to set
+     *                                       the cursor's current position.
+     * @see #canSetPosition()
+     * @see #trySetPosition(Vector2fc)
      */
     public void setPosition(@NotNull Vector2fc pos) {
         Objects.requireNonNull(pos, "pos");
+        if (!this.canSetPosition()) {
+            String msg = "cannot set position with current adapter";
+            msg += ", did it forget to set adapterCanSetPosition";
+            msg += " to true in the internal state?";
+            throw new UnsupportedOperationException(msg);
+        }
         internalState.requestedPos = pos;
+    }
+
+    /**
+     * Alternative to {@link #setPosition(Vector2fc)} which only sets the
+     * cursor's current position if the adapter has the ability to do so.
+     *
+     * @param pos the position to set the cursor to.
+     * @return {@code true} if the cursor position was successfully updated,
+     * {@code false} otherwise.
+     * @throws NullPointerException if {@code pos} is {@code null}.
+     */
+    public final boolean trySetPosition(@NotNull Vector2fc pos) {
+        Objects.requireNonNull(pos, "pos");
+        if (!this.canSetPosition()) {
+            return false;
+        }
+        this.setPosition(pos);
+        return true;
     }
 
     /**
      * @param xPos the X-axis position to set the cursor to.
      * @param yPos the Y-axis position to set the cursor to.
-     * @see #setPosition(Vector2fc)
+     * @throws UnsupportedOperationException if the internal state of this
+     *                                       state indicates that the adapter
+     *                                       does not have the ability to set
+     *                                       the cursor's current position.
+     * @see #canSetPosition()
+     * @see #trySetPosition(float, float)
      */
     public final void setPosition(float xPos, float yPos) {
         this.setPosition(new Vector2f(xPos, yPos));
+    }
+
+    /**
+     * Alternative to {@link #setPosition(float, float)} which only sets the
+     * cursor's current position if the adapter has the ability to do so.
+     *
+     * @param xPos the X-axis position to set the cursor to.
+     * @param yPos the Y-axis position to set the cursor to.
+     * @return {@code true} if the cursor position was successfully updated,
+     * {@code false} otherwise.
+     */
+    public final boolean trySetPosition(float xPos, float yPos) {
+        return this.trySetPosition(new Vector2f(xPos, yPos));
     }
 
 }
