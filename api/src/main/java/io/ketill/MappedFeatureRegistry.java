@@ -188,6 +188,39 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     }
     /* @formatter:on */
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Note:</b> I/O device adapters needing to access the internal state
+     * of a feature can do so via {@link #getInternalState(IoFeature)}.
+     */
+    @Override
+    public <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
+        return FeatureRegistry.super.getState(feature);
+    }
+
+    /**
+     * This method exists for the benefit of device adapters. The internal
+     * state of an I/O feature should <i>not</i> be publicly accessible.
+     *
+     * @param feature the feature whose state to fetch.
+     * @param <Z>     the internal state type.
+     * @return the internal state of {@code feature}.
+     * @throws NullPointerException  if {@code feature} is {@code null}.
+     * @throws IllegalStateException if {@code feature} is not registered.
+     * @see #getState(IoFeature)
+     */
+    public <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
+        Objects.requireNonNull(feature, "feature cannot be null");
+        RegisteredFeature<?, Z, ?> registered =
+                this.getFeatureRegistration(feature);
+        if (registered == null) {
+            String msg = "no such feature \"" + feature.id + "\"";
+            throw new IllegalStateException(msg);
+        }
+        return registered.internalState;
+    }
+
     /* @formatter:off */
     @Override
     public <F extends IoFeature<Z, S>, Z, S>

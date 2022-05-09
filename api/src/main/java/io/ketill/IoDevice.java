@@ -319,8 +319,9 @@ public abstract class IoDevice implements FeatureRegistry {
      * <b>Note:</b> I/O devices needing to access the internal state of
      * a feature can do so via {@link #getInternalState(IoFeature)}.
      */
+    @Override
     public <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
-        return FeatureRegistry.super.getState(feature);
+        return registry.getState(feature);
     }
 
     /**
@@ -335,14 +336,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #getState(IoFeature)
      */
     protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
-        Objects.requireNonNull(feature, "feature cannot be null");
-        RegisteredFeature<?, Z, ?> registered =
-                this.getFeatureRegistration(feature);
-        if (registered == null) {
-            String msg = "no such feature \"" + feature.id + "\"";
-            throw new IllegalStateException(msg);
-        }
-        return registered.internalState;
+        return registry.getInternalState(feature);
     }
 
     /**

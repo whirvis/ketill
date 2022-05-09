@@ -198,6 +198,30 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
+    void testGetInternalState() {
+        MockIoFeature feature = new MockIoFeature();
+
+        /*
+         * It would not make sense to get the internal state of a null
+         * feature or a feature which has not yet been registered. As
+         * such, assume this was a user mistake and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> registry.getInternalState(null));
+        assertThrows(IllegalStateException.class,
+                () -> registry.getInternalState(feature));
+
+        /*
+         * When the internal state of a feature is fetched, it should be
+         * the same internal state contained in the feature registration.
+         */
+        RegisteredFeature<?, ?, ?> registered =
+                registry.registerFeature(feature);
+        Object internalState = registry.getInternalState(feature);
+        assertSame(internalState, registered.internalState);
+    }
+
+    @Test
     void testRequestState() {
         MockIoFeature feature = new MockIoFeature();
 

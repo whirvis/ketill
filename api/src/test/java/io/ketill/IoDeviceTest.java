@@ -1,6 +1,5 @@
 package io.ketill;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -246,23 +245,12 @@ class IoDeviceTest {
     @Test
     void testGetInternalState() {
         /*
-         * It would not make sense to get the internal state of a null
-         * feature or a feature which has not yet been registered. As
-         * such, assume this was a user mistake and throw an exception.
+         * The getInternalState() method in IoDevice is an accessor method
+         * to the same method implemented in MappedFeatureRegistry. As such,
+         * their results should be equal.
          */
-        assertThrows(NullPointerException.class,
-                () -> device.getInternalState(null));
-        assertThrows(IllegalStateException.class,
-                () -> device.getInternalState(new MockIoFeature()));
-
-        /*
-         * When the internal state of a feature is fetched, it should be
-         * the same internal state contained in the feature registration.
-         */
-        Object internalState = device.getInternalState(MockIoDevice.FEATURE);
-        RegisteredFeature<?, ?, ?> registered =
-                device.getFeatureRegistration(MockIoDevice.FEATURE);
-        assertSame(internalState, registered.internalState);
+        assertSame(device.getInternalState(MockIoDevice.FEATURE),
+                adapter.registry.getInternalState(MockIoDevice.FEATURE));
     }
 
     @Test
