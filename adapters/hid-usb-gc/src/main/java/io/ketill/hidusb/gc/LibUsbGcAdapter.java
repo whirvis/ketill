@@ -38,7 +38,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
     }
 
     private float getNormalizedAxis(@NotNull AxisMapping mapping) {
-        int pos = slot.getAxis(mapping.gcAxis);
+        int pos = slot.getAnalogAxis(mapping.gcAxis);
 
         /*
          * It's not uncommon for an axis to go one or two points
@@ -98,7 +98,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
 
     @FeatureAdapter
     private void updateButton(@NotNull ButtonStateZ state, int gcButton) {
-        state.pressed = slot.isPressed(gcButton);
+        state.pressed = slot.isButtonPressed(gcButton);
     }
 
     @FeatureAdapter

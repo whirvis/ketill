@@ -7,9 +7,10 @@ import java.util.Arrays;
 
 final class GcWiiUSlotState {
 
-    private static final int DATA_LEN = 9;
-    private static final int BUTTON_COUNT = 12;
-    private static final int ANALOG_COUNT = 6;
+    /* package-private for testing */
+    static final int DATA_LEN = 9;
+    static final int BUTTON_COUNT = 12;
+    static final int ANALOG_COUNT = 6;
 
     final byte[] data;
 
@@ -31,11 +32,11 @@ final class GcWiiUSlotState {
         return this.type > 0;
     }
 
-    boolean isPressed(int gcButton) {
+    boolean isButtonPressed(int gcButton) {
         return this.buttons[gcButton];
     }
 
-    int getAxis(int gcAxis) {
+    int getAnalogAxis(int gcAxis) {
         return this.analogs[gcAxis];
     }
 
@@ -51,19 +52,18 @@ final class GcWiiUSlotState {
         int offset = 0;
 
         /*
-         * The first byte is the current controller type. This is
-         * used to determine if the controller is connected, and
-         * if it self-reports to be wireless. Wireless controllers
-         * are usually Wavebird controllers. However, there is no
-         * guarantee for this.
+         * The first byte is the controller type. This is used to determine
+         * if the controller is connected, and if it reports to be wireless.
+         * Wireless controllers are usually Wavebird controllers. However,
+         * there is no  guarantee for this.
          */
         this.type = (data[offset++] & 0xFF) >> 4;
 
         /*
-         * The next two bytes of the data payload store the button
-         * states. Each button state is stored using a single bit
-         * for the next two bytes. As such, bit shifting is used
-         * to determine if a button is pressed.
+         * The next two bytes of the data payload store the button states.
+         * Each button state is stored using a single bit for the next two
+         * bytes. As such, bit shifting is used to determine if each button
+         * is pressed.
          */
         short buttonStates = 0;
         buttonStates |= (data[offset++] & 0xFF);
@@ -73,9 +73,9 @@ final class GcWiiUSlotState {
         }
 
         /*
-         * The value of each analog axis is stored using a single
-         * byte. The amount of bytes that are read is determined
-         * by the amount of axes there are on the controller.
+         * The value of each analog axis is stored using a single byte. The
+         * amount of bytes that are read is determined by the amount of axes
+         * there are on the controller.
          */
         for (int i = 0; i < analogs.length; i++) {
             this.analogs[i] = data[offset++] & 0xFF;
