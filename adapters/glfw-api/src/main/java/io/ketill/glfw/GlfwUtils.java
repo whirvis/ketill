@@ -9,7 +9,8 @@ class GlfwUtils {
 
     static long requireWindow(long ptr_glfwWindow) {
         if (ptr_glfwWindow == NULL_PTR) {
-            throw new NullPointerException("null GLFW window pointer");
+            String msg = "GLFW window pointer cannot be NULL";
+            throw new NullPointerException(msg);
         }
 
         /*
