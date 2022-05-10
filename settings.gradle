@@ -18,6 +18,7 @@ include ':adapters:glfw-xbox'
 include ':adapters:hid-usb-api'
 include ':adapters:hid-usb-gc'
 include ':adapters:hid-usb-psx'
+include ':adapters:java-awt'
 include ':adapters:xinput'
 
 include ':testing'
