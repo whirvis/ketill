@@ -3,6 +3,7 @@ package io.ketill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -106,8 +107,20 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void getDeviceCount() {
+    void testGetDeviceCount() {
         assertEquals(0, seeker.getDeviceCount());
+    }
+
+    @Test
+    void testGetDevices() {
+        /*
+         * Since no devices have been discovered yet, the returned list
+         * should be empty. Furthermore, the returned list is read-only.
+         * As such, any modifications should result in an exception.
+         */
+        List<MockIoDevice> devices = seeker.getDevices();
+        assertTrue(devices.isEmpty());
+        assertThrows(UnsupportedOperationException.class, devices::clear);
     }
 
     @Test

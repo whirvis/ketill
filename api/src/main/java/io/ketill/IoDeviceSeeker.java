@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -218,9 +219,20 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     /**
      * @return the amount of currently discovered devices.
+     * @see #getDevices()
+     * @see #forEachDevice(Consumer)
      */
     public final int getDeviceCount() {
         return devices.size();
+    }
+
+    /**
+     * @return all currently discovered devices.
+     * @see #getDeviceCount()
+     * @see #forEachDevice(Consumer)
+     */
+    public final @NotNull List<@NotNull I> getDevices() {
+        return Collections.unmodifiableList(devices);
     }
 
     /**
@@ -234,6 +246,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws NullPointerException  if {@code action} is {@code null}.
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
+     * @see #getDeviceCount()
+     * @see #getDevices()
      */
     /* @formatter:off */
     public final synchronized IoDeviceSeeker<I>
