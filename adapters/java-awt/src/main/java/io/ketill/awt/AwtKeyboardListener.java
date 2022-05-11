@@ -8,11 +8,7 @@ import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
-class AwtKeyboardListener implements KeyListener {
-
-    private static class KeyState {
-        boolean pressed;
-    }
+final class AwtKeyboardListener implements KeyListener {
 
     private final Component component;
     private final Map<Integer, Map<Integer, KeyState>> keys;
@@ -21,18 +17,6 @@ class AwtKeyboardListener implements KeyListener {
     AwtKeyboardListener(@NotNull Component component) {
         this.component = component;
         this.keys = new HashMap<>();
-    }
-
-    boolean isInitialized() {
-        return this.initialized;
-    }
-
-    void init() {
-        if (this.isInitialized()) {
-            throw new IllegalStateException("already initialized");
-        }
-        component.addKeyListener(this);
-        this.initialized = true;
     }
 
     private @NotNull KeyState getState(int keyCode, int keyLocation) {
@@ -60,6 +44,18 @@ class AwtKeyboardListener implements KeyListener {
 
     boolean isPressed(@NotNull KeyMapping mapping) {
         return this.isPressed(mapping.keyCode, mapping.keyLocation);
+    }
+
+    boolean isInitialized() {
+        return this.initialized;
+    }
+
+    void init() {
+        if (this.isInitialized()) {
+            throw new IllegalStateException("already initialized");
+        }
+        component.addKeyListener(this);
+        this.initialized = true;
     }
 
     @Override

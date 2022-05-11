@@ -50,7 +50,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     private final @NotNull Component component;
     private final @NotNull AwtMouseListener mouseListener;
     private final @Nullable Robot robot;
-    private boolean wasVisible;
+    private boolean wasCursorVisible;
 
     /**
      * @param device    the device which owns this adapter.
@@ -110,6 +110,8 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         CursorStateZ cursor = registry.getInternalState(FEATURE_CURSOR);
         cursor.adapterCanSetVisible = true;
         cursor.adapterCanSetPosition = robot != null;
+
+        this.wasCursorVisible = cursor.visible;
     }
 
     @FeatureAdapter
@@ -140,12 +142,12 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
             cursor.currentPos.y = (float) relativeY;
         }
 
-        if (!wasVisible && cursor.visible) {
-            component.setCursor(INVISIBLE_CURSOR);
-            this.wasVisible = true;
-        } else if (wasVisible && !cursor.visible) {
+        if (!wasCursorVisible && cursor.visible) {
             component.setCursor(null);
-            this.wasVisible = false;
+            this.wasCursorVisible = true;
+        } else if (wasCursorVisible && !cursor.visible) {
+            component.setCursor(INVISIBLE_CURSOR);
+            this.wasCursorVisible = false;
         }
     }
 

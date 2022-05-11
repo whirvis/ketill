@@ -1,6 +1,9 @@
 package io.ketill.awt;
 
-class KeyMapping {
+import io.ketill.MappingType;
+
+@MappingType
+final class KeyMapping {
 
     final int keyCode;
     final int keyLocation;

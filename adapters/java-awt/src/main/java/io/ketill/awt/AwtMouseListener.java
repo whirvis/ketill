@@ -6,14 +6,14 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-class AwtMouseListener implements MouseListener {
+final class AwtMouseListener implements MouseListener {
 
     /*
      * In the HID protocol specification, 3 bits are used for mouse buttons.
      * This means that there can be, in total, twelve buttons on a mouse.
      * However, just to be safe, double this amount is assumed to exist.
      */
-    private static final int MOUSE_BUTTON_COUNT = 24;
+    static final int MOUSE_BUTTON_COUNT = 24;
 
     private final Component component;
     private final boolean[] buttons;
@@ -25,9 +25,6 @@ class AwtMouseListener implements MouseListener {
     }
 
     boolean isPressed(int id) {
-        if (id < 0 || id >= MOUSE_BUTTON_COUNT) {
-            return false;
-        }
         return this.buttons[id];
     }
 
