@@ -33,7 +33,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
     protected final double[] xPos;
     protected final double[] yPos;
-    protected boolean wasVisible;
+    protected boolean wasCursorVisible;
 
     /**
      * @param mouse          the device which owns this adapter.
@@ -50,7 +50,6 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
         super(mouse, registry, ptr_glfwWindow);
         this.xPos = new double[1];
         this.yPos = new double[1];
-        this.wasVisible = true; /* visible by default */
     }
 
 
@@ -86,6 +85,8 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
         CursorStateZ cursor = registry.getInternalState(FEATURE_CURSOR);
         cursor.adapterCanSetVisible = true;
         cursor.adapterCanSetPosition = true;
+
+        this.wasCursorVisible = cursor.visible;
     }
 
     @FeatureAdapter
@@ -106,12 +107,12 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
             cursor.currentPos.y = (float) this.yPos[0];
         }
 
-        if (!wasVisible && cursor.visible) {
+        if (!wasCursorVisible && cursor.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            this.wasVisible = true;
-        } else if (wasVisible && !cursor.visible) {
+            this.wasCursorVisible = true;
+        } else if (wasCursorVisible && !cursor.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-            this.wasVisible = false;
+            this.wasCursorVisible = false;
         }
     }
 
