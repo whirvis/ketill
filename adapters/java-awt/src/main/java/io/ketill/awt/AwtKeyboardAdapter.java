@@ -32,6 +32,27 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
         return new Keyboard((d, r) -> new AwtKeyboardAdapter(d, r, component));
     }
 
+    /**
+     * Similar to {@link #capture(Component)}, with the key difference being
+     * that the captured {@code Keyboard} will be automatically polled in a
+     * background thread managed by Ketill's Java AWT module.
+     *
+     * @param component the AWT component.
+     * @return the captured keyboard.
+     * @throws NullPointerException if {@code component} is {@code null}.
+     * @see AwtPollWorker#getDevice()
+     * @see AwtPollWorker#cancel()
+     */
+    /* @formatter:off */
+    @CapturingMethod
+    public static @NotNull AwtPollWorker<Keyboard>
+            captureBackground(@NotNull Component component) {
+        Objects.requireNonNull(component, "component cannot be null");
+        Keyboard keyboard = capture(component);
+        return AwtPollWorker.pollInBackground(keyboard);
+    }
+    /* @formatter:on */
+
     private final @NotNull AwtKeyboardListener keyboardListener;
 
     /**

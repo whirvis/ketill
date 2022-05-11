@@ -39,6 +39,27 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         return new Mouse((d, r) -> new AwtMouseAdapter(d, r, component));
     }
 
+    /**
+     * Similar to {@link #capture(Component)}, with the key difference being
+     * that the captured {@code Mouse} will be automatically polled in a
+     * background thread managed by Ketill's Java AWT module.
+     *
+     * @param component the AWT component.
+     * @return the captured mouse.
+     * @throws NullPointerException if {@code component} is {@code null}.
+     * @see AwtPollWorker#getDevice()
+     * @see AwtPollWorker#cancel()
+     */
+    /* @formatter:off */
+    @CapturingMethod
+    public static @NotNull AwtPollWorker<Mouse>
+            captureBackground(@NotNull Component component) {
+        Objects.requireNonNull(component, "component cannot be null");
+        Mouse mouse = capture(component);
+        return AwtPollWorker.pollInBackground(mouse);
+    }
+    /* @formatter:on */
+
     private static @Nullable Robot createRobot() {
         try {
             return new Robot();

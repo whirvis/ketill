@@ -60,6 +60,24 @@ class AwtMouseAdapterTest {
     }
 
     @Test
+    void testCapture() {
+        assertThrows(NullPointerException.class,
+                () -> AwtMouseAdapter.capture(null));
+        assertNotNull(AwtMouseAdapter.capture(component));
+    }
+
+    @Test
+    void testCaptureBackground() {
+        assertThrows(NullPointerException.class,
+                () -> AwtMouseAdapter.captureBackground(null));
+
+        AwtPollWorker<Mouse> mouseWorker =
+                AwtMouseAdapter.captureBackground(component);
+        assertNotNull(mouseWorker);
+        mouseWorker.cancel(); /* prevent lingering background thread */
+    }
+
+    @Test
     void testMapButton() {
         /* create adapter from mocks for next test */
         Mouse mouse = mock(Mouse.class);

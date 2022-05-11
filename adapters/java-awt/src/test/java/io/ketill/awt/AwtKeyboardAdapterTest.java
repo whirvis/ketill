@@ -48,6 +48,24 @@ class AwtKeyboardAdapterTest {
     }
 
     @Test
+    void testCapture() {
+        assertThrows(NullPointerException.class,
+                () -> AwtKeyboardAdapter.capture(null));
+        assertNotNull(AwtKeyboardAdapter.capture(component));
+    }
+
+    @Test
+    void testCaptureBackground() {
+        assertThrows(NullPointerException.class,
+                () -> AwtKeyboardAdapter.captureBackground(null));
+
+        AwtPollWorker<Keyboard> keyboardWorker =
+                AwtKeyboardAdapter.captureBackground(component);
+        assertNotNull(keyboardWorker);
+        keyboardWorker.cancel(); /* prevent lingering background thread */
+    }
+
+    @Test
     void testMapKey() {
         /* create adapter from mocks for next test */
         Keyboard keyboard = mock(Keyboard.class);
