@@ -25,6 +25,7 @@ public class CursorStateZ {
     public final @NotNull Vector2f currentPos;
 
     public CursorStateZ() {
+        this.visible = true;
         this.currentPos = new Vector2f();
     }
 
