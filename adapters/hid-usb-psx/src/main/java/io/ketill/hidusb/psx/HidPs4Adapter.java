@@ -230,7 +230,7 @@ abstract class HidPs4Adapter extends IoDeviceAdapter<Ps4Controller> {
     }
 
     @FeatureAdapter
-    void updateStick(@NotNull StickPosZ pos, @NotNull StickMapping mapping) {
+    void updateStick(@NotNull StickPosZ state, @NotNull StickMapping mapping) {
         int posX = this.inputReport[mapping.byteOffsetX] & 0xFF;
         int posY = this.inputReport[mapping.byteOffsetY] & 0xFF;
 
@@ -250,9 +250,9 @@ abstract class HidPs4Adapter extends IoDeviceAdapter<Ps4Controller> {
          * very right (1.0F.). The Y-axis starts at the very at the very
          * top (0.0F) and ends at the very bottom (1.0F.)
          */
-        pos.x = ((posX / 255.0F) * 2.0F) - 1.0F;
-        pos.y = ((posY / 255.0F) * -2.0F) + 1.0F;
-        pos.z = pressed ? -1.0F : 0.0F;
+        state.pos.x = ((posX / 255.0F) * 2.0F) - 1.0F;
+        state.pos.y = ((posY / 255.0F) * -2.0F) + 1.0F;
+        state.pos.z = pressed ? -1.0F : 0.0F;
     }
 
     @FeatureAdapter

@@ -41,7 +41,7 @@ final class AnalogTriggerMonitor
 
     @Override
     protected boolean isPressed() {
-        return AnalogTrigger.isPressed(internalState.force);
+        return AnalogTrigger.isPressed(internalState.calibratedForce);
     }
 
 }

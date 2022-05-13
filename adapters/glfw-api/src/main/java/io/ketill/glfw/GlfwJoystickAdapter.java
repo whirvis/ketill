@@ -195,19 +195,19 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * Updater for analog sticks mapped via
      * {@link #mapStick(AnalogStick, GlfwStickMapping)}.
      *
-     * @param pos     the analog stick position.
+     * @param state   the analog stick position.
      * @param mapping the GLFW stick mapping.
      */
     @FeatureAdapter
-    protected void updateStick(@NotNull StickPosZ pos,
+    protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
-        pos.x = this.getAxis(mapping.glfwXAxis);
-        pos.y = this.getAxis(mapping.glfwYAxis);
+        state.pos.x = this.getAxis(mapping.glfwXAxis);
+        state.pos.y = this.getAxis(mapping.glfwYAxis);
         if (mapping.hasZButton) {
             boolean pressed = this.isPressed(mapping.glfwZButton);
-            pos.z = pressed ? -1.0F : 0.0F;
+            state.pos.z = pressed ? -1.0F : 0.0F;
         } else {
-            pos.z = 0.0F;
+            state.pos.z = 0.0F;
         }
     }
 

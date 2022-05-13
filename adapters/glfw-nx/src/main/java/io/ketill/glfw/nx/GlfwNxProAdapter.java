@@ -93,26 +93,14 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
 
         this.mapProTrigger(TRIGGER_LT, ZL_INDEX);
         this.mapProTrigger(TRIGGER_RT, ZR_INDEX);
-
-        /*
-         * This feature is supported, but its value is only referenced.
-         * Map this feature to a no-op so isFeatureSupported() returns
-         * a value of true as expected by the user.
-         */
-        registry.mapFeature(FEATURE_CALIBRATION, (f) -> {
-        });
     }
 
     @Override
-    protected void updateStick(@NotNull StickPosZ pos,
+    protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
-        super.updateStick(pos, mapping);
-        if (mapping == MAPPING_LS) {
-            pos.y *= -1.0F;
-            device.calibration.applyLs(pos);
-        } else if (mapping == MAPPING_RS) {
-            pos.y *= -1.0F;
-            device.calibration.applyRs(pos);
+        super.updateStick(state, mapping);
+        if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
+            state.pos.y *= -1.0F;
         }
     }
 

@@ -9,11 +9,11 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.DeviceButton;
 import io.ketill.controller.LedState;
-import io.ketill.controller.TriggerStateZ;
 import io.ketill.controller.MotorVibration;
+import io.ketill.controller.StickPosZ;
+import io.ketill.controller.TriggerStateZ;
 import io.ketill.psx.Ps3Controller;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 import org.usb4java.LibUsb;
 import org.usb4java.LibUsbException;
 import org.usb4java.Transfer;
@@ -161,7 +161,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull Vector3f pos,
+    private void updateStick(@NotNull StickPosZ state,
                              @NotNull StickMapping mapping) {
         int posX = input.get(mapping.byteOffsetX) & 0xFF;
         int posY = input.get(mapping.byteOffsetY) & 0xFF;
@@ -182,15 +182,15 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
          * very right (1.0F.). The Y-axis starts at the very at the very
          * top (0.0F) and ends at the very bottom (1.0F.)
          */
-        pos.x = ((posX / 255.0F) * 2.0F) - 1.0F;
-        pos.y = ((posY / 255.0F) * -2.0F) + 1.0F;
-        pos.z = pressed ? -1.0F : 0.0F;
+        state.pos.x = ((posX / 255.0F) * 2.0F) - 1.0F;
+        state.pos.y = ((posY / 255.0F) * -2.0F) + 1.0F;
+        state.pos.z = pressed ? -1.0F : 0.0F;
     }
 
     @FeatureAdapter
-    private void updateTrigger(@NotNull TriggerStateZ trigger, int byteOffset) {
+    private void updateTrigger(@NotNull TriggerStateZ state, int byteOffset) {
         int value = input.get(byteOffset) & 0xFF;
-        trigger.force = (value / 255.0F);
+        state.force = (value / 255.0F);
     }
 
     @FeatureAdapter

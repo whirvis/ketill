@@ -29,6 +29,7 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      */
     public static boolean isPressed(@NotNull Vector3fc pos,
                                     @NotNull Direction direction) {
+        Objects.requireNonNull(direction, "pos cannot be null");
         Objects.requireNonNull(direction, "direction cannot be null");
         switch (direction) {
             case UP:
@@ -43,9 +44,49 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
         throw new KetillException("this is a bug");
     }
 
+    /**
+     * @param pos       the analog stick position.
+     * @param direction the direction to check for.
+     * @return {@code true} if {@code pos} is pointing towards
+     * {@code direction}, {@code false} otherwise.
+     * @throws NullPointerException if {@code direction} is {@code null}.
+     */
+    public static boolean isPressed(@NotNull StickPos pos,
+                                    @NotNull Direction direction) {
+        Objects.requireNonNull(direction, "pos cannot be null");
+        Objects.requireNonNull(direction, "direction cannot be null");
+        return isPressed(pos.getPos(true), direction);
+    }
+
     public final @Nullable DeviceButton zButton;
+    public final @Nullable AnalogStickCalibration baseCalibration;
 
     /**
+     * @param id              the analog stick ID.
+     * @param zButton         the button that, when pressed, should result in
+     *                        the Z-axis of this analog stick being decreased
+     *                        from {@code 0.0F} to {@code -1.0F}. A value of
+     *                        {@code null} is permitted, and indicates that
+     *                        there is no button corresponding to the Z-axis.
+     * @param baseCalibration the calibration to use when creating a state
+     *                        container for this analog stick. Note that the
+     *                        state can use a different calibration after it
+     *                        has been created.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton,
+                       @Nullable AnalogStickCalibration baseCalibration) {
+        super(id);
+        this.zButton = zButton;
+        this.baseCalibration = baseCalibration;
+    }
+
+    /**
+     * Constructs a new {@code AnalogStick} with no base calibration. Note
+     * that a state can use a different calibration after being created.
+     *
      * @param id      the analog stick ID.
      * @param zButton the button that, when pressed, should have the Z-axis
      *                of this analog stick decreased from {@code 0.0F} to
@@ -57,12 +98,27 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      *                                  whitespace.
      */
     public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton) {
-        super(id);
-        this.zButton = zButton;
+        this(id, zButton, null);
     }
 
     /**
      * Constructs a new {@code AnalogStick} with no Z-button.
+     *
+     * @param id          the analog stick ID.
+     * @param calibration the analog stick calibration.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public AnalogStick(@NotNull String id,
+                       @Nullable AnalogStickCalibration calibration) {
+        this(id, null, calibration);
+    }
+
+    /**
+     * Constructs a new {@code AnalogStick} with no Z-button or base
+     * calibration. Note that a state can use a different calibration
+     * after being created.
      *
      * @param id the analog stick ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
@@ -70,12 +126,12 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      *                                  whitespace.
      */
     public AnalogStick(@NotNull String id) {
-        this(id, null);
+        this(id, null, null);
     }
 
     @Override
     protected @NotNull StickPosZ getInternalState() {
-        return new StickPosZ();
+        return new StickPosZ(baseCalibration);
     }
 
     @Override

@@ -66,11 +66,11 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
     }
 
     @Override
-    protected void updateStick(@NotNull StickPosZ pos,
+    protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
-        super.updateStick(pos, mapping);
+        super.updateStick(state, mapping);
         if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
-            pos.y *= -1.0F;
+            state.pos.y *= -1.0F;
         }
     }
 

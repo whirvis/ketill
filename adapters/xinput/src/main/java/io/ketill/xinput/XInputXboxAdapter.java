@@ -115,16 +115,16 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull StickPosZ pos,
+    private void updateStick(@NotNull StickPosZ state,
                              @NotNull StickMapping mapping) {
-        pos.x = axes.get(mapping.xAxis);
-        pos.y = axes.get(mapping.yAxis);
+        state.pos.x = axes.get(mapping.xAxis);
+        state.pos.y = axes.get(mapping.yAxis);
 
         XInputButton zButton = mapping.zButton;
         if (zButton != null && zButton.isPressed(buttons)) {
-            pos.z = -1.0F;
+            state.pos.z = -1.0F;
         } else {
-            pos.z = 0.0F;
+            state.pos.z = 0.0F;
         }
     }
 

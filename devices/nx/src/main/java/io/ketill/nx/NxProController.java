@@ -5,6 +5,7 @@ import io.ketill.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
+import io.ketill.controller.AnalogStickCalibration;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
@@ -21,6 +22,9 @@ import java.util.Objects;
  * A Nintendo Switch Pro controller.
  */
 public class NxProController extends Controller {
+
+    public static final @NotNull AnalogStickCalibration CALIBRATION =
+            new AnalogStickCalibration(0.70F, 0.70F, -0.70F, -0.70F);
 
     /* @formatter:off */
     @FeaturePresent
@@ -48,8 +52,8 @@ public class NxProController extends Controller {
 
     @FeaturePresent
     public static final @NotNull AnalogStick
-            STICK_LS = new AnalogStick("ls", BUTTON_L_THUMB),
-            STICK_RS = new AnalogStick("rs", BUTTON_R_THUMB);
+            STICK_LS = new AnalogStick("ls", BUTTON_L_THUMB, CALIBRATION),
+            STICK_RS = new AnalogStick("rs", BUTTON_R_THUMB, CALIBRATION);
 
     @FeaturePresent
     public static final @NotNull AnalogTrigger
@@ -59,10 +63,6 @@ public class NxProController extends Controller {
     @FeaturePresent
     public static final @NotNull PlayerLed
             FEATURE_LED = new PlayerLed("led");
-
-    @FeaturePresent
-    public static final @NotNull NxCalibration
-            FEATURE_CALIBRATION = new NxCalibration("calibration");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -102,10 +102,6 @@ public class NxProController extends Controller {
     @FeatureState
     public final @NotNull LedState
             led = this.getState(FEATURE_LED);
-
-    @FeatureState
-    public final @NotNull NxCalibrationConfig
-            calibration = this.getState(FEATURE_CALIBRATION);
     /* @formatter:on */
 
     /**
@@ -115,8 +111,8 @@ public class NxProController extends Controller {
      *                              {@code adapterSupplier} is {@code null}.
      */
     public NxProController(@NotNull AdapterSupplier<NxProController> adapterSupplier) {
-        super("nx_pro", adapterSupplier,
-                STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
+        super("nx_pro", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
+                TRIGGER_RT);
     }
 
 }

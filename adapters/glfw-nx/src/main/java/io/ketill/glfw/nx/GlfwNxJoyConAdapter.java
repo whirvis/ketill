@@ -45,28 +45,28 @@ abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
     }
 
     @FeatureAdapter
-    private void updateJoyConStick(@NotNull StickPosZ pos,
+    private void updateJoyConStick(@NotNull StickPosZ state,
                                    @NotNull JoyConStickMapping mapping) {
         if (this.isPressed(mapping.glfwLeft)) {
-            pos.x = -1.0F;
+            state.pos.x = -1.0F;
         } else if (this.isPressed(mapping.glfwRight)) {
-            pos.x = 1.0F;
+            state.pos.x = 1.0F;
         } else {
-            pos.x = 0.0F;
+            state.pos.x = 0.0F;
         }
 
         if (this.isPressed(mapping.glfwUp)) {
-            pos.y = 1.0F;
+            state.pos.y = 1.0F;
         } else if (this.isPressed(mapping.glfwDown)) {
-            pos.y = -1.0F;
+            state.pos.y = -1.0F;
         } else {
-            pos.y = 0.0F;
+            state.pos.y = 0.0F;
         }
 
         if (this.isPressed(mapping.glfwThumb)) {
-            pos.z = -1.0F;
+            state.pos.z = -1.0F;
         } else {
-            pos.z = 0.0F;
+            state.pos.z = 0.0F;
         }
     }
 

@@ -54,7 +54,7 @@ final class AnalogStickMonitor
 
     @Override
     protected boolean isPressed() {
-        return AnalogStick.isPressed(internalState, direction);
+        return AnalogStick.isPressed(internalState.calibratedPos, direction);
     }
 
 }
