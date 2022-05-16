@@ -7,8 +7,8 @@ final class StatePair<Z, S> {
     final @NotNull Z internal;
     final @NotNull S container;
 
-    StatePair(@NotNull Z internal, @NotNull S user) {
-        this.container = user;
+    StatePair(@NotNull Z internal, @NotNull S container) {
+        this.container = container;
         this.internal = internal;
     }
 

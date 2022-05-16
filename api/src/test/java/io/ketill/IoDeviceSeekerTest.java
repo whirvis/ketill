@@ -1,5 +1,6 @@
 package io.ketill;
 
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,14 +22,57 @@ class IoDeviceSeekerTest {
     }
 
     @Test
+    void testSubscribeEvents() {
+        /*
+         * It makes no sense to subscribe for events of a null type or to
+         * subscribe for events with a null callback. As such, assume this
+         * was a mistake by the user and throw an exception.
+         */
+        /* @formatter:off */
+        assertThrows(NullPointerException.class,
+                () -> seeker.subscribeEvents(null, event -> {}));
+        assertThrows(NullPointerException.class,
+                () -> seeker.subscribeEvents(null));
+        /* @formatter:on */
+
+        AtomicBoolean emitted = new AtomicBoolean();
+        Disposable subscription = seeker.subscribeEvents(event -> {
+            IoDeviceSeeker<?> emitter = event.getSeeker();
+            emitted.set(emitter == seeker);
+        });
+
+        /*
+         * Once subscribed, the I/O device seeker should return a subscription
+         * that can later be disposed of. Furthermore, since no type was given,
+         * the argument for the eventClazz parameter should have defaulted
+         * to IoDeviceSeekerEvent.class. As such, any emitted events should
+         * result in the callback being executed.
+         */
+        assertNotNull(subscription);
+        seeker.events.onNext(new MockIoDeviceSeekerEvent(seeker));
+        assertTrue(emitted.get());
+
+        /* reset emitted for next test */
+        emitted.set(false);
+
+        /*
+         * After the subscription has been disposed of, the callback should
+         * no longer be executed.
+         */
+        subscription.dispose();
+        seeker.events.onNext(new MockIoDeviceSeekerEvent(seeker));
+        assertFalse(emitted.get());
+    }
+
+    @Test
     void testDiscoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
-        seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
+        seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
+                event -> discovered.set(event.getDevice() == device));
 
         /*
          * When a device is first discovered, the device seeker is expected
-         * to execute the internal hook as well as the callback (assuming
-         * one was set by the user). Failure to do so indicates an error.
+         * to execute the internal hook as well as emit an event.
          */
         seeker.discoverDevice(device);
         assertTrue(seeker.discoveredDevice);
@@ -41,18 +85,11 @@ class IoDeviceSeekerTest {
 
         /*
          * Once a device has been discovered, it would not make sense for it
-         * to be discovered again (unless previously forgotten.) As such, the
-         * callback should not be called again.
+         * to be discovered As such, the event should not be re-emitted.
          */
         seeker.discoverDevice(device);
         assertFalse(seeker.discoveredDevice);
         assertFalse(discovered.get());
-
-        /*
-         * A null value is allowed when setting a callback. This should have
-         * the effect of removing the callback from the seeker.
-         */
-        assertDoesNotThrow(() -> seeker.onDiscoverDevice(null));
 
         /*
          * It would not make sense to discover a null device. As such, assume
@@ -65,15 +102,15 @@ class IoDeviceSeekerTest {
     @Test
     void testForgetDevice() {
         AtomicBoolean forgotten = new AtomicBoolean();
-        seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
+        seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                event -> forgotten.set(event.getDevice() == device));
 
         /* discover device for next test */
         seeker.discoverDevice(device);
 
         /*
-         * When a discovered device is forgotten, the device seeker is
-         * expected to execute the internal hook as well as the callback
-         * (assuming one was set by the user).
+         * When a discovered device is forgotten, the device seeker should
+         * execute the internal hook method and then emit an event.
          */
         seeker.forgetDevice(device);
         assertTrue(seeker.forgotDevice);
@@ -85,18 +122,12 @@ class IoDeviceSeekerTest {
         forgotten.set(false);
 
         /*
-         * If a device has is not discovered, it would not make sense to
-         * forget it. As such, the callback should not be executed.
+         * If a device was not previously discovered, it would not make sense
+         * to forget it. As such, no event should be emitted.
          */
         seeker.forgetDevice(device);
         assertFalse(seeker.forgotDevice);
         assertFalse(forgotten.get());
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the seeker.
-         */
-        assertDoesNotThrow(() -> seeker.onDiscoverDevice(null));
 
         /*
          * It would not make sense to forget a null device. As such, assume
@@ -154,32 +185,11 @@ class IoDeviceSeekerTest {
         seeker.errorOnSeek = true;
 
         /*
-         * When no error callback is set, a device seeker is obligated to
-         * wrap the exception it encounters and throw it back. This is to
-         * ensure errors do not occur silently.
+         * When an error occurs while seeking for devices, the device seeker
+         * is obligated to wrap the exception throw it back to the caller.
+         * This ensures errors do not occur silently.
          */
         assertThrows(KetillException.class, seeker::seek);
-        assertTrue(seeker.caughtSeekError);
-
-        /* reset state for next test */
-        seeker.caughtSeekError = false;
-
-        /*
-         * Once an error callback is set, the device seeker must not throw
-         * the exception it encounters in seek(). Rather, it must notify the
-         * callback of the error that has occurred and pass the exception.
-         */
-        AtomicBoolean caughtError = new AtomicBoolean();
-        seeker.onSeekError((s, e) -> caughtError.set(true));
-        assertDoesNotThrow(seeker::seek);
-        assertTrue(seeker.caughtSeekError);
-        assertTrue(caughtError.get());
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the seeker.
-         */
-        assertDoesNotThrow(() -> seeker.onSeekError(null));
     }
 
     @Test
@@ -188,30 +198,19 @@ class IoDeviceSeekerTest {
         seeker.discoverDevice(device);
 
         /*
-         * When a device seeker is closed, it is expected forget all
-         * previously discovered devices. This is because they will
-         * (usually) no longer be used.
+         * When a device seeker is closed, it is expected forget all devices
+         * that were previously discovered. This is because they will usually
+         * no longer be used.
          */
         AtomicBoolean forgotten = new AtomicBoolean();
         assertFalse(seeker.isClosed());
-        seeker.onForgetDevice((s, d) -> forgotten.set(d == device));
+        seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                events -> forgotten.set(events.getDevice() == device));
 
         seeker.close();
 
         assertTrue(forgotten.get());
         assertTrue(seeker.isClosed());
-
-        /*
-         * It would not make sense to set any callbacks after the device
-         * seeker has been closed. None of them will ever be executed. As
-         * such, assume this was a user mistake and thrown an exception.
-         */
-        assertThrows(IllegalStateException.class,
-                () -> seeker.onDiscoverDevice(null));
-        assertThrows(IllegalStateException.class,
-                () -> seeker.onForgetDevice(null));
-        assertThrows(IllegalStateException.class,
-                () -> seeker.onSeekError(null));
 
         /*
          * It would not make sense to discover a device, forget a device, or

@@ -32,7 +32,6 @@ class MockIoDevice extends IoDevice {
     boolean executedTask;
     boolean featureRegistered, featureUnregistered;
     boolean deviceConnected, deviceDisconnected;
-    boolean caughtPollError;
     boolean polled;
 
     MockIoDevice(String id,
@@ -82,11 +81,6 @@ class MockIoDevice extends IoDevice {
     @Override
     protected void deviceDisconnected() {
         this.deviceDisconnected = true;
-    }
-
-    @Override
-    protected void pollError(@NotNull Throwable cause) {
-        this.caughtPollError = true;
     }
 
     @Override

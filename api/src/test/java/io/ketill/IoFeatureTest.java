@@ -84,4 +84,13 @@ class IoFeatureTest {
         assertSame(pair.container, feature.containerState);
     }
 
+    @Test
+    void testUpdate() {
+        /*
+         * By default, this method does nothing. As such, even though both
+         * parameters are marked with @NotNull, nothing should be thrown.
+         */
+        assertDoesNotThrow(() -> feature.update(null, null));
+    }
+
 }

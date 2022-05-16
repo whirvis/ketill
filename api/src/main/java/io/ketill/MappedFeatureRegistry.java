@@ -21,10 +21,12 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
             " of a previously registered feature";
     /* @formatter:on */
 
+    private final IoDeviceObserver events;
     private final Map<IoFeature<?, ?>, RegisteredFeature<?, ?, ?>> features;
     private final Map<IoFeature<?, ?>, MappedFeature<?, ?, ?>> mappings;
 
-    MappedFeatureRegistry() {
+    MappedFeatureRegistry(@NotNull IoDeviceObserver events) {
+        this.events = events;
         this.features = new HashMap<>();
         this.mappings = new HashMap<>();
     }
@@ -135,7 +137,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         Object removed = mappings.remove(feature);
         RegisteredFeature<?, ?, ?> registered = features.get(feature);
         if (registered != null) {
-            registered.updater = RegisteredFeature.NO_UPDATER;
+            registered.adapterUpdater = RegisteredFeature.NO_UPDATER;
         }
         return removed != null;
     }
@@ -152,9 +154,9 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         MappedFeature<R, ?, ?> mapped =
                 (MappedFeature<R, ?, ?>) mappings.get(feature);
         if (mapped != null) {
-            registered.updater = mapped.getUpdater(registered);
+            registered.adapterUpdater = mapped.getUpdater(registered);
         } else {
-            registered.updater = RegisteredFeature.NO_UPDATER;
+            registered.adapterUpdater = RegisteredFeature.NO_UPDATER;
         }
     }
     /* @formatter:on */
@@ -232,7 +234,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         }
 
         RegisteredFeature<F, Z, S> registered =
-                new RegisteredFeature<>(feature);
+                new RegisteredFeature<>(feature, events);
 
         /*
          * The feature being registered must not have any states that are
@@ -273,7 +275,8 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
 
     void updateFeatures() {
         for (RegisteredFeature<?, ?, ?> registered : features.values()) {
-            registered.updater.run();
+            registered.adapterUpdater.run();
+            registered.featureUpdater.run();
         }
     }
 

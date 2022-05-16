@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
 class MappedFeatureRegistryTest {
@@ -16,7 +17,8 @@ class MappedFeatureRegistryTest {
 
     @BeforeEach
     void createRegistry() {
-        this.registry = new MappedFeatureRegistry();
+        IoDeviceObserver events = mock(IoDeviceObserver.class);
+        this.registry = new MappedFeatureRegistry(events);
     }
 
     @Test
@@ -32,7 +34,7 @@ class MappedFeatureRegistryTest {
     @Test
     void testMapFeature() {
         MockIoFeature feature = new MockIoFeature();
-        AtomicBoolean updated = new AtomicBoolean();
+        AtomicBoolean updatedAdapter = new AtomicBoolean();
 
         /* feature must be registered for updates */
         registry.registerFeature(feature);
@@ -42,33 +44,33 @@ class MappedFeatureRegistryTest {
          * parameters when updating the feature. This is verified via
          * a randomly generated value on each test.
          */
-        updated.set(false);
+        updatedAdapter.set(false);
         int paramsValue = new Random().nextInt();
         registry.mapFeature(feature, paramsValue,
-                (s, p) -> updated.set(p == paramsValue));
+                (s, p) -> updatedAdapter.set(p == paramsValue));
         assertTrue(registry.hasMapping(feature));
         registry.updateFeatures();
-        assertTrue(updated.get());
+        assertTrue(updatedAdapter.get());
 
         /*
          * When mapping a feature without any specified parameters, but
          * still providing an updater which takes in a parameter, the
          * received parameter must be the feature itself.
          */
-        updated.set(false);
-        registry.mapFeature(feature, (s, p) -> updated.set(p == feature));
+        updatedAdapter.set(false);
+        registry.mapFeature(feature, (s, p) -> updatedAdapter.set(p == feature));
         registry.updateFeatures();
-        assertTrue(updated.get());
+        assertTrue(updatedAdapter.get());
 
         /*
          * Mapping a feature with an updater that takes in no parameters
          * is allowed via a shorthand. Ensure that this shorthand works
          * by verifying that the feature was updated.
          */
-        updated.set(false);
-        registry.mapFeature(feature, (s) -> updated.set(true));
+        updatedAdapter.set(false);
+        registry.mapFeature(feature, (s) -> updatedAdapter.set(true));
         registry.updateFeatures();
-        assertTrue(updated.get());
+        assertTrue(updatedAdapter.get());
 
         /*
          * A null value is allowed for the parameters when mapping a feature.
@@ -88,14 +90,14 @@ class MappedFeatureRegistryTest {
          */
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(null, null, (f, s) -> {
-                }));
+        }));
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(feature, feature, null));
     }
 
     @Test
     void testUnmapFeature() {
-        AtomicBoolean updated = new AtomicBoolean();
+        AtomicBoolean updatedAdapter = new AtomicBoolean();
         MockIoFeature feature = new MockIoFeature();
 
         /* feature must be registered for updates */
@@ -107,7 +109,7 @@ class MappedFeatureRegistryTest {
          * actually unmapped a feature from an updater.
          */
         assertFalse(registry.unmapFeature(feature));
-        registry.mapFeature(feature, (s) -> updated.set(true));
+        registry.mapFeature(feature, (s) -> updatedAdapter.set(true));
         assertTrue(registry.unmapFeature(feature));
         assertFalse(registry.hasMapping(feature));
 
@@ -117,9 +119,10 @@ class MappedFeatureRegistryTest {
          * expected to remain false. If it is set to true, then unmapFeature()
          * has not properly unmapped the feature.
          */
-        assertSame(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
+        assertSame(registeredFeature.adapterUpdater,
+                RegisteredFeature.NO_UPDATER);
         registry.updateFeatures();
-        assertFalse(updated.get());
+        assertFalse(updatedAdapter.get());
 
         /*
          * It makes no sense to unmap a null feature. As such, assume
@@ -163,8 +166,7 @@ class MappedFeatureRegistryTest {
          */
         RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertSame(registeredFeature,
-                registry.getFeatureRegistration(feature));
+        assertSame(registeredFeature, registry.getFeatureRegistration(feature));
 
         /*
          * It makes no sense to get the registration of a null feature.
@@ -250,13 +252,22 @@ class MappedFeatureRegistryTest {
         assertTrue(registry.isFeatureRegistered(feature));
 
         /*
+         * When a feature is registered, it should be updated even if it has
+         * no mapping associated with it. Furthermore, the feature's update
+         * should be called after the adapter's updater is called.
+         */
+        registry.updateFeatures();
+        assertTrue(feature.updatedFeature);
+
+        /*
          * Ensure that the fields within registeredFeature correlate to their
          * expected values. That being the contained feature, the state, as
          * well as the updater. If these are not their expected values, then
          * registerFeature() did not instantiate registeredFeature correctly.
          */
         assertSame(registeredFeature.feature, feature);
-        assertSame(registeredFeature.updater, RegisteredFeature.NO_UPDATER);
+        assertSame(registeredFeature.adapterUpdater,
+                RegisteredFeature.NO_UPDATER);
 
         /*
          * It makes no sense to register a null feature or a feature which

@@ -33,16 +33,18 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
     public final @NotNull F feature;
     public final @NotNull S containerState;
     final @NotNull Z internalState;
-    @NotNull Runnable updater;
+    final @NotNull Runnable featureUpdater;
+    @NotNull Runnable adapterUpdater;
 
-    RegisteredFeature(@NotNull F feature) {
+    RegisteredFeature(@NotNull F feature, @NotNull IoDeviceObserver events) {
         this.feature = feature;
 
         StatePair<Z, S> pair = feature.getState();
         this.containerState = pair.container;
         this.internalState = pair.internal;
 
-        this.updater = NO_UPDATER;
+        this.featureUpdater = () -> feature.update(internalState, events);
+        this.adapterUpdater = NO_UPDATER;
     }
 
 }

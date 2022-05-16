@@ -1,5 +1,6 @@
 package io.ketill;
 
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,6 +73,49 @@ class IoDeviceTest {
     }
 
     @Test
+    void testSubscribeEvents() {
+        /*
+         * It makes no sense to subscribe for events of a null type or to
+         * subscribe for events with a null callback. As such, assume this
+         * was a mistake by the user and throw an exception.
+         */
+        /* @formatter:off */
+        assertThrows(NullPointerException.class,
+                () -> device.subscribeEvents(null, event -> {}));
+        assertThrows(NullPointerException.class,
+                () -> device.subscribeEvents(null));
+        /* @formatter:on */
+
+        AtomicBoolean emitted = new AtomicBoolean();
+        Disposable subscription = device.subscribeEvents(event -> {
+            IoDevice emitter = event.getDevice();
+            emitted.set(emitter == device);
+        });
+
+        /*
+         * Once subscribed, the I/O device should return a subscription that
+         * can later be disposed of. Furthermore, since no type was given,
+         * the argument for the eventClazz parameter should have defaulted
+         * to IoDeviceEvent.class. As such, any emitted events should result
+         * in the callback being executed.
+         */
+        assertNotNull(subscription);
+        device.events.onNext(new MockIoDeviceEvent(device));
+        assertTrue(emitted.get());
+
+        /* reset emitted for next test */
+        emitted.set(false);
+
+        /*
+         * After the subscription has been disposed of, the callback should
+         * no longer be executed.
+         */
+        subscription.dispose();
+        device.events.onNext(new MockIoDeviceEvent(device));
+        assertFalse(emitted.get());
+    }
+
+    @Test
     void testInitAdapter() {
         /*
          * The MockInputDevice constructed in setup() uses the default
@@ -105,11 +149,10 @@ class IoDeviceTest {
         assertThrows(IllegalStateException.class, device::registerFields);
 
         /*
-         * It makes no sense for a feature field annotated with the
-         * @FeaturePresent annotation to be private (as it would not
-         * be accessible to the outside world.) Furthermore, if the
-         * field is not assignable from DeviceFeature, then it cannot
-         * be registered as a device feature.
+         * It makes no sense for fields annotated with @FeaturePresent to
+         * be private (as it would not be accessible to the outside world.)
+         * Furthermore, if the field is not assignable from IoFeature, then
+         * it cannot be registered as an I/O feature.
          */
         assertThrows(KetillException.class,
                 MockIoDevice.WithPrivateFeature::new);
@@ -257,18 +300,13 @@ class IoDeviceTest {
     void testRegisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean registered = new AtomicBoolean();
-        device.onRegisterFeature((d, f) -> registered.set(f == feature));
+        device.subscribeEvents(IoFeatureRegisterEvent.class,
+                event -> registered.set(event.getFeature() == feature));
 
         device.registerFeature(feature);
         assertTrue(device.featureRegistered);
         assertTrue(registered.get());
         assertTrue(device.isFeatureRegistered(feature));
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the device.
-         */
-        assertDoesNotThrow(() -> device.onRegisterFeature(null));
 
         /*
          * It makes no sense to register a null feature or a feature which
@@ -285,7 +323,8 @@ class IoDeviceTest {
     void testUnregisterFeature() {
         MockIoFeature feature = new MockIoFeature();
         AtomicBoolean unregistered = new AtomicBoolean();
-        device.onUnregisterFeature((d, f) -> unregistered.set(f == feature));
+        device.subscribeEvents(IoFeatureUnregisterEvent.class,
+                event -> unregistered.set(event.getFeature() == feature));
 
         /* register feature for next test */
         device.registerFeature(feature);
@@ -294,12 +333,6 @@ class IoDeviceTest {
         assertTrue(device.featureUnregistered);
         assertTrue(unregistered.get());
         assertFalse(device.isFeatureRegistered(feature));
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the device.
-         */
-        assertDoesNotThrow(() -> device.onUnregisterFeature(null));
 
         /*
          * It makes no sense to unregister a null feature or a feature which
@@ -315,14 +348,16 @@ class IoDeviceTest {
     @Test
     void testIsConnected() {
         AtomicBoolean connected = new AtomicBoolean();
-        device.onConnect((d) -> connected.set(true));
-        device.onDisconnect((d) -> connected.set(false));
+        device.subscribeEvents(IoDeviceConnectEvent.class,
+                event -> connected.set(true));
+        device.subscribeEvents(IoDeviceDisconnectEvent.class,
+                event -> connected.set(false));
 
         /*
-         * First test the callback for when the device is connected. Since
-         * the device is disconnected when first instantiated, it will not
-         * send a callback. Connecting the device here, then disconnecting
-         * it, will have the disconnect callback fired as desired.
+         * First test the event for device connection. Since the device is
+         * disconnected when first instantiated, it will not emit any events.
+         * Connecting the device here, then disconnecting it, will have the
+         * disconnection event emitted as desired.
          */
         adapter.shouldBeConnected = true;
         device.poll();
@@ -335,13 +370,6 @@ class IoDeviceTest {
         assertTrue(device.deviceDisconnected);
         assertFalse(connected.get());
         assertFalse(device.isConnected());
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the device.
-         */
-        assertDoesNotThrow(() -> device.onConnect(null));
-        assertDoesNotThrow(() -> device.onDisconnect(null));
     }
 
     @Test
@@ -349,32 +377,11 @@ class IoDeviceTest {
         adapter.errorOnPoll = true;
 
         /*
-         * When no error callback is set, a device is obligated to wrap
-         * the exception it encounters and throw it back. This ensures
-         * errors do not occur silently.
+         * When an error occurs while polling the device adapter, the device
+         * is obligated to wrap the exception throw it back to the caller.
+         * This ensures errors do not occur silently.
          */
         assertThrows(KetillException.class, device::poll);
-        assertTrue(device.caughtPollError);
-
-        /* reset state for next test */
-        device.caughtPollError = false;
-
-        /*
-         * Once an error callback is set, the device must not throw the
-         * exception it encounters in seek(). Rather, it must notify the
-         * callback of the error that has occurred and pass the exception.
-         */
-        AtomicBoolean caughtError = new AtomicBoolean();
-        device.onPollError((d, e) -> caughtError.set(true));
-        assertDoesNotThrow(device::poll);
-        assertTrue(device.caughtPollError);
-        assertTrue(caughtError.get());
-
-        /*
-         * A null value is allowed when setting a callback. This should
-         * have the effect of removing the callback from the device.
-         */
-        assertDoesNotThrow(() -> device.onPollError(null));
     }
 
 }

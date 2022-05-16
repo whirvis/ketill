@@ -95,4 +95,22 @@ public abstract class IoFeature<Z, S> {
      */
     protected abstract @NotNull S getContainerState(@NotNull Z internalState);
 
+    /**
+     * Updates the internal state of this feature <i>after</i> it has been
+     * updated by the adapter of an I/O device. By default, this method does
+     * nothing.
+     * <p>
+     * If necessary, this should be used to update the internal state of a
+     * feature where the adapter is not considered responsible (e.g., the
+     * calibration of an analog stick).
+     *
+     * @param internalState the internal state of the feature.
+     * @param events        an observer which can emit events to
+     *                      subscribers of the I/O device.
+     */
+    protected void update(@NotNull Z internalState,
+                          @NotNull IoDeviceObserver events) {
+        /* optional implement */
+    }
+
 }

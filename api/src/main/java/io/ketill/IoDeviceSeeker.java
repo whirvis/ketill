@@ -1,15 +1,16 @@
 package io.ketill;
 
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.PublishSubject;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -28,22 +29,21 @@ import java.util.function.Consumer;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(BiConsumer)
- * @see #onForgetDevice(BiConsumer)
- * @see #onSeekError(BiConsumer)
  * @see IoDeviceAdapter
  */
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
-    private final @NotNull List<I> devices;
+    private final @NotNull Subject<IoDeviceSeekerEvent> subject;
+    protected final @NotNull IoDeviceSeekerObserver events;
 
-    private @Nullable BiConsumer<IoDeviceSeeker<I>, I> discoverDeviceCallback;
-    private @Nullable BiConsumer<IoDeviceSeeker<I>, I> forgetDeviceCallback;
-    private @Nullable BiConsumer<IoDeviceSeeker<I>, Throwable> errorCallback;
+    private final @NotNull List<I> devices;
 
     private boolean closed;
 
     public IoDeviceSeeker() {
+        this.subject = PublishSubject.create();
+        this.events = new IoDeviceSeekerObserver(this, subject);
+
         /*
          * Its possible devices will be modified while being iterated
          * over (e.g., a device is discovered or forgotten.) Using a
@@ -59,67 +59,58 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Sets the callback for when this seeker has discovered a device. If this
-     * callback was set <i>after</i> one or more devices have been discovered,
-     * it will not be called for them.
-     * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event should
-     * override {@link #deviceDiscovered(IoDevice)}. The callback is for users.
+     * Subscribes to events emitted from this I/O device seeker.
      *
-     * @param callback the code to execute when a device is discovered. A
-     *                 value of {@code null} is permitted, and will result
-     *                 in nothing being executed.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @param eventClazz the event type class to listen for. Only events of
+     *                   this type and those extending it will be emitted
+     *                   to {@code callable}.
+     * @param callback   the code to execute when an event of the desired
+     *                   type is emitted by the device seeker.
+     * @param <T>        the event type.
+     * @return the new {@link Disposable} instance, which can be used to
+     * dispose the subscription at any time.
+     * @throws NullPointerException if {@code eventClazz} or {@code callback}
+     *                              are {@code null}.
      */
-    public final void onDiscoverDevice(@Nullable BiConsumer<IoDeviceSeeker<I>,
-            I> callback) {
-        this.requireOpen();
-        this.discoverDeviceCallback = callback;
+    /* @formatter:off */
+    @SuppressWarnings("unchecked")
+    public final <T extends IoDeviceSeekerEvent> @NotNull Disposable
+            subscribeEvents(@NotNull Class<T> eventClazz,
+                            @NotNull Consumer<T> callback) {
+        Objects.requireNonNull(eventClazz, "eventClazz cannot be null");
+        Objects.requireNonNull(callback, "callback cannot be null");
+        return subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
+                .map(obj -> (T) obj).subscribe(callback::accept);
     }
+    /* @formatter:on */
 
     /**
-     * Sets the callback for when this seeker has forgotten a device. If this
-     * callback was set <i>after</i> one or more devices have been forgotten,
-     * it will not be called for them.
-     * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event should
-     * override {@link #deviceForgotten(IoDevice)}. The callback is for users.
+     * Subscribes to all events emitted from this I/O device seeker.
      *
-     * @param callback the code to execute when a device is forgotten. A
-     *                 value of {@code null} is permitted, and will result
-     *                 in nothing being executed.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @param callback the code to execute when an event is emitted by the
+     *                 device seeker.
+     * @return the new {@link Disposable} instance, which can be used to
+     * dispose the subscription at any time.
+     * @throws NullPointerException if {@code callback} is {@code null}.
      */
-    public final void onForgetDevice(@Nullable BiConsumer<IoDeviceSeeker<I>,
-            I> callback) {
-        this.requireOpen();
-        this.forgetDeviceCallback = callback;
+    /* @formatter:off */
+    public final @NotNull Disposable
+            subscribeEvents(@NotNull Consumer<IoDeviceSeekerEvent> callback) {
+        Objects.requireNonNull(callback, "callback cannot be null");
+        return this.subscribeEvents(IoDeviceSeekerEvent.class, callback);
     }
+    /* @formatter:on */
 
     /**
-     * Sets the callback for when an error occurs in {@link #seek()}. By
-     * default, a wrapping {@code KetillException} will be constructed for
-     * the original error and thrown.
-     * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event should
-     * override {@link #seekerError(Throwable)}. The callback is for users.
-     * Furthermore, for the sake of the user, implementing this method will
-     * not prevent an exception from being thrown.
+     * Discovers a device. If a device is already currently discovered, this
+     * method does nothing.
      *
-     * @param callback the code to execute when an error occurs. A value
-     *                 of {@code null} is permitted, and will result in a
-     *                 wrapping {@code KetillException} being thrown.
+     * @param device the device to discover.
+     * @throws NullPointerException  if {@code device} is {@code null}.
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
+     * @see #deviceDiscovered(IoDevice)
      */
-    public final void onSeekError(@Nullable BiConsumer<IoDeviceSeeker<I>,
-            Throwable> callback) {
-        this.requireOpen();
-        this.errorCallback = callback;
-    }
-
     @MustBeInvokedByOverriders
     protected void discoverDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device cannot be null");
@@ -129,9 +120,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.add(device);
         this.deviceDiscovered(device);
-        if (discoverDeviceCallback != null) {
-            discoverDeviceCallback.accept(this, device);
-        }
+        events.onNext(new IoDeviceDiscoverEvent(this, device));
     }
 
     /**
@@ -145,6 +134,16 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         /* optional implement */
     }
 
+    /**
+     * Forgets a device. If a device is not currently discovered, this
+     * method does nothing.
+     *
+     * @param device the device to forget.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     * @see #deviceForgotten(IoDevice)
+     */
     @MustBeInvokedByOverriders
     protected void forgetDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device cannot be null");
@@ -154,9 +153,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.remove(device);
         this.deviceForgotten(device);
-        if (forgetDeviceCallback != null) {
-            forgetDeviceCallback.accept(this, device);
-        }
+        events.onNext(new IoDeviceForgetEvent(this, device));
     }
 
     /**
@@ -187,8 +184,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @return this device seeker.
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
-     * @throws KetillException       if an error occurs and no callback was
-     *                               set via {@link #onSeekError(BiConsumer)}.
+     * @throws KetillException       if an error occurs.
      * @see #pollDevices()
      */
     public final synchronized IoDeviceSeeker<I> seek() {
@@ -196,25 +192,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         try {
             this.seekImpl();
         } catch (Throwable cause) {
-            this.seekerError(cause);
-            if (errorCallback != null) {
-                errorCallback.accept(this, cause);
-            } else {
-                throw new KetillException("error in DeviceSeeker", cause);
-            }
+            String msg = "error in " + this.getClass().getName();
+            throw new KetillException(msg, cause);
         }
         return this;
-    }
-
-    /**
-     * Called when an error occurs in {@link #seek()}. Overriding this
-     * method allows for an I/O device seeker to know when an error has
-     * occurred without needing to set themselves as the callback.
-     *
-     * @param cause the cause of the error.
-     */
-    protected void seekerError(@NotNull Throwable cause) {
-        /* optional implement */
     }
 
     /**
@@ -307,10 +288,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             I discovered = devices.get(0);
             this.forgetDevice(discovered);
         }
-
-        this.discoverDeviceCallback = null;
-        this.forgetDeviceCallback = null;
-        this.errorCallback = null;
 
         this.closed = true;
     }
