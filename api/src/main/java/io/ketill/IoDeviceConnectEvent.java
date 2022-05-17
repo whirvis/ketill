@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @see IoDevice#isConnected()
  */
-public class IoDeviceConnectEvent extends IoDeviceEvent {
+public final class IoDeviceConnectEvent extends IoDeviceEvent {
 
     /**
      * @param device the device which emitted this event.

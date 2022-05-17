@@ -7,23 +7,23 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
-class IoFeatureUnregisterEventTest {
+class IoFeatureEventTest {
 
     private IoDevice device;
     private IoFeature<?, ?> feature;
-    private IoFeatureUnregisterEvent event;
+    private MockIoFeatureEvent event;
 
     @BeforeEach
     void createEvent() {
         this.device = mock(IoDevice.class);
         this.feature = new MockIoFeature();
-        this.event = new IoFeatureUnregisterEvent(device, feature);
+        this.event = new MockIoFeatureEvent(device, feature);
     }
 
     @Test
     void testInit() {
         assertThrows(NullPointerException.class,
-                () -> new IoFeatureUnregisterEvent(device, null));
+                () -> new IoFeatureRegisterEvent(device, null));
     }
 
     @Test

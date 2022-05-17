@@ -2,16 +2,12 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
- * Emitted by {@link IoDevice} when a feature is unregistered.
+ * Emitted by {@link IoDevice} when an {@link IoFeature} is unregistered.
  *
  * @see IoDevice#unregisterFeature(IoFeature)
  */
-public class IoFeatureUnregisterEvent extends IoDeviceEvent {
-
-    private final @NotNull IoFeature<?, ?> feature;
+public final class IoFeatureUnregisterEvent extends IoFeatureEvent {
 
     /**
      * @param device  the device which emitted this event.
@@ -21,16 +17,7 @@ public class IoFeatureUnregisterEvent extends IoDeviceEvent {
      */
     IoFeatureUnregisterEvent(@NotNull IoDevice device,
                              @NotNull IoFeature<?, ?> feature) {
-        super(device);
-        this.feature = Objects.requireNonNull(feature,
-                "feature cannot be null");
-    }
-
-    /**
-     * @return the feature which was unregistered.
-     */
-    public final @NotNull IoFeature<?, ?> getFeature() {
-        return this.feature;
+        super(device, feature);
     }
 
 }

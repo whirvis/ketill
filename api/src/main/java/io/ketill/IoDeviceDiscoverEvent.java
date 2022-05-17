@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @see IoDeviceSeeker#getDeviceCount()
  * @see IoDeviceSeeker#forEachDevice(Consumer)
  */
-public class IoDeviceDiscoverEvent extends IoDeviceSeekerEvent {
+public final class IoDeviceDiscoverEvent extends IoDeviceSeekerEvent {
 
     private final @NotNull IoDevice device;
 

@@ -2,14 +2,12 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * Emitted by {@link IoDevice} when a feature is registered.
  *
  * @see IoDevice#registerFeature(IoFeature)
  */
-public class IoFeatureRegisterEvent extends IoDeviceEvent {
+public final class IoFeatureRegisterEvent extends IoFeatureEvent {
 
     private final @NotNull RegisteredFeature<?, ?, ?> registered;
 
@@ -21,23 +19,15 @@ public class IoFeatureRegisterEvent extends IoDeviceEvent {
      */
     IoFeatureRegisterEvent(@NotNull IoDevice device,
                            @NotNull RegisteredFeature<?, ?, ?> registered) {
-        super(device);
-        this.registered = Objects.requireNonNull(registered,
-                "registered cannot be null");
+        super(device, registered.feature);
+        this.registered = registered;
     }
 
     /**
      * @return the registration of the feature.
      */
-    public final @NotNull RegisteredFeature<?, ?, ?> getRegistration() {
+    public @NotNull RegisteredFeature<?, ?, ?> getRegistration() {
         return this.registered;
-    }
-
-    /**
-     * @return the feature which was registered.
-     */
-    public final @NotNull IoFeature<?, ?> getFeature() {
-        return registered.feature;
     }
 
 }

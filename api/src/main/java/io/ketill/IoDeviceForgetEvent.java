@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * @see IoDeviceSeeker#getDeviceCount()
  * @see IoDeviceSeeker#forEachDevice(Consumer)
  */
-public class IoDeviceForgetEvent extends IoDeviceSeekerEvent {
+public final class IoDeviceForgetEvent extends IoDeviceSeekerEvent {
 
     private final @NotNull IoDevice device;
 
