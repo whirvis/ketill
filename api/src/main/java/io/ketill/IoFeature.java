@@ -17,6 +17,8 @@ import java.util.Objects;
  *            act as a pass through to the internal state. If the internal
  *            state contains no sensitive data, they can be the same type.
  * @see IoDevice#registerFeature(IoFeature)
+ * @see AutonomousState
+ * @see ContainerState
  * @see PlainIoFeature
  * @see FeaturePresent
  * @see FeatureState
@@ -41,47 +43,75 @@ public abstract class IoFeature<Z, S> {
     }
 
     /**
-     * Constructs a new {@code StateContainer} containing a newly
-     * instantiated instance of both the internal and container state.
+     * Constructs a new {@code StatePair} containing a newly instantiated
+     * instance of both the internal and container state.
      *
-     * @return the state container.
-     * @throws NullPointerException          if {@link #getInternalState()} or
-     *                                       {@link #getContainerState(Object)}
-     *                                       return {@code null}.
-     * @throws UnsupportedOperationException if the returned internal state
-     *                                       or container state are instances
-     *                                       of an {@link IoFeature}.
+     * @param observer an observer of the I/O device which owns this state.
+     *                 This allows the state to emit events.
+     * @return the state pair.
+     * @throws NullPointerException if {@code observer} is {@code null};
+     *                              if the returned internal state or
+     *                              container state are {@code null}.
+     * @throws KetillException      if the returned internal state or
+     *                              container state are instances of
+     *                              {@link IoFeature};
+     *                              if the returned internal state
+     *                              extends {@link ContainerState};
+     *                              if the returned container state
+     *                              implements {@link AutonomousState}.
      */
-    protected final @NotNull StatePair<Z, S> getState() {
-        Z internalState = this.getInternalState();
+    /* @formatter:off */
+    protected final @NotNull StatePair<Z, S>
+            getState(@NotNull IoDeviceObserver observer) {
+        Objects.requireNonNull(observer, "observer cannot be null");
+
+        Z internalState = this.getInternalState(observer);
         Objects.requireNonNull(internalState,
                 "getInternalState() cannot return null");
-        if (internalState instanceof IoFeature) {
-            String msg = "internal state cannot be an";
-            msg += " " + this.getClass().getSimpleName();
-            throw new UnsupportedOperationException(msg);
-        }
 
         S containerState = this.getContainerState(internalState);
         Objects.requireNonNull(containerState,
                 "getContainerState() cannot return null");
-        if (containerState instanceof IoFeature) {
+
+        if (internalState instanceof IoFeature) {
+            String msg = "internal state cannot be an";
+            msg += " " + this.getClass().getSimpleName();
+            throw new KetillException(msg);
+        } else if (containerState instanceof IoFeature) {
             String msg = "container state cannot be an";
             msg += " " + this.getClass().getSimpleName();
-            throw new UnsupportedOperationException(msg);
+            throw new KetillException(msg);
+        }
+
+        if (containerState instanceof AutonomousState) {
+            String msg = "container state cannot be autonomous";
+            msg += " (cannot implement ";
+            msg += AutonomousState.class.getSimpleName() + ")";
+            throw new KetillException(msg);
+        } else if (internalState instanceof ContainerState) {
+            String msg = "internal state cannot be a container";
+            msg += " (cannot extend ";
+            msg += ContainerState.class.getSimpleName() + ")";
+            throw new KetillException(msg);
         }
 
         return new StatePair<>(internalState, containerState);
     }
+    /* @formatter:on */
 
     /**
      * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
      * to prevent possible headaches with other methods.
      *
+     * @param observer an observer of the I/O device which owns this state.
+     *                 This can be used to emit events if desired.
      * @return a newly instantiated instance of the internal state. This
      * method must <i>never</i> return {@code null}.
      */
-    protected abstract @NotNull Z getInternalState();
+    /* @formatter:off */
+    protected abstract @NotNull Z
+            getInternalState(@NotNull IoDeviceObserver observer);
+    /* @formatter:on */
 
     /**
      * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
@@ -89,28 +119,10 @@ public abstract class IoFeature<Z, S> {
      *
      * @param internalState the internal state. This can be used to access
      *                      sensitive data without while limiting the user
-     *                      as necessary (e.g., making it read only).
+     *                      as necessary (e.g., by making it read only).
      * @return a newly instantiated instance of the container state. This
      * method must <i>never</i> return {@code null}.
      */
     protected abstract @NotNull S getContainerState(@NotNull Z internalState);
-
-    /**
-     * Updates the internal state of this feature <i>after</i> it has been
-     * updated by the adapter of an I/O device. By default, this method does
-     * nothing.
-     * <p>
-     * If necessary, this should be used to update the internal state of a
-     * feature where the adapter is not considered responsible (e.g., the
-     * calibration of an analog stick).
-     *
-     * @param internalState the internal state of the feature.
-     * @param events        an observer which can emit events to
-     *                      subscribers of the I/O device.
-     */
-    protected void update(@NotNull Z internalState,
-                          @NotNull IoDeviceObserver events) {
-        /* optional implement */
-    }
 
 }

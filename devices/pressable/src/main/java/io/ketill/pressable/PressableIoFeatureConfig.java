@@ -4,20 +4,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Used by {@link PressableFeatureMonitor} to decide if a pressable feature
+ * Used by {@link PressableIoFeatureObserver} to decide if a pressable feature
  * is being held down, how quickly it should be virtually pressed, etc.
  */
-public class PressableFeatureConfig implements PressableFeatureConfigView {
+public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
 
     /* @formatter:off */
     /**
      * @param view the configuration view to filter.
      * @return {@code view} as given if not {@code null},
-     * {@link PressableFeatureConfig#DEFAULT} otherwise.
+     * {@link PressableIoFeatureConfig#DEFAULT} otherwise.
      */
-    public static @NotNull PressableFeatureConfigView
-            valueOf(@Nullable PressableFeatureConfigView view) {
-        return view != null ? view : PressableFeatureConfig.DEFAULT;
+    public static @NotNull PressableIoFeatureConfigView
+            valueOf(@Nullable PressableIoFeatureConfigView view) {
+        return view != null ? view : PressableIoFeatureConfig.DEFAULT;
     }
     /* @formatter:on */
 
@@ -28,8 +28,8 @@ public class PressableFeatureConfig implements PressableFeatureConfigView {
             DISABLE_HOLD = -1L,
             DISABLE_HOLD_PRESS = 0L;
 
-    public static final @NotNull PressableFeatureConfigView
-            DEFAULT = new PressableFeatureConfig();
+    public static final @NotNull PressableIoFeatureConfigView
+            DEFAULT = new PressableIoFeatureConfig();
     /* @formatter:on */
 
     private long holdTime;
@@ -44,7 +44,7 @@ public class PressableFeatureConfig implements PressableFeatureConfigView {
      *                          virtual feature presses. Values less than
      *                          one will disable this feature.
      */
-    public PressableFeatureConfig(long holdTime, long holdPressInterval) {
+    public PressableIoFeatureConfig(long holdTime, long holdPressInterval) {
         this.setHoldTime(holdTime);
         this.setHoldPressInterval(holdPressInterval);
     }
@@ -54,7 +54,7 @@ public class PressableFeatureConfig implements PressableFeatureConfigView {
      * for {@code holdTime} being {@value #DEFAULT_HOLD_TIME} and
      * {@code holdPressInterval} being {@value #DEFAULT_HOLD_PRESS_INTERVAL}.
      */
-    public PressableFeatureConfig() {
+    public PressableIoFeatureConfig() {
         this(DEFAULT_HOLD_TIME, DEFAULT_HOLD_PRESS_INTERVAL);
     }
 

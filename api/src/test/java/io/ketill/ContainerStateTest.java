@@ -6,15 +6,15 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
-class StateContainerTest {
+class ContainerStateTest {
 
     private Object internalState;
-    private MockStateContainer container;
+    private MockContainerState container;
 
     @BeforeEach
     void createState() {
         this.internalState = new Object();
-        this.container = new MockStateContainer(internalState);
+        this.container = new MockContainerState(internalState);
     }
 
     @Test
@@ -25,7 +25,7 @@ class StateContainerTest {
          * and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> new MockStateContainer(null));
+                () -> new MockContainerState(null));
     }
 
     @Test

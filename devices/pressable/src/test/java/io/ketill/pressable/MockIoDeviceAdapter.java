@@ -1,6 +1,5 @@
 package io.ketill.pressable;
 
-import io.ketill.IoDevice;
 import io.ketill.IoDeviceAdapter;
 import io.ketill.MappedFeatureRegistry;
 

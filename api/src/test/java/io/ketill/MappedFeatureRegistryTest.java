@@ -58,7 +58,8 @@ class MappedFeatureRegistryTest {
          * received parameter must be the feature itself.
          */
         updatedAdapter.set(false);
-        registry.mapFeature(feature, (s, p) -> updatedAdapter.set(p == feature));
+        registry.mapFeature(feature,
+                (s, p) -> updatedAdapter.set(p == feature));
         registry.updateFeatures();
         assertTrue(updatedAdapter.get());
 
@@ -90,7 +91,7 @@ class MappedFeatureRegistryTest {
          */
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(null, null, (f, s) -> {
-        }));
+                }));
         assertThrows(NullPointerException.class,
                 () -> registry.mapFeature(feature, feature, null));
     }
@@ -244,20 +245,24 @@ class MappedFeatureRegistryTest {
 
     @Test
     void testRegisterFeature() {
-        /* it is convient to test isRegistered() here */
         MockIoFeature feature = new MockIoFeature();
+        MockAutonomousState autonomous = new MockAutonomousState();
+        feature.internalState = autonomous;
+
+        /* it is convient to test isRegistered() here */
         assertFalse(registry.isFeatureRegistered(feature));
         RegisteredFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
         assertTrue(registry.isFeatureRegistered(feature));
 
         /*
-         * When a feature is registered, it should be updated even if it has
-         * no mapping associated with it. Furthermore, the feature's update
-         * should be called after the adapter's updater is called.
+         * When a feature with an autonomous internal state, it should
+         * be updated even if it has no mapping associated with it. The
+         * feature's update should also be called after the adapter's
+         * updater is called.
          */
         registry.updateFeatures();
-        assertTrue(feature.updatedFeature);
+        assertTrue(autonomous.updatedState);
 
         /*
          * Ensure that the fields within registeredFeature correlate to their

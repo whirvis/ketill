@@ -6,7 +6,6 @@ class MockIoFeature extends IoFeature<Object, Object> {
 
     Object internalState;
     Object containerState;
-    boolean updatedFeature;
 
     MockIoFeature(@NotNull String id) {
         super(id);
@@ -19,19 +18,13 @@ class MockIoFeature extends IoFeature<Object, Object> {
     }
 
     @Override
-    protected @NotNull Object getInternalState() {
+    protected @NotNull Object getInternalState(@NotNull IoDeviceObserver observer) {
         return this.internalState;
     }
 
     @Override
     protected @NotNull Object getContainerState(@NotNull Object internalState) {
         return this.containerState;
-    }
-
-    @Override
-    protected void update(@NotNull Object internalState,
-                          @NotNull IoDeviceObserver events) {
-        this.updatedFeature = true;
     }
 
 }

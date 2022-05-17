@@ -21,12 +21,12 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
             " of a previously registered feature";
     /* @formatter:on */
 
-    private final IoDeviceObserver events;
+    private final IoDeviceObserver observer;
     private final Map<IoFeature<?, ?>, RegisteredFeature<?, ?, ?>> features;
     private final Map<IoFeature<?, ?>, MappedFeature<?, ?, ?>> mappings;
 
-    MappedFeatureRegistry(@NotNull IoDeviceObserver events) {
-        this.events = events;
+    MappedFeatureRegistry(@NotNull IoDeviceObserver observer) {
+        this.observer = observer;
         this.features = new HashMap<>();
         this.mappings = new HashMap<>();
     }
@@ -234,7 +234,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         }
 
         RegisteredFeature<F, Z, S> registered =
-                new RegisteredFeature<>(feature, events);
+                new RegisteredFeature<>(feature, observer);
 
         /*
          * The feature being registered must not have any states that are
@@ -276,7 +276,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     void updateFeatures() {
         for (RegisteredFeature<?, ?, ?> registered : features.values()) {
             registered.adapterUpdater.run();
-            registered.featureUpdater.run();
+            registered.autonomousUpdater.run();
         }
     }
 

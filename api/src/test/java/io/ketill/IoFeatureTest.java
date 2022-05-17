@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
 class IoFeatureTest {
@@ -31,6 +32,11 @@ class IoFeatureTest {
 
     @Test
     void testGetState() {
+        assertThrows(NullPointerException.class,
+                () -> feature.getState(null));
+
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+
         /*
          * It would not make sense for the internal state of an I/O
          * feature to be null. As such, assume this was a mistake by
@@ -38,7 +44,7 @@ class IoFeatureTest {
          */
         feature.internalState = null;
         assertThrows(NullPointerException.class,
-                () -> feature.getState());
+                () -> feature.getState(observer));
 
         /*
          * The internal state of an I/O feature is not allowed to be
@@ -46,8 +52,17 @@ class IoFeatureTest {
          * and confusion that would result from doing such a thing.
          */
         feature.internalState = new MockIoFeature();
-        assertThrows(UnsupportedOperationException.class,
-                () -> feature.getState());
+        assertThrows(KetillException.class,
+                () -> feature.getState(observer));
+
+        /*
+         * The container state of an I/O feature is not allowed to be
+         * a container. This is to enforce a proper hierarchy of state
+         * classes for an I/O feature.
+         */
+        feature.internalState = new MockContainerState();
+        assertThrows(KetillException.class,
+                () -> feature.getState(observer));
 
         /* use valid internal state for next test */
         feature.internalState = new Object();
@@ -59,7 +74,7 @@ class IoFeatureTest {
          */
         feature.containerState = null;
         assertThrows(NullPointerException.class,
-                () -> feature.getState());
+                () -> feature.getState(observer));
 
         /*
          * The container state of an I/O feature is not allowed to be
@@ -67,8 +82,17 @@ class IoFeatureTest {
          * and confusion that would result from doing such a thing.
          */
         feature.containerState = new MockIoFeature();
-        assertThrows(UnsupportedOperationException.class,
-                () -> feature.getState());
+        assertThrows(KetillException.class,
+                () -> feature.getState(observer));
+
+        /*
+         * The container state of an I/O feature is not allowed to be
+         * autonomous. This is to enforce a proper hierarchy of state
+         * classes for an I/O feature.
+         */
+        feature.containerState = new MockAutonomousState();
+        assertThrows(KetillException.class,
+                () -> feature.getState(observer));
 
         /* use valid container state for next test */
         feature.containerState = new Object();
@@ -78,19 +102,10 @@ class IoFeatureTest {
          * container returned should contain the states provided by the
          * extending class.
          */
-        StatePair<?, ?> pair = feature.getState();
+        StatePair<?, ?> pair = feature.getState(observer);
         assertNotNull(pair);
         assertSame(pair.internal, feature.internalState);
         assertSame(pair.container, feature.containerState);
-    }
-
-    @Test
-    void testUpdate() {
-        /*
-         * By default, this method does nothing. As such, even though both
-         * parameters are marked with @NotNull, nothing should be thrown.
-         */
-        assertDoesNotThrow(() -> feature.update(null, null));
     }
 
 }

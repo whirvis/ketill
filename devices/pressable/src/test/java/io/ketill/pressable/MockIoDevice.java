@@ -5,16 +5,14 @@ import io.ketill.IoDevice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+class MockIoDevice extends IoDevice implements PressableIoFeatureSupport {
 
-class MockIoDevice extends IoDevice implements PressableFeatureSupport {
-
-    private PressableFeatureConfigView config;
+    private PressableIoFeatureConfigView config;
 
     MockIoDevice(@NotNull String id,
                  @NotNull AdapterSupplier<MockIoDevice> adapterSupplier) {
         super(id, adapterSupplier);
-        this.config = PressableFeatureConfig.DEFAULT;
+        this.config = PressableIoFeatureConfig.DEFAULT;
     }
 
     MockIoDevice() {
@@ -22,17 +20,12 @@ class MockIoDevice extends IoDevice implements PressableFeatureSupport {
     }
 
     @Override
-    public void usePressableConfig(@Nullable PressableFeatureConfigView config) {
+    public void usePressableConfig(@Nullable PressableIoFeatureConfigView config) {
         this.config = config;
     }
 
     @Override
-    public @NotNull PressableFeatureConfigView getPressableConfig() {
+    public @NotNull PressableIoFeatureConfigView getPressableConfig() {
         return this.config;
-    }
-
-    @Override
-    public void onPressableEvent(@Nullable Consumer<PressableFeatureEvent> callback) {
-        throw new UnsupportedOperationException();
     }
 }

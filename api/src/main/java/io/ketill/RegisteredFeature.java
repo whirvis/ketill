@@ -31,19 +31,27 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
     };
 
     public final @NotNull F feature;
+    public final @NotNull IoDeviceObserver observer;
     public final @NotNull S containerState;
     final @NotNull Z internalState;
-    final @NotNull Runnable featureUpdater;
+    final @NotNull Runnable autonomousUpdater;
     @NotNull Runnable adapterUpdater;
 
-    RegisteredFeature(@NotNull F feature, @NotNull IoDeviceObserver events) {
+    RegisteredFeature(@NotNull F feature, @NotNull IoDeviceObserver observer) {
         this.feature = feature;
+        this.observer = observer;
 
-        StatePair<Z, S> pair = feature.getState();
+        StatePair<Z, S> pair = feature.getState(observer);
         this.containerState = pair.container;
         this.internalState = pair.internal;
 
-        this.featureUpdater = () -> feature.update(internalState, events);
+        if (internalState instanceof AutonomousState) {
+            AutonomousState autonomy = (AutonomousState) internalState;
+            this.autonomousUpdater = () -> autonomy.update(feature, observer);
+        } else {
+            this.autonomousUpdater = NO_UPDATER;
+        }
+
         this.adapterUpdater = NO_UPDATER;
     }
 

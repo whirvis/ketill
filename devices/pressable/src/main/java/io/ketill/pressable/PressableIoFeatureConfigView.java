@@ -1,9 +1,9 @@
 package io.ketill.pressable;
 
 /**
- * A read-only view of a {@link PressableFeatureConfig}.
+ * A read-only view of a {@link PressableIoFeatureConfig}.
  */
-public interface PressableFeatureConfigView {
+public interface PressableIoFeatureConfigView {
 
     /**
      * @return {@code true} if virtual feature pressing is enabled for
@@ -11,7 +11,7 @@ public interface PressableFeatureConfigView {
      */
     default boolean isHoldPressEnabled() {
         long interval = this.getHoldPressInterval();
-        return interval > PressableFeatureConfig.DISABLE_HOLD_PRESS;
+        return interval > PressableIoFeatureConfig.DISABLE_HOLD_PRESS;
     }
 
     /**
@@ -27,7 +27,7 @@ public interface PressableFeatureConfigView {
      */
     default boolean isHoldEnabled() {
         long time = this.getHoldTime();
-        return time > PressableFeatureConfig.DISABLE_HOLD;
+        return time > PressableIoFeatureConfig.DISABLE_HOLD;
     }
 
     /**

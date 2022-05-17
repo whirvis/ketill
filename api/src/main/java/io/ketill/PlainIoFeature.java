@@ -17,30 +17,50 @@ import java.util.function.Supplier;
  */
 public class PlainIoFeature<S> extends IoFeature<S, S> {
 
-    private final @NotNull Supplier<@NotNull S> initialState;
+    private final @NotNull InitialStateSupplier<@NotNull S> supplier;
 
     /**
-     * @param id           the feature ID.
-     * @param initialState a supplier for the feature's initial state.
-     * @throws NullPointerException     if {@code id}, {@code initialState} or
-     *                                  the value that {@code initialState}
-     *                                  supplies is {@code null}.
+     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
+     * extend {@link ContainerState} as it is both the internal state and
+     * container state.
+     *
+     * @param id       the feature ID.
+     * @param supplier a supplier for the feature's initial state.
+     * @throws NullPointerException     if {@code id} or {@code supplier}
+     *                                  are {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public PlainIoFeature(@NotNull String id,
-                          @NotNull Supplier<@NotNull S> initialState) {
+                          @NotNull InitialStateSupplier<@NotNull S> supplier) {
         super(id);
-        this.initialState = Objects.requireNonNull(initialState,
-                "initialState cannot be null");
-        Objects.requireNonNull(initialState.get(),
-                "value supplied by initialState cannot be null");
+        this.supplier = Objects.requireNonNull(supplier,
+                "supplier cannot be null");
     }
 
-    @Override
-    protected final @NotNull S getInternalState() {
-        return initialState.get();
+    /**
+     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
+     * extend {@link ContainerState} as it is both the internal state and
+     * container state.
+     *
+     * @param id       the feature ID.
+     * @param supplier a supplier for the feature's initial state.
+     * @throws NullPointerException     if {@code id} or {@code supplier}
+     *                                  are {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public PlainIoFeature(@NotNull String id, Supplier<@NotNull S> supplier) {
+        this(id, InitialStateSupplier.wrap(supplier));
     }
+
+    /* @formatter:off */
+    @Override
+    protected final @NotNull S
+            getInternalState(@NotNull IoDeviceObserver observer) {
+        return supplier.get(this, observer);
+    }
+    /* @formatter:on */
 
     @Override
     protected final @NotNull S getContainerState(@NotNull S internalState) {
