@@ -1,6 +1,6 @@
 package io.ketill.controller;
 
-import io.ketill.StateContainer;
+import io.ketill.ContainerState;
 import io.ketill.pressable.PressableState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import org.joml.Vector3fc;
 /**
  * Read-only view of an analog stick's state.
  */
-public class StickPos extends StateContainer<StickPosZ> {
+public class StickPos extends ContainerState<StickPosZ> {
 
     public final @NotNull PressableState up, down, left, right;
 

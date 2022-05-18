@@ -1,47 +1,42 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
-import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.IoDeviceObserver;
 import io.ketill.pressable.PressableIoFeatureObserver;
-import io.ketill.pressable.PressableIoFeatureSupport;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+final class AnalogTriggerObserver extends PressableIoFeatureObserver<TriggerStateZ> {
 
-final class AnalogTriggerMonitor
-        extends PressableIoFeatureObserver<AnalogTrigger, TriggerStateZ> {
+    private final @NotNull AnalogTrigger trigger;
 
-    /* @formatter:off */
-    <I extends IoDevice & PressableIoFeatureSupport>
-            AnalogTriggerMonitor(@NotNull I device,
-                                 @NotNull AnalogTrigger trigger,
-                                 @NotNull TriggerStateZ state,
-                                 @NotNull Supplier<@Nullable Consumer<PressableFeatureEvent>> callbackSupplier) {
-        super(device, trigger, state, callbackSupplier);
-    }
-    /* @formatter:on */
-
-    @Override
-    protected void eventFired(@NotNull PressableFeatureEvent event) {
-        switch (event.type) {
-            case PRESS:
-                internalState.pressed = true;
-                break;
-            case HOLD:
-                internalState.held = true;
-                break;
-            case RELEASE:
-                internalState.pressed = false;
-                internalState.held = false;
-                break;
-        }
+    AnalogTriggerObserver(@NotNull AnalogTrigger trigger,
+                          @NotNull TriggerStateZ internalState,
+                          @NotNull IoDeviceObserver observer) {
+        super(trigger, internalState, observer);
+        this.trigger = trigger; /* prevent casting */
     }
 
     @Override
     protected boolean isPressed() {
         return AnalogTrigger.isPressed(internalState.calibratedForce);
+    }
+
+    @Override
+    protected void onPress() {
+        internalState.pressed = true;
+        this.onNext(new AnalogTriggerPressEvent(device, trigger));
+    }
+
+    @Override
+    protected void onHold() {
+        internalState.held = true;
+        this.onNext(new AnalogTriggerHoldEvent(device, trigger));
+    }
+
+    @Override
+    protected void onRelease() {
+        internalState.pressed = false;
+        internalState.held = false;
+        this.onNext(new AnalogTriggerReleaseEvent(device, trigger));
     }
 
 }

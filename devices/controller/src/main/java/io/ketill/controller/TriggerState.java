@@ -1,6 +1,6 @@
 package io.ketill.controller;
 
-import io.ketill.StateContainer;
+import io.ketill.ContainerState;
 import io.ketill.pressable.PressableState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Read-only view of an analog trigger's state.
  */
-public class TriggerState extends StateContainer<TriggerStateZ>
+public class TriggerState extends ContainerState<TriggerStateZ>
         implements PressableState {
 
     /**

@@ -1,25 +1,19 @@
 package io.ketill.controller;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.IoDevice;
 import io.ketill.IoFeature;
 import io.ketill.RegisteredFeature;
-import io.ketill.pressable.PressableFeatureConfig;
-import io.ketill.pressable.PressableFeatureConfigView;
-import io.ketill.pressable.PressableFeatureEvent;
-import io.ketill.pressable.PressableFeatureMonitor;
-import io.ketill.pressable.PressableFeatureSupport;
+import io.ketill.pressable.PressableIoFeatureConfig;
+import io.ketill.pressable.PressableIoFeatureConfigView;
+import io.ketill.pressable.PressableIoFeatureSupport;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * A controller which and can send receive I/O data. Examples of controllers
@@ -31,13 +25,10 @@ import java.util.function.Consumer;
  * the controller once every application update.
  */
 public abstract class Controller extends IoDevice
-        implements PressableFeatureSupport {
+        implements PressableIoFeatureSupport {
 
     private final @NotNull Map<RumbleMotor, MotorVibration> rumbleMotors;
-    private final @NotNull List<PressableFeatureMonitor<?, ?>> monitors;
-    private @NotNull PressableFeatureConfigView pressableConfig;
-
-    private @Nullable Consumer<PressableFeatureEvent> pressableCallback;
+    private @NotNull PressableIoFeatureConfigView pressableConfig;
 
     /**
      * The left and right analog sticks of the controller.<br>
@@ -86,8 +77,7 @@ public abstract class Controller extends IoDevice
         super(id, adapterSupplier, false, false);
 
         this.rumbleMotors = new HashMap<>();
-        this.monitors = new ArrayList<>();
-        this.pressableConfig = PressableFeatureConfig.DEFAULT;
+        this.pressableConfig = PressableIoFeatureConfig.DEFAULT;
 
         if (registerFields) {
             this.registerFields();
@@ -150,8 +140,7 @@ public abstract class Controller extends IoDevice
             registerAndGetState(@Nullable IoFeature<?, S> feature) {
         if (feature == null) {
             return null;
-        }
-        if (!this.isFeatureRegistered(feature)) {
+        } else if (!this.isFeatureRegistered(feature)) {
             this.registerFeature(feature);
         }
         return this.getState(feature);
@@ -167,37 +156,7 @@ public abstract class Controller extends IoDevice
     @MustBeInvokedByOverriders
     protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
                                      @NotNull Object internalState) {
-        if (registered.feature instanceof DeviceButton) {
-            DeviceButton button = (DeviceButton) registered.feature;
-            ButtonStateZ state = (ButtonStateZ) internalState;
-            synchronized (monitors) {
-                monitors.add(new DeviceButtonMonitor(this, button,
-                        state, () -> pressableCallback));
-            }
-        } else if (registered.feature instanceof AnalogStick) {
-            AnalogStick stick = (AnalogStick) registered.feature;
-            StickPosZ pos = (StickPosZ) internalState;
-
-            /* @formatter:off */
-            synchronized (monitors) {
-                monitors.add(new AnalogStickMonitor(this, stick, pos,
-                        Direction.UP, pos.up, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick, pos,
-                        Direction.DOWN, pos.down, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick, pos,
-                        Direction.LEFT, pos.left, () -> pressableCallback));
-                monitors.add(new AnalogStickMonitor(this, stick, pos,
-                        Direction.RIGHT, pos.right, () -> pressableCallback));
-            }
-            /* @formatter:on */
-        } else if (registered.feature instanceof AnalogTrigger) {
-            AnalogTrigger trigger = (AnalogTrigger) registered.feature;
-            TriggerStateZ state = (TriggerStateZ) internalState;
-            synchronized (monitors) {
-                monitors.add(new AnalogTriggerMonitor(this, trigger,
-                        state, () -> pressableCallback));
-            }
-        } else if (registered.feature instanceof RumbleMotor) {
+        if (registered.feature instanceof RumbleMotor) {
             RumbleMotor motor = (RumbleMotor) registered.feature;
             MotorVibration vibration = (MotorVibration) internalState;
             synchronized (rumbleMotors) {
@@ -209,13 +168,22 @@ public abstract class Controller extends IoDevice
     @Override
     @MustBeInvokedByOverriders
     protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
-        monitors.removeIf(monitor -> monitor.feature == feature);
         if (feature instanceof RumbleMotor) {
             synchronized (rumbleMotors) {
                 MotorVibration vibration = rumbleMotors.remove(feature);
                 vibration.setStrength(0.0F);
             }
         }
+    }
+
+    @Override
+    public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
+        this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
+    }
+
+    @Override
+    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
+        return this.pressableConfig;
     }
 
     /**
@@ -229,42 +197,6 @@ public abstract class Controller extends IoDevice
         synchronized (rumbleMotors) {
             for (MotorVibration vibration : rumbleMotors.values()) {
                 vibration.setStrength(strength);
-            }
-        }
-    }
-
-    protected final @Nullable Consumer<PressableFeatureEvent> getPressableCallback() {
-        return this.pressableCallback;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * <b>Note:</b> Classes extending {@code Controller} can access the
-     * callback set here via {@link #getPressableCallback()}.
-     */
-    @Override
-    public final void onPressableEvent(@Nullable Consumer<PressableFeatureEvent> callback) {
-        this.pressableCallback = callback;
-    }
-
-    @Override
-    public final void usePressableConfig(@Nullable PressableFeatureConfigView view) {
-        this.pressableConfig = PressableFeatureConfig.valueOf(view);
-    }
-
-    @Override
-    public final @NotNull PressableFeatureConfigView getPressableConfig() {
-        return this.pressableConfig;
-    }
-
-    @Override
-    @MustBeInvokedByOverriders
-    public void poll() {
-        super.poll();
-        synchronized (monitors) {
-            for (PressableFeatureMonitor<?, ?> monitor : monitors) {
-                monitor.poll();
             }
         }
     }

@@ -1,0 +1,44 @@
+package io.ketill.controller;
+
+import io.ketill.Direction;
+import io.ketill.IoDevice;
+import io.ketill.pressable.IoFeaturePressEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
+/**
+ * Emitted by {@link IoDevice} when an {@link AnalogStick} is pressed
+ * towards a specific direction.
+ */
+public class AnalogStickPressEvent extends IoFeaturePressEvent
+        implements AnalogStickEvent {
+
+    private final Direction direction;
+
+    /**
+     * @param device    the device which emitted this event.
+     * @param stick     the analog stick which triggered this event.
+     * @param direction the direction of the analog stick.
+     * @throws NullPointerException if {@code device}, {@code stick}, or
+     *                              {@code direction} are {@code null}.
+     */
+    public AnalogStickPressEvent(@NotNull IoDevice device,
+                                 @NotNull AnalogStick stick,
+                                 @NotNull Direction direction) {
+        super(device, stick);
+        this.direction = Objects.requireNonNull(direction,
+                "direction cannot be null");
+    }
+
+    @Override
+    public @NotNull AnalogStick getStick() {
+        return (AnalogStick) this.getFeature();
+    }
+
+    @Override
+    public @NotNull Direction getDirection() {
+        return this.direction;
+    }
+
+}

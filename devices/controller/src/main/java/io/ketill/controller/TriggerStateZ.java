@@ -1,32 +1,48 @@
 package io.ketill.controller;
 
-import io.ketill.LivingState;
-import io.ketill.pressable.MonitorUpdatedField;
+import io.ketill.AutonomousField;
+import io.ketill.AutonomousState;
+import io.ketill.IoDeviceObserver;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TriggerStateZ implements LivingState {
+import java.util.Objects;
 
-    /**
-     * The adapter should only update this to the raw force of the
-     * analog trigger (that being, without calibration). Calibration
-     * is handled for the adapter by {@link TriggerState}.
-     */
+/**
+ * Contains the state of an {@link AnalogTrigger}.
+ */
+public class TriggerStateZ implements AutonomousState {
+
     public float force;
 
-    public float calibratedForce;
-
+    @AutonomousField
     public @Nullable AnalogTriggerCalibration calibration;
 
-    /**
-     * Adapters should only update the state of {@link #force}. The
-     * {@link AnalogTriggerMonitor} handles determining if a trigger
-     * is currently pressed or held down.
-     */
-    @MonitorUpdatedField
+    @AutonomousField
+    public float calibratedForce;
+
+    @AutonomousField
     public boolean pressed, held;
 
-    public TriggerStateZ(@Nullable AnalogTriggerCalibration calibration) {
+    private final AnalogTriggerObserver triggerObserver;
+
+    /**
+     * @param trigger     the analog trigger which created this state.
+     * @param observer    the I/O device observer.
+     * @param calibration the initial calibration.
+     * @throws NullPointerException if {@code trigger} or {@code observer}
+     *                              are {@code null}.
+     */
+    public TriggerStateZ(@NotNull AnalogTrigger trigger,
+                         @NotNull IoDeviceObserver observer,
+                         @Nullable AnalogTriggerCalibration calibration) {
+        Objects.requireNonNull(trigger, "trigger cannot be null");
+        Objects.requireNonNull(observer, "observer cannot be null");
+
         this.calibration = calibration;
+
+        this.triggerObserver = new AnalogTriggerObserver(trigger,
+                this, observer);
     }
 
     @Override
@@ -36,6 +52,8 @@ public class TriggerStateZ implements LivingState {
         } else {
             this.calibratedForce = force;
         }
+
+        triggerObserver.poll();
     }
 
 }

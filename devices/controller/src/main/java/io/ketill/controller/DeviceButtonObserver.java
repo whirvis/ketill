@@ -1,21 +1,40 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
-import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.IoDeviceObserver;
 import io.ketill.pressable.PressableIoFeatureObserver;
-import io.ketill.pressable.PressableIoFeatureSupport;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+final class DeviceButtonObserver extends PressableIoFeatureObserver<ButtonStateZ> {
 
-final class DeviceButtonMonitor
-        extends PressableIoFeatureObserver<DeviceButton, ButtonStateZ> {
+    private final @NotNull DeviceButton button;
+
+    DeviceButtonObserver(@NotNull DeviceButton button,
+                         @NotNull ButtonStateZ internalState,
+                         @NotNull IoDeviceObserver observer) {
+        super(button, internalState, observer);
+        this.button = button; /* prevent casting */
+    }
 
     @Override
     protected boolean isPressed() {
         return internalState.pressed;
+    }
+
+    @Override
+    protected void onPress() {
+        this.onNext(new DeviceButtonPressEvent(device, button));
+    }
+
+    @Override
+    protected void onHold() {
+        internalState.held = true;
+        this.onNext(new DeviceButtonHoldEvent(device, button));
+    }
+
+    @Override
+    protected void onRelease() {
+        internalState.held = false;
+        this.onNext(new DeviceButtonReleaseEvent(device, button));
     }
 
 }

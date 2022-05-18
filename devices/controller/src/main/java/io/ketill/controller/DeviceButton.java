@@ -1,6 +1,7 @@
 package io.ketill.controller;
 
 import io.ketill.Direction;
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +41,8 @@ public class DeviceButton extends IoFeature<ButtonStateZ, ButtonState> {
     }
 
     @Override
-    protected @NotNull ButtonStateZ getInternalState() {
-        return new ButtonStateZ();
+    protected @NotNull ButtonStateZ getInternalState(@NotNull IoDeviceObserver observer) {
+        return new ButtonStateZ(this, observer);
     }
 
     @Override

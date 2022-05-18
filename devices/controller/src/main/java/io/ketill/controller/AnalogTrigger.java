@@ -1,5 +1,6 @@
 package io.ketill.controller;
 
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,8 +56,8 @@ public class AnalogTrigger extends IoFeature<TriggerStateZ, TriggerState> {
     }
 
     @Override
-    protected @NotNull TriggerStateZ getInternalState() {
-        return new TriggerStateZ(baseCalibration);
+    protected @NotNull TriggerStateZ getInternalState(@NotNull IoDeviceObserver observer) {
+        return new TriggerStateZ(this, observer, baseCalibration);
     }
 
     @Override

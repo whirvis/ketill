@@ -1,6 +1,7 @@
 package io.ketill.controller;
 
 import io.ketill.Direction;
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import io.ketill.KetillException;
 import org.jetbrains.annotations.NotNull;
@@ -130,8 +131,8 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     }
 
     @Override
-    protected @NotNull StickPosZ getInternalState() {
-        return new StickPosZ(baseCalibration);
+    protected @NotNull StickPosZ getInternalState(@NotNull IoDeviceObserver observer) {
+        return new StickPosZ(this, observer, baseCalibration);
     }
 
     @Override
