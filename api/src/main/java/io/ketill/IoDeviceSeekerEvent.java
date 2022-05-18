@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * The base for events emitted by {@link IoDeviceSeeker}.
  */
-public class IoDeviceSeekerEvent {
+public abstract class IoDeviceSeekerEvent {
 
     private final @NotNull IoDeviceSeeker<?> seeker;
 

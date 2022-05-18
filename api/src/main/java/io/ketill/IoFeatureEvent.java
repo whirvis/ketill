@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * The base for {@link IoFeature} related events emitted by {@link IoDevice}.
  */
-public class IoFeatureEvent extends IoDeviceEvent {
+public abstract class IoFeatureEvent extends IoDeviceEvent {
 
     private final IoFeature<?, ?> feature;
 
