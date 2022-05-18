@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Emitted by {@link IoDevice} when a pressable {@link IoFeature} is held down.
  */
-public final class IoFeatureHoldEvent extends PressableIoFeatureEvent {
+public class IoFeatureHoldEvent extends PressableIoFeatureEvent {
 
     /**
      * @param device  the device which emitted this event.
@@ -15,8 +15,8 @@ public final class IoFeatureHoldEvent extends PressableIoFeatureEvent {
      * @throws NullPointerException if {@code device} or {@code feature}
      *                              are{@code null}.
      */
-    IoFeatureHoldEvent(@NotNull IoDevice device,
-                       @NotNull IoFeature<?, ?> feature) {
+    public IoFeatureHoldEvent(@NotNull IoDevice device,
+                              @NotNull IoFeature<?, ?> feature) {
         super(device, feature);
     }
 
