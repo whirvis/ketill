@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing a button on a {@link Mouse}.
  */
-public class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
+public final class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
 
     /**
      * @param id the mouse button ID.

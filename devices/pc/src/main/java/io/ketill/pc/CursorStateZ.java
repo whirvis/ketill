@@ -7,9 +7,13 @@ import org.joml.Vector2fc;
 
 /**
  * Contains the state of a {@link Cursor}.
+ * <p>
+ * <b>Note:</b> This class can be extended to implement extra cursor
+ * functionality. However, if this is done, {@link Cursor} cannot
+ * be used. A new I/O feature type will be needed to instantiate it.
  *
- * @see #adapterCanSetVisible
- * @see #adapterCanSetPosition
+ * @see #visible
+ * @see #requestedPos
  */
 public class CursorStateZ {
 
@@ -26,13 +30,28 @@ public class CursorStateZ {
             adapterCanSetPosition;
     /* @formatter:on */
 
-    public boolean visible;
-    public @Nullable Vector2fc requestedPos;
     public final @NotNull Vector2f currentPos;
 
+    /**
+     * When this value changes, the adapter should update the visibility of
+     * the mouse cursor.
+     *
+     * @see #adapterCanSetVisible
+     */
+    public boolean visible;
+
+    /**
+     * When this value is not {@code null}, the adapter should move mouse
+     * cursor to this position. Afterwards, this value should be set back
+     * to {@code null}.
+     *
+     * @see #adapterCanSetPosition
+     */
+    public @Nullable Vector2fc requestedPos;
+
     public CursorStateZ() {
-        this.visible = true;
         this.currentPos = new Vector2f();
+        this.visible = true;
     }
 
 }

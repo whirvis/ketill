@@ -9,14 +9,18 @@ import java.util.Objects;
 
 /**
  * Read-only view of a mouse's cursor.
+ * <p>
+ * <b>Note:</b> This class can be extended to implement extra cursor
+ * functionality. However, if this is done, {@link Cursor} cannot
+ * be used. A new I/O feature type will be needed to instantiate it.
  */
-public class CursorState extends ContainerState<CursorStateZ> {
+public final class CursorState extends ContainerState<CursorStateZ> {
 
     /**
      * @param internalState the internal state.
      * @throws NullPointerException if {@code internalState} is {@code null}.
      */
-    public CursorState(CursorStateZ internalState) {
+    public CursorState(@NotNull CursorStateZ internalState) {
         super(internalState);
     }
 
@@ -92,7 +96,7 @@ public class CursorState extends ContainerState<CursorStateZ> {
      * @return the X-axis position of the cursor.
      * @see #getPosition()
      */
-    public final float getX() {
+    public float getX() {
         return this.getPosition().x();
     }
 
@@ -100,7 +104,7 @@ public class CursorState extends ContainerState<CursorStateZ> {
      * @return the Y-axis position of the cursor.
      * @see #getPosition()
      */
-    public final float getY() {
+    public float getY() {
         return this.getPosition().y();
     }
 
@@ -134,7 +138,7 @@ public class CursorState extends ContainerState<CursorStateZ> {
      * {@code false} otherwise.
      * @throws NullPointerException if {@code pos} is {@code null}.
      */
-    public final boolean trySetPosition(@NotNull Vector2fc pos) {
+    public boolean trySetPosition(@NotNull Vector2fc pos) {
         Objects.requireNonNull(pos, "pos");
         if (!this.canSetPosition()) {
             return false;
@@ -153,7 +157,7 @@ public class CursorState extends ContainerState<CursorStateZ> {
      * @see #canSetPosition()
      * @see #trySetPosition(float, float)
      */
-    public final void setPosition(float xPos, float yPos) {
+    public void setPosition(float xPos, float yPos) {
         this.setPosition(new Vector2f(xPos, yPos));
     }
 
@@ -166,7 +170,7 @@ public class CursorState extends ContainerState<CursorStateZ> {
      * @return {@code true} if the cursor position was successfully updated,
      * {@code false} otherwise.
      */
-    public final boolean trySetPosition(float xPos, float yPos) {
+    public boolean trySetPosition(float xPos, float yPos) {
         return this.trySetPosition(new Vector2f(xPos, yPos));
     }
 

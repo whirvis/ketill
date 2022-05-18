@@ -7,17 +7,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Emitted by {@link Mouse} when a {@link MouseButton} is pressed.
  */
-public class MouseButtonPressEvent extends IoFeaturePressEvent
+public final class MouseButtonPressEvent extends IoFeaturePressEvent
         implements MouseButtonEvent {
 
-    /**
-     * @param device the device which emitted this event.
-     * @param button the button which triggered this event.
-     * @throws NullPointerException if {@code device} or {@code button}
-     *                              are {@code null}.
-     */
-    public MouseButtonPressEvent(@NotNull IoDevice device,
-                                 @NotNull MouseButton button) {
+    MouseButtonPressEvent(@NotNull IoDevice device,
+                          @NotNull MouseButton button) {
         super(device, button);
     }
 

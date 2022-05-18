@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing a key on a {@link Keyboard}.
  */
-public class KeyboardKey extends IoFeature<KeyPressZ, KeyPress> {
+public final class KeyboardKey extends IoFeature<KeyPressZ, KeyPress> {
 
     /**
      * @param id the keyboard key ID.

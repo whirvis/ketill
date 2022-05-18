@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing the cursor of a {@link Mouse}.
  */
-public class Cursor extends IoFeature<CursorStateZ, CursorState> {
+public final class Cursor extends IoFeature<CursorStateZ, CursorState> {
 
     /**
      * @param id the mouse cursor ID.
