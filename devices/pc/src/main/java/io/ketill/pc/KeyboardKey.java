@@ -1,5 +1,6 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +20,8 @@ public class KeyboardKey extends IoFeature<KeyPressZ, KeyPress> {
     }
 
     @Override
-    protected @NotNull KeyPressZ getInternalState() {
-        return new KeyPressZ();
+    protected @NotNull KeyPressZ getInternalState(@NotNull IoDeviceObserver observer) {
+        return new KeyPressZ(this, observer);
     }
 
     @Override

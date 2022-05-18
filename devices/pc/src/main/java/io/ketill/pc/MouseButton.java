@@ -1,5 +1,6 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,8 +20,8 @@ public class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
     }
 
     @Override
-    protected @NotNull MouseClickZ getInternalState() {
-        return new MouseClickZ();
+    protected @NotNull MouseClickZ getInternalState(@NotNull IoDeviceObserver observer) {
+        return new MouseClickZ(this, observer);
     }
 
     @Override

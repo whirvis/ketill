@@ -13,7 +13,7 @@ class KeyPressTest {
 
     @BeforeEach
     void createState() {
-        this.internal = new KeyPressZ();
+        this.internal = new KeyPressZ(null, null);
         this.container = new KeyPress(internal);
     }
 

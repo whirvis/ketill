@@ -13,7 +13,7 @@ class MouseClickTest {
 
     @BeforeEach
     void createState() {
-        this.internal = new MouseClickZ();
+        this.internal = new MouseClickZ(null, null);
         this.container = new MouseClick(internal);
     }
 

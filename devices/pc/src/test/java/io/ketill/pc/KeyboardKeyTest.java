@@ -23,7 +23,7 @@ class KeyboardKeyTest {
 
     @Test
     void testGetState() {
-        KeyPressZ internal = key.getInternalState();
+        KeyPressZ internal = key.getInternalState(null);
         assertNotNull(internal);
         KeyPress container = key.getContainerState(internal);
         assertNotNull(container);

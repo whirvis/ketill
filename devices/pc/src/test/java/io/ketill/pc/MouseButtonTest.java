@@ -23,7 +23,7 @@ class MouseButtonTest {
 
     @Test
     void testGetState() {
-        MouseClickZ internal = key.getInternalState();
+        MouseClickZ internal = key.getInternalState(null);
         assertNotNull(internal);
         MouseClick container = key.getContainerState(internal);
         assertNotNull(container);

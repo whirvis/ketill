@@ -1,12 +1,8 @@
 package io.ketill.pc;
 
-import io.ketill.pressable.PressableFeatureConfig;
-import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.pressable.PressableIoFeatureConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import static io.ketill.KetillAssertions.*;
 import static io.ketill.pc.Keyboard.*;
@@ -151,52 +147,8 @@ class KeyboardTest {
     }
 
     @Test
-    void testKeyboardKeyEvents() {
-        /* set callback for next test */
-        AtomicBoolean notified = new AtomicBoolean();
-        keyboard.onPressableEvent(e -> notified.set(true));
-
-        /*
-         * When a keyboard key is registered, the keyboard should notify
-         * listeners when it is pressed or released.
-         */
-        KeyboardKey key = new KeyboardKey("key");
-        keyboard.registerFeature(key);
-        KeyPressZ state = keyboard.getInternalState(key);
-
-        state.pressed = true; /* press key */
-        keyboard.poll(); /* fire events */
-        assertTrue(notified.get());
-
-        /*
-         * When a keyboard key is unregistered, the keyboard should no
-         * longer notify listeners when it is pressed or released.
-         */
-        keyboard.unregisterFeature(key);
-        notified.set(false);
-
-        state.pressed = false; /* release key */
-        keyboard.poll(); /* fire events */
-        assertFalse(notified.get());
-    }
-
-    @Test
-    void testGetPressableCallback() {
-        assertNull(keyboard.getPressableCallback());
-    }
-
-    @Test
-    void testUsePressableCallback() {
-        /* @formatter:off */
-        Consumer<PressableFeatureEvent> callback = (e) -> {};
-        keyboard.onPressableEvent(callback);
-        assertSame(callback, keyboard.getPressableCallback());
-        /* @formatter:on */
-    }
-
-    @Test
     void testUsePressableConfig() {
-        PressableFeatureConfig config = new PressableFeatureConfig();
+        PressableIoFeatureConfig config = new PressableIoFeatureConfig();
         keyboard.usePressableConfig(config);
         assertSame(config, keyboard.getPressableConfig());
 
@@ -205,13 +157,13 @@ class KeyboardTest {
          * feature config, it should use the default configuration instead.
          */
         keyboard.usePressableConfig(null);
-        assertSame(PressableFeatureConfig.DEFAULT,
+        assertSame(PressableIoFeatureConfig.DEFAULT,
                 keyboard.getPressableConfig());
     }
 
     @Test
     void testGetPressableConfig() {
-        assertSame(PressableFeatureConfig.DEFAULT,
+        assertSame(PressableIoFeatureConfig.DEFAULT,
                 keyboard.getPressableConfig());
     }
 

@@ -1,6 +1,6 @@
 package io.ketill.pc;
 
-import io.ketill.StateContainer;
+import io.ketill.ContainerState;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Read-only view of a mouse's cursor.
  */
-public class CursorState extends StateContainer<CursorStateZ> {
+public class CursorState extends ContainerState<CursorStateZ> {
 
     /**
      * @param internalState the internal state.

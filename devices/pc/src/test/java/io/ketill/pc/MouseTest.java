@@ -1,12 +1,8 @@
 package io.ketill.pc;
 
-import io.ketill.pressable.PressableFeatureConfig;
-import io.ketill.pressable.PressableFeatureEvent;
+import io.ketill.pressable.PressableIoFeatureConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 import static io.ketill.KetillAssertions.*;
 import static io.ketill.pc.Mouse.*;
@@ -40,52 +36,8 @@ class MouseTest {
     }
 
     @Test
-    void testMouseButtonEvents() {
-        /* set callback for next test */
-        AtomicBoolean notified = new AtomicBoolean();
-        mouse.onPressableEvent(e -> notified.set(true));
-
-        /*
-         * When a mouse button is registered, the mouse should notify
-         * listeners when it is pressed or released.
-         */
-        MouseButton button = new MouseButton("button");
-        mouse.registerFeature(button);
-        MouseClickZ state = mouse.getInternalState(button);
-
-        state.pressed = true; /* click button */
-        mouse.poll(); /* fire events */
-        assertTrue(notified.get());
-
-        /*
-         * When a mouse button is unregistered, the mouse should no
-         * longer notify listeners when it is pressed or released.
-         */
-        mouse.unregisterFeature(button);
-        notified.set(false);
-
-        state.pressed = false; /* unclick button */
-        mouse.poll(); /* fire events */
-        assertFalse(notified.get());
-    }
-
-    @Test
-    void testGetPressableCallback() {
-        assertNull(mouse.getPressableCallback());
-    }
-
-    @Test
-    void testUsePressableCallback() {
-        /* @formatter:off */
-        Consumer<PressableFeatureEvent> callback = (e) -> {};
-        mouse.onPressableEvent(callback);
-        assertSame(callback, mouse.getPressableCallback());
-        /* @formatter:on */
-    }
-
-    @Test
     void testUsePressableConfig() {
-        PressableFeatureConfig config = new PressableFeatureConfig();
+        PressableIoFeatureConfig config = new PressableIoFeatureConfig();
         mouse.usePressableConfig(config);
         assertSame(config, mouse.getPressableConfig());
 
@@ -94,13 +46,13 @@ class MouseTest {
          * feature config, it should use the default configuration instead.
          */
         mouse.usePressableConfig(null);
-        assertSame(PressableFeatureConfig.DEFAULT,
+        assertSame(PressableIoFeatureConfig.DEFAULT,
                 mouse.getPressableConfig());
     }
 
     @Test
     void testGetPressableConfig() {
-        assertSame(PressableFeatureConfig.DEFAULT,
+        assertSame(PressableIoFeatureConfig.DEFAULT,
                 mouse.getPressableConfig());
     }
 

@@ -5,26 +5,18 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
 import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
-import io.ketill.pressable.PressableFeatureConfig;
-import io.ketill.pressable.PressableFeatureConfigView;
-import io.ketill.pressable.PressableFeatureEvent;
-import io.ketill.pressable.PressableFeatureMonitor;
-import io.ketill.pressable.PressableFeatureSupport;
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import io.ketill.pressable.PressableIoFeatureConfig;
+import io.ketill.pressable.PressableIoFeatureConfigView;
+import io.ketill.pressable.PressableIoFeatureSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * A generic computer keyboard.
  *
  * @see Mouse
  */
-public class Keyboard extends IoDevice implements PressableFeatureSupport {
+public class Keyboard extends IoDevice implements PressableIoFeatureSupport {
 
     /* @formatter:off */
     @FeaturePresent /* printable keys */
@@ -282,10 +274,7 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
             menu = this.getState(KEY_MENU);
     /* @formatter:on */
 
-    private List<PressableFeatureMonitor<?, ?>> monitors;
-    private @NotNull PressableFeatureConfigView pressableConfig;
-
-    private @Nullable Consumer<PressableFeatureEvent> pressableCallback;
+    private @NotNull PressableIoFeatureConfigView pressableConfig;
 
     /**
      * @param adapterSupplier the keyboard adapter supplier.
@@ -295,7 +284,7 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
      */
     public Keyboard(@NotNull AdapterSupplier<Keyboard> adapterSupplier) {
         super("keyboard", adapterSupplier);
-        this.pressableConfig = PressableFeatureConfig.DEFAULT;
+        this.pressableConfig = PressableIoFeatureConfig.DEFAULT;
     }
 
     @Override /* overridden for visibility in KeyboardTest */
@@ -304,64 +293,13 @@ public class Keyboard extends IoDevice implements PressableFeatureSupport {
     }
 
     @Override
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
-                                     @NotNull Object internalState) {
-        /*
-         * Due to the order of class initialization, the monitors list must
-         * be initialized here (otherwise, it would be final and initialized
-         * in the constructor.) This is because features can be registered
-         * during construction of the super class.
-         */
-        if (monitors == null) {
-            this.monitors = new ArrayList<>();
-        }
-
-        if (registered.feature instanceof KeyboardKey) {
-            KeyboardKey key = (KeyboardKey) registered.feature;
-            KeyPressZ press = (KeyPressZ) internalState;
-            monitors.add(new KeyboardKeyMonitor(this, key,
-                    press, () -> pressableCallback));
-        }
+    public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
+        this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
     }
 
     @Override
-    @MustBeInvokedByOverriders
-    protected void featureUnregistered(@NotNull IoFeature<?, ?> feature) {
-        monitors.removeIf(monitor -> monitor.feature == feature);
-    }
-
-    protected final @Nullable Consumer<PressableFeatureEvent> getPressableCallback() {
-        return this.pressableCallback;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * <b>Note:</b> Classes extending {@code Keyboard} can access the
-     * callback set here via {@link #getPressableCallback()}.
-     */
-    @Override
-    public final void onPressableEvent(@Nullable Consumer<PressableFeatureEvent> callback) {
-        this.pressableCallback = callback;
-    }
-
-    @Override
-    public final void usePressableConfig(@Nullable PressableFeatureConfigView view) {
-        this.pressableConfig = PressableFeatureConfig.valueOf(view);
-    }
-
-    @Override
-    public final @NotNull PressableFeatureConfigView getPressableConfig() {
+    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
         return this.pressableConfig;
-    }
-
-    @Override
-    @MustBeInvokedByOverriders
-    public void poll() {
-        super.poll();
-        for (PressableFeatureMonitor<?, ?> monitor : monitors) {
-            monitor.poll();
-        }
     }
 
 }

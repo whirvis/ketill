@@ -22,7 +22,7 @@ class CursorTest {
 
     @Test
     void testGetState() {
-        CursorStateZ internal = cursor.getInternalState();
+        CursorStateZ internal = cursor.getInternalState(null);
         assertNotNull(internal);
         CursorState container = cursor.getContainerState(internal);
         assertNotNull(container);

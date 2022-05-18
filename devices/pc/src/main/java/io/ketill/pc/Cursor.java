@@ -1,5 +1,6 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +20,7 @@ public class Cursor extends IoFeature<CursorStateZ, CursorState> {
     }
 
     @Override
-    protected @NotNull CursorStateZ getInternalState() {
+    protected @NotNull CursorStateZ getInternalState(@NotNull IoDeviceObserver observer) {
         return new CursorStateZ();
     }
 
