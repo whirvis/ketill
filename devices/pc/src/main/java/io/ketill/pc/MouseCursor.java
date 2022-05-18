@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing the cursor of a {@link Mouse}.
  */
-public final class Cursor extends IoFeature<CursorStateZ, CursorState> {
+public final class MouseCursor extends IoFeature<CursorStateZ, CursorState> {
 
     /**
      * @param id the mouse cursor ID.
@@ -15,7 +15,7 @@ public final class Cursor extends IoFeature<CursorStateZ, CursorState> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public Cursor(@NotNull String id) {
+    public MouseCursor(@NotNull String id) {
         super(id);
     }
 

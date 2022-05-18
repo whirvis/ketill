@@ -6,10 +6,10 @@ import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
 /**
- * Contains the state of a {@link Cursor}.
+ * Contains the state of a {@link MouseCursor}.
  * <p>
  * <b>Note:</b> This class can be extended to implement extra cursor
- * functionality. However, if this is done, {@link Cursor} cannot
+ * functionality. However, if this is done, {@link MouseCursor} cannot
  * be used. A new I/O feature type will be needed to instantiate it.
  *
  * @see #visible

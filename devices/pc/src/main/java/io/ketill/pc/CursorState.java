@@ -11,7 +11,7 @@ import java.util.Objects;
  * Read-only view of a mouse's cursor.
  * <p>
  * <b>Note:</b> This class can be extended to implement extra cursor
- * functionality. However, if this is done, {@link Cursor} cannot
+ * functionality. However, if this is done, {@link MouseCursor} cannot
  * be used. A new I/O feature type will be needed to instantiate it.
  */
 public final class CursorState extends ContainerState<CursorStateZ> {

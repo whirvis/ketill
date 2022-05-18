@@ -32,8 +32,8 @@ public class Mouse extends IoDevice
             BUTTON_M8 = new MouseButton("mouse_8");
 
     @FeaturePresent
-    public static final @NotNull Cursor
-            FEATURE_CURSOR = new Cursor("mouse_cursor");
+    public static final @NotNull MouseCursor
+            FEATURE_CURSOR = new MouseCursor("mouse_cursor");
     /* @formatter:on */
 
     /* @formatter:off */
