@@ -4,6 +4,8 @@ import io.ketill.AutonomousState;
 import io.ketill.IoDevice;
 import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,19 +27,24 @@ import java.util.function.Supplier;
  * @see PressableIoFeatureConfig
  * @see PressableIoFeatureSupport
  */
-public abstract class PressableIoFeatureObserver<Z> {
+public abstract class PressableIoFeatureObserver<Z> implements Observer<PressableIoFeatureEvent> {
 
     protected final @NotNull IoFeature<Z, ?> feature;
     protected final @NotNull Z internalState;
-    protected final @NotNull IoDeviceObserver observer;
     protected final @NotNull IoDevice device;
-    protected final @NotNull Supplier<PressableIoFeatureConfigView> configSupplier;
+
+    private final IoDeviceObserver observer;
+    private final Supplier<PressableIoFeatureConfigView> configSupplier;
 
     private boolean pressed;
     private boolean held;
     private long lastPressTime;
 
     /**
+     * Take note that {@code feature}, {@code internalState}, and the device
+     * of {@code observer} are accessible as fields to extending classes. To
+     * emit events, use {@link #onNext(PressableIoFeatureEvent)}.
+     *
      * @param feature       the feature whose state is being observed.
      * @param internalState the internal state of {@code feature}.
      * @param observer      the I/O device observer.
@@ -88,6 +95,53 @@ public abstract class PressableIoFeatureObserver<Z> {
     protected abstract boolean isPressed();
 
     /**
+     * @return the configuration this observer uses in determining if and
+     * when events should be emitted.
+     */
+    public final @NotNull PressableIoFeatureConfigView getConfig() {
+        return configSupplier.get();
+    }
+
+    @Override
+    public final void onSubscribe(@NotNull Disposable disposable) {
+        observer.onSubscribe(disposable);
+    }
+
+    /**
+     * Provides subscribers with a new event to observe. This method may
+     * be called 0 or more times. The event <i>must</i> be triggered by
+     * the I/O feature which this observes.
+     *
+     * @param event the event to emit.
+     * @throws NullPointerException     if {@code event} is {@code null}.
+     * @throws IllegalArgumentException if {@code event} was constructed
+     *                                  to be triggered by a different I/O
+     *                                  feature than the one which this
+     *                                  observes.
+     * @see PressableIoFeatureEvent#getFeature()
+     */
+    @Override
+    public final void onNext(@NotNull PressableIoFeatureEvent event) {
+        Objects.requireNonNull(event, "event cannot be null");
+        if (event.getFeature() != feature) {
+            String msg = "event must be triggered by";
+            msg += " the feature which this observes";
+            throw new IllegalArgumentException(msg);
+        }
+        observer.onNext(event);
+    }
+
+    @Override
+    public final void onError(@NotNull Throwable cause) {
+        observer.onError(cause);
+    }
+
+    @Override
+    public final void onComplete() {
+        observer.onComplete();
+    }
+
+    /**
      * Called when the feature is first pressed down, or virtually
      * pressed due to being held down. By default, this method emits
      * an {@link IoFeaturePressEvent}.
@@ -97,7 +151,7 @@ public abstract class PressableIoFeatureObserver<Z> {
      * state.
      */
     protected void onPress() {
-        observer.onNext(new IoFeaturePressEvent(device, feature));
+        this.onNext(new IoFeaturePressEvent(device, feature));
     }
 
     /**
@@ -110,7 +164,7 @@ public abstract class PressableIoFeatureObserver<Z> {
      * state.
      */
     protected void onHold() {
-        observer.onNext(new IoFeatureHoldEvent(device, feature));
+        this.onNext(new IoFeatureHoldEvent(device, feature));
     }
 
     /**
@@ -122,10 +176,10 @@ public abstract class PressableIoFeatureObserver<Z> {
      * state.
      */
     protected void onRelease() {
-        observer.onNext(new IoFeatureReleaseEvent(device, feature));
+        this.onNext(new IoFeatureReleaseEvent(device, feature));
     }
 
-    private void firePressEvents(long currentTime) {
+    private void emitPressEvents(long currentTime) {
         boolean pressed = this.isPressed();
         boolean wasPressed = this.pressed;
         this.pressed = pressed;
@@ -139,7 +193,7 @@ public abstract class PressableIoFeatureObserver<Z> {
         }
     }
 
-    private void fireHoldEvents(long currentTime) {
+    private void emitHoldEvents(long currentTime) {
         if (!this.pressed) {
             return;
         }
@@ -175,8 +229,8 @@ public abstract class PressableIoFeatureObserver<Z> {
     @MustBeInvokedByOverriders
     public void poll() {
         long currentTime = System.currentTimeMillis();
-        this.firePressEvents(currentTime);
-        this.fireHoldEvents(currentTime);
+        this.emitPressEvents(currentTime);
+        this.emitHoldEvents(currentTime);
     }
 
 }
