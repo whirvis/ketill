@@ -1,5 +1,8 @@
 package io.ketill.pc;
 
+import io.ketill.AutonomousState;
+import io.ketill.IoDevice;
+import io.ketill.IoDeviceObserver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
@@ -7,15 +10,11 @@ import org.joml.Vector2fc;
 
 /**
  * Contains the state of a {@link MouseCursor}.
- * <p>
- * <b>Note:</b> This class can be extended to implement extra cursor
- * functionality. However, if this is done, {@link MouseCursor} cannot
- * be used. A new I/O feature type will be needed to instantiate it.
  *
  * @see #visible
  * @see #requestedPos
  */
-public class CursorStateZ {
+public final class CursorStateZ implements AutonomousState {
 
     /**
      * These indicate if an I/O device adapter has the ability to perform a
@@ -49,9 +48,33 @@ public class CursorStateZ {
      */
     public @Nullable Vector2fc requestedPos;
 
-    public CursorStateZ() {
+    private final MouseCursor cursor;
+    private final IoDevice device;
+    private final IoDeviceObserver observer;
+
+    private final Vector2f lastPos;
+
+    CursorStateZ(@NotNull MouseCursor cursor,
+                 @NotNull IoDeviceObserver observer) {
+        this.cursor = cursor;
+        this.device = observer.getDevice();
+        this.observer = observer;
+
         this.currentPos = new Vector2f();
         this.visible = true;
+
+        this.lastPos = new Vector2f();
+    }
+
+    @Override
+    public void update() {
+        if (!currentPos.equals(lastPos)) {
+            Vector2f displacement = new Vector2f();
+            currentPos.sub(lastPos, displacement);
+            observer.onNext(new MouseCursorDisplaceEvent(device, cursor,
+                    displacement));
+        }
+        lastPos.set(currentPos);
     }
 
 }

@@ -8,16 +8,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("ConstantConditions")
 class CursorTest {
 
-    private Cursor cursor;
+    private MouseCursor cursor;
 
     @BeforeEach
     void createCursor() {
-        this.cursor = new Cursor("cursor");
+        this.cursor = new MouseCursor("cursor");
     }
 
     @Test
     void testInit() {
-        assertThrows(NullPointerException.class, () -> new Cursor(null));
+        assertThrows(NullPointerException.class, () -> new MouseCursor(null));
     }
 
     @Test

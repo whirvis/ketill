@@ -19,7 +19,7 @@ class CursorStateTest {
 
     @BeforeEach
     void setup() {
-        this.internal = new CursorStateZ();
+        this.internal = new CursorStateZ(null, null);
         this.container = new CursorState(internal);
     }
 

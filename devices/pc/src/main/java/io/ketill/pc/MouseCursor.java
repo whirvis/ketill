@@ -21,7 +21,7 @@ public final class MouseCursor extends IoFeature<CursorStateZ, CursorState> {
 
     @Override
     protected @NotNull CursorStateZ getInternalState(@NotNull IoDeviceObserver observer) {
-        return new CursorStateZ();
+        return new CursorStateZ(this, observer);
     }
 
     @Override
