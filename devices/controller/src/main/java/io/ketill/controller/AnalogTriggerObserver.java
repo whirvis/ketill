@@ -2,8 +2,8 @@ package io.ketill.controller;
 
 import io.ketill.IoDevice;
 import io.ketill.pressable.PressableFeatureEvent;
-import io.ketill.pressable.PressableFeatureMonitor;
-import io.ketill.pressable.PressableFeatureSupport;
+import io.ketill.pressable.PressableIoFeatureObserver;
+import io.ketill.pressable.PressableIoFeatureSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,10 +11,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 final class AnalogTriggerMonitor
-        extends PressableFeatureMonitor<AnalogTrigger, TriggerStateZ> {
+        extends PressableIoFeatureObserver<AnalogTrigger, TriggerStateZ> {
 
     /* @formatter:off */
-    <I extends IoDevice & PressableFeatureSupport>
+    <I extends IoDevice & PressableIoFeatureSupport>
             AnalogTriggerMonitor(@NotNull I device,
                                  @NotNull AnalogTrigger trigger,
                                  @NotNull TriggerStateZ state,

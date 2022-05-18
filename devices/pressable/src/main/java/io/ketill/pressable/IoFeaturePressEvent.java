@@ -13,7 +13,7 @@ public class IoFeaturePressEvent extends PressableIoFeatureEvent {
      * @param device  the device which emitted this event.
      * @param feature the feature which triggered this event.
      * @throws NullPointerException if {@code device} or {@code feature}
-     *                              are{@code null}.
+     *                              are {@code null}.
      */
     public IoFeaturePressEvent(@NotNull IoDevice device,
                                @NotNull IoFeature<?, ?> feature) {
