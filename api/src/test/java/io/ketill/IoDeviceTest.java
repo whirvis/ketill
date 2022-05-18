@@ -175,7 +175,7 @@ class IoDeviceTest {
          * not the other way around. Assume this was a mistake by the user
          * and throw an exception.
          */
-        assertThrows(UnsupportedOperationException.class,
+        assertThrows(KetillException.class,
                 () -> device.getFeature(MockIoDevice.FEATURE));
 
         /*

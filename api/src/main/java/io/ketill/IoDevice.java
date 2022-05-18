@@ -275,16 +275,16 @@ public abstract class IoDevice implements FeatureRegistry {
      *                     either the internal state of the container state.
      * @return the {@code feature} which owns {@code featureState},
      * {@code null} if no such feature is currently registered.
-     * @throws NullPointerException          if {@code featureState}
-     *                                       is {@code null}.
-     * @throws UnsupportedOperationException if {@code featureState} is
-     *                                       an {@link IoFeature} instance.
+     * @throws NullPointerException if {@code featureState} is {@code null}.
+     * @throws KetillException      if {@code featureState} is an instance
+     *                              of {@link IoFeature}.
      */
     public IoFeature<?, ?> getFeature(Object featureState) {
         Objects.requireNonNull(featureState, "featureState cannot be null");
         if (featureState instanceof IoFeature) {
-            String msg = "did you mean getState(IoFeature)?";
-            throw new UnsupportedOperationException(msg);
+            String msg = "cannot get a feature's feature";
+            msg += ", did you mean getState(IoFeature)?";
+            throw new KetillException(msg);
         }
         for (RegisteredFeature<?, ?, ?> registered : registry.getFeatures()) {
             if (registered.internalState == featureState ||
