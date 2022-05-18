@@ -5,7 +5,7 @@ import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Emitted by {@link IoDevice} when an {@link AnalogStick} is held down.
+ * Emitted by {@link Controller} when an {@link AnalogStick} is held down.
  */
 public class AnalogTriggerHoldEvent extends IoFeatureHoldEvent
         implements AnalogTriggerEvent {

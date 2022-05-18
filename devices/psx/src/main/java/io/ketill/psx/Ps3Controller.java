@@ -5,7 +5,7 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.RumbleMotor;
@@ -22,9 +22,9 @@ public class Ps3Controller extends PsxController {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_SELECT = new DeviceButton("select"),
-            BUTTON_START = new DeviceButton("start");
+    public static final @NotNull ControllerButton
+            BUTTON_SELECT = new ControllerButton("select"),
+            BUTTON_START = new ControllerButton("start");
 
     @FeaturePresent
     public static final @NotNull AnalogTrigger

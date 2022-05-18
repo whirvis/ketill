@@ -6,7 +6,7 @@ import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
@@ -20,16 +20,16 @@ public class NxRightJoyCon extends NxJoyCon {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_A = new DeviceButton("a"),
-            BUTTON_X = new DeviceButton("x"),
-            BUTTON_B = new DeviceButton("b"),
-            BUTTON_Y = new DeviceButton("y"),
-            BUTTON_PLUS = new DeviceButton("plus"),
-            BUTTON_R_THUMB = new DeviceButton("r_thumb"),
-            BUTTON_HOME = new DeviceButton("home"),
-            BUTTON_R = new DeviceButton("r"),
-            BUTTON_ZR = new DeviceButton("zr");
+    public static final @NotNull ControllerButton
+            BUTTON_A = new ControllerButton("a"),
+            BUTTON_X = new ControllerButton("x"),
+            BUTTON_B = new ControllerButton("b"),
+            BUTTON_Y = new ControllerButton("y"),
+            BUTTON_PLUS = new ControllerButton("plus"),
+            BUTTON_R_THUMB = new ControllerButton("r_thumb"),
+            BUTTON_HOME = new ControllerButton("home"),
+            BUTTON_R = new ControllerButton("r"),
+            BUTTON_ZR = new ControllerButton("zr");
 
     @FeaturePresent
     public static final @NotNull AnalogStick

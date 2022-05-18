@@ -12,7 +12,7 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.StickPosZ;
@@ -54,7 +54,7 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @MappingMethod
-    private void mapXButton(@NotNull DeviceButton button,
+    private void mapXButton(@NotNull ControllerButton button,
                             @NotNull XInputButton accessor) {
         registry.mapFeature(button, accessor, this::updateButton);
     }

@@ -5,7 +5,7 @@ import io.ketill.pressable.IoFeaturePressEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Emitted by {@link IoDevice} when an {@link AnalogStick} is pressed.
+ * Emitted by {@link Controller} when an {@link AnalogStick} is pressed.
  */
 public class AnalogTriggerPressEvent extends IoFeaturePressEvent
         implements AnalogTriggerEvent {

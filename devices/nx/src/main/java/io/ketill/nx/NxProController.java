@@ -9,7 +9,7 @@ import io.ketill.controller.AnalogStickCalibration;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.StickPos;
@@ -28,27 +28,27 @@ public class NxProController extends Controller {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_B = new DeviceButton("b"),
-            BUTTON_A = new DeviceButton("a"),
-            BUTTON_Y = new DeviceButton("y"),
-            BUTTON_X = new DeviceButton("x"),
-            BUTTON_L = new DeviceButton("l"),
-            BUTTON_R = new DeviceButton("r"),
-            BUTTON_ZL = new DeviceButton("zl"),
-            BUTTON_ZR = new DeviceButton("zr"),
-            BUTTON_MINUS = new DeviceButton("minus"),
-            BUTTON_PLUS = new DeviceButton("plus"),
-            BUTTON_L_THUMB = new DeviceButton("l_thumb"),
-            BUTTON_R_THUMB = new DeviceButton("r_thumb"),
-            BUTTON_HOME = new DeviceButton("home"),
-            BUTTON_SCREENSHOT = new DeviceButton("screenshot"),
-            BUTTON_BUMPER = new DeviceButton("bumper"),
-            BUTTON_Z_BUMPER = new DeviceButton("z_bumper"),
-            BUTTON_UP = new DeviceButton("up", Direction.UP),
-            BUTTON_RIGHT = new DeviceButton("right", Direction.RIGHT),
-            BUTTON_DOWN = new DeviceButton("down", Direction.DOWN),
-            BUTTON_LEFT = new DeviceButton("left", Direction.LEFT);
+    public static final @NotNull ControllerButton
+            BUTTON_B = new ControllerButton("b"),
+            BUTTON_A = new ControllerButton("a"),
+            BUTTON_Y = new ControllerButton("y"),
+            BUTTON_X = new ControllerButton("x"),
+            BUTTON_L = new ControllerButton("l"),
+            BUTTON_R = new ControllerButton("r"),
+            BUTTON_ZL = new ControllerButton("zl"),
+            BUTTON_ZR = new ControllerButton("zr"),
+            BUTTON_MINUS = new ControllerButton("minus"),
+            BUTTON_PLUS = new ControllerButton("plus"),
+            BUTTON_L_THUMB = new ControllerButton("l_thumb"),
+            BUTTON_R_THUMB = new ControllerButton("r_thumb"),
+            BUTTON_HOME = new ControllerButton("home"),
+            BUTTON_SCREENSHOT = new ControllerButton("screenshot"),
+            BUTTON_BUMPER = new ControllerButton("bumper"),
+            BUTTON_Z_BUMPER = new ControllerButton("z_bumper"),
+            BUTTON_UP = new ControllerButton("up", Direction.UP),
+            BUTTON_RIGHT = new ControllerButton("right", Direction.RIGHT),
+            BUTTON_DOWN = new ControllerButton("down", Direction.DOWN),
+            BUTTON_LEFT = new ControllerButton("left", Direction.LEFT);
 
     @FeaturePresent
     public static final @NotNull AnalogStick

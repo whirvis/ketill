@@ -6,13 +6,13 @@ import org.jetbrains.annotations.NotNull;
 
 final class AnalogTriggerObserver extends PressableIoFeatureObserver<TriggerStateZ> {
 
-    private final @NotNull AnalogTrigger trigger;
+    private final AnalogTrigger trigger;
 
     AnalogTriggerObserver(@NotNull AnalogTrigger trigger,
                           @NotNull TriggerStateZ internalState,
                           @NotNull IoDeviceObserver observer) {
         super(trigger, internalState, observer);
-        this.trigger = trigger; /* prevent casting */
+        this.trigger = trigger;
     }
 
     @Override

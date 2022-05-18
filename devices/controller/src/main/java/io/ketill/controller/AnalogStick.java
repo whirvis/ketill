@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * An I/O feature representing an analog stick on a {@link Controller}.
  *
- * @see DeviceButton
+ * @see ControllerButton
  * @see AnalogTrigger
  * @see #isPressed(Vector3fc, Direction)
  */
@@ -59,7 +59,7 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
         return isPressed(pos.getPos(true), direction);
     }
 
-    public final @Nullable DeviceButton zButton;
+    public final @Nullable ControllerButton zButton;
     public final @Nullable AnalogStickCalibration baseCalibration;
 
     /**
@@ -77,7 +77,7 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton,
+    public AnalogStick(@NotNull String id, @Nullable ControllerButton zButton,
                        @Nullable AnalogStickCalibration baseCalibration) {
         super(id);
         this.zButton = zButton;
@@ -98,7 +98,7 @@ public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public AnalogStick(@NotNull String id, @Nullable DeviceButton zButton) {
+    public AnalogStick(@NotNull String id, @Nullable ControllerButton zButton) {
         this(id, zButton, null);
     }
 

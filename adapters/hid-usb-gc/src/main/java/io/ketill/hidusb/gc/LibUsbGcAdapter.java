@@ -7,9 +7,9 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.MotorVibration;
-import io.ketill.controller.StickPosZ;
+import io.ketill.controller.StickStateZ;
 import io.ketill.controller.TriggerStateZ;
 import io.ketill.gc.GcController;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +56,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @MappingMethod
-    private void mapButton(@NotNull DeviceButton button, int gcButton) {
+    private void mapButton(@NotNull ControllerButton button, int gcButton) {
         registry.mapFeature(button, gcButton, this::updateButton);
     }
 
@@ -102,7 +102,7 @@ public final class LibUsbGcAdapter extends IoDeviceAdapter<GcController> {
     }
 
     @FeatureAdapter
-    private void updateStick(@NotNull StickPosZ pos,
+    private void updateStick(@NotNull StickStateZ pos,
                              @NotNull StickMapping mapping) {
         pos.x = this.getNormalizedAxis(mapping.xAxis);
         pos.y = this.getNormalizedAxis(mapping.yAxis);

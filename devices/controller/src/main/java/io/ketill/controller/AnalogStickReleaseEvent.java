@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Emitted by {@link IoDevice} when an {@link AnalogStick} is released
+ * Emitted by {@link Controller} when an {@link AnalogStick} is released
  * from a specific direction.
  */
 public class AnalogStickReleaseEvent extends IoFeatureReleaseEvent

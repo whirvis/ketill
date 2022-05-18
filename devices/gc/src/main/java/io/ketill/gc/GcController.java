@@ -8,7 +8,7 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
@@ -24,19 +24,19 @@ public class GcController extends Controller {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_A = new DeviceButton("a"),
-            BUTTON_B = new DeviceButton("b"),
-            BUTTON_X = new DeviceButton("x"),
-            BUTTON_Y = new DeviceButton("y"),
-            BUTTON_LEFT = new DeviceButton("left", Direction.LEFT),
-            BUTTON_RIGHT = new DeviceButton("right", Direction.RIGHT),
-            BUTTON_DOWN = new DeviceButton("down", Direction.DOWN),
-            BUTTON_UP = new DeviceButton("up", Direction.UP),
-            BUTTON_START = new DeviceButton("start"),
-            BUTTON_Z = new DeviceButton("z"),
-            BUTTON_R = new DeviceButton("r"),
-            BUTTON_L = new DeviceButton("l");
+    public static final @NotNull ControllerButton
+            BUTTON_A = new ControllerButton("a"),
+            BUTTON_B = new ControllerButton("b"),
+            BUTTON_X = new ControllerButton("x"),
+            BUTTON_Y = new ControllerButton("y"),
+            BUTTON_LEFT = new ControllerButton("left", Direction.LEFT),
+            BUTTON_RIGHT = new ControllerButton("right", Direction.RIGHT),
+            BUTTON_DOWN = new ControllerButton("down", Direction.DOWN),
+            BUTTON_UP = new ControllerButton("up", Direction.UP),
+            BUTTON_START = new ControllerButton("start"),
+            BUTTON_Z = new ControllerButton("z"),
+            BUTTON_R = new ControllerButton("r"),
+            BUTTON_L = new ControllerButton("l");
 
     @FeaturePresent
     public static final @NotNull AnalogStick

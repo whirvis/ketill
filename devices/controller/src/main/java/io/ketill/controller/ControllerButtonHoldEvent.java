@@ -5,10 +5,10 @@ import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Emitted by {@link IoDevice} when a {@link DeviceButton} is held down.
+ * Emitted by {@link Controller} when a {@link ControllerButton} is held down.
  */
-public class DeviceButtonHoldEvent extends IoFeatureHoldEvent
-        implements DeviceButtonEvent {
+public class ControllerButtonHoldEvent extends IoFeatureHoldEvent
+        implements ControllerButtonEvent {
 
     /**
      * @param device the device which emitted this event.
@@ -16,14 +16,14 @@ public class DeviceButtonHoldEvent extends IoFeatureHoldEvent
      * @throws NullPointerException if {@code device} or {@code button}
      *                              are {@code null}.
      */
-    public DeviceButtonHoldEvent(@NotNull IoDevice device,
-                                 @NotNull DeviceButton button) {
+    public ControllerButtonHoldEvent(@NotNull IoDevice device,
+                                     @NotNull ControllerButton button) {
         super(device, button);
     }
 
     @Override
-    public @NotNull DeviceButton getButton() {
-        return (DeviceButton) this.getFeature();
+    public @NotNull ControllerButton getButton() {
+        return (ControllerButton) this.getFeature();
     }
 
 }

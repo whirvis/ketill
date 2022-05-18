@@ -5,10 +5,10 @@ import io.ketill.pressable.IoFeatureReleaseEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Emitted by {@link IoDevice} when a {@link DeviceButton} is released.
+ * Emitted by {@link Controller} when a {@link ControllerButton} is released.
  */
-public class DeviceButtonReleaseEvent extends IoFeatureReleaseEvent
-        implements DeviceButtonEvent {
+public class ControllerButtonReleaseEvent extends IoFeatureReleaseEvent
+        implements ControllerButtonEvent {
 
     /**
      * @param device the device which emitted this event.
@@ -16,14 +16,14 @@ public class DeviceButtonReleaseEvent extends IoFeatureReleaseEvent
      * @throws NullPointerException if {@code device} or {@code button}
      *                              are {@code null}.
      */
-    public DeviceButtonReleaseEvent(@NotNull IoDevice device,
-                                    @NotNull DeviceButton button) {
+    public ControllerButtonReleaseEvent(@NotNull IoDevice device,
+                                        @NotNull ControllerButton button) {
         super(device, button);
     }
 
     @Override
-    public @NotNull DeviceButton getButton() {
-        return (DeviceButton) this.getFeature();
+    public @NotNull ControllerButton getButton() {
+        return (ControllerButton) this.getFeature();
     }
 
 }

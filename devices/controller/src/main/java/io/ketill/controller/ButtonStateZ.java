@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Contains the state of a {@link DeviceButton}.
+ * Contains the state of a {@link ControllerButton}.
  */
 public class ButtonStateZ implements AutonomousState {
 
@@ -17,7 +17,7 @@ public class ButtonStateZ implements AutonomousState {
     @AutonomousField
     public boolean held;
 
-    private final DeviceButtonObserver buttonObserver;
+    private final ControllerButtonObserver buttonObserver;
 
     /**
      * @param button   the button which created this state.
@@ -25,12 +25,12 @@ public class ButtonStateZ implements AutonomousState {
      * @throws NullPointerException if {@code button} or {@code observer}
      *                              are {@code null}.
      */
-    public ButtonStateZ(@NotNull DeviceButton button,
+    public ButtonStateZ(@NotNull ControllerButton button,
                         @NotNull IoDeviceObserver observer) {
         Objects.requireNonNull(button, "button cannot be null");
         Objects.requireNonNull(observer, "observer cannot be null");
 
-        this.buttonObserver = new DeviceButtonObserver(button, this, observer);
+        this.buttonObserver = new ControllerButtonObserver(button, this, observer);
     }
 
     public ButtonStateZ() {

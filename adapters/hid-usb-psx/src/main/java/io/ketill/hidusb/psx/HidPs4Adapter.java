@@ -7,7 +7,7 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.StickPosZ;
@@ -178,13 +178,13 @@ abstract class HidPs4Adapter extends IoDeviceAdapter<Ps4Controller> {
     }
 
     @MappingMethod
-    void mapDpad(@NotNull DeviceButton button, int byteOffset, int[] patterns) {
+    void mapDpad(@NotNull ControllerButton button, int byteOffset, int[] patterns) {
         registry.mapFeature(button, new DpadMapping(byteOffset, patterns),
                 this::updateDpad);
     }
 
     @MappingMethod
-    void mapButton(@NotNull DeviceButton button, int byteOffset, int bitIndex) {
+    void mapButton(@NotNull ControllerButton button, int byteOffset, int bitIndex) {
         registry.mapFeature(button, new ButtonMapping(byteOffset, bitIndex),
                 this::updateButton);
     }

@@ -8,7 +8,7 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.StickPosZ;
 import io.ketill.controller.TriggerStateZ;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -42,7 +42,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * </pre>
  *
  * @param <I> the I/O device type.
- * @see #mapButton(DeviceButton, int)
+ * @see #mapButton(ControllerButton, int)
  * @see #mapStick(AnalogStick, GlfwStickMapping)
  * @see #mapTrigger(AnalogTrigger, int)
  * @see AdapterSupplier
@@ -88,7 +88,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @see #updateButton(ButtonStateZ, int)
      */
     @MappingMethod
-    protected void mapButton(@NotNull DeviceButton button, int glfwButton) {
+    protected void mapButton(@NotNull ControllerButton button, int glfwButton) {
         Objects.requireNonNull(button, "button");
         if (glfwButton < 0) {
             throw new IllegalArgumentException("glfwButton < 0");
@@ -181,7 +181,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
 
     /**
      * Updater for buttons mapped via
-     * {@link #mapButton(DeviceButton, int)}.
+     * {@link #mapButton(ControllerButton, int)}.
      *
      * @param state      the button state.
      * @param glfwButton the GLFW button.

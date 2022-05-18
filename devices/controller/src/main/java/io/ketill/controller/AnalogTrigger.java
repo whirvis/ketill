@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An I/O feature representing an analog trigger on a {@link Controller}.
  *
- * @see DeviceButton
+ * @see ControllerButton
  * @see AnalogStick
  */
 public class AnalogTrigger extends IoFeature<TriggerStateZ, TriggerState> {

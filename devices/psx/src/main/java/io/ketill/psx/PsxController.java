@@ -8,7 +8,7 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.StickPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,21 +30,21 @@ public abstract class PsxController extends Controller {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_SQUARE = new DeviceButton("square"),
-            BUTTON_CROSS = new DeviceButton("cross"),
-            BUTTON_CIRCLE = new DeviceButton("circle"),
-            BUTTON_TRIANGLE = new DeviceButton("triangle"),
-            BUTTON_L1 = new DeviceButton("l1"),
-            BUTTON_R1 = new DeviceButton("r1"),
-            BUTTON_L2 = new DeviceButton("l2"),
-            BUTTON_R2 = new DeviceButton("r2"),
-            BUTTON_L_THUMB = new DeviceButton("l_thumb"),
-            BUTTON_R_THUMB = new DeviceButton("r_thumb"),
-            BUTTON_UP = new DeviceButton("up", Direction.UP),
-            BUTTON_RIGHT = new DeviceButton("right", Direction.RIGHT),
-            BUTTON_DOWN = new DeviceButton("down", Direction.DOWN),
-            BUTTON_LEFT = new DeviceButton("left", Direction.LEFT);
+    public static final @NotNull ControllerButton
+            BUTTON_SQUARE = new ControllerButton("square"),
+            BUTTON_CROSS = new ControllerButton("cross"),
+            BUTTON_CIRCLE = new ControllerButton("circle"),
+            BUTTON_TRIANGLE = new ControllerButton("triangle"),
+            BUTTON_L1 = new ControllerButton("l1"),
+            BUTTON_R1 = new ControllerButton("r1"),
+            BUTTON_L2 = new ControllerButton("l2"),
+            BUTTON_R2 = new ControllerButton("r2"),
+            BUTTON_L_THUMB = new ControllerButton("l_thumb"),
+            BUTTON_R_THUMB = new ControllerButton("r_thumb"),
+            BUTTON_UP = new ControllerButton("up", Direction.UP),
+            BUTTON_RIGHT = new ControllerButton("right", Direction.RIGHT),
+            BUTTON_DOWN = new ControllerButton("down", Direction.DOWN),
+            BUTTON_LEFT = new ControllerButton("left", Direction.LEFT);
 
     @FeaturePresent
     public static final @NotNull AnalogStick

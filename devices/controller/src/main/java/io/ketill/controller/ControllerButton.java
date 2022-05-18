@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @see AnalogStick
  * @see AnalogTrigger
  */
-public class DeviceButton extends IoFeature<ButtonStateZ, ButtonState> {
+public class ControllerButton extends IoFeature<ButtonStateZ, ButtonState> {
 
     public final @Nullable Direction direction;
 
@@ -25,7 +25,7 @@ public class DeviceButton extends IoFeature<ButtonStateZ, ButtonState> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public DeviceButton(@NotNull String id, @Nullable Direction direction) {
+    public ControllerButton(@NotNull String id, @Nullable Direction direction) {
         super(id);
         this.direction = direction;
     }
@@ -36,7 +36,7 @@ public class DeviceButton extends IoFeature<ButtonStateZ, ButtonState> {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public DeviceButton(@NotNull String id) {
+    public ControllerButton(@NotNull String id) {
         this(id, null);
     }
 

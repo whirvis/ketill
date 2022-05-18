@@ -45,8 +45,6 @@ class NxProControllerTest {
         assertFeatureOwnsState(nxPro, nxPro.rt, TRIGGER_RT);
 
         assertFeatureOwnsState(nxPro, nxPro.led, FEATURE_LED);
-
-        assertFeatureOwnsState(nxPro, nxPro.calibration, FEATURE_CALIBRATION);
     }
 
 }

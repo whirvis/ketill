@@ -5,14 +5,14 @@ import io.ketill.IoDevice;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
 
 class MockJoystick extends IoDevice {
 
-    static final DeviceButton BUTTON = new DeviceButton("button");
+    static final ControllerButton BUTTON = new ControllerButton("button");
     static final AnalogStick STICK = new AnalogStick("stick");
     static final AnalogTrigger TRIGGER = new AnalogTrigger("trigger");
 

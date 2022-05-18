@@ -7,7 +7,7 @@ import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.LedState;
 import io.ketill.controller.MotorVibration;
 import io.ketill.controller.StickPosZ;
@@ -99,7 +99,7 @@ public final class LibUsbPs3Adapter extends IoDeviceAdapter<Ps3Controller> {
     }
 
     @MappingMethod
-    private void mapButton(@NotNull DeviceButton button, int byteOffset,
+    private void mapButton(@NotNull ControllerButton button, int byteOffset,
                            int bitIndex) {
         registry.mapFeature(button, new ButtonMapping(byteOffset, bitIndex),
                 this::updateButton);

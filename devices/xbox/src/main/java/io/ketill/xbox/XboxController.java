@@ -8,7 +8,7 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
@@ -24,21 +24,21 @@ public class XboxController extends Controller {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_A = new DeviceButton("a"),
-            BUTTON_B = new DeviceButton("b"),
-            BUTTON_X = new DeviceButton("x"),
-            BUTTON_Y = new DeviceButton("y"),
-            BUTTON_LB = new DeviceButton("lb"),
-            BUTTON_RB = new DeviceButton("rb"),
-            BUTTON_GUIDE = new DeviceButton("menu"),
-            BUTTON_START = new DeviceButton("pause"),
-            BUTTON_L_THUMB = new DeviceButton("l_thumb"),
-            BUTTON_R_THUMB = new DeviceButton("r_thumb"),
-            BUTTON_UP = new DeviceButton("up", Direction.UP),
-            BUTTON_RIGHT = new DeviceButton("right", Direction.RIGHT),
-            BUTTON_DOWN = new DeviceButton("down", Direction.DOWN),
-            BUTTON_LEFT = new DeviceButton("left", Direction.LEFT);
+    public static final @NotNull ControllerButton
+            BUTTON_A = new ControllerButton("a"),
+            BUTTON_B = new ControllerButton("b"),
+            BUTTON_X = new ControllerButton("x"),
+            BUTTON_Y = new ControllerButton("y"),
+            BUTTON_LB = new ControllerButton("lb"),
+            BUTTON_RB = new ControllerButton("rb"),
+            BUTTON_GUIDE = new ControllerButton("menu"),
+            BUTTON_START = new ControllerButton("pause"),
+            BUTTON_L_THUMB = new ControllerButton("l_thumb"),
+            BUTTON_R_THUMB = new ControllerButton("r_thumb"),
+            BUTTON_UP = new ControllerButton("up", Direction.UP),
+            BUTTON_RIGHT = new ControllerButton("right", Direction.RIGHT),
+            BUTTON_DOWN = new ControllerButton("down", Direction.DOWN),
+            BUTTON_LEFT = new ControllerButton("left", Direction.LEFT);
 
     @FeaturePresent
     public static final @NotNull AnalogStick

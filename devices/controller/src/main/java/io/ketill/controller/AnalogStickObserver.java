@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 
 final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
 
-    private final @NotNull AnalogStick stick;
-    private final @NotNull Direction direction;
-    private final @NotNull ButtonStateZ buttonState;
+    private final AnalogStick stick;
+    private final Direction direction;
+    private final ButtonStateZ buttonState;
 
     AnalogStickObserver(@NotNull AnalogStick stick,
                         @NotNull Direction direction,
@@ -17,7 +17,7 @@ final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
                         @NotNull ButtonStateZ buttonState,
                         @NotNull IoDeviceObserver observer) {
         super(stick, internalState, observer);
-        this.stick = stick; /* prevent casting */
+        this.stick = stick;
         this.direction = direction;
         this.buttonState = buttonState;
     }

@@ -7,7 +7,7 @@ import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import org.jetbrains.annotations.NotNull;
@@ -23,9 +23,9 @@ public abstract class NxJoyCon extends Controller {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_SL = new DeviceButton("sl"),
-            BUTTON_SR = new DeviceButton("sr");
+    public static final @NotNull ControllerButton
+            BUTTON_SL = new ControllerButton("sl"),
+            BUTTON_SR = new ControllerButton("sr");
 
     @FeaturePresent
     public static final @NotNull PlayerLed

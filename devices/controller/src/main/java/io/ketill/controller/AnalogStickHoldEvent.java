@@ -2,14 +2,13 @@ package io.ketill.controller;
 
 import io.ketill.Direction;
 import io.ketill.IoDevice;
-import io.ketill.IoFeature;
 import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 /**
- * Emitted by {@link IoDevice} when an {@link AnalogStick} is held down
+ * Emitted by {@link Controller} when an {@link AnalogStick} is held down
  * towards a specific direction.
  */
 public class AnalogStickHoldEvent extends IoFeatureHoldEvent

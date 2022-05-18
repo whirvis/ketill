@@ -5,7 +5,7 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
-import io.ketill.controller.DeviceButton;
+import io.ketill.controller.ControllerButton;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.TriggerState;
 import io.ketill.controller.MotorVibration;
@@ -20,11 +20,11 @@ public class Ps4Controller extends PsxController {
 
     /* @formatter:off */
     @FeaturePresent
-    public static final @NotNull DeviceButton
-            BUTTON_SHARE = new DeviceButton("share"),
-            BUTTON_OPTIONS = new DeviceButton("options"),
-            BUTTON_PS = new DeviceButton("playstation"),
-            BUTTON_TPAD = new DeviceButton("trackpad");
+    public static final @NotNull ControllerButton
+            BUTTON_SHARE = new ControllerButton("share"),
+            BUTTON_OPTIONS = new ControllerButton("options"),
+            BUTTON_PS = new ControllerButton("playstation"),
+            BUTTON_TPAD = new ControllerButton("trackpad");
 
     @FeaturePresent
     public static final @NotNull AnalogTrigger
