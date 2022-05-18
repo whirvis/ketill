@@ -16,7 +16,7 @@ import java.util.Objects;
  * @see AnalogTrigger
  * @see #isPressed(Vector3fc, Direction)
  */
-public class AnalogStick extends IoFeature<StickPosZ, StickPos> {
+public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
 
     private static final float STICK_PRESS = 2.0F / 3.0F;
 

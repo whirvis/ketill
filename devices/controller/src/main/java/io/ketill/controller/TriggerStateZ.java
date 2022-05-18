@@ -6,12 +6,10 @@ import io.ketill.IoDeviceObserver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * Contains the state of an {@link AnalogTrigger}.
  */
-public class TriggerStateZ implements AutonomousState {
+public final class TriggerStateZ implements AutonomousState {
 
     public float force;
 
@@ -26,19 +24,9 @@ public class TriggerStateZ implements AutonomousState {
 
     private final AnalogTriggerObserver triggerObserver;
 
-    /**
-     * @param trigger     the analog trigger which created this state.
-     * @param observer    the I/O device observer.
-     * @param calibration the initial calibration.
-     * @throws NullPointerException if {@code trigger} or {@code observer}
-     *                              are {@code null}.
-     */
-    public TriggerStateZ(@NotNull AnalogTrigger trigger,
-                         @NotNull IoDeviceObserver observer,
-                         @Nullable AnalogTriggerCalibration calibration) {
-        Objects.requireNonNull(trigger, "trigger cannot be null");
-        Objects.requireNonNull(observer, "observer cannot be null");
-
+    TriggerStateZ(@NotNull AnalogTrigger trigger,
+                  @NotNull IoDeviceObserver observer,
+                  @Nullable AnalogTriggerCalibration calibration) {
         this.calibration = calibration;
 
         this.triggerObserver = new AnalogTriggerObserver(trigger,

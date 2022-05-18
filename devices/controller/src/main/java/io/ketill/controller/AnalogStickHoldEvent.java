@@ -10,21 +10,14 @@ import java.util.Objects;
  * Emitted by {@link Controller} when an {@link AnalogStick} is held down
  * towards a specific direction.
  */
-public class AnalogStickHoldEvent extends IoFeatureHoldEvent
+public final class AnalogStickHoldEvent extends IoFeatureHoldEvent
         implements AnalogStickEvent {
 
     private final Direction direction;
 
-    /**
-     * @param device    the device which emitted this event.
-     * @param stick     the analog stick which triggered this event.
-     * @param direction the direction of the analog stick.
-     * @throws NullPointerException if {@code device}, {@code stick}, or
-     *                              {@code direction} are {@code null}.
-     */
-    public AnalogStickHoldEvent(@NotNull IoDevice device,
-                                @NotNull AnalogStick stick,
-                                @NotNull Direction direction) {
+    AnalogStickHoldEvent(@NotNull IoDevice device,
+                         @NotNull AnalogStick stick,
+                         @NotNull Direction direction) {
         super(device, stick);
         this.direction = Objects.requireNonNull(direction,
                 "direction cannot be null");

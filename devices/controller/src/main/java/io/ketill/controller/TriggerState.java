@@ -8,14 +8,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Read-only view of an analog trigger's state.
  */
-public class TriggerState extends ContainerState<TriggerStateZ>
+public final class TriggerState extends ContainerState<TriggerStateZ>
         implements PressableState {
 
-    /**
-     * @param internalState the internal state.
-     * @throws NullPointerException if {@code internalState} is {@code null}.
-     */
-    public TriggerState(@NotNull TriggerStateZ internalState) {
+    TriggerState(@NotNull TriggerStateZ internalState) {
         super(internalState);
     }
 

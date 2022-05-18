@@ -7,12 +7,13 @@ import org.jetbrains.annotations.NotNull;
  * An I/O feature representing a Player LED indicator on a
  * {@link Controller}.
  */
-public class PlayerLed extends PlainIoFeature<LedState> {
+public final class PlayerLed extends PlainIoFeature<LedState> {
 
     public final int ledCount;
 
     /**
-     * @param id the player LED ID.
+     * @param id       the player LED ID.
+     * @param ledCount the amount of LEDs present.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace; if {@code ledCount} is

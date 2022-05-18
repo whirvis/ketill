@@ -15,7 +15,7 @@ import java.util.Objects;
  * @see #applyTo(Vector2f)
  * @see #applyTo(Vector3f)
  */
-public class AnalogStickCalibration {
+public final class AnalogStickCalibration {
 
     public final @NotNull Vector2fc upperBound;
     public final @NotNull Vector2fc lowerBound;

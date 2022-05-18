@@ -1,6 +1,6 @@
 package io.ketill.controller;
 
-class Analog {
+final class Analog {
 
     static float normalize(float value, float upper, float lower) {
         float capped = Math.min(Math.max(value, upper), lower);

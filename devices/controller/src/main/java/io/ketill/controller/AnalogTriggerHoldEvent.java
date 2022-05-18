@@ -7,17 +7,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Emitted by {@link Controller} when an {@link AnalogStick} is held down.
  */
-public class AnalogTriggerHoldEvent extends IoFeatureHoldEvent
+public final class AnalogTriggerHoldEvent extends IoFeatureHoldEvent
         implements AnalogTriggerEvent {
 
-    /**
-     * @param device  the device which emitted this event.
-     * @param trigger the analog trigger which triggered this event.
-     * @throws NullPointerException if {@code device} or {@code trigger}
-     *                              are {@code null}.
-     */
-    public AnalogTriggerHoldEvent(@NotNull IoDevice device,
-                                  @NotNull AnalogTrigger trigger) {
+    AnalogTriggerHoldEvent(@NotNull IoDevice device,
+                           @NotNull AnalogTrigger trigger) {
         super(device, trigger);
     }
 

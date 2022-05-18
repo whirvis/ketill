@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
  * @see ControllerButton
  * @see AnalogStick
  */
-public class AnalogTrigger extends IoFeature<TriggerStateZ, TriggerState> {
+public final class AnalogTrigger
+        extends IoFeature<TriggerStateZ, TriggerState> {
 
     private static final float TRIGGER_PRESS = 2.0F / 3.0F;
 

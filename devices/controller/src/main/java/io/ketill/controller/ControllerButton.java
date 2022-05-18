@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
  * @see AnalogStick
  * @see AnalogTrigger
  */
-public class ControllerButton extends IoFeature<ButtonStateZ, ButtonState> {
+public final class ControllerButton
+        extends IoFeature<ButtonStateZ, ButtonState> {
 
     public final @Nullable Direction direction;
 

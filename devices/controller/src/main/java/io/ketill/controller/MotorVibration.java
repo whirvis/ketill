@@ -5,9 +5,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Contains the state of a {@link RumbleMotor}.
  */
-public class MotorVibration {
+public final class MotorVibration {
 
     private float strength;
+
+    MotorVibration() {
+        /* make constructor package-private */
+    }
 
     /**
      * @return the current vibration strength, guaranteed to be in range of

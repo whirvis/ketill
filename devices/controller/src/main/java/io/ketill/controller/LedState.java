@@ -2,6 +2,10 @@ package io.ketill.controller;
 
 /**
  * Contains the state of a {@link PlayerLed}.
+ * <p>
+ * <b>Note:</b> This class can be extended to implement extra LED modes.
+ * However, if this is done, a new I/O feature type must be created to
+ * instantiate it.
  *
  * @see #setNumber(int)
  * @see #setPattern(int)

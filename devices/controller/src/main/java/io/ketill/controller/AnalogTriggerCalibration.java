@@ -7,7 +7,7 @@ package io.ketill.controller;
  *
  * @see #apply(float)
  */
-public class AnalogTriggerCalibration {
+public final class AnalogTriggerCalibration {
 
     public final float upperBound;
     public final float lowerBound;

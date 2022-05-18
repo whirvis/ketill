@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing a rumble motor on a {@link Controller}.
  */
-public class RumbleMotor extends PlainIoFeature<MotorVibration> {
+public final class RumbleMotor extends PlainIoFeature<MotorVibration> {
 
     /**
      * @param id the rumble motor ID.

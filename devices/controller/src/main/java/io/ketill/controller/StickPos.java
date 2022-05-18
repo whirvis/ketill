@@ -9,15 +9,19 @@ import org.joml.Vector3fc;
 /**
  * Read-only view of an analog stick's state.
  */
-public class StickPos extends ContainerState<StickPosZ> {
-
-    public final @NotNull PressableState up, down, left, right;
+public final class StickPos extends ContainerState<StickPosZ> {
 
     /**
-     * @param internalState the internal state.
-     * @throws NullPointerException if {@code internalState} is {@code null}.
+     * Representations of each {@link Direction} the analog stick can be
+     * pressed towards.
+     * <p>
+     * For example: if {@code up.isPressed()} returns {@code true}, that
+     * means the position of this analog stick is pressed towards
+     * {@link Direction#UP}.
      */
-    public StickPos(@NotNull StickPosZ internalState) {
+    public final @NotNull PressableState up, down, left, right;
+
+    StickPos(@NotNull StickPosZ internalState) {
         super(internalState);
 
         this.up = new ButtonState(internalState.up);

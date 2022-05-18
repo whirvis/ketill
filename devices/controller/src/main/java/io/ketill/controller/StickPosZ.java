@@ -7,12 +7,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import java.util.Objects;
-
 /**
  * Contains the state of an {@link AnalogStick}.
  */
-public class StickPosZ implements AutonomousState {
+public final class StickPosZ implements AutonomousState {
 
     public final @NotNull Vector3f pos;
 
@@ -30,19 +28,9 @@ public class StickPosZ implements AutonomousState {
     private final AnalogStickObserver leftObserver;
     private final AnalogStickObserver rightObserver;
 
-    /**
-     * @param stick       the analog stick which created this state.
-     * @param observer    the I/O device observer.
-     * @param calibration the initial calibration.
-     * @throws NullPointerException if {@code stick} or {@code observer}
-     *                              are {@code null}.
-     */
-    public StickPosZ(@NotNull AnalogStick stick,
-                     @NotNull IoDeviceObserver observer,
-                     @Nullable AnalogStickCalibration calibration) {
-        Objects.requireNonNull(stick, "stick cannot be null");
-        Objects.requireNonNull(observer, "observer cannot be null");
-
+    StickPosZ(@NotNull AnalogStick stick,
+              @NotNull IoDeviceObserver observer,
+              @Nullable AnalogStickCalibration calibration) {
         this.pos = new Vector3f();
         this.calibration = calibration;
         this.calibratedPos = new Vector3f();
