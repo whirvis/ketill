@@ -7,8 +7,7 @@ class MockAutonomousState implements AutonomousState {
     boolean updatedState;
 
     @Override
-    public void update(@NotNull IoFeature<?, ?> feature,
-                       @NotNull IoDeviceObserver events) {
+    public void update() {
         this.updatedState = true;
     }
 

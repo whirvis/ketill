@@ -47,7 +47,7 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
 
         if (internalState instanceof AutonomousState) {
             AutonomousState autonomy = (AutonomousState) internalState;
-            this.autonomousUpdater = () -> autonomy.update(feature, observer);
+            this.autonomousUpdater = autonomy::update;
         } else {
             this.autonomousUpdater = NO_UPDATER;
         }
