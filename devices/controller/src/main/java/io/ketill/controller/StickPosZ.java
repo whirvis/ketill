@@ -2,7 +2,6 @@ package io.ketill.controller;
 
 import io.ketill.AutonomousField;
 import io.ketill.AutonomousState;
-import io.ketill.Direction;
 import io.ketill.IoDeviceObserver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

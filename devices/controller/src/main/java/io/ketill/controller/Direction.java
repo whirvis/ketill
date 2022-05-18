@@ -1,4 +1,4 @@
-package io.ketill;
+package io.ketill.controller;
 
 import org.jetbrains.annotations.NotNull;
 

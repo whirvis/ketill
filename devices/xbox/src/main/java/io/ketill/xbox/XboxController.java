@@ -1,7 +1,7 @@
 package io.ketill.xbox;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.Direction;
+import io.ketill.controller.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;

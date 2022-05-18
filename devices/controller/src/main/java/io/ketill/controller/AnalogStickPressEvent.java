@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.Direction;
 import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeaturePressEvent;
 import org.jetbrains.annotations.NotNull;

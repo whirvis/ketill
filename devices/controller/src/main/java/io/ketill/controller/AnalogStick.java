@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.Direction;
 import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import io.ketill.KetillException;
