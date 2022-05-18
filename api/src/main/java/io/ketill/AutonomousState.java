@@ -12,6 +12,7 @@ package io.ketill;
  * only. When implemented by the container state, it will result in an
  * {@code UnsupportedOperationException} during creation.
  *
+ * @see AutonomousField
  * @see ContainerState
  */
 public interface AutonomousState {
