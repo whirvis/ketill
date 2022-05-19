@@ -27,7 +27,8 @@ import java.util.function.Supplier;
  * @see PressableIoFeatureConfig
  * @see PressableIoFeatureSupport
  */
-public abstract class PressableIoFeatureObserver<Z> implements Observer<PressableIoFeatureEvent> {
+public abstract class PressableIoFeatureObserver<Z>
+        implements Observer<PressableIoFeatureEvent> {
 
     protected final @NotNull IoFeature<Z, ?> feature;
     protected final @NotNull Z internalState;
@@ -51,10 +52,6 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
      * @throws NullPointerException     if {@code feature},
      *                                  {@code internalState}, or
      *                                  {@code observer} are {@code null}.
-     * @throws IllegalStateException    if {@code feature} is not registered
-     *                                  to the device of {@code observer}.
-     * @throws IllegalArgumentException if {@code internalState} does not
-     *                                  belong to {@code feature}.
      */
     public PressableIoFeatureObserver(@NotNull IoFeature<Z, ?> feature,
                                       @NotNull Z internalState,
@@ -66,14 +63,6 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
         this.observer = Objects.requireNonNull(observer,
                 "observer cannot be null");
         this.device = observer.getDevice();
-
-        if (!device.isFeatureRegistered(feature)) {
-            String msg = "feature must be registered to device";
-            throw new IllegalStateException(msg);
-        } else if (device.getFeature(internalState) != feature) {
-            String msg = "internalState must belong to feature";
-            throw new IllegalArgumentException(msg);
-        }
 
         if (device instanceof PressableIoFeatureSupport) {
             PressableIoFeatureSupport support =
