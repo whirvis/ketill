@@ -30,9 +30,9 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
         /* nothing to update */
     };
 
-    public final @NotNull F feature;
-    public final @NotNull IoDeviceObserver observer;
-    public final @NotNull S containerState;
+    final @NotNull F feature;
+    final @NotNull IoDeviceObserver observer;
+    final @NotNull S containerState;
     final @NotNull Z internalState;
     final @NotNull Runnable autonomousUpdater;
     @NotNull Runnable adapterUpdater;
@@ -53,6 +53,20 @@ public final class RegisteredFeature<F extends IoFeature<Z, S>, Z, S> {
         }
 
         this.adapterUpdater = NO_UPDATER;
+    }
+
+    /**
+     * @return the registered I/O feature.
+     */
+    public @NotNull F getFeature() {
+        return this.feature;
+    }
+
+    /**
+     * @return the current state of the feature.
+     */
+    public @NotNull S getState() {
+        return this.containerState;
     }
 
 }
