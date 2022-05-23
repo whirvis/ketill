@@ -49,7 +49,7 @@ class IoDeviceSeekerTest {
          * result in the callback being executed.
          */
         assertNotNull(subscription);
-        seeker.events.onNext(new MockIoDeviceSeekerEvent(seeker));
+        seeker.observer.onNext(new MockIoDeviceSeekerEvent(seeker));
         assertTrue(emitted.get());
 
         /* reset emitted for next test */
@@ -60,7 +60,7 @@ class IoDeviceSeekerTest {
          * no longer be executed.
          */
         subscription.dispose();
-        seeker.events.onNext(new MockIoDeviceSeekerEvent(seeker));
+        seeker.observer.onNext(new MockIoDeviceSeekerEvent(seeker));
         assertFalse(emitted.get());
     }
 
@@ -205,7 +205,7 @@ class IoDeviceSeekerTest {
         AtomicBoolean forgotten = new AtomicBoolean();
         assertFalse(seeker.isClosed());
         seeker.subscribeEvents(IoDeviceForgetEvent.class,
-                events -> forgotten.set(events.getDevice() == device));
+                event -> forgotten.set(event.getDevice() == device));
 
         seeker.close();
 

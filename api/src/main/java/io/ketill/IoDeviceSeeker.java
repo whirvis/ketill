@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     private final @NotNull Subject<IoDeviceSeekerEvent> subject;
-    protected final @NotNull IoDeviceSeekerObserver events;
+    protected final @NotNull IoDeviceSeekerObserver observer;
 
     private final @NotNull List<I> devices;
 
@@ -42,7 +42,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     public IoDeviceSeeker() {
         this.subject = PublishSubject.create();
-        this.events = new IoDeviceSeekerObserver(this, subject);
+        this.observer = new IoDeviceSeekerObserver(this, subject);
 
         /*
          * Its possible devices will be modified while being iterated
@@ -120,7 +120,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.add(device);
         this.deviceDiscovered(device);
-        events.onNext(new IoDeviceDiscoverEvent(this, device));
+        observer.onNext(new IoDeviceDiscoverEvent(this, device));
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
         devices.remove(device);
         this.deviceForgotten(device);
-        events.onNext(new IoDeviceForgetEvent(this, device));
+        observer.onNext(new IoDeviceForgetEvent(this, device));
     }
 
     /**

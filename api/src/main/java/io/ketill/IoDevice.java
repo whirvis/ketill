@@ -38,7 +38,7 @@ public abstract class IoDevice implements FeatureRegistry {
     public final @NotNull String id;
 
     private final @NotNull Subject<IoDeviceEvent> subject;
-    protected final @NotNull IoDeviceObserver events;
+    protected final @NotNull IoDeviceObserver observer;
 
     private final MappedFeatureRegistry registry;
     private final IoDeviceAdapter<IoDevice> adapter;
@@ -80,9 +80,9 @@ public abstract class IoDevice implements FeatureRegistry {
          * an event will be fired from code executed in this constructor.
          */
         this.subject = PublishSubject.create();
-        this.events = new IoDeviceObserver(this, subject);
+        this.observer = new IoDeviceObserver(this, subject);
 
-        this.registry = new MappedFeatureRegistry(events);
+        this.registry = new MappedFeatureRegistry(observer);
 
         /*
          * While this is an unchecked cast, the template requires that the
@@ -406,7 +406,7 @@ public abstract class IoDevice implements FeatureRegistry {
                 registry.registerFeature(feature);
 
         this.featureRegistered(registered);
-        events.onNext(new IoFeatureRegisterEvent(this, registered));
+        observer.onNext(new IoFeatureRegisterEvent(this, registered));
         return registered;
     }
     /* @formatter:on */
@@ -429,7 +429,7 @@ public abstract class IoDevice implements FeatureRegistry {
     public void unregisterFeature(@NotNull IoFeature<?, ?> feature) {
         registry.unregisterFeature(feature);
         this.featureUnregistered(feature);
-        events.onNext(new IoFeatureUnregisterEvent(this, feature));
+        observer.onNext(new IoFeatureUnregisterEvent(this, feature));
     }
 
     /**
@@ -506,10 +506,10 @@ public abstract class IoDevice implements FeatureRegistry {
         this.connected = adapter.isDeviceConnected();
         if (connected && !wasConnected) {
             this.deviceConnected();
-            events.onNext(new IoDeviceConnectEvent(this));
+            observer.onNext(new IoDeviceConnectEvent(this));
         } else if (!connected && wasConnected) {
             this.deviceDisconnected();
-            events.onNext(new IoDeviceDisconnectEvent(this));
+            observer.onNext(new IoDeviceDisconnectEvent(this));
         }
 
         registry.updateFeatures();

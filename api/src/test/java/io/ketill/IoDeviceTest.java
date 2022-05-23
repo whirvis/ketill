@@ -100,7 +100,7 @@ class IoDeviceTest {
          * in the callback being executed.
          */
         assertNotNull(subscription);
-        device.events.onNext(new MockIoDeviceEvent(device));
+        device.observer.onNext(new MockIoDeviceEvent(device));
         assertTrue(emitted.get());
 
         /* reset emitted for next test */
@@ -111,7 +111,7 @@ class IoDeviceTest {
          * no longer be executed.
          */
         subscription.dispose();
-        device.events.onNext(new MockIoDeviceEvent(device));
+        device.observer.onNext(new MockIoDeviceEvent(device));
         assertFalse(emitted.get());
     }
 
