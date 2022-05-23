@@ -394,7 +394,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * <b>Note:</b> This method can be called before {@code IoDevice} is
      * finished constructing by the {@link #registerField(Field)} method.
      *
-     * @see #featureRegistered(RegisteredFeature, Object)
+     * @see #featureRegistered(RegisteredFeature)
      */
     /* @formatter:off */
     @Override
@@ -405,7 +405,7 @@ public abstract class IoDevice implements FeatureRegistry {
         RegisteredFeature<F, Z, S> registered =
                 registry.registerFeature(feature);
 
-        this.featureRegistered(registered, registered.internalState);
+        this.featureRegistered(registered);
         events.onNext(new IoFeatureRegisterEvent(this, registered));
         return registered;
     }
@@ -415,14 +415,10 @@ public abstract class IoDevice implements FeatureRegistry {
      * Called when a feature is registered. This will be called before
      * the corresponding event is emitted to subscribers.
      *
-     * @param registered    the registered feature.
-     * @param internalState the internal state of {@code registered}. This
-     *                      should only be made accessible to parts of the
-     *                      program that <i>absolutely</i> require it.
+     * @param registered the registered feature.
      * @see #getInternalState(IoFeature)
      */
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
-                                     @NotNull Object internalState) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered) {
         /* optional implement */
     }
 

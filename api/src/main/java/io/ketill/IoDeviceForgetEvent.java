@@ -30,7 +30,7 @@ public final class IoDeviceForgetEvent extends IoDeviceSeekerEvent {
     /**
      * @return the device which was forgotten.
      */
-    public final @NotNull IoDevice getDevice() {
+    public @NotNull IoDevice getDevice() {
         return this.device;
     }
 

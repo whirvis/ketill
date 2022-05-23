@@ -63,8 +63,7 @@ class MockIoDevice extends IoDevice {
     }
 
     @Override
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
-                                     @NotNull Object internalState) {
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered) {
         this.featureRegistered = true;
     }
 

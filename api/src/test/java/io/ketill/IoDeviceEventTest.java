@@ -2,7 +2,6 @@ package io.ketill;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Null;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

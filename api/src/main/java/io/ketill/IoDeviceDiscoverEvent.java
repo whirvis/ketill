@@ -30,7 +30,7 @@ public final class IoDeviceDiscoverEvent extends IoDeviceSeekerEvent {
     /**
      * @return the device which was discovered.
      */
-    public final @NotNull IoDevice getDevice() {
+    public @NotNull IoDevice getDevice() {
         return this.device;
     }
 
