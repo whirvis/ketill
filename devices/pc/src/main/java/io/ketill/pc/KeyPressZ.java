@@ -17,8 +17,7 @@ public final class KeyPressZ implements AutonomousState {
 
     private final KeyboardKeyObserver keyObserver;
 
-    KeyPressZ(@NotNull KeyboardKey key,
-              @NotNull IoDeviceObserver observer) {
+    KeyPressZ(@NotNull KeyboardKey key, @NotNull IoDeviceObserver observer) {
         this.keyObserver = new KeyboardKeyObserver(key, this, observer);
     }
 

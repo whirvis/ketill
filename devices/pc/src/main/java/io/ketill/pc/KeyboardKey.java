@@ -16,7 +16,7 @@ public final class KeyboardKey extends IoFeature<KeyPressZ, KeyPress> {
      *                                  whitespace.
      */
     public KeyboardKey(@NotNull String id) {
-        super(id);
+        super(Keyboard.class, id);
     }
 
     @Override

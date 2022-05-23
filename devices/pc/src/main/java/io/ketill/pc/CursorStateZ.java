@@ -1,7 +1,6 @@
 package io.ketill.pc;
 
 import io.ketill.AutonomousState;
-import io.ketill.IoDevice;
 import io.ketill.IoDeviceObserver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +48,7 @@ public final class CursorStateZ implements AutonomousState {
     public @Nullable Vector2fc requestedPos;
 
     private final MouseCursor cursor;
-    private final IoDevice device;
+    private final Mouse mouse;
     private final IoDeviceObserver observer;
 
     private final Vector2f lastPos;
@@ -57,7 +56,7 @@ public final class CursorStateZ implements AutonomousState {
     CursorStateZ(@NotNull MouseCursor cursor,
                  @NotNull IoDeviceObserver observer) {
         this.cursor = cursor;
-        this.device = observer.getDevice();
+        this.mouse = (Mouse) observer.getDevice();
         this.observer = observer;
 
         this.currentPos = new Vector2f();
@@ -71,7 +70,7 @@ public final class CursorStateZ implements AutonomousState {
         if (!currentPos.equals(lastPos)) {
             Vector2f displacement = new Vector2f();
             currentPos.sub(lastPos, displacement);
-            observer.onNext(new MouseCursorDisplaceEvent(device, cursor,
+            observer.onNext(new MouseCursorDisplaceEvent(mouse, cursor,
                     displacement));
         }
         lastPos.set(currentPos);

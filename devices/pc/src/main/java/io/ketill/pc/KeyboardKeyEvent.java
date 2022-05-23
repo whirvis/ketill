@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base for events relating to a {@link KeyboardKey}.
  */
-public interface KeyboardKeyEvent {
+public interface KeyboardKeyEvent extends KeyboardEvent {
 
     /**
      * @return the key which triggered this event.

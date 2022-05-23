@@ -6,35 +6,41 @@ import org.jetbrains.annotations.NotNull;
 
 final class KeyboardKeyObserver extends PressableIoFeatureObserver<KeyPressZ> {
 
+    private final Keyboard keyboard;
     private final KeyboardKey key;
 
     KeyboardKeyObserver(@NotNull KeyboardKey key,
                         @NotNull KeyPressZ internalState,
                         @NotNull IoDeviceObserver observer) {
         super(key, internalState, observer);
+        this.keyboard = (Keyboard) observer.getDevice();
         this.key = key;
     }
 
     @Override
-    protected boolean isPressed() {
+    protected boolean isPressedImpl() {
         return internalState.pressed;
     }
 
     @Override
     protected void onPress() {
-        this.onNext(new KeyboardKeyPressEvent(device, key));
+        this.onNext(new KeyboardKeyPressEvent(keyboard, key));
     }
 
     @Override
     protected void onHold() {
-        internalState.held = true;
-        this.onNext(new KeyboardKeyHoldEvent(device, key));
+        this.onNext(new KeyboardKeyHoldEvent(keyboard, key));
     }
 
     @Override
     protected void onRelease() {
-        internalState.held = false;
-        this.onNext(new KeyboardKeyReleaseEvent(device, key));
+        this.onNext(new KeyboardKeyReleaseEvent(keyboard, key));
+    }
+
+    @Override
+    public void poll() {
+        super.poll();
+        internalState.held = this.isHeld();
     }
 
 }

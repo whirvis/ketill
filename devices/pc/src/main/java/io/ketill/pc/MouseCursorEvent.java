@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base for events relating to a {@link MouseCursor}.
  */
-public interface MouseCursorEvent {
+public interface MouseCursorEvent extends MouseEvent {
 
     /**
      * @return the cursor which triggered this event.

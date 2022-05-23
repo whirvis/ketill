@@ -1,6 +1,5 @@
 package io.ketill.pc;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class MouseButtonHoldEvent extends IoFeatureHoldEvent
         implements MouseButtonEvent {
 
-    MouseButtonHoldEvent(@NotNull IoDevice device,
+    MouseButtonHoldEvent(@NotNull Mouse mouse,
                          @NotNull MouseButton button) {
-        super(device, button);
+        super(mouse, button);
+    }
+
+    @Override
+    public @NotNull Mouse getMouse() {
+        return (Mouse) this.getDevice();
     }
 
     @Override

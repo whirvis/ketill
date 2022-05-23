@@ -16,7 +16,7 @@ public final class MouseCursor extends IoFeature<CursorStateZ, CursorState> {
      *                                  whitespace.
      */
     public MouseCursor(@NotNull String id) {
-        super(id);
+        super(Mouse.class, id);
     }
 
     @Override

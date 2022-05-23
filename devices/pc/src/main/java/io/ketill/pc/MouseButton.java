@@ -16,7 +16,7 @@ public final class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
      *                                  whitespace.
      */
     public MouseButton(@NotNull String id) {
-        super(id);
+        super(Mouse.class, id);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base for events relating to a {@link MouseButton}.
  */
-public interface MouseButtonEvent {
+public interface MouseButtonEvent extends MouseEvent {
 
     /**
      * @return the button which triggered this event.

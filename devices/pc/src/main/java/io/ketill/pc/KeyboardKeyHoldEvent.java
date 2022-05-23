@@ -1,6 +1,5 @@
 package io.ketill.pc;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class KeyboardKeyHoldEvent extends IoFeatureHoldEvent
         implements KeyboardKeyEvent {
 
-    KeyboardKeyHoldEvent(@NotNull IoDevice device,
+    KeyboardKeyHoldEvent(@NotNull Keyboard keyboard,
                          @NotNull KeyboardKey key) {
-        super(device, key);
+        super(keyboard, key);
+    }
+
+    @Override
+    public @NotNull Keyboard getKeyboard() {
+        return (Keyboard) this.getDevice();
     }
 
     @Override

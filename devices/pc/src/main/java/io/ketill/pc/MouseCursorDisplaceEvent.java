@@ -1,6 +1,5 @@
 package io.ketill.pc;
 
-import io.ketill.IoDevice;
 import io.ketill.IoFeatureEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
@@ -16,17 +15,27 @@ public final class MouseCursorDisplaceEvent extends IoFeatureEvent
     private final Vector2fc displacement;
 
     /**
-     * @param device the device which emitted this event.
+     * @param mouse  the mouse which emitted this event.
      * @param cursor the cursor which triggered this event.
      * @throws NullPointerException if {@code device} or {@code cursor}
      *                              are{@code null}.
      */
-    public MouseCursorDisplaceEvent(@NotNull IoDevice device,
+    public MouseCursorDisplaceEvent(@NotNull Mouse mouse,
                                     @NotNull MouseCursor cursor,
                                     @NotNull Vector2fc displacement) {
-        super(device, cursor);
+        super(mouse, cursor);
         this.displacement = Objects.requireNonNull(displacement,
                 "displacement cannot be null");
+    }
+
+    @Override
+    public @NotNull Mouse getMouse() {
+        return (Mouse) this.getDevice();
+    }
+
+    @Override
+    public @NotNull MouseCursor getCursor() {
+        return (MouseCursor) this.getFeature();
     }
 
     /**
@@ -36,8 +45,4 @@ public final class MouseCursorDisplaceEvent extends IoFeatureEvent
         return this.displacement;
     }
 
-    @Override
-    public @NotNull MouseCursor getCursor() {
-        return (MouseCursor) this.getFeature();
-    }
 }
