@@ -101,8 +101,8 @@ class IoDeviceTest {
          * Once subscribed, the I/O device should return a subscription that
          * can later be disposed of. Furthermore, since no type was given,
          * the argument for the eventClazz parameter should have defaulted
-         * to IoDeviceEvent.class. As such, any emitted events should result
-         * in the callback being executed.
+         * to IoEvent.class. As such, any emitted events should result in
+         * the callback being executed.
          */
         assertNotNull(subscription);
         device.observer.onNext(new MockIoDeviceEvent(device));

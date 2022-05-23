@@ -143,10 +143,11 @@ public abstract class IoDevice implements FeatureRegistry {
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code eventClazz} or {@code callback}
      *                              are {@code null}.
+     * @see IoDeviceEvent
      */
     /* @formatter:off */
     @SuppressWarnings("unchecked")
-    public final <T extends IoDeviceEvent> @NotNull Disposable
+    public final <T extends IoEvent> @NotNull Disposable
             subscribeEvents(@NotNull Class<T> eventClazz,
                             @NotNull Consumer<T> callback) {
         Objects.requireNonNull(eventClazz, "eventClazz cannot be null");
@@ -167,9 +168,9 @@ public abstract class IoDevice implements FeatureRegistry {
      */
     /* @formatter:off */
     public final @NotNull Disposable
-            subscribeEvents(@NotNull Consumer<IoDeviceEvent> callback) {
+            subscribeEvents(@NotNull Consumer<IoEvent> callback) {
         Objects.requireNonNull(callback, "callback cannot be null");
-        return this.subscribeEvents(IoDeviceEvent.class, callback);
+        return this.subscribeEvents(IoEvent.class, callback);
     }
     /* @formatter:on */
 
