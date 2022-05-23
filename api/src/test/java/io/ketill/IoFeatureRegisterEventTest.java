@@ -13,11 +13,12 @@ class IoFeatureRegisterEventTest {
 
     @BeforeEach
     void createEvent() {
-        IoDeviceObserver events = mock(IoDeviceObserver.class);
         IoDevice device = mock(IoDevice.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(device);
         IoFeature<?, ?> feature = new MockIoFeature();
 
-        this.registered = new RegisteredFeature<>(feature, events);
+        this.registered = new RegisteredFeature<>(feature, observer);
         this.event = new IoFeatureRegisterEvent(device, registered);
     }
 

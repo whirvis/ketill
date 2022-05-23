@@ -7,14 +7,19 @@ class MockIoFeature extends IoFeature<Object, Object> {
     Object internalState;
     Object containerState;
 
-    MockIoFeature(@NotNull String id) {
-        super(id);
+    MockIoFeature(@NotNull Class<? extends IoDevice> requiredType,
+                  @NotNull String id) {
+        super(requiredType, id);
         this.internalState = new Object();
         this.containerState = new Object();
     }
 
+    MockIoFeature(@NotNull Class<? extends IoDevice> requiredType) {
+        this(requiredType, "mock");
+    }
+
     MockIoFeature() {
-        this("mock");
+        this(IoDevice.class, "mock");
     }
 
     @Override

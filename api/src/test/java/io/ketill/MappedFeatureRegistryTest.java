@@ -17,8 +17,11 @@ class MappedFeatureRegistryTest {
 
     @BeforeEach
     void createRegistry() {
-        IoDeviceObserver events = mock(IoDeviceObserver.class);
-        this.registry = new MappedFeatureRegistry(events);
+        IoDevice device = mock(IoDevice.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(device);
+
+        this.registry = new MappedFeatureRegistry(observer);
     }
 
     @Test

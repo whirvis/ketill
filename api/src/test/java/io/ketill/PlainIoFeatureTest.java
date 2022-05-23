@@ -29,7 +29,9 @@ class PlainIoFeatureTest {
 
     @Test
     void testGetState() {
+        IoDevice device = mock(IoDevice.class);
         IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(device);
 
         /*
          * The purpose of a plain I/O feature is to generate a state with

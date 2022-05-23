@@ -23,11 +23,13 @@ class IoFeatureTest {
          * Furthermore, any whitespace in an ID is illegal.
          */
         assertThrows(NullPointerException.class,
-                () -> new MockIoFeature(null));
+                () -> new MockIoFeature(null, "mock"));
+        assertThrows(NullPointerException.class,
+                () -> new MockIoFeature(IoDevice.class, null));
         assertThrows(IllegalArgumentException.class,
-                () -> new MockIoFeature(""));
+                () -> new MockIoFeature(IoDevice.class, ""));
         assertThrows(IllegalArgumentException.class,
-                () -> new MockIoFeature("\t"));
+                () -> new MockIoFeature(IoDevice.class, "\t"));
     }
 
     @Test
@@ -35,7 +37,18 @@ class IoFeatureTest {
         assertThrows(NullPointerException.class,
                 () -> feature.getState(null));
 
+        IoDevice device = mock(IoDevice.class);
         IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(device);
+
+        /*
+         * When the wrong type of I/O device is provided to an I/O feature,
+         * it should throw an exception and prevent the state from being
+         * created in the first place. This allows code for features to
+         * expect a specific device type and perform casts safely.
+         */
+        MockIoFeature picky = new MockIoFeature(MockIoDevice.class);
+        assertThrows(KetillException.class, () -> picky.getState(observer));
 
         /*
          * It would not make sense for the internal state of an I/O

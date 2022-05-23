@@ -14,10 +14,13 @@ class RegisteredFeatureTest {
 
     @BeforeEach
     void createRegistration() {
+        IoDevice device = mock(IoDevice.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(device);
+
         this.feature = new MockIoFeature();
         feature.containerState = new Object();
-
-        this.observer = mock(IoDeviceObserver.class);
+        this.observer = observer;
         this.registered = new RegisteredFeature<>(feature, observer);
     }
 

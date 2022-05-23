@@ -25,21 +25,40 @@ import java.util.Objects;
  */
 public abstract class IoFeature<Z, S> {
 
+    public final @NotNull Class<? extends IoDevice> requiredType;
     public final @NotNull String id;
 
     /**
-     * @param id the feature ID.
+     * @param requiredType the type an {@link IoDevice} must be for it to
+     *                     register this feature.
+     * @param id           the feature ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public IoFeature(@NotNull String id) {
+    public IoFeature(@NotNull Class<? extends IoDevice> requiredType,
+                     @NotNull String id) {
+        this.requiredType = Objects.requireNonNull(requiredType,
+                "requiredType cannot be null");
         this.id = Objects.requireNonNull(id, "id cannot be null");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
         } else if (!id.matches("\\S+")) {
             throw new IllegalArgumentException("id cannot contain whitespace");
         }
+    }
+
+    /**
+     * Constructs a new {@code IoFeature} which can be registered by any type
+     * of {@link IoDevice}.
+     *
+     * @param id the feature ID.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public IoFeature(@NotNull String id) {
+        this(IoDevice.class, id);
     }
 
     /**
@@ -52,7 +71,9 @@ public abstract class IoFeature<Z, S> {
      * @throws NullPointerException if {@code observer} is {@code null};
      *                              if the returned internal state or
      *                              container state are {@code null}.
-     * @throws KetillException      if the returned internal state or
+     * @throws KetillException      if the device of {@code observer}
+     *                              is not of required type;
+     *                              if the returned internal state or
      *                              container state are instances of
      *                              {@link IoFeature};
      *                              if the returned internal state
@@ -64,6 +85,13 @@ public abstract class IoFeature<Z, S> {
     protected final @NotNull StatePair<Z, S>
             getState(@NotNull IoDeviceObserver observer) {
         Objects.requireNonNull(observer, "observer cannot be null");
+
+        Class<?> deviceClazz = observer.getDevice().getClass();
+        if(!requiredType.isAssignableFrom(deviceClazz)) {
+            String msg = "observer.getDevice() must be of type";
+            msg += " " + requiredType.getName();
+            throw new KetillException(msg);
+        }
 
         Z internalState = this.getInternalState(observer);
         Objects.requireNonNull(internalState,
