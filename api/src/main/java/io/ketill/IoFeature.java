@@ -25,12 +25,12 @@ import java.util.Objects;
  */
 public abstract class IoFeature<Z, S> {
 
-    public final @NotNull Class<? extends IoDevice> requiredType;
-    public final @NotNull String id;
+    private final @NotNull Class<? extends IoDevice> requiredType;
+    private final @NotNull String id;
 
     /**
      * @param requiredType the type an {@link IoDevice} must be for it to
-     *                     register this feature.
+     *                     create an instance of this feature's state.
      * @param id           the feature ID.
      * @throws NullPointerException     if {@code requiredType} or
      *                                  {@code id} are {@code null}.
@@ -47,6 +47,21 @@ public abstract class IoFeature<Z, S> {
         } else if (!id.matches("\\S+")) {
             throw new IllegalArgumentException("id cannot contain whitespace");
         }
+    }
+
+    /**
+     * @return the type an {@link IoDevice} must be for it to create an
+     * instance of this feature's state.
+     */
+    public @NotNull Class<? extends IoDevice> getRequiredType() {
+        return this.requiredType;
+    }
+
+    /**
+     * @return the ID of this feature.
+     */
+    public @NotNull String getId() {
+        return this.id;
     }
 
     /**

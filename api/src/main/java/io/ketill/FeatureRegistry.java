@@ -54,7 +54,7 @@ interface FeatureRegistry {
         RegisteredFeature<?, ?, S> registered =
                 this.getFeatureRegistration(feature);
         if (registered == null) {
-            String msg = "no such feature \"" + feature.id + "\"";
+            String msg = "no such feature \"" + feature.getId() + "\"";
             throw new IllegalStateException(msg);
         }
         return registered.containerState;

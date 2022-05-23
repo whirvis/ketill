@@ -34,10 +34,10 @@ class MockIoDevice extends IoDevice {
     boolean deviceConnected, deviceDisconnected;
     boolean polled;
 
-    MockIoDevice(String id,
+    MockIoDevice(String typeId,
                  AdapterSupplier<MockIoDevice> adapterSupplier,
                  boolean registerFields, boolean initAdapter) {
-        super(id, adapterSupplier, registerFields, initAdapter);
+        super(typeId, adapterSupplier, registerFields, initAdapter);
         if (registerFields) {
             this.featureContainerState = this.getState(FEATURE);
             this.featureInternalState = this.getInternalState(FEATURE);
@@ -47,9 +47,9 @@ class MockIoDevice extends IoDevice {
         }
     }
 
-    MockIoDevice(@NotNull String id,
+    MockIoDevice(@NotNull String typeId,
                  @NotNull AdapterSupplier<MockIoDevice> adapterSupplier) {
-        super(id, adapterSupplier);
+        super(typeId, adapterSupplier);
         this.featureContainerState = this.getState(FEATURE);
         this.featureInternalState = this.getInternalState(FEATURE);
     }

@@ -73,6 +73,11 @@ class IoDeviceTest {
     }
 
     @Test
+    void testGetId() {
+        assertEquals("mock", device.getTypeId());
+    }
+
+    @Test
     void testSubscribeEvents() {
         /*
          * It makes no sense to subscribe for events of a null type or to

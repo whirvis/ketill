@@ -33,6 +33,16 @@ class IoFeatureTest {
     }
 
     @Test
+    void testGetRequiredType() {
+        assertEquals(IoDevice.class, feature.getRequiredType());
+    }
+
+    @Test
+    void testGetId() {
+        assertEquals("mock", feature.getId());
+    }
+
+    @Test
     void testGetState() {
         assertThrows(NullPointerException.class,
                 () -> feature.getState(null));

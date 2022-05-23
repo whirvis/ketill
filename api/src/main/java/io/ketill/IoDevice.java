@@ -35,7 +35,7 @@ import java.util.function.Consumer;
  */
 public abstract class IoDevice implements FeatureRegistry {
 
-    public final @NotNull String id;
+    private final @NotNull String typeId;
 
     private final @NotNull Subject<IoDeviceEvent> subject;
     protected final @NotNull IoDeviceObserver observer;
@@ -47,7 +47,7 @@ public abstract class IoDevice implements FeatureRegistry {
     private boolean connected;
 
     /**
-     * @param id              the device ID.
+     * @param typeId          the device type ID.
      * @param adapterSupplier the device adapter supplier.
      * @param registerFields  {@code true} if the constructor should call
      *                        {@link #registerFields()}. If {@code false},
@@ -56,22 +56,23 @@ public abstract class IoDevice implements FeatureRegistry {
      * @param initAdapter     {@code true} if the constructor should call
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
-     * @throws NullPointerException     if {@code id} or
+     * @throws NullPointerException     if {@code typeId} or
      *                                  {@code adapterSupplier}
      *                                  are {@code null}; if the adapter
      *                                  given by {@code adapterSupplier}
      *                                  is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
      */
     @SuppressWarnings("unchecked")
-    public IoDevice(@NotNull String id,
+    public IoDevice(@NotNull String typeId,
                     @NotNull AdapterSupplier<?> adapterSupplier,
                     boolean registerFields, boolean initAdapter) {
-        this.id = Objects.requireNonNull(id, "id cannot be null");
-        if (id.isEmpty()) {
+        this.typeId = Objects.requireNonNull(typeId,
+                "typeId cannot be null");
+        if (typeId.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
-        } else if (!id.matches("\\S+")) {
+        } else if (!typeId.matches("\\S+")) {
             throw new IllegalArgumentException("id cannot contain whitespace");
         }
 
@@ -109,17 +110,24 @@ public abstract class IoDevice implements FeatureRegistry {
      * This is a shorthand for the base constructor with the argument for
      * {@code registerFields} and {@code initAdapter} being {@code true}.
      *
-     * @param id              the device ID.
+     * @param typeId          the device type ID.
      * @param adapterSupplier the device adapter supplier.
-     * @throws NullPointerException     if {@code id} or
+     * @throws NullPointerException     if {@code typeId} or
      *                                  {@code adapterSupplier}
      *                                  are {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
      */
-    public IoDevice(@NotNull String id,
+    public IoDevice(@NotNull String typeId,
                     @NotNull AdapterSupplier<?> adapterSupplier) {
-        this(id, adapterSupplier, true, true);
+        this(typeId, adapterSupplier, true, true);
+    }
+
+    /**
+     * @return the type ID of this device.
+     */
+    public final @NotNull String getTypeId() {
+        return this.typeId;
     }
 
     /**
