@@ -78,6 +78,7 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
      *
      * @return {@code true} if the feature is currently pressed down,
      * {@code false} otherwise.
+     * @see #isPressed()
      */
     protected abstract boolean isPressedImpl();
 
