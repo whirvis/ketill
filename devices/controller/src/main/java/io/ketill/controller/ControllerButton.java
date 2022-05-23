@@ -26,7 +26,7 @@ public final class ControllerButton
      *                                  whitespace.
      */
     public ControllerButton(@NotNull String id, @Nullable Direction direction) {
-        super(id);
+        super(Controller.class, id);
         this.direction = direction;
     }
 

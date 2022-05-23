@@ -39,7 +39,7 @@ public final class AnalogTrigger
      */
     public AnalogTrigger(@NotNull String id,
                          @Nullable AnalogTriggerCalibration baseCalibration) {
-        super(id);
+        super(Controller.class, id);
         this.baseCalibration = baseCalibration;
     }
 

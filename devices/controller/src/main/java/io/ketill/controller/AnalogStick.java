@@ -78,7 +78,7 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      */
     public AnalogStick(@NotNull String id, @Nullable ControllerButton zButton,
                        @Nullable AnalogStickCalibration baseCalibration) {
-        super(id);
+        super(Controller.class, id);
         this.zButton = zButton;
         this.baseCalibration = baseCalibration;
     }

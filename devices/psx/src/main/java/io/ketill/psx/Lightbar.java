@@ -15,7 +15,7 @@ public class Lightbar extends PlainIoFeature<LightbarColor> {
      *                                  whitespace.
      */
     public Lightbar(@NotNull String id) {
-        super(id, LightbarColor::new);
+        super(Ps4Controller.class, id, LightbarColor::new);
     }
 
 }

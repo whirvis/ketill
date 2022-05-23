@@ -4,7 +4,8 @@ import io.ketill.IoDeviceObserver;
 import io.ketill.pressable.PressableIoFeatureObserver;
 import org.jetbrains.annotations.NotNull;
 
-final class ControllerButtonObserver extends PressableIoFeatureObserver<ButtonStateZ> {
+final class ControllerButtonObserver
+        extends PressableIoFeatureObserver<ButtonStateZ> {
 
     private final ControllerButton button;
 
@@ -16,7 +17,7 @@ final class ControllerButtonObserver extends PressableIoFeatureObserver<ButtonSt
     }
 
     @Override
-    protected boolean isPressed() {
+    protected boolean isPressedImpl() {
         return internalState.pressed;
     }
 
@@ -27,14 +28,18 @@ final class ControllerButtonObserver extends PressableIoFeatureObserver<ButtonSt
 
     @Override
     protected void onHold() {
-        internalState.held = true;
         this.onNext(new ControllerButtonHoldEvent(device, button));
     }
 
     @Override
     protected void onRelease() {
-        internalState.held = false;
         this.onNext(new ControllerButtonReleaseEvent(device, button));
+    }
+
+    @Override
+    public void poll() {
+        super.poll();
+        internalState.held = this.isHeld();
     }
 
 }

@@ -22,27 +22,30 @@ final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
     }
 
     @Override
-    protected boolean isPressed() {
+    protected boolean isPressedImpl() {
         return AnalogStick.isPressed(internalState.calibratedPos, direction);
     }
 
     @Override
     protected void onPress() {
-        buttonState.pressed = true;
         this.onNext(new AnalogStickPressEvent(device, stick, direction));
     }
 
     @Override
     protected void onHold() {
-        buttonState.held = true;
         this.onNext(new AnalogStickHoldEvent(device, stick, direction));
     }
 
     @Override
     protected void onRelease() {
-        buttonState.pressed = false;
-        buttonState.held = false;
         this.onNext(new AnalogStickReleaseEvent(device, stick, direction));
+    }
+
+    @Override
+    public void poll() {
+        super.poll();
+        buttonState.pressed = this.isPressed();
+        buttonState.held = this.isHeld();
     }
 
 }

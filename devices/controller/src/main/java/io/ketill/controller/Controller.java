@@ -48,7 +48,7 @@ public abstract class Controller extends IoDevice
      * registered automatically during construction (assuming they are not
      * already registered via the {@link FeaturePresent} annotation.)
      *
-     * @param id              the controller ID.
+     * @param typeId          the controller type ID.
      * @param adapterSupplier the controller adapter supplier.
      * @param ls              the left analog stick, may be {@code null}.
      * @param rs              the right analog stick, may be {@code null}.
@@ -61,20 +61,20 @@ public abstract class Controller extends IoDevice
      * @param initAdapter     {@code true} if the constructor should call
      *                        {@link #initAdapter()}. If {@code false}, the
      *                        extending class <b>must</b> call it.
-     * @throws NullPointerException     if {@code id} or
+     * @throws NullPointerException     if {@code typeId} or
      *                                  {@code adapterSupplier}
      *                                  are {@code null}; if the adapter
      *                                  given by {@code adapterSupplier}
      *                                  is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
      */
-    public Controller(@NotNull String id,
+    public Controller(@NotNull String typeId,
                       @NotNull AdapterSupplier<?> adapterSupplier,
                       @Nullable AnalogStick ls, @Nullable AnalogStick rs,
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt,
                       boolean registerFields, boolean initAdapter) {
-        super(id, adapterSupplier, false, false);
+        super(typeId, adapterSupplier, false, false);
 
         this.rumbleMotors = new HashMap<>();
         this.pressableConfig = PressableIoFeatureConfig.DEFAULT;
@@ -102,25 +102,25 @@ public abstract class Controller extends IoDevice
      * This is a shorthand for the base constructor with the argument for
      * {@code registerFields} and {@code initAdapter} being {@code true}.
      *
-     * @param id              the controller ID.
+     * @param typeId          the controller type ID.
      * @param adapterSupplier the controller adapter supplier.
      * @param ls              the left analog stick, may be {@code null}.
      * @param rs              the right analog stick, may be {@code null}.
      * @param lt              the left analog trigger, may be {@code null}.
      * @param rt              the right analog trigger, may be {@code null}.
-     * @throws NullPointerException     if {@code id} or
+     * @throws NullPointerException     if {@code typeId} or
      *                                  {@code adapterSupplier}
      *                                  are {@code null}; if the adapter
      *                                  given by {@code adapterSupplier}
      *                                  is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
      */
-    public Controller(@NotNull String id,
+    public Controller(@NotNull String typeId,
                       @NotNull AdapterSupplier<?> adapterSupplier,
                       @Nullable AnalogStick ls, @Nullable AnalogStick rs,
                       @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt) {
-        this(id, adapterSupplier, ls, rs, lt, rt, true, true);
+        this(typeId, adapterSupplier, ls, rs, lt, rt, true, true);
     }
 
     /**
@@ -154,10 +154,12 @@ public abstract class Controller extends IoDevice
 
     @Override
     @MustBeInvokedByOverriders
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered,
-                                     @NotNull Object internalState) {
-        if (registered.feature instanceof RumbleMotor) {
-            RumbleMotor motor = (RumbleMotor) registered.feature;
+    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered) {
+        IoFeature<?, ?> feature = registered.getFeature();
+        Object internalState = this.getInternalState(feature);
+
+        if (feature instanceof RumbleMotor) {
+            RumbleMotor motor = (RumbleMotor) feature;
             MotorVibration vibration = (MotorVibration) internalState;
             synchronized (rumbleMotors) {
                 rumbleMotors.put(motor, vibration);
