@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 /**
  * An object which observes the state of an I/O feature, specifically one
  * which can be considered to be pressed or released (this is determined
- * via the {@link #isPressed()} method). The associated event is emitted
+ * via the {@link #isPressedImpl()} method). The associated event is emitted
  * when the state of the observed feature changes.
  * <p>
  * <b>Note:</b> For events to be emitted, the monitor must be polled
@@ -27,8 +27,7 @@ import java.util.function.Supplier;
  * @see PressableIoFeatureConfig
  * @see PressableIoFeatureSupport
  */
-public abstract class PressableIoFeatureObserver<Z>
-        implements Observer<PressableIoFeatureEvent> {
+public abstract class PressableIoFeatureObserver<Z> implements Observer<PressableIoFeatureEvent> {
 
     protected final @NotNull IoFeature<Z, ?> feature;
     protected final @NotNull Z internalState;
@@ -49,9 +48,9 @@ public abstract class PressableIoFeatureObserver<Z>
      * @param feature       the feature whose state is being observed.
      * @param internalState the internal state of {@code feature}.
      * @param observer      the I/O device observer.
-     * @throws NullPointerException     if {@code feature},
-     *                                  {@code internalState}, or
-     *                                  {@code observer} are {@code null}.
+     * @throws NullPointerException if {@code feature},
+     *                              {@code internalState}, or
+     *                              {@code observer} are {@code null}.
      */
     public PressableIoFeatureObserver(@NotNull IoFeature<Z, ?> feature,
                                       @NotNull Z internalState,
@@ -74,21 +73,42 @@ public abstract class PressableIoFeatureObserver<Z>
     }
 
     /**
-     * This is used to determine when emits should be emitted. The behavior
-     * of event emission can be changed by overriding {@link #onPress()},
-     * {@link #onHold()}, and/or {@link #onRelease()}.
+     * Called each time {@link #poll()} is invoked. This method is used to
+     * determine if the observed feature is currently held down.
      *
-     * @return {@code true} if the state of the feature indicates that it is
-     * currently pressed down, {@code false} otherwise.
+     * @return {@code true} if the feature is currently pressed down,
+     * {@code false} otherwise.
      */
-    protected abstract boolean isPressed();
+    protected abstract boolean isPressedImpl();
+
+    /**
+     * @return {@code true} if the feature is currently pressed down,
+     * {@code false} otherwise.
+     */
+    public final boolean isPressed() {
+        return this.pressed;
+    }
+
+    /**
+     * @return {@code true} if the feature has been pressed down long enough
+     * to be considered held, {@code false} otherwise.
+     */
+    public final boolean isHeld() {
+        return this.held;
+    }
 
     /**
      * @return the configuration this observer uses in determining if and
-     * when events should be emitted.
+     * when events should be emitted. If the configuration returned by the
+     * device is {@code null}, {@link PressableIoFeatureConfig#DEFAULT} will
+     * be returned instead.
      */
     public final @NotNull PressableIoFeatureConfigView getConfig() {
-        return configSupplier.get();
+        PressableIoFeatureConfigView config = configSupplier.get();
+        if (config == null) {
+            return PressableIoFeatureConfig.DEFAULT;
+        }
+        return config;
     }
 
     @Override
@@ -134,10 +154,6 @@ public abstract class PressableIoFeatureObserver<Z>
      * Called when the feature is first pressed down, or virtually
      * pressed due to being held down. By default, this method emits
      * an {@link IoFeaturePressEvent}.
-     * <p>
-     * This method can be overridden to change its behavior. For example,
-     * by emitting a different type of event or by updating the observed
-     * state.
      */
     protected void onPress() {
         this.onNext(new IoFeaturePressEvent(device, feature));
@@ -147,10 +163,6 @@ public abstract class PressableIoFeatureObserver<Z>
      * Called when the feature is first held down, due to being pressed
      * for an extended period of time. By default, this method emits an
      * {@link IoFeatureHoldEvent}.
-     * <p>
-     * This method can be overridden to change its behavior. For example,
-     * by emitting a different type of event or by updating the observed
-     * state.
      */
     protected void onHold() {
         this.onNext(new IoFeatureHoldEvent(device, feature));
@@ -158,18 +170,14 @@ public abstract class PressableIoFeatureObserver<Z>
 
     /**
      * Called when the feature is released after being pressed down.
-     * By default, this method emits an {@link IoFeaturePressEvent}.
-     * <p>
-     * This method can be overridden to change its behavior. For example,
-     * by emitting a different type of event or by updating the observed
-     * state.
+     * By default, this method emits an {@link IoFeatureReleaseEvent}.
      */
     protected void onRelease() {
         this.onNext(new IoFeatureReleaseEvent(device, feature));
     }
 
     private void emitPressEvents(long currentTime) {
-        boolean pressed = this.isPressed();
+        boolean pressed = this.isPressedImpl();
         boolean wasPressed = this.pressed;
         this.pressed = pressed;
 
@@ -187,7 +195,7 @@ public abstract class PressableIoFeatureObserver<Z>
             return;
         }
 
-        PressableIoFeatureConfigView config = configSupplier.get();
+        PressableIoFeatureConfigView config = this.getConfig();
 
         boolean holdEnabled = config.isHoldEnabled();
         boolean holdPressEnabled = config.isHoldPressEnabled();
