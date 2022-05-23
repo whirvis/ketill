@@ -27,12 +27,12 @@ class MockIoDevice extends IoDevice {
 
     }
 
-    final IoDeviceObserver eventsAccess;
+    final IoDeviceObserver observerAccess;
 
     MockIoDevice(@NotNull String id,
                  @NotNull AdapterSupplier<MockIoDevice> adapterSupplier) {
         super(id, adapterSupplier);
-        this.eventsAccess = this.events;
+        this.observerAccess = this.observer;
     }
 
     MockIoDevice() {

@@ -34,10 +34,10 @@ class PressableIoFeatureObserverTest {
          */
         assertThrows(NullPointerException.class,
                 () -> new MockIoFeatureObserver(null, state,
-                        device.eventsAccess));
+                        device.observerAccess));
         assertThrows(NullPointerException.class,
                 () -> new MockIoFeatureObserver(feature, null,
-                        device.eventsAccess));
+                        device.observerAccess));
         assertThrows(NullPointerException.class,
                 () -> new MockIoFeatureObserver(feature, state, null));
     }
@@ -106,7 +106,8 @@ class PressableIoFeatureObserverTest {
          * It would not make sense to emit a null event from this observer.
          * As such, assume it was a user mistake and throw an exception.
          */
-        assertThrows(NullPointerException.class, () -> observer.onNext(null));
+        assertThrows(NullPointerException.class,
+                () -> observer.onNext(null));
 
         /*
          * It would not make sense to emit an event created for a different
