@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * The base for events emitted by {@link IoDevice}.
  */
-public abstract class IoDeviceEvent implements IoEvent {
+public abstract class IoDeviceEvent {
 
     private final @NotNull IoDevice device;
 
@@ -19,7 +19,9 @@ public abstract class IoDeviceEvent implements IoEvent {
         this.device = Objects.requireNonNull(device, "device cannot be null");
     }
 
-    @Override
+    /**
+     * @return the device which emitted this event.
+     */
     public final @NotNull IoDevice getDevice() {
         return this.device;
     }
