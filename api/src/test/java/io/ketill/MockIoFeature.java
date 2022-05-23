@@ -19,7 +19,9 @@ class MockIoFeature extends IoFeature<Object, Object> {
     }
 
     MockIoFeature() {
-        this(IoDevice.class, "mock");
+        super("mock"); /* use super for coverage */
+        this.internalState = new Object();
+        this.containerState = new Object();
     }
 
     @Override

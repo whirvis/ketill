@@ -25,6 +25,8 @@ class PlainIoFeatureTest {
          */
         assertThrows(NullPointerException.class,
                 () -> new MockPlainIoFeature(null));
+        assertThrows(NullPointerException.class,
+                () -> new MockPlainIoFeature("mock", null));
     }
 
     @Test

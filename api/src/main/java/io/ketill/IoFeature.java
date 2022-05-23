@@ -32,9 +32,10 @@ public abstract class IoFeature<Z, S> {
      * @param requiredType the type an {@link IoDevice} must be for it to
      *                     register this feature.
      * @param id           the feature ID.
-     * @throws NullPointerException     if {@code id} is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws NullPointerException     if {@code requiredType} or
+     *                                  {@code id} are {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or
+     *                                  contains whitespace.
      */
     public IoFeature(@NotNull Class<? extends IoDevice> requiredType,
                      @NotNull String id) {
@@ -54,8 +55,8 @@ public abstract class IoFeature<Z, S> {
      *
      * @param id the feature ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code id} is empty or
+     *                                  contains whitespace.
      */
     public IoFeature(@NotNull String id) {
         this(IoDevice.class, id);

@@ -10,4 +10,9 @@ class MockPlainIoFeature extends PlainIoFeature<Object> {
         super("mock", initialState);
     }
 
+    MockPlainIoFeature(@NotNull String id,
+                       @NotNull InitialStateSupplier<? super Object> initialState) {
+        super(id, initialState);
+    }
+
 }
