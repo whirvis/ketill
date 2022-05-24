@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoFeatureRegisterEvent extends IoFeatureEvent {
 
-    private final @NotNull RegisteredFeature<?, ?, ?> registered;
+    private final @NotNull RegisteredIoFeature<?, ?, ?> registered;
 
     /**
      * @param device     the device which emitted this event.
@@ -18,7 +18,7 @@ public final class IoFeatureRegisterEvent extends IoFeatureEvent {
      *                              are {@code null}.
      */
     IoFeatureRegisterEvent(@NotNull IoDevice device,
-                           @NotNull RegisteredFeature<?, ?, ?> registered) {
+                           @NotNull RegisteredIoFeature<?, ?, ?> registered) {
         super(device, registered.feature);
         this.registered = registered;
     }
@@ -26,7 +26,7 @@ public final class IoFeatureRegisterEvent extends IoFeatureEvent {
     /**
      * @return the registration of the feature.
      */
-    public @NotNull RegisteredFeature<?, ?, ?> getRegistration() {
+    public @NotNull RegisteredIoFeature<?, ?, ?> getRegistration() {
         return this.registered;
     }
 

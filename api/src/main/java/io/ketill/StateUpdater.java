@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An interface for updating the state of a {@link RegisteredFeature}.
+ * An interface for updating the state of a {@link RegisteredIoFeature}.
  *
  * @param <Z> the internal state type.
  * @param <P> the mapping parameters type.

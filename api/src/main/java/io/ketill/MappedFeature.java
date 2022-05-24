@@ -3,7 +3,7 @@ package io.ketill;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-final class MappedFeature<R extends RegisteredFeature<?, Z, ?>, Z, P> {
+final class MappedFeature<R extends RegisteredIoFeature<?, Z, ?>, Z, P> {
 
     private final @Nullable P params;
     private final @NotNull StateUpdater<Z, P> updater;

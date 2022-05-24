@@ -22,7 +22,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     private final IoDeviceObserver observer;
-    private final Map<IoFeature<?, ?>, RegisteredFeature<?, ?, ?>> features;
+    private final Map<IoFeature<?, ?>, RegisteredIoFeature<?, ?, ?>> features;
     private final Map<IoFeature<?, ?>, MappedFeature<?, ?, ?>> mappings;
 
     MappedFeatureRegistry(@NotNull IoDeviceObserver observer) {
@@ -135,16 +135,16 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
             return false;
         }
         Object removed = mappings.remove(feature);
-        RegisteredFeature<?, ?, ?> registered = features.get(feature);
+        RegisteredIoFeature<?, ?, ?> registered = features.get(feature);
         if (registered != null) {
-            registered.adapterUpdater = RegisteredFeature.NO_UPDATER;
+            registered.adapterUpdater = RegisteredIoFeature.NO_UPDATER;
         }
         return removed != null;
     }
 
     /* @formatter:off */
     @SuppressWarnings("unchecked")
-    private <R extends RegisteredFeature<?, ?, ?>> void
+    private <R extends RegisteredIoFeature<?, ?, ?>> void
             updateMapping(@NotNull IoFeature<?, ?> feature) {
         R registered = (R) features.get(feature);
         if (registered == null) {
@@ -156,7 +156,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
         if (mapped != null) {
             registered.adapterUpdater = mapped.getUpdater(registered);
         } else {
-            registered.adapterUpdater = RegisteredFeature.NO_UPDATER;
+            registered.adapterUpdater = RegisteredIoFeature.NO_UPDATER;
         }
     }
     /* @formatter:on */
@@ -168,25 +168,46 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     }
 
     @Override
+    public boolean isFeatureWithIdRegistered(@NotNull String id) {
+        return this.getFeatureById(id) != null;
+    }
+
+    @Override
     public int getFeatureCount() {
         return features.size();
     }
 
+    @Override
+    public @Nullable IoFeature<?, ?> getFeatureById(@NotNull String id) {
+        Objects.requireNonNull(id, "id cannot be null");
+        for (IoFeature<?, ?> feature : features.keySet()) {
+            if (id.equals(feature.getId())) {
+                return feature;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull IoFeature<?, ?>> getFeatures() {
+        return Collections.unmodifiableCollection(features.keySet());
+    }
+
     /* @formatter:off */
     @Override
-    public @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>>
-            getFeatures() {
-        return Collections.unmodifiableCollection(features.values());
+    @SuppressWarnings("unchecked")
+    public <Z, S> @Nullable RegisteredIoFeature<?, Z, S>
+            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
+        Objects.requireNonNull(feature, "feature cannot be null");
+        return (RegisteredIoFeature<?, Z, S>) features.get(feature);
     }
     /* @formatter:on */
 
     /* @formatter:off */
     @Override
-    @SuppressWarnings("unchecked")
-    public <Z, S> @Nullable RegisteredFeature<?, Z, S>
-            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
-        Objects.requireNonNull(feature, "feature cannot be null");
-        return (RegisteredFeature<?, Z, S>) features.get(feature);
+    public @NotNull Collection<@NotNull RegisteredIoFeature<?, ?, ?>>
+            getFeatureRegistrations() {
+        return Collections.unmodifiableCollection(features.values());
     }
     /* @formatter:on */
 
@@ -214,7 +235,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      */
     public <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
-        RegisteredFeature<?, Z, ?> registered =
+        RegisteredIoFeature<?, Z, ?> registered =
                 this.getFeatureRegistration(feature);
         if (registered == null) {
             String msg = "no such feature \"" + feature.getId() + "\"";
@@ -226,22 +247,34 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:off */
     @Override
     public <F extends IoFeature<Z, S>, Z, S>
-            @NotNull RegisteredFeature<F, Z, S>
+            @NotNull RegisteredIoFeature<F, Z, S>
             registerFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         if (this.isFeatureRegistered(feature)) {
             throw new IllegalStateException("feature already registered");
         }
 
-        RegisteredFeature<F, Z, S> registered =
-                new RegisteredFeature<>(feature, observer);
+        /*
+         * No two features with the same ID can be registered at the same
+         * time. This is to prevent confusion when debugging, and allows
+         * for things like configurations relating to a feature to safely
+         * use their ID as the key.
+         */
+        if(this.isFeatureWithIdRegistered(feature.getId())) {
+            String msg = "feature with ID \"" + feature.getId() + "\"";
+            msg += " already registered";
+            throw new IllegalStateException(msg);
+        }
+
+        RegisteredIoFeature<F, Z, S> registered =
+                new RegisteredIoFeature<>(feature, observer);
 
         /*
          * The feature being registered must not have any states that are
          * the same as the state of a previously registered feature. This
          * would cause confusion and break methods.
          */
-        for(RegisteredFeature<?, ?, ?> rf : features.values()) {
+        for(RegisteredIoFeature<?, ?, ?> rf : features.values()) {
             if(registered.internalState == rf.internalState) {
                 throw new IllegalStateException(String.format(DSE_MSG,
                         "internalState", "internalState"));
@@ -274,7 +307,7 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     }
 
     void updateFeatures() {
-        for (RegisteredFeature<?, ?, ?> registered : features.values()) {
+        for (RegisteredIoFeature<?, ?, ?> registered : features.values()) {
             registered.adapterUpdater.run();
             registered.autonomousUpdater.run();
         }

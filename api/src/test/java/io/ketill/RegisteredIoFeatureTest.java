@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class RegisteredFeatureTest {
+class RegisteredIoFeatureTest {
 
     private MockIoFeature feature;
     private IoDeviceObserver observer;
-    private RegisteredFeature<?, ?, ?> registered;
+    private RegisteredIoFeature<?, ?, ?> registered;
 
     @BeforeEach
     void createRegistration() {
@@ -21,7 +21,7 @@ class RegisteredFeatureTest {
         this.feature = new MockIoFeature();
         feature.containerState = new Object();
         this.observer = observer;
-        this.registered = new RegisteredFeature<>(feature, observer);
+        this.registered = new RegisteredIoFeature<>(feature, observer);
     }
 
     @Test
@@ -31,7 +31,7 @@ class RegisteredFeatureTest {
          * with a feature with a non-autonomous state, it should have set
          * its autonomous updater to the no-op runnable.
          */
-        assertSame(registered.autonomousUpdater, RegisteredFeature.NO_UPDATER);
+        assertSame(registered.autonomousUpdater, RegisteredIoFeature.NO_UPDATER);
 
         /* use autonomous state for next test */
         AutonomousState autonomousState = mock(AutonomousState.class);
@@ -42,10 +42,10 @@ class RegisteredFeatureTest {
          * autonomous state, its autonomous updater should not be the same as
          * the no-op runnable used for other internal states.
          */
-        RegisteredFeature<?, ?, ?> autonomousRegistered =
-                new RegisteredFeature<>(feature, observer);
+        RegisteredIoFeature<?, ?, ?> autonomousRegistered =
+                new RegisteredIoFeature<>(feature, observer);
         assertNotSame(autonomousRegistered.autonomousUpdater,
-                RegisteredFeature.NO_UPDATER);
+                RegisteredIoFeature.NO_UPDATER);
 
         /*
          * When invoked, the autonomous updater should invoke the update()

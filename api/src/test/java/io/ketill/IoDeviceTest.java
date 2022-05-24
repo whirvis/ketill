@@ -73,7 +73,12 @@ class IoDeviceTest {
     }
 
     @Test
-    void testGetId() {
+    void ensureRegistryMethodsFinal() {
+
+    }
+
+    @Test
+    void testGetTypeId() {
         assertEquals("mock", device.getTypeId());
     }
 
@@ -173,7 +178,7 @@ class IoDeviceTest {
          * an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> device.getFeature(null));
+                () -> device.getFeatureById(null));
 
         /*
          * This method is to get the feature which created the given state,
@@ -236,11 +241,12 @@ class IoDeviceTest {
 
     @Test
     void testIsFeatureRegistered() {
+        MockIoFeature feature = new MockIoFeature("test");
+
         /*
-         * The isRegistered() method is an accessor to getFeatures() in
+         * The isRegistered() method is an accessor to isRegistered() in
          * MappedFeatureRegistry. As such, their results should be equal.
          */
-        MockIoFeature feature = new MockIoFeature();
         assertEquals(device.isFeatureRegistered(feature),
                 adapter.registry.isFeatureRegistered(feature));
         device.registerFeature(feature);
@@ -249,13 +255,43 @@ class IoDeviceTest {
     }
 
     @Test
+    void testIsFeatureWithIdRegistered() {
+        MockIoFeature feature = new MockIoFeature("test");
+        String featureId = feature.getId();
+
+        /*
+         * The isFeatureWithIdRegistered() method is an accessor to
+         * isFeatureWithIdRegistered() in MappedFeatureRegistry. As such,
+         * their results should be equal.
+         */
+        assertEquals(device.isFeatureWithIdRegistered(featureId),
+                adapter.registry.isFeatureWithIdRegistered(featureId));
+        device.registerFeature(feature);
+        assertEquals(device.isFeatureWithIdRegistered(featureId),
+                adapter.registry.isFeatureWithIdRegistered(featureId));
+    }
+
+    @Test
     void testGetFeatureCount() {
         /*
-         * Since a single feature is declared and annotated with
-         * @FeaturePresent in the MockIoFeature class, this should
-         * return a value of one.
+         * Since a single feature is declared and annotated with the
+         * FeaturePresent annotation in the MockIoFeature class, this
+         * should return a value of one.
          */
         assertEquals(1, device.getFeatureCount());
+    }
+
+    @Test
+    void testGetFeatureById() {
+        String featureId = MockIoDevice.FEATURE.getId();
+
+        /*
+         * The getFeatureById() method is an accessor to getFeatureById()
+         * in MappedFeatureRegistry. As such, their results should be of
+         * the same instance.
+         */
+        assertSame(device.getFeatureById(featureId),
+                adapter.registry.getFeatureById(featureId));
     }
 
     @Test
@@ -273,10 +309,21 @@ class IoDeviceTest {
         /*
          * The getFeatureRegistration() method in IoDevice is an accessor
          * method to the same method implemented in MappedFeatureRegistry.
-         * As such, their results should be equal.
+         * As such, their results should be of the same instance.
          */
         assertSame(device.getFeatureRegistration(MockIoDevice.FEATURE),
                 adapter.registry.getFeatureRegistration(MockIoDevice.FEATURE));
+    }
+
+    @Test
+    void testGetFeatureRegistrations() {
+        /*
+         * The getFeatureRegistrations() method is an accessor to
+         * getFeatureRegistrations() in MappedFeatureRegistry. As such,
+         * their results should be equal.
+         */
+        assertIterableEquals(device.getFeatureRegistrations(),
+                adapter.registry.getFeatureRegistrations());
     }
 
     @Test
@@ -284,7 +331,7 @@ class IoDeviceTest {
         /*
          * The getState() method in IoDevice is an accessor method to the
          * same method implemented in MappedFeatureRegistry. As a result,
-         * their results should be equal.
+         * their results should be of the same instance.
          */
         assertSame(device.getState(MockIoDevice.FEATURE),
                 adapter.registry.getState(MockIoDevice.FEATURE));
@@ -295,7 +342,7 @@ class IoDeviceTest {
         /*
          * The getInternalState() method in IoDevice is an accessor method
          * to the same method implemented in MappedFeatureRegistry. As such,
-         * their results should be equal.
+         * their results should be of the same instance.
          */
         assertSame(device.getInternalState(MockIoDevice.FEATURE),
                 adapter.registry.getInternalState(MockIoDevice.FEATURE));
@@ -303,7 +350,7 @@ class IoDeviceTest {
 
     @Test
     void testRegisterFeature() {
-        MockIoFeature feature = new MockIoFeature();
+        MockIoFeature feature = new MockIoFeature("test");
         AtomicBoolean registered = new AtomicBoolean();
         device.subscribeEvents(IoFeatureRegisterEvent.class,
                 event -> registered.set(event.getFeature() == feature));
@@ -326,7 +373,7 @@ class IoDeviceTest {
 
     @Test
     void testUnregisterFeature() {
-        MockIoFeature feature = new MockIoFeature();
+        MockIoFeature feature = new MockIoFeature("test");
         AtomicBoolean unregistered = new AtomicBoolean();
         device.subscribeEvents(IoFeatureUnregisterEvent.class,
                 event -> unregistered.set(event.getFeature() == feature));

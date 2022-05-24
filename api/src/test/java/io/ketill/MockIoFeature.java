@@ -18,6 +18,10 @@ class MockIoFeature extends IoFeature<Object, Object> {
         this(requiredType, "mock");
     }
 
+    MockIoFeature(String id) {
+        this(IoDevice.class, id);
+    }
+
     MockIoFeature() {
         super("mock"); /* use super for coverage */
         this.internalState = new Object();

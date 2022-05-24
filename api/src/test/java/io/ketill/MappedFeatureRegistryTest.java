@@ -105,7 +105,7 @@ class MappedFeatureRegistryTest {
         MockIoFeature feature = new MockIoFeature();
 
         /* feature must be registered for updates */
-        RegisteredFeature<?, ?, ?> registeredFeature =
+        RegisteredIoFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
 
         /*
@@ -124,7 +124,7 @@ class MappedFeatureRegistryTest {
          * has not properly unmapped the feature.
          */
         assertSame(registeredFeature.adapterUpdater,
-                RegisteredFeature.NO_UPDATER);
+                RegisteredIoFeature.NO_UPDATER);
         registry.updateFeatures();
         assertFalse(updatedAdapter.get());
 
@@ -137,6 +137,48 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
+    void testIsFeatureRegistered() {
+        /*
+         * It would not make sense to check if a null feature is registered.
+         * As such, assume this was a user mistake and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> registry.isFeatureRegistered(null));
+
+        MockIoFeature feature = new MockIoFeature();
+
+        assertFalse(registry.isFeatureRegistered(feature));
+        registry.registerFeature(feature);
+        assertTrue(registry.isFeatureRegistered(feature));
+    }
+
+    @Test
+    void testIsFeatureWithIdRegistered() {
+        /*
+         * It would not make sense to check if a feature will a null ID
+         * is registered. As such, assume this was a mistake by the user
+         * and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> registry.isFeatureWithIdRegistered(null));
+
+        /* create feature for next test */
+        MockIoFeature feature = new MockIoFeature();
+        String featureId = feature.getId();
+
+        assertFalse(registry.isFeatureWithIdRegistered(featureId));
+        registry.registerFeature(feature);
+        assertTrue(registry.isFeatureWithIdRegistered(featureId));
+
+        /*
+         * Feature IDs are case-sensitive. As such, checking if a feature
+         * with the same ID but in uppercase should return false.
+         */
+        String uppercaseId = feature.getId().toUpperCase();
+        assertFalse(registry.isFeatureWithIdRegistered(uppercaseId));
+    }
+
+    @Test
     void testGetFeatureCount() {
         /*
          * Since no features have been registered yet, this method should
@@ -146,14 +188,43 @@ class MappedFeatureRegistryTest {
     }
 
     @Test
+    void testGetFeatureById() {
+        /*
+         * It would not make sense to get a feature with a null ID.
+         * Assume this was a mistake by the user and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> registry.getFeatureById(null));
+
+        /* create feature for next test */
+        MockIoFeature feature = new MockIoFeature();
+        String featureId = feature.getId();
+
+        /*
+         * When no such feature with the specified ID is registered, the
+         * registry should return null (and not throw an exception).
+         * Otherwise, it should be returned as previously registered.
+         */
+        assertNull(registry.getFeatureById(featureId));
+        registry.registerFeature(feature);
+        assertSame(feature, registry.getFeatureById(featureId));
+
+        /*
+         * Feature IDs are case-sensitive. As such, fetching a feature
+         * with the same ID but in uppercase should return null.
+         */
+        String uppercaseId = featureId.toUpperCase();
+        assertNull(registry.getFeatureById(uppercaseId));
+    }
+
+    @Test
     void testGetFeatures() {
         /*
-         * The getFeatures() method provides a read-only view of all registered
-         * features in a feature registry. Ensure that it never returns null
-         * (even when it is empty) and that is unmodifiable from the outside.
+         * The getFeatures() method provides a read-only view of all
+         * registered features in a feature registry. Ensure that it
+         * never returns null (even when empty) and is unmodifiable.
          */
-        Collection<RegisteredFeature<?, ?, ?>> features =
-                registry.getFeatures();
+        Collection<IoFeature<?, ?>> features = registry.getFeatures();
         assertNotNull(features); /* this should never be null, only empty */
         assertThrows(UnsupportedOperationException.class, features::clear);
     }
@@ -168,7 +239,7 @@ class MappedFeatureRegistryTest {
          * registered feature. As such, it should return the same value
          * as the registerFeature() method.
          */
-        RegisteredFeature<?, ?, ?> registeredFeature =
+        RegisteredIoFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
         assertSame(registeredFeature, registry.getFeatureRegistration(feature));
 
@@ -178,6 +249,19 @@ class MappedFeatureRegistryTest {
          */
         assertThrows(NullPointerException.class,
                 () -> registry.getFeatureRegistration(null));
+    }
+
+    @Test
+    void testGetFeatureRegistrations() {
+        /*
+         * The getFeatureRegistrations() method provides a read-only view
+         * of all feature registrations in a feature registry. Ensure that
+         * it never returns null (even when empty) and is unmodifiable.
+         */
+        Collection<RegisteredIoFeature<?, ?, ?>> features =
+                registry.getFeatureRegistrations();
+        assertNotNull(features); /* this should never be null, only empty */
+        assertThrows(UnsupportedOperationException.class, features::clear);
     }
 
     @Test
@@ -197,7 +281,7 @@ class MappedFeatureRegistryTest {
          * The value of state inside registeredField must match the value
          * returned by getState(), as it is a shorthand.
          */
-        RegisteredFeature<?, ?, ?> registeredFeature =
+        RegisteredIoFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
         assertSame(registeredFeature.containerState,
                 registry.getState(feature));
@@ -221,7 +305,7 @@ class MappedFeatureRegistryTest {
          * When the internal state of a feature is fetched, it should be
          * the same internal state contained in the feature registration.
          */
-        RegisteredFeature<?, ?, ?> registered =
+        RegisteredIoFeature<?, ?, ?> registered =
                 registry.registerFeature(feature);
         Object internalState = registry.getInternalState(feature);
         assertSame(internalState, registered.internalState);
@@ -252,11 +336,9 @@ class MappedFeatureRegistryTest {
         MockAutonomousState autonomous = new MockAutonomousState();
         feature.internalState = autonomous;
 
-        /* it is convient to test isRegistered() here */
-        assertFalse(registry.isFeatureRegistered(feature));
-        RegisteredFeature<?, ?, ?> registeredFeature =
+        /* register feature for next test */
+        RegisteredIoFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertTrue(registry.isFeatureRegistered(feature));
 
         /*
          * When a feature with an autonomous internal state, it should
@@ -275,7 +357,7 @@ class MappedFeatureRegistryTest {
          */
         assertSame(registeredFeature.feature, feature);
         assertSame(registeredFeature.adapterUpdater,
-                RegisteredFeature.NO_UPDATER);
+                RegisteredIoFeature.NO_UPDATER);
 
         /*
          * It makes no sense to register a null feature or a feature which
@@ -288,12 +370,21 @@ class MappedFeatureRegistryTest {
                 () -> registry.registerFeature(feature));
 
         /*
+         * Registering a feature with the same ID as a previous feature is
+         * not allowed. As such, assume this was a mistake by the user and
+         * throw an exception.
+         */
+        MockIoFeature duplicateId = new MockIoFeature();
+        assertThrows(IllegalStateException.class,
+                () -> registry.registerFeature(duplicateId));
+
+        /*
          * These states will be used to simulate the situation in which a
          * feature being registered shares an internal state and container
          * state with a previously registered feature.
          */
-        MockIoFeature crewmate = new MockIoFeature();
-        MockIoFeature imposter = new MockIoFeature();
+        MockIoFeature crewmate = new MockIoFeature("crewmate");
+        MockIoFeature imposter = new MockIoFeature("imposter");
         registry.registerFeature(crewmate);
 
         /*

@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 
 class IoFeatureRegisterEventTest {
 
-    private RegisteredFeature<?, ?, ?> registered;
+    private RegisteredIoFeature<?, ?, ?> registered;
     private IoFeatureRegisterEvent event;
 
     @BeforeEach
@@ -18,7 +18,7 @@ class IoFeatureRegisterEventTest {
         when(observer.getDevice()).thenReturn(device);
         IoFeature<?, ?> feature = new MockIoFeature();
 
-        this.registered = new RegisteredFeature<>(feature, observer);
+        this.registered = new RegisteredIoFeature<>(feature, observer);
         this.event = new IoFeatureRegisterEvent(device, registered);
     }
 

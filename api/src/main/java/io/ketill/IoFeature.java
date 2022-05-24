@@ -50,6 +50,19 @@ public abstract class IoFeature<Z, S> {
     }
 
     /**
+     * Constructs a new {@code IoFeature} which can be registered by any type
+     * of {@link IoDevice}.
+     *
+     * @param id the feature ID.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or
+     *                                  contains whitespace.
+     */
+    public IoFeature(@NotNull String id) {
+        this(IoDevice.class, id);
+    }
+
+    /**
      * @return the type an {@link IoDevice} must be for it to create an
      * instance of this feature's state.
      */
@@ -62,19 +75,6 @@ public abstract class IoFeature<Z, S> {
      */
     public @NotNull String getId() {
         return this.id;
-    }
-
-    /**
-     * Constructs a new {@code IoFeature} which can be registered by any type
-     * of {@link IoDevice}.
-     *
-     * @param id the feature ID.
-     * @throws NullPointerException     if {@code id} is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or
-     *                                  contains whitespace.
-     */
-    public IoFeature(@NotNull String id) {
-        this(IoDevice.class, id);
     }
 
     /**

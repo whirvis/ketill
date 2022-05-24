@@ -183,6 +183,7 @@ public abstract class IoDevice implements FeatureRegistry {
         this.initializedAdapter = true;
     }
 
+    @MustBeInvokedByOverriders
     protected void registerFields() {
         if (registeredFields) {
             throw new IllegalStateException("fields already registered");
@@ -288,14 +289,15 @@ public abstract class IoDevice implements FeatureRegistry {
      * @throws KetillException      if {@code featureState} is an instance
      *                              of {@link IoFeature}.
      */
-    public IoFeature<?, ?> getFeature(Object featureState) {
+    public final @Nullable IoFeature<?, ?> getFeature(Object featureState) {
         Objects.requireNonNull(featureState, "featureState cannot be null");
         if (featureState instanceof IoFeature) {
             String msg = "cannot get a feature's feature";
             msg += ", did you mean getState(IoFeature)?";
             throw new KetillException(msg);
         }
-        for (RegisteredFeature<?, ?, ?> registered : registry.getFeatures()) {
+        for (RegisteredIoFeature<?, ?, ?> registered :
+                registry.getFeatureRegistrations()) {
             if (registered.internalState == featureState ||
                     registered.containerState == featureState) {
                 return registered.feature;
@@ -319,7 +321,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      * @see #isFeatureSupported(Object)
      */
-    public boolean isFeatureSupported(@NotNull IoFeature<?, ?> feature) {
+    public final boolean isFeatureSupported(@NotNull IoFeature<?, ?> feature) {
         return registry.hasMapping(feature);
     }
 
@@ -340,34 +342,49 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #getState(IoFeature)
      * @see #isFeatureSupported(IoFeature)
      */
-    public boolean isFeatureSupported(@NotNull Object featureState) {
+    public final boolean isFeatureSupported(@NotNull Object featureState) {
         IoFeature<?, ?> feature = this.getFeature(featureState);
         return feature != null && this.isFeatureSupported(feature);
     }
 
     @Override
-    public boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature) {
+    public final boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature) {
         return registry.isFeatureRegistered(feature);
     }
 
     @Override
-    public int getFeatureCount() {
+    public final boolean isFeatureWithIdRegistered(@NotNull String id) {
+        return registry.isFeatureWithIdRegistered(id);
+    }
+
+    @Override
+    public final int getFeatureCount() {
         return registry.getFeatureCount();
+    }
+
+    @Override
+    public final @Nullable IoFeature<?, ?> getFeatureById(@NotNull String id) {
+        return registry.getFeatureById(id);
+    }
+
+    @Override
+    public final @NotNull Collection<@NotNull IoFeature<?, ?>> getFeatures() {
+        return registry.getFeatures();
     }
 
     /* @formatter:off */
     @Override
-    public @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>>
-            getFeatures() {
-        return registry.getFeatures();
+    public final <Z, S> @Nullable RegisteredIoFeature<?, Z, S>
+            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
+        return registry.getFeatureRegistration(feature);
     }
     /* @formatter:on */
 
     /* @formatter:off */
     @Override
-    public <Z, S> @Nullable RegisteredFeature<?, Z, S>
-            getFeatureRegistration(@NotNull IoFeature<Z, S> feature) {
-        return registry.getFeatureRegistration(feature);
+    public final @NotNull Collection<@NotNull RegisteredIoFeature<?, ?, ?>>
+            getFeatureRegistrations() {
+        return registry.getFeatureRegistrations();
     }
     /* @formatter:on */
 
@@ -378,7 +395,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * a feature can do so via {@link #getInternalState(IoFeature)}.
      */
     @Override
-    public <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
+    public final <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
         return registry.getState(feature);
     }
 
@@ -393,7 +410,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @throws IllegalStateException if {@code feature} is not registered.
      * @see #getState(IoFeature)
      */
-    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
+    protected final <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
         return registry.getInternalState(feature);
     }
 
@@ -403,15 +420,15 @@ public abstract class IoDevice implements FeatureRegistry {
      * <b>Note:</b> This method can be called before {@code IoDevice} is
      * finished constructing by the {@link #registerField(Field)} method.
      *
-     * @see #featureRegistered(RegisteredFeature)
+     * @see #featureRegistered(RegisteredIoFeature)
      */
     /* @formatter:off */
     @Override
     public <F extends IoFeature<Z, S>, Z, S>
-            @NotNull RegisteredFeature<F, Z, S>
+            @NotNull RegisteredIoFeature<F, Z, S>
             registerFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
-        RegisteredFeature<F, Z, S> registered =
+        RegisteredIoFeature<F, Z, S> registered =
                 registry.registerFeature(feature);
 
         this.featureRegistered(registered);
@@ -427,7 +444,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @param registered the registered feature.
      * @see #getInternalState(IoFeature)
      */
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredIoFeature<?, ?, ?> registered) {
         /* optional implement */
     }
 
@@ -460,7 +477,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #deviceConnected()
      * @see #deviceDisconnected()
      */
-    public boolean isConnected() {
+    public final boolean isConnected() {
         /*
          * Before, this method returned the value of the "connected"
          * field. This made poll() required for an up-to-date value.
@@ -512,7 +529,7 @@ public abstract class IoDevice implements FeatureRegistry {
         }
 
         boolean wasConnected = this.connected;
-        this.connected = adapter.isDeviceConnected();
+        this.connected = this.isConnected();
         if (connected && !wasConnected) {
             this.deviceConnected();
             observer.onNext(new IoDeviceConnectEvent(this));

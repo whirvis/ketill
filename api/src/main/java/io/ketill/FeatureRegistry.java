@@ -16,16 +16,34 @@ interface FeatureRegistry {
     boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature);
 
     /**
+     * @param id the ID of the feature to check, case-sensitive.
+     * @return {@code true} if a feature with the specified ID is registered,
+     * {@code false} otherwise.
+     * @throws NullPointerException if {@code id} is {@code null}.
+     * @see #registerFeature(IoFeature)
+     */
+    boolean isFeatureWithIdRegistered(@NotNull String id);
+
+    /**
      * @return the amount of registered features.
      * @see #getFeatures()
      */
     int getFeatureCount();
 
     /**
+     * @param id the ID of the feature to fetch, case-sensitive.
+     * @return the registered feature with the specified ID, {@code null} if
+     * no such feature is registered.
+     * @see #registerFeature(IoFeature)
+     */
+    @Nullable IoFeature<?, ?> getFeatureById(@NotNull String id);
+
+    /**
      * @return all registered features.
      * @see #getFeatureCount()
+     * @see #getFeatureRegistrations()
      */
-    @NotNull Collection<@NotNull RegisteredFeature<?, ?, ?>> getFeatures();
+    @NotNull Collection<@NotNull IoFeature<?, ?>> getFeatures();
 
     /**
      * @param feature the feature whose registration to fetch.
@@ -35,8 +53,18 @@ interface FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     /* @formatter:off */
-    <Z, S> @Nullable RegisteredFeature<?, Z, S>
+    <Z, S> @Nullable RegisteredIoFeature<?, Z, S>
             getFeatureRegistration(@NotNull IoFeature<Z, S> feature);
+    /* @formatter:on */
+
+    /**
+     * @return the registration of all registered features.
+     * @see #getFeatureCount()
+     * @see #getFeatures()
+     */
+    /* @formatter:off */
+    @NotNull Collection<@NotNull RegisteredIoFeature<?, ?, ?>>
+            getFeatureRegistrations();
     /* @formatter:on */
 
     /**
@@ -51,7 +79,7 @@ interface FeatureRegistry {
      * @throws IllegalStateException if {@code feature} is not registered.
      */
     default <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
-        RegisteredFeature<?, ?, S> registered =
+        RegisteredIoFeature<?, ?, S> registered =
                 this.getFeatureRegistration(feature);
         if (registered == null) {
             String msg = "no such feature \"" + feature.getId() + "\"";
@@ -72,7 +100,7 @@ interface FeatureRegistry {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     default <S> @Nullable S requestState(@NotNull IoFeature<?, S> feature) {
-        RegisteredFeature<?, ?, S> registered =
+        RegisteredIoFeature<?, ?, S> registered =
                 this.getFeatureRegistration(feature);
         return registered != null ? registered.containerState : null;
     }
@@ -86,13 +114,16 @@ interface FeatureRegistry {
      * @throws NullPointerException  if {@code feature} is
      *                               {@code null}.
      * @throws IllegalStateException if {@code feature} is already registered;
+     *                               if another feature with the same ID as
+     *                               {@code feature} is already registered,
+     *                               regardless of casing;
      *                               if the {@code internalState} or
      *                               {@code containerState} supplied by
      *                               {@code feature} belong to a previously
      *                               registered feature.
      */
     /* @formatter:off */
-    <F extends IoFeature<Z, S>, Z, S> @NotNull RegisteredFeature<F, Z, S>
+    <F extends IoFeature<Z, S>, Z, S> @NotNull RegisteredIoFeature<F, Z, S>
             registerFeature(@NotNull F feature);
     /* @formatter:on */
 
