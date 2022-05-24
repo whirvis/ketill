@@ -25,22 +25,22 @@ import java.util.Objects;
  */
 public abstract class IoFeature<Z, S> {
 
-    private final @NotNull Class<? extends IoDevice> requiredType;
+    private final @NotNull Class<? extends IoDevice> deviceType;
     private final @NotNull String id;
 
     /**
-     * @param requiredType the type an {@link IoDevice} must be for it to
-     *                     create an instance of this feature's state.
-     * @param id           the feature ID.
-     * @throws NullPointerException     if {@code requiredType} or
+     * @param deviceType the type an {@link IoDevice} must be for it to
+     *                   create an instance of this feature's state.
+     * @param id         the feature ID.
+     * @throws NullPointerException     if {@code deviceType} or
      *                                  {@code id} are {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or
      *                                  contains whitespace.
      */
-    public IoFeature(@NotNull Class<? extends IoDevice> requiredType,
+    public IoFeature(@NotNull Class<? extends IoDevice> deviceType,
                      @NotNull String id) {
-        this.requiredType = Objects.requireNonNull(requiredType,
-                "requiredType cannot be null");
+        this.deviceType = Objects.requireNonNull(deviceType,
+                "deviceType cannot be null");
         this.id = Objects.requireNonNull(id, "id cannot be null");
         if (id.isEmpty()) {
             throw new IllegalArgumentException("id cannot be empty");
@@ -66,8 +66,8 @@ public abstract class IoFeature<Z, S> {
      * @return the type an {@link IoDevice} must be for it to create an
      * instance of this feature's state.
      */
-    public @NotNull Class<? extends IoDevice> getRequiredType() {
-        return this.requiredType;
+    public @NotNull Class<? extends IoDevice> getDeviceType() {
+        return this.deviceType;
     }
 
     /**
@@ -103,9 +103,9 @@ public abstract class IoFeature<Z, S> {
         Objects.requireNonNull(observer, "observer cannot be null");
 
         Class<?> deviceClazz = observer.getDevice().getClass();
-        if(!requiredType.isAssignableFrom(deviceClazz)) {
+        if(!deviceType.isAssignableFrom(deviceClazz)) {
             String msg = "observer.getDevice() must be of type";
-            msg += " " + requiredType.getName();
+            msg += " " + deviceType.getName();
             throw new KetillException(msg);
         }
 

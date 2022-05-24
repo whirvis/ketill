@@ -33,8 +33,8 @@ class IoFeatureTest {
     }
 
     @Test
-    void testGetRequiredType() {
-        assertEquals(IoDevice.class, feature.getRequiredType());
+    void testGetDeviceType() {
+        assertEquals(IoDevice.class, feature.getDeviceType());
     }
 
     @Test
