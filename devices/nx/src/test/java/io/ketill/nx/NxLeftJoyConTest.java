@@ -28,7 +28,6 @@ class NxLeftJoyConTest {
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.lThumb, BUTTON_L_THUMB);
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.snapshot, BUTTON_SNAPSHOT);
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.l, BUTTON_L);
-        assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.zl, BUTTON_ZL);
 
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.ls, STICK_LS);
 

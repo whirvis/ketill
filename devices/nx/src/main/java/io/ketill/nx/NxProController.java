@@ -1,7 +1,6 @@
 package io.ketill.nx;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.controller.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
@@ -10,6 +9,7 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.Direction;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.StickPos;
@@ -23,8 +23,10 @@ import java.util.Objects;
  */
 public class NxProController extends Controller {
 
-    public static final @NotNull AnalogStickCalibration CALIBRATION =
-            new AnalogStickCalibration(0.70F, 0.70F, -0.70F, -0.70F);
+    /* @formatter:off */
+    public static final @NotNull AnalogStickCalibration
+            CALIBRATION = new AnalogStickCalibration(0.70F, 0.70F, -0.70F, -0.70F);
+    /* @formatter:on */
 
     /* @formatter:off */
     @FeaturePresent
@@ -35,8 +37,6 @@ public class NxProController extends Controller {
             BUTTON_X = new ControllerButton("x"),
             BUTTON_L = new ControllerButton("l"),
             BUTTON_R = new ControllerButton("r"),
-            BUTTON_ZL = new ControllerButton("zl"),
-            BUTTON_ZR = new ControllerButton("zr"),
             BUTTON_MINUS = new ControllerButton("minus"),
             BUTTON_PLUS = new ControllerButton("plus"),
             BUTTON_L_THUMB = new ControllerButton("l_thumb"),
@@ -55,10 +55,19 @@ public class NxProController extends Controller {
             STICK_LS = new AnalogStick("ls", BUTTON_L_THUMB, CALIBRATION),
             STICK_RS = new AnalogStick("rs", BUTTON_R_THUMB, CALIBRATION);
 
+    /**
+     * These features are both presented as an {@link AnalogTrigger} (rather
+     * than a {@link ControllerButton}) even though they can only be fully
+     * pressed or fully released. This is because most other controllers have
+     * a proper analog trigger, so this continues the pattern.
+     * <p>
+     * Feature adapters should set the force to {@code 1.0F} when the
+     * trigger button is pressed, and {@code 0.0F} when it is released.
+     */
     @FeaturePresent
     public static final @NotNull AnalogTrigger
-            TRIGGER_LT = new AnalogTrigger("lt"),
-            TRIGGER_RT = new AnalogTrigger("rt");
+            TRIGGER_ZL = new AnalogTrigger("lt"),
+            TRIGGER_ZR = new AnalogTrigger("rt");
 
     @FeaturePresent
     public static final @NotNull PlayerLed
@@ -74,8 +83,6 @@ public class NxProController extends Controller {
             x = this.getState(BUTTON_X),
             l = this.getState(BUTTON_L),
             r = this.getState(BUTTON_R),
-            zl = this.getState(BUTTON_ZL),
-            zr = this.getState(BUTTON_ZR),
             minus = this.getState(BUTTON_MINUS),
             plus = this.getState(BUTTON_PLUS),
             lThumb = this.getState(BUTTON_L_THUMB),
@@ -96,8 +103,8 @@ public class NxProController extends Controller {
 
     @FeatureState
     public final @NotNull TriggerState
-            lt = Objects.requireNonNull(super.lt),
-            rt = Objects.requireNonNull(super.rt);
+            zl = Objects.requireNonNull(super.lt),
+            zr = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull LedState
@@ -111,8 +118,8 @@ public class NxProController extends Controller {
      *                              {@code adapterSupplier} is {@code null}.
      */
     public NxProController(@NotNull AdapterSupplier<NxProController> adapterSupplier) {
-        super("nx_pro", adapterSupplier, STICK_LS, STICK_RS, TRIGGER_LT,
-                TRIGGER_RT);
+        super("nx_pro", adapterSupplier,
+                STICK_LS, STICK_RS, TRIGGER_ZL, TRIGGER_ZR);
     }
 
 }

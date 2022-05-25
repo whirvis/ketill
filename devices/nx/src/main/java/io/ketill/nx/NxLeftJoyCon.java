@@ -28,13 +28,21 @@ public class NxLeftJoyCon extends NxJoyCon {
             BUTTON_MINUS = new ControllerButton("minus"),
             BUTTON_L_THUMB = new ControllerButton("l_thumb"),
             BUTTON_SNAPSHOT = new ControllerButton("snapshot"),
-            BUTTON_L = new ControllerButton("l"),
-            BUTTON_ZL = new ControllerButton("zl");
+            BUTTON_L = new ControllerButton("l");
 
     @FeaturePresent
     public static final AnalogStick
             STICK_LS = new AnalogStick("ls");
 
+    /**
+     * This feature is presented as an {@link AnalogTrigger} (rather than a
+     * {@link ControllerButton}) even though it can only be fully pressed or
+     * fully released. This is because most other controllers have a proper
+     * analog trigger, so this continues the pattern.
+     * <p>
+     * Feature adapters should set the force to {@code 1.0F} when the ZL
+     * button is pressed, and {@code 0.0F} when it is released.
+     */
     @FeaturePresent
     public static final AnalogTrigger
             TRIGGER_ZL = new AnalogTrigger("zl");
@@ -50,8 +58,7 @@ public class NxLeftJoyCon extends NxJoyCon {
             minus = this.getState(BUTTON_MINUS),
             lThumb = this.getState(BUTTON_L_THUMB),
             snapshot = this.getState(BUTTON_SNAPSHOT),
-            l = this.getState(BUTTON_L),
-            zl = this.getState(BUTTON_ZL);
+            l = this.getState(BUTTON_L);
 
     @FeatureState
     public final @NotNull StickPos

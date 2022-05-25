@@ -28,13 +28,21 @@ public class NxRightJoyCon extends NxJoyCon {
             BUTTON_PLUS = new ControllerButton("plus"),
             BUTTON_R_THUMB = new ControllerButton("r_thumb"),
             BUTTON_HOME = new ControllerButton("home"),
-            BUTTON_R = new ControllerButton("r"),
-            BUTTON_ZR = new ControllerButton("zr");
+            BUTTON_R = new ControllerButton("r");
 
     @FeaturePresent
     public static final @NotNull AnalogStick
             STICK_RS = new AnalogStick("rs");
 
+    /**
+     * This feature is presented as an {@link AnalogTrigger} (rather than a
+     * {@link ControllerButton}) even though it can only be fully pressed or
+     * fully released. This is because most other controllers have a proper
+     * analog trigger, so this continues the pattern.
+     * <p>
+     * Feature adapters should set the force to {@code 1.0F} when the ZR
+     * button is pressed, and {@code 0.0F} when it is released.
+     */
     @FeaturePresent
     public static final @NotNull AnalogTrigger
             TRIGGER_ZR = new AnalogTrigger("zr");
@@ -50,8 +58,7 @@ public class NxRightJoyCon extends NxJoyCon {
             plus = this.getState(BUTTON_PLUS),
             rThumb = this.getState(BUTTON_R_THUMB),
             home = this.getState(BUTTON_HOME),
-            r = this.getState(BUTTON_R),
-            zr = this.getState(BUTTON_ZR);
+            r = this.getState(BUTTON_R);
 
     @FeatureState
     public final @NotNull StickPos
