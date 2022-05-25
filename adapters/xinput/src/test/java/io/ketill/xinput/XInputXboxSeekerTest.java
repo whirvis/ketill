@@ -3,6 +3,8 @@ package io.ketill.xinput;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
+import io.ketill.IoDeviceDiscoverEvent;
+import io.ketill.IoDeviceForgetEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -57,7 +59,8 @@ class XInputXboxSeekerTest {
             x.when(() -> XInputDevice.getDeviceFor(0)).thenReturn(xDevice);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((s, d) -> discovered.set(true));
+            seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
+                    event -> discovered.set(true));
             seeker.seek();
             assertTrue(discovered.get());
 
@@ -72,7 +75,8 @@ class XInputXboxSeekerTest {
 
             when(xDevice.isConnected()).thenReturn(false);
             AtomicBoolean forgotten = new AtomicBoolean();
-            seeker.onForgetDevice((s, d) -> forgotten.set(true));
+            seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                    event -> forgotten.set(true));
             seeker.seek();
             assertTrue(forgotten.get());
         }

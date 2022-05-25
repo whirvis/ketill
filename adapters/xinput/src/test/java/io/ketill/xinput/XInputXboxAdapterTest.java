@@ -5,13 +5,13 @@ import com.github.strikerx3.jxinput.XInputButtons;
 import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
-import io.ketill.RegisteredFeature;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -48,9 +48,7 @@ class XInputXboxAdapterTest {
 
     @Test
     void ensureAllFeaturesSupported() {
-        for (RegisteredFeature<?, ?, ?> rf : controller.getFeatures()) {
-            assertTrue(controller.isFeatureSupported(rf.feature));
-        }
+        assertAllFeaturesSupported(controller);
     }
 
     @Test
@@ -81,13 +79,13 @@ class XInputXboxAdapterTest {
 
         controller.poll(); /* update stick positions */
 
-        assertEquals(0.123F, controller.ls.x());
-        assertEquals(0.456F, controller.ls.y());
-        assertEquals(0.0F, controller.ls.z());
+        assertEquals(0.123F, controller.ls.getPos().x());
+        assertEquals(0.456F, controller.ls.getPos().y());
+        assertEquals(0.0F, controller.ls.getPos().z());
 
-        assertEquals(0.789F, controller.rs.x());
-        assertEquals(1.011F, controller.rs.y());
-        assertEquals(-1.0F, controller.rs.z());
+        assertEquals(0.789F, controller.rs.getPos().x());
+        assertEquals(1.011F, controller.rs.getPos().y());
+        assertEquals(-1.0F, controller.rs.getPos().z());
     }
 
     @Test
