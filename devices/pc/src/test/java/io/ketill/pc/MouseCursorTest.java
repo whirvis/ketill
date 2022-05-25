@@ -1,12 +1,13 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@SuppressWarnings("ConstantConditions")
-class CursorTest {
+class MouseCursorTest {
 
     private MouseCursor cursor;
 
@@ -16,14 +17,19 @@ class CursorTest {
     }
 
     @Test
-    void testInit() {
-        assertThrows(NullPointerException.class, () -> new MouseCursor(null));
+    void testGetDevice() {
+        assertSame(Mouse.class, cursor.getDeviceType());
     }
 
     @Test
     void testGetState() {
-        CursorStateZ internal = cursor.getInternalState(null);
+        Mouse mouse = mock(Mouse.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(mouse);
+
+        CursorStateZ internal = cursor.getInternalState(observer);
         assertNotNull(internal);
+
         CursorState container = cursor.getContainerState(internal);
         assertNotNull(container);
     }
