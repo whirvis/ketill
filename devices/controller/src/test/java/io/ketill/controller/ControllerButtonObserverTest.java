@@ -63,14 +63,14 @@ class ControllerButtonObserverTest {
         /*
          * After a button has been pressed for a long enough time to be
          * considered held down, the button state should be updated by
-         * the observer to indicate that is held down.
+         * the observer to indicate that it is held down.
          */
         Thread.sleep(buttonObserver.getConfig().getHoldTime());
         buttonObserver.poll(); /* trigger state update */
         assertTrue(internalState.held);
 
         /*
-         * Once a button has been released (after being press down), the
+         * Once a button has been released (after being pressed down), the
          * button state should be updated by the observer to indicate that
          * it is also no longer held down.
          */
