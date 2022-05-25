@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An I/O feature representing the lightbar of a {@link Ps4Controller}.
  */
-public class Lightbar extends PlainIoFeature<LightbarColor> {
+public final class Lightbar extends PlainIoFeature<LightbarColor> {
 
     /**
      * @param id the lightbar ID.

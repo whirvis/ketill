@@ -21,7 +21,7 @@ public final class PsxAmbiguityEvent extends IoDeviceSeekerEvent {
      *                     if it has been resolved.
      * @throws NullPointerException if {@code seeker} is {@code null}.
      */
-    public PsxAmbiguityEvent(@NotNull IoDeviceSeeker<?> seeker,
+    public PsxAmbiguityEvent(@NotNull IoDeviceSeeker<? extends PsxController> seeker,
                              boolean nowAmbiguous) {
         super(seeker);
         this.nowAmbiguous = nowAmbiguous;

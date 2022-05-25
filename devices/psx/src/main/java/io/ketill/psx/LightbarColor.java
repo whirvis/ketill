@@ -10,7 +10,7 @@ import java.awt.*;
 /**
  * Contains the state of a {@link Lightbar}.
  */
-public class LightbarColor {
+public final class LightbarColor {
 
     private static float cap(float value, float min, float max) {
         return Math.min(Math.max(value, min), max);
