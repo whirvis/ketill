@@ -15,11 +15,19 @@ class DirectionTest {
     }
 
     @Test
+    void testGetId() {
+        assertEquals(0, Direction.UP.getId());
+        assertEquals(1, Direction.DOWN.getId());
+        assertEquals(2, Direction.LEFT.getId());
+        assertEquals(3, Direction.RIGHT.getId());
+    }
+
+    @Test
     void testFromId() {
         assertThrows(IllegalArgumentException.class,
                 () -> Direction.fromId(-1));
         for (Direction value : Direction.values()) {
-            assertSame(value, Direction.fromId(value.id));
+            assertSame(value, Direction.fromId(value.getId()));
         }
     }
 

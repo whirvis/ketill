@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class PlayerLed extends PlainIoFeature<LedState> {
 
-    public final int ledCount;
+    private final int ledCount;
 
     /**
      * @param id       the player LED ID.
@@ -38,6 +38,13 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
      */
     public PlayerLed(@NotNull String id) {
         this(id, 4);
+    }
+
+    /**
+     * @return the amount of LEDs present.
+     */
+    public int getLedCount() {
+        return this.ledCount;
     }
 
 }

@@ -6,6 +6,7 @@ package io.ketill.controller;
  * {@code -1.0F} to {@code 1.0F}.
  *
  * @see #apply(float)
+ * @see AnalogStickCalibration
  */
 public final class AnalogTriggerCalibration {
 
@@ -13,8 +14,8 @@ public final class AnalogTriggerCalibration {
         return (value - lower) / (upper - lower);
     }
 
-    public final float upperBound;
-    public final float lowerBound;
+    private final float upperBound;
+    private final float lowerBound;
 
     /**
      * @param upperBound the upper bound. This <i>must</i> have a value
@@ -36,6 +37,22 @@ public final class AnalogTriggerCalibration {
 
         this.upperBound = upperBound;
         this.lowerBound = lowerBound;
+    }
+
+    /**
+     * @return the upper bound for this calibration. This is guaranteed to be
+     * greater than the value returned by {@link #getLowerBound()}.
+     */
+    public float getUpperBound() {
+        return this.upperBound;
+    }
+
+    /**
+     * @return the lower bound for this calibration. This is guaranteed to be
+     * lower than the value returned by {@link #getUpperBound()}.
+     */
+    public float getLowerBound() {
+        return this.lowerBound;
     }
 
     /**

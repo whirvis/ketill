@@ -26,6 +26,16 @@ class AnalogTriggerCalibrationTest {
     }
 
     @Test
+    void testGetUpperBound() {
+        assertEquals(0.77F, calibration.getUpperBound());
+    }
+
+    @Test
+    void testGetLowerBound() {
+        assertEquals(0.00F, calibration.getLowerBound());
+    }
+
+    @Test
     void testApply() {
         float value = 0.1925F; /* pressed by one quarter */
         assertEquals(0.25F, calibration.apply(value));

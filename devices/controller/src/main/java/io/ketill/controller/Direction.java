@@ -16,14 +16,22 @@ public enum Direction {
             WEST = LEFT, EAST = RIGHT;
     /* @formatter:on */
 
-    public final int id;
+    private final int id;
 
     Direction(int id) {
         this.id = id;
     }
 
     /**
-     * @param id the event ID.
+     * @return the direction ID.
+     * @see #fromId(int)
+     */
+    public int getId() {
+        return this.id;
+    }
+
+    /**
+     * @param id the direction ID.
      * @return the {@code Direction} with the specified ID.
      * @throws IllegalArgumentException if no such direction exists.
      */

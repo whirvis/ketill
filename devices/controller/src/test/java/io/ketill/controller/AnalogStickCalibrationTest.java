@@ -1,6 +1,7 @@
 package io.ketill.controller;
 
 import org.joml.Vector2f;
+import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,20 @@ class AnalogStickCalibrationTest {
          */
         assertThrows(IllegalArgumentException.class,
                 () -> new AnalogStickCalibration(0.0F, 0.0F, 0.0F, 0.0F));
+    }
+
+    @Test
+    void testGetUpperBound() {
+        Vector2fc upperBound = calibration.getUpperBound();
+        assertEquals(0.77F, upperBound.x());
+        assertEquals(0.77F, upperBound.y());
+    }
+
+    @Test
+    void testGetLowerBound() {
+        Vector2fc lowerBound = calibration.getLowerBound();
+        assertEquals(-0.77F, lowerBound.x());
+        assertEquals(-0.77F, lowerBound.y());
     }
 
     @Test

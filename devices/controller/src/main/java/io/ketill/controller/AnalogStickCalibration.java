@@ -14,6 +14,7 @@ import java.util.Objects;
  *
  * @see #applyTo(Vector2f)
  * @see #applyTo(Vector3f)
+ * @see AnalogTriggerCalibration
  */
 public final class AnalogStickCalibration {
 
@@ -22,8 +23,8 @@ public final class AnalogStickCalibration {
         return (normalized * 2.0F) - 1.0F;
     }
 
-    public final @NotNull Vector2fc upperBound;
-    public final @NotNull Vector2fc lowerBound;
+    private final @NotNull Vector2fc upperBound;
+    private final @NotNull Vector2fc lowerBound;
 
     /**
      * @param upperBound the upper bound. This <i>must</i> have a value
@@ -79,6 +80,22 @@ public final class AnalogStickCalibration {
         this(new Vector2f(upperBoundX, upperBoundY),
                 new Vector2f(lowerBoundX, lowerBoundY));
         /* @formatter:on */
+    }
+
+    /**
+     * @return the upper bound for this calibration. This is guaranteed to be
+     * greater than the value returned by {@link #getLowerBound()}.
+     */
+    public @NotNull Vector2fc getUpperBound() {
+        return this.upperBound;
+    }
+
+    /**
+     * @return the lower bound for this calibration. This is guaranteed to be
+     * lower than the value returned by {@link #getUpperBound()}.
+     */
+    public @NotNull Vector2fc getLowerBound() {
+        return this.lowerBound;
     }
 
     /**

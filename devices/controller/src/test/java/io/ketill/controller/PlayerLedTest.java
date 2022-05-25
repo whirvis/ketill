@@ -29,8 +29,8 @@ class PlayerLedTest {
     }
 
     @Test
-    void testLedCount() {
-        assertEquals(4, led.ledCount);
+    void testGetLedCount() {
+        assertEquals(4, led.getLedCount());
     }
 
 }

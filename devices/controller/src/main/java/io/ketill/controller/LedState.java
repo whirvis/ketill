@@ -33,6 +33,10 @@ public class LedState {
         this(1);
     }
 
+    /**
+     * @return the current mode of this LED state. This determines how an
+     * adapter will interpret {@link #getValue()}.
+     */
     public int getMode() {
         return this.mode;
     }
