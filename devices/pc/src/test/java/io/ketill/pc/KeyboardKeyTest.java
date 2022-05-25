@@ -1,11 +1,12 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@SuppressWarnings("ConstantConditions")
 class KeyboardKeyTest {
 
     private KeyboardKey key;
@@ -16,15 +17,19 @@ class KeyboardKeyTest {
     }
 
     @Test
-    void testInit() {
-        assertThrows(NullPointerException.class,
-                () -> new KeyboardKey(null));
+    void testGetDevice() {
+        assertSame(Keyboard.class, key.getDeviceType());
     }
 
     @Test
     void testGetState() {
-        KeyPressZ internal = key.getInternalState(null);
+        Keyboard keyboard = mock(Keyboard.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        when(observer.getDevice()).thenReturn(keyboard);
+
+        KeyPressZ internal = key.getInternalState(observer);
         assertNotNull(internal);
+
         KeyPress container = key.getContainerState(internal);
         assertNotNull(container);
     }
