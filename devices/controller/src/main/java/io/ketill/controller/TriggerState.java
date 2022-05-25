@@ -16,6 +16,14 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
     }
 
     /**
+     * @return the calibration used by {@link #getForce(boolean)}. A value
+     * of {@code null} may be returned, and indicates no calibration.
+     */
+    public @Nullable AnalogTriggerCalibration getCalibration() {
+        return internalState.calibration;
+    }
+
+    /**
      * @param calibration the calibration to use when getting the force
      *                    being applied to this analog trigger. A value
      *                    of {@code null} is permitted, and will result
@@ -24,14 +32,6 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
      */
     public void useCalibration(@Nullable AnalogTriggerCalibration calibration) {
         internalState.calibration = calibration;
-    }
-
-    /**
-     * @return the calibration used by {@link #getForce(boolean)}. A value
-     * of {@code null} may be returned, and indicates no calibration.
-     */
-    public @Nullable AnalogTriggerCalibration getCalibration() {
-        return internalState.calibration;
     }
 
     /**

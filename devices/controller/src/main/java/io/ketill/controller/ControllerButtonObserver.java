@@ -8,12 +8,14 @@ final class ControllerButtonObserver
         extends PressableIoFeatureObserver<ButtonStateZ> {
 
     private final ControllerButton button;
+    private final Controller controller;
 
     ControllerButtonObserver(@NotNull ControllerButton button,
                              @NotNull ButtonStateZ internalState,
                              @NotNull IoDeviceObserver observer) {
         super(button, internalState, observer);
         this.button = button;
+        this.controller = (Controller) observer.getDevice();
     }
 
     @Override
@@ -23,17 +25,17 @@ final class ControllerButtonObserver
 
     @Override
     protected void onPress() {
-        this.onNext(new ControllerButtonPressEvent(device, button));
+        this.onNext(new ControllerButtonPressEvent(controller, button));
     }
 
     @Override
     protected void onHold() {
-        this.onNext(new ControllerButtonHoldEvent(device, button));
+        this.onNext(new ControllerButtonHoldEvent(controller, button));
     }
 
     @Override
     protected void onRelease() {
-        this.onNext(new ControllerButtonReleaseEvent(device, button));
+        this.onNext(new ControllerButtonReleaseEvent(controller, button));
     }
 
     @Override

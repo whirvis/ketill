@@ -1,16 +1,22 @@
 package io.ketill.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("ConstantConditions")
 class RumbleMotorTest {
 
+    private RumbleMotor motor;
+
+    @BeforeEach
+    void createMotor() {
+        this.motor = new RumbleMotor("motor");
+    }
+
     @Test
-    void testInit() {
-        assertThrows(NullPointerException.class,
-                () -> new RumbleMotor(null));
+    void testGetDeviceType() {
+        assertSame(Controller.class, motor.getDeviceType());
     }
 
 }

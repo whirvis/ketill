@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base for events relating to an {@link AnalogTrigger}.
  */
-public interface AnalogTriggerEvent {
+public interface AnalogTriggerEvent extends ControllerEvent {
 
     /**
      * @return the analog trigger which triggered this event.

@@ -4,7 +4,7 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.IoDevice;
 import io.ketill.IoFeature;
-import io.ketill.RegisteredFeature;
+import io.ketill.RegisteredIoFeature;
 import io.ketill.pressable.PressableIoFeatureConfig;
 import io.ketill.pressable.PressableIoFeatureConfigView;
 import io.ketill.pressable.PressableIoFeatureSupport;
@@ -24,8 +24,7 @@ import java.util.Map;
  * periodically via the {@link #poll()} method. It is recommended to poll
  * the controller once every application update.
  */
-public abstract class Controller extends IoDevice
-        implements PressableIoFeatureSupport {
+public abstract class Controller extends IoDevice implements PressableIoFeatureSupport {
 
     private final @NotNull Map<RumbleMotor, MotorVibration> rumbleMotors;
     private @NotNull PressableIoFeatureConfigView pressableConfig;
@@ -147,14 +146,9 @@ public abstract class Controller extends IoDevice
     }
     /* @formatter:on */
 
-    @Override /* overridden for visibility in ControllerTest */
-    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
-        return super.getInternalState(feature);
-    }
-
     @Override
     @MustBeInvokedByOverriders
-    protected void featureRegistered(@NotNull RegisteredFeature<?, ?, ?> registered) {
+    protected void featureRegistered(@NotNull RegisteredIoFeature<?, ?, ?> registered) {
         IoFeature<?, ?> feature = registered.getFeature();
         Object internalState = this.getInternalState(feature);
 
@@ -179,13 +173,13 @@ public abstract class Controller extends IoDevice
     }
 
     @Override
-    public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
-        this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
+    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
+        return this.pressableConfig;
     }
 
     @Override
-    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
-        return this.pressableConfig;
+    public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
+        this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
     }
 
     /**

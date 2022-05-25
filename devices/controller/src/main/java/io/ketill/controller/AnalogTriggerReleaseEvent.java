@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureReleaseEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class AnalogTriggerReleaseEvent extends IoFeatureReleaseEvent
         implements AnalogTriggerEvent {
 
-    AnalogTriggerReleaseEvent(@NotNull IoDevice device,
+    AnalogTriggerReleaseEvent(@NotNull Controller controller,
                               @NotNull AnalogTrigger trigger) {
-        super(device, trigger);
+        super(controller, trigger);
+    }
+
+    @Override
+    public @NotNull Controller getController() {
+        return (Controller) this.getDevice();
     }
 
     @Override

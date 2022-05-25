@@ -25,7 +25,7 @@ public final class AnalogTrigger
         return force >= TRIGGER_PRESS;
     }
 
-    public final @Nullable AnalogTriggerCalibration baseCalibration;
+    private final @Nullable AnalogTriggerCalibration baseCalibration;
 
     /**
      * @param id              the analog trigger ID.
@@ -54,6 +54,16 @@ public final class AnalogTrigger
      */
     public AnalogTrigger(@NotNull String id) {
         this(id, null);
+    }
+
+    /**
+     * @return the calibration to use when creating a state for this
+     * analog trigger. Note that the state can use a different calibration
+     * after creation.
+     * @see TriggerState#useCalibration(AnalogTriggerCalibration)
+     */
+    public @Nullable AnalogTriggerCalibration getBaseCalibration() {
+        return this.baseCalibration;
     }
 
     @Override

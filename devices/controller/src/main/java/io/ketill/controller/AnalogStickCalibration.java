@@ -11,11 +11,16 @@ import java.util.Objects;
  * Used by {@link AnalogStick} and {@link StickPos} to calibrate the current
  * position of an analog stick to the appropriate bounds of {@code -1.0F} to
  * {@code 1.0F}.
- * 
+ *
  * @see #applyTo(Vector2f)
  * @see #applyTo(Vector3f)
  */
 public final class AnalogStickCalibration {
+
+    private static float normalize(float value, float upper, float lower) {
+        float normalized = (value - lower) / (upper - lower);
+        return (normalized * 2.0F) - 1.0F;
+    }
 
     public final @NotNull Vector2fc upperBound;
     public final @NotNull Vector2fc lowerBound;
@@ -87,14 +92,14 @@ public final class AnalogStickCalibration {
      */
     public void applyTo(@NotNull Vector2f vec) {
         Objects.requireNonNull(vec, "vec cannot be null");
-        vec.x = Analog.normalize(vec.x, upperBound.x(), lowerBound.x());
-        vec.y = Analog.normalize(vec.y, upperBound.y(), lowerBound.y());
+        vec.x = normalize(vec.x, upperBound.x(), lowerBound.x());
+        vec.y = normalize(vec.y, upperBound.y(), lowerBound.y());
     }
 
     /**
      * Applies this calibration to the specified vector.
      * <p>
-     * <b>Note:</b> This method does <i>not</i> update the Z-axis.
+     * <b>Note:</b> This method does <i>not</i> modify the Z-axis.
      *
      * @param vec the vector to apply this calibration to. The updated
      *            values of each axis will be on a scale of {@code -1.0F}
@@ -104,8 +109,8 @@ public final class AnalogStickCalibration {
      */
     public void applyTo(@NotNull Vector3f vec) {
         Objects.requireNonNull(vec, "vec cannot be null");
-        vec.x = Analog.normalize(vec.x, upperBound.x(), lowerBound.x());
-        vec.y = Analog.normalize(vec.y, upperBound.y(), lowerBound.y());
+        vec.x = normalize(vec.x, upperBound.x(), lowerBound.x());
+        vec.y = normalize(vec.y, upperBound.y(), lowerBound.y());
     }
 
 }

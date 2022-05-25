@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public final class ControllerButton
         extends IoFeature<ButtonStateZ, ButtonState> {
 
-    public final @Nullable Direction direction;
+    private final @Nullable Direction direction;
 
     /**
      * @param id        the button ID.
@@ -38,6 +38,14 @@ public final class ControllerButton
      */
     public ControllerButton(@NotNull String id) {
         this(id, null);
+    }
+
+    /**
+     * @return the direction this button represents, {@code null} if this
+     * button does not represent a  direction.
+     */
+    public @Nullable Direction getDirection() {
+        return this.direction;
     }
 
     @Override

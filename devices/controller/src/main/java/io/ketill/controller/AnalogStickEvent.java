@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * The base for events relating to an {@link AnalogStick}.
  */
-public interface AnalogStickEvent {
+public interface AnalogStickEvent extends ControllerEvent {
 
     /**
      * @return the analog stick which triggered this event.

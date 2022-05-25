@@ -31,6 +31,14 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * @return the calibration used by {@link #getPos(boolean)}. A value of
+     * {@code null} may be returned, and indicates no calibration.
+     */
+    public @Nullable AnalogStickCalibration getCalibration() {
+        return internalState.calibration;
+    }
+
+    /**
      * @param calibration the calibration to use when getting the position
      *                    of this analog stick. A value of {@code null} is
      *                    permitted, and will result in no calibration.
@@ -38,14 +46,6 @@ public final class StickPos extends ContainerState<StickPosZ> {
      */
     public void useCalibration(@Nullable AnalogStickCalibration calibration) {
         internalState.calibration = calibration;
-    }
-
-    /**
-     * @return the calibration used by {@link #getPos(boolean)}. A value of
-     * {@code null} may be returned, and indicates no calibration.
-     */
-    public @Nullable AnalogStickCalibration getCalibration() {
-        return internalState.calibration;
     }
 
     /**

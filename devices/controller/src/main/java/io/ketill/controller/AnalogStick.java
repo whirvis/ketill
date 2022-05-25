@@ -29,7 +29,7 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      */
     public static boolean isPressed(@NotNull Vector3fc pos,
                                     @NotNull Direction direction) {
-        Objects.requireNonNull(direction, "pos cannot be null");
+        Objects.requireNonNull(pos, "pos cannot be null");
         Objects.requireNonNull(direction, "direction cannot be null");
         switch (direction) {
             case UP:
@@ -54,12 +54,11 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     public static boolean isPressed(@NotNull StickPos pos,
                                     @NotNull Direction direction) {
         Objects.requireNonNull(direction, "pos cannot be null");
-        Objects.requireNonNull(direction, "direction cannot be null");
         return isPressed(pos.getPos(true), direction);
     }
 
-    public final @Nullable ControllerButton zButton;
-    public final @Nullable AnalogStickCalibration baseCalibration;
+    private final @Nullable ControllerButton zButton;
+    private final @Nullable AnalogStickCalibration baseCalibration;
 
     /**
      * @param id              the analog stick ID.
@@ -69,15 +68,14 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      *                        {@code null} is permitted, and indicates that
      *                        there is no button corresponding to the Z-axis.
      * @param baseCalibration the calibration to use when creating a state
-     *                        container for this analog stick. Note that the
-     *                        state can use a different calibration after it
-     *                        has been created.
+     *                        for this analog stick. Note that the state can
+     *                        use a different calibration after creation.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public AnalogStick(@NotNull String id, @Nullable ControllerButton zButton,
-                       @Nullable AnalogStickCalibration baseCalibration) {
+    public AnalogStick(@NotNull String id, @Nullable ControllerButton zButton
+            , @Nullable AnalogStickCalibration baseCalibration) {
         super(Controller.class, id);
         this.zButton = zButton;
         this.baseCalibration = baseCalibration;
@@ -104,15 +102,17 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     /**
      * Constructs a new {@code AnalogStick} with no Z-button.
      *
-     * @param id          the analog stick ID.
-     * @param calibration the analog stick calibration.
+     * @param id              the analog stick ID.
+     * @param baseCalibration the calibration to use when creating a state
+     *                        for this analog stick. Note that the state can
+     *                        use a different calibration after creation.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public AnalogStick(@NotNull String id,
-                       @Nullable AnalogStickCalibration calibration) {
-        this(id, null, calibration);
+                       @Nullable AnalogStickCalibration baseCalibration) {
+        this(id, null, baseCalibration);
     }
 
     /**
@@ -127,6 +127,24 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      */
     public AnalogStick(@NotNull String id) {
         this(id, null, null);
+    }
+
+    /**
+     * @return the button that, when pressed, should have the Z-axis of this
+     * analog stick decreased from {@code 0.0F} to {@code -1.0F}.
+     */
+    public @Nullable ControllerButton getZButton() {
+        return this.zButton;
+    }
+
+    /**
+     * @return the calibration to use when creating a state for this
+     * analog stick. Note that the state can use a different calibration
+     * after creation.
+     * @see StickPos#useCalibration(AnalogStickCalibration)
+     */
+    public @Nullable AnalogStickCalibration getBaseCalibration() {
+        return this.baseCalibration;
     }
 
     @Override

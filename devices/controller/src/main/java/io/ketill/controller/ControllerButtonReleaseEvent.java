@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureReleaseEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class ControllerButtonReleaseEvent extends IoFeatureReleaseEvent
         implements ControllerButtonEvent {
 
-    ControllerButtonReleaseEvent(@NotNull IoDevice device,
+    ControllerButtonReleaseEvent(@NotNull Controller controller,
                                  @NotNull ControllerButton button) {
-        super(device, button);
+        super(controller, button);
+    }
+
+    @Override
+    public @NotNull Controller getController() {
+        return (Controller) this.getDevice();
     }
 
     @Override

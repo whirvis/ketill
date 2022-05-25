@@ -9,6 +9,10 @@ package io.ketill.controller;
  */
 public final class AnalogTriggerCalibration {
 
+    private static float normalize(float value, float upper, float lower) {
+        return (value - lower) / (upper - lower);
+    }
+
     public final float upperBound;
     public final float lowerBound;
 
@@ -38,11 +42,11 @@ public final class AnalogTriggerCalibration {
      * Applies this calibration to the specified value.
      *
      * @param value the value to apply this calibration to. The returned
-     *              value will be on a scale of {@code -1.0F} to {@code 1.0F}.
+     *              value will be on a scale of {@code 0.0F} to {@code 1.0F}.
      * @return the calibrated force.
      */
     public float apply(float value) {
-        return Analog.normalize(value, upperBound, lowerBound);
+        return normalize(value, upperBound, lowerBound);
     }
 
 }

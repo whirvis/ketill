@@ -35,12 +35,10 @@ public final class TriggerStateZ implements AutonomousState {
 
     @Override
     public void update() {
+        this.calibratedForce = force;
         if (calibration != null) {
             this.calibratedForce = calibration.apply(force);
-        } else {
-            this.calibratedForce = force;
         }
-
         triggerObserver.poll();
     }
 

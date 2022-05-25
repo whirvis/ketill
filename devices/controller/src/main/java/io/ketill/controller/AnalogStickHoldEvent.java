@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,12 +14,17 @@ public final class AnalogStickHoldEvent extends IoFeatureHoldEvent
 
     private final Direction direction;
 
-    AnalogStickHoldEvent(@NotNull IoDevice device,
+    AnalogStickHoldEvent(@NotNull Controller controller,
                          @NotNull AnalogStick stick,
                          @NotNull Direction direction) {
-        super(device, stick);
+        super(controller, stick);
         this.direction = Objects.requireNonNull(direction,
                 "direction cannot be null");
+    }
+
+    @Override
+    public @NotNull Controller getController() {
+        return (Controller) this.getDevice();
     }
 
     @Override

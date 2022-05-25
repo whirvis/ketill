@@ -1,6 +1,5 @@
 package io.ketill.controller;
 
-import io.ketill.IoDevice;
 import io.ketill.pressable.IoFeatureHoldEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,9 +9,14 @@ import org.jetbrains.annotations.NotNull;
 public final class AnalogTriggerHoldEvent extends IoFeatureHoldEvent
         implements AnalogTriggerEvent {
 
-    AnalogTriggerHoldEvent(@NotNull IoDevice device,
+    AnalogTriggerHoldEvent(@NotNull Controller controller,
                            @NotNull AnalogTrigger trigger) {
-        super(device, trigger);
+        super(controller, trigger);
+    }
+
+    @Override
+    public @NotNull Controller getController() {
+        return (Controller) this.getDevice();
     }
 
     @Override

@@ -15,7 +15,7 @@ public final class RumbleMotor extends PlainIoFeature<MotorVibration> {
      *                                  whitespace.
      */
     public RumbleMotor(@NotNull String id) {
-        super(id, MotorVibration::new);
+        super(Controller.class, id, MotorVibration::new);
     }
 
 }

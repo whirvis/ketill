@@ -9,6 +9,7 @@ final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
     private final AnalogStick stick;
     private final Direction direction;
     private final ButtonStateZ buttonState;
+    private final Controller controller;
 
     AnalogStickObserver(@NotNull AnalogStick stick,
                         @NotNull Direction direction,
@@ -19,6 +20,7 @@ final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
         this.stick = stick;
         this.direction = direction;
         this.buttonState = buttonState;
+        this.controller = (Controller) observer.getDevice();
     }
 
     @Override
@@ -28,17 +30,17 @@ final class AnalogStickObserver extends PressableIoFeatureObserver<StickPosZ> {
 
     @Override
     protected void onPress() {
-        this.onNext(new AnalogStickPressEvent(device, stick, direction));
+        this.onNext(new AnalogStickPressEvent(controller, stick, direction));
     }
 
     @Override
     protected void onHold() {
-        this.onNext(new AnalogStickHoldEvent(device, stick, direction));
+        this.onNext(new AnalogStickHoldEvent(controller, stick, direction));
     }
 
     @Override
     protected void onRelease() {
-        this.onNext(new AnalogStickReleaseEvent(device, stick, direction));
+        this.onNext(new AnalogStickReleaseEvent(controller, stick, direction));
     }
 
     @Override
