@@ -15,6 +15,9 @@ class KetillAssertionsTest {
     @Test
     void testAssertAllFeaturesSupported() {
         IoDevice device = mock(IoDevice.class);
+        IoDeviceObserver observer = mock(IoDeviceObserver.class);
+        doReturn(device).when(observer).getDevice();
+
         MockIoFeature feature = new MockIoFeature();
 
         /*
@@ -40,13 +43,13 @@ class KetillAssertionsTest {
         assertThrows(AssertionError.class,
                 () -> assertAllFeaturesSupported(device, feature));
 
-        RegisteredFeature<MockIoFeature, Object, Object> registered =
-                new RegisteredFeature<>(feature);
-        Collection<RegisteredFeature<?, ?, ?>> features =
+        RegisteredIoFeature<MockIoFeature, Object, Object> registered =
+                new RegisteredIoFeature<>(feature, observer);
+        Collection<RegisteredIoFeature<?, ?, ?>> features =
                 Collections.singletonList(registered);
 
         /* mock registration and mapping of feature */
-        doReturn(features).when(device).getFeatures();
+        doReturn(features).when(device).getFeatureRegistrations();
         doReturn(true).when(device).isFeatureRegistered(feature);
         doReturn(true).when(device).isFeatureSupported(feature);
 

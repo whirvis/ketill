@@ -41,14 +41,15 @@ public class KetillAssertions {
              * assume this was a user mistake and throw an exception.
              */
             if (!device.isFeatureRegistered(feature)) {
-                String msg = "feature with ID \"" + feature.id + "\"";
+                String msg = "feature with ID \"" + feature.getId() + "\"";
                 msg += " marked as unsupported but not registered";
                 throw new AssertionError(msg);
             }
         }
 
         List<IoFeature<?, ?>> unsupportedList = Arrays.asList(unsupported);
-        for (RegisteredFeature<?, ?, ?> registered : device.getFeatures()) {
+        for (RegisteredIoFeature<?, ?, ?> registered :
+                device.getFeatureRegistrations()) {
             IoFeature<?, ?> feature = registered.feature;
 
             if (unsupportedList.contains(feature)) {
@@ -58,7 +59,7 @@ public class KetillAssertions {
                  * was a user mistake and throw an exception.
                  */
                 if (device.isFeatureSupported(feature)) {
-                    String msg = "feature with ID \"" + feature.id + "\"";
+                    String msg = "feature with ID \"" + feature.getId() + "\"";
                     msg += " supported when marked as unsupported";
                     throw new AssertionError(msg);
                 } else {
@@ -67,7 +68,7 @@ public class KetillAssertions {
             }
 
             if (!device.isFeatureSupported(feature)) {
-                String msg = "feature with ID \"" + feature.id + "\"";
+                String msg = "feature with ID \"" + feature.getId() + "\"";
                 msg += " not supported as expected";
                 throw new AssertionError(msg);
             }
@@ -101,7 +102,7 @@ public class KetillAssertions {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         if (device.getFeature(state) != feature) {
-            String msg = "feature with ID \"" + feature.id + "\"";
+            String msg = "feature with ID \"" + feature.getId() + "\"";
             msg += " does not own provided state";
             throw new AssertionError(msg);
         }
