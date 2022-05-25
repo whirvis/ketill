@@ -6,6 +6,10 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface to a read-only view of a mouse button's state.
+ * <p>
+ * <b>Note: </b> The name {@code MouseClick} was deliberately chosen so
+ * there would be no conflict with the class {@code ButtonState} found in
+ * the {@code controller} module.
  */
 public final class MouseClick extends ContainerState<MouseClickZ>
         implements PressableState {
