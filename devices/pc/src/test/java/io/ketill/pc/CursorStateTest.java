@@ -1,5 +1,6 @@
 package io.ketill.pc;
 
+import io.ketill.IoDeviceObserver;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,18 +9,26 @@ import org.junit.jupiter.api.Test;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
 class CursorStateTest {
 
     private static final Random RANDOM = new Random();
 
+    private IoDeviceObserver observer;
     private CursorStateZ internal;
     private CursorState container;
 
     @BeforeEach
     void setup() {
-        this.internal = new CursorStateZ(null, null);
+        MouseCursor cursor = mock(MouseCursor.class);
+
+        Mouse mouse = mock(Mouse.class);
+        this.observer = mock(IoDeviceObserver.class);
+        doReturn(mouse).when(observer).getDevice();
+
+        this.internal = new CursorStateZ(cursor, observer);
         this.container = new CursorState(internal);
     }
 
@@ -29,6 +38,7 @@ class CursorStateTest {
                 () -> new CursorState(null));
     }
 
+    @SuppressWarnings("UnusedAssignment")
     @Test
     void testCanSetVisible() {
         internal.adapterCanSetVisible = true;
@@ -37,6 +47,7 @@ class CursorStateTest {
         assertFalse(container.canSetVisible());
     }
 
+    @SuppressWarnings("UnusedAssignment")
     @Test
     void testCanSetPosition() {
         internal.adapterCanSetPosition = true;
@@ -45,6 +56,7 @@ class CursorStateTest {
         assertFalse(container.canSetPosition());
     }
 
+    @SuppressWarnings("UnusedAssignment")
     @Test
     void testIsVisible() {
         internal.visible = true;
@@ -151,6 +163,45 @@ class CursorStateTest {
         assertTrue(container.trySetPosition(0.0F, 0.0F));
         internal.adapterCanSetPosition = false;
         assertFalse(container.trySetPosition(0.0F, 0.0F));
+    }
+
+    @Test
+    void testUpdate() {
+        Vector2f lastDisplacement = new Vector2f();
+        doAnswer(answer -> {
+            MouseCursorDisplaceEvent event = answer.getArgument(0);
+            lastDisplacement.set(event.getDisplacement());
+            return null;
+        }).when(observer).onNext(any());
+
+        /*
+         * Each time the mouse cursor position changes from the last update,
+         * the cursor state should emit an event to notify listeners. Since
+         * the mouse cursor was moved to the right, the displacement should
+         * be a positive value.
+         */
+        internal.currentPos.set(1024.0F, 1024.0F);
+        internal.update(); /* trigger event emission */
+        assertEquals(1024.0F, lastDisplacement.x());
+        assertEquals(1024.0F, lastDisplacement.y());
+
+        /*
+         * This time, the mouse cursor was moved to the left of the screen.
+         * As such, the displacement should be a negative value.
+         */
+        internal.currentPos.set(256.0F, 256.0F);
+        internal.update(); /* trigger event emission */
+        assertEquals(-768.0F, lastDisplacement.x());
+        assertEquals(-768.0F, lastDisplacement.y());
+
+        /*
+         * Since the mouse cursor has not moved since the last updated,
+         * the cursor state should not emit an event to listeners.
+         */
+        lastDisplacement.set(0.0f, 0.0f);
+        internal.update(); /* update without event */
+        assertEquals(0.0F, lastDisplacement.x());
+        assertEquals(0.0F, lastDisplacement.y());
     }
 
 }
