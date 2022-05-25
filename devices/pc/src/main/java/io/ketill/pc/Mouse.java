@@ -4,7 +4,6 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
-import io.ketill.IoFeature;
 import io.ketill.pressable.PressableIoFeatureConfig;
 import io.ketill.pressable.PressableIoFeatureConfigView;
 import io.ketill.pressable.PressableIoFeatureSupport;
@@ -75,19 +74,14 @@ public class Mouse extends IoDevice
         this.pressableConfig = PressableIoFeatureConfig.DEFAULT;
     }
 
-    @Override /* overridden for visibility in MouseTest */
-    protected <Z> Z getInternalState(@NotNull IoFeature<Z, ?> feature) {
-        return super.getInternalState(feature);
+    @Override
+    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
+        return this.pressableConfig;
     }
 
     @Override
     public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
         this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
-    }
-
-    @Override
-    public final @NotNull PressableIoFeatureConfigView getPressableConfig() {
-        return this.pressableConfig;
     }
 
 }
