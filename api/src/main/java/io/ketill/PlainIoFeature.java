@@ -24,19 +24,19 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
      * extend {@link ContainerState} as it is both the internal state and
      * container state.
      *
-     * @param requiredType the type an {@link IoDevice} must be for it to
-     *                     register this feature.
-     * @param id           the feature ID.
-     * @param supplier     a supplier for the feature's initial state.
+     * @param deviceType the type an {@link IoDevice} must be for it to
+     *                   create an instance of this feature's state.
+     * @param id         the feature ID.
+     * @param supplier   a supplier for the feature's initial state.
      * @throws NullPointerException     if {@code requiredType}, {@code id}
      *                                  or {@code supplier} are {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public PlainIoFeature(@NotNull Class<? extends IoDevice> requiredType,
+    public PlainIoFeature(@NotNull Class<? extends IoDevice> deviceType,
                           @NotNull String id,
                           @NotNull InitialStateSupplier<@NotNull S> supplier) {
-        super(requiredType, id);
+        super(deviceType, id);
         this.supplier = Objects.requireNonNull(supplier,
                 "supplier cannot be null");
     }
@@ -66,16 +66,18 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
      * extend {@link ContainerState} as it is both the internal state and
      * container state.
      *
-     * @param id       the feature ID.
-     * @param supplier a supplier for the feature's initial state.
+     * @param deviceType the type an {@link IoDevice} must be for it to
+     *                   create an instance of this feature's state.
+     * @param id         the feature ID.
+     * @param supplier   a supplier for the feature's initial state.
      * @throws NullPointerException     if {@code requiredType}, {@code id}
      *                                  or {@code supplier} are {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public PlainIoFeature(@NotNull Class<? extends IoDevice> requiredType,
+    public PlainIoFeature(@NotNull Class<? extends IoDevice> deviceType,
                           @NotNull String id, Supplier<@NotNull S> supplier) {
-        this(requiredType, id, InitialStateSupplier.wrap(supplier));
+        this(deviceType, id, InitialStateSupplier.wrap(supplier));
     }
 
     /**

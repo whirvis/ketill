@@ -2,6 +2,9 @@ package io.ketill;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Signals that an error relating to Ketill I/O has occurred.
+ */
 @SuppressWarnings("unused")
 public class KetillException extends RuntimeException {
 
@@ -21,7 +24,8 @@ public class KetillException extends RuntimeException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public KetillException(@Nullable String message, @Nullable Throwable cause) {
+    public KetillException(@Nullable String message,
+                           @Nullable Throwable cause) {
         super(message, cause);
     }
 

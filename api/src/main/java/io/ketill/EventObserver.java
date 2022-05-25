@@ -2,15 +2,21 @@ package io.ketill;
 
 import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 abstract class EventObserver<E> implements Observer<E> {
 
-    protected final @NotNull Observer<E> subject;
+    /**
+     * The original subject this event observer wraps around. This is
+     * {@code protected} so child classes have direct access to the original,
+     * if they so need.
+     */
+    protected final @NotNull Subject<E> subject;
 
-    EventObserver(@NotNull Observer<E> subject) {
+    EventObserver(@NotNull Subject<E> subject) {
         this.subject = subject;
     }
 

@@ -34,12 +34,23 @@ import java.util.function.Consumer;
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     private final @NotNull Subject<IoDeviceSeekerEvent> subject;
+
+    /**
+     * The observer for this I/O device. This should be used to emit events
+     * to listeners when they occur.
+     * <p>
+     * This field is {@code protected} so it is visible to child classes,
+     * allowing them to emit their own events from this seeker.
+     */
     protected final @NotNull IoDeviceSeekerObserver observer;
 
     private final @NotNull List<I> devices;
 
     private boolean closed;
 
+    /**
+     * Constructs a new {@code IoDeviceSeeker}.
+     */
     public IoDeviceSeeker() {
         this.subject = PublishSubject.create();
         this.observer = new IoDeviceSeekerObserver(this, subject);
@@ -263,6 +274,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         }
     }
 
+    /**
+     * @return {@code true} if this I/O device seeker has been closed via
+     * {@link #close()}, {@code false} otherwise.
+     */
     public final boolean isClosed() {
         return this.closed;
     }

@@ -17,6 +17,11 @@ import java.util.Objects;
  */
 public abstract class ContainerState<Z> {
 
+    /**
+     * The internal state which this state contains. This should be kept
+     * hidden from the user. Its data made visible and/or modifiable via
+     * special methods that limit how it can be interacted with.
+     */
     protected final @NotNull Z internalState;
 
     /**

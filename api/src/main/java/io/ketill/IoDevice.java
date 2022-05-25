@@ -38,6 +38,15 @@ public abstract class IoDevice implements FeatureRegistry {
     private final @NotNull String typeId;
 
     private final @NotNull Subject<IoDeviceEvent> subject;
+
+    /**
+     * The observer for this I/O device. This should be used to emit events
+     * to listeners when they occur.
+     * <p>
+     * This field is {@code protected} so it is visible to child classes.
+     * It is also passed to the internal state of I/O features, allowing
+     * them to emit their own events from this device.
+     */
     protected final @NotNull IoDeviceObserver observer;
 
     private final MappedFeatureRegistry registry;
@@ -174,6 +183,14 @@ public abstract class IoDevice implements FeatureRegistry {
     }
     /* @formatter:on */
 
+    /**
+     * Initializes the adapter instantiated at construction. This method
+     * is called automatically if the argument for {@code initAdapter} at
+     * construction was {@code true}. Otherwise, a child class is expected
+     * to call this method themselves.
+     *
+     * @throws IllegalStateException if this has already been called.
+     */
     @MustBeInvokedByOverriders
     protected void initAdapter() {
         if (initializedAdapter) {
@@ -183,6 +200,15 @@ public abstract class IoDevice implements FeatureRegistry {
         this.initializedAdapter = true;
     }
 
+    /**
+     * Registers all fields present in this class annotated with
+     * {@link FeaturePresent}. This method is called automatically if the
+     * argument for {@code registerFields} at construction was {@code true}.
+     * Otherwise, a child class is expected to call this method themselves.
+     *
+     * @throws IllegalStateException if this has already been called.
+     * @see #registerFeature(IoFeature)
+     */
     @MustBeInvokedByOverriders
     protected void registerFields() {
         if (registeredFields) {

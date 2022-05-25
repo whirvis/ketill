@@ -1,6 +1,6 @@
 package io.ketill;
 
-import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.subjects.Subject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -15,7 +15,7 @@ public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEv
     private final @NotNull IoDeviceSeeker<?> seeker;
 
     IoDeviceSeekerObserver(@NotNull IoDeviceSeeker<?> seeker,
-                           @NotNull Observer<IoDeviceSeekerEvent> subject) {
+                           @NotNull Subject<IoDeviceSeekerEvent> subject) {
         super(subject);
         this.seeker = seeker;
     }

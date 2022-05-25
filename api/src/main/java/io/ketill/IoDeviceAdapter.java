@@ -19,7 +19,19 @@ import java.util.Objects;
  */
 public abstract class IoDeviceAdapter<I extends IoDevice> {
 
+    /**
+     * The I/O device which owns this adapter.
+     *
+     * @see #registry
+     */
     protected final @NotNull I device;
+
+    /**
+     * The mapped feature registry of {@link #device}. This should be used
+     * by the adapter to map existing features to feature adapter methods.
+     *
+     * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
+     */
     protected final @NotNull MappedFeatureRegistry registry;
 
     /**
