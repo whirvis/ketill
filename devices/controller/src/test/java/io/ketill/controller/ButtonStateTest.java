@@ -45,11 +45,11 @@ class ButtonStateTest {
 
     @Test
     void testUpdate() {
-        internal.pressed = true;
+        internal.pressed = true; /* press button */
         internal.update(); /* trigger event emission */
         assertEmitted(observer, ControllerButtonPressEvent.class);
 
-        internal.pressed = false; /* release trigger */
+        internal.pressed = false; /* release button */
         internal.update(); /* trigger event emission */
         assertEmitted(observer, ControllerButtonReleaseEvent.class);
     }
