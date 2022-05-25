@@ -24,6 +24,11 @@ class PlayerLedTest {
     }
 
     @Test
+    void testGetDeviceType() {
+        assertSame(Controller.class, led.getDeviceType());
+    }
+
+    @Test
     void testLedCount() {
         assertEquals(4, led.ledCount);
     }

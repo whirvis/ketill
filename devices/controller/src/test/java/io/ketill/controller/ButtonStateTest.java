@@ -4,38 +4,28 @@ import io.ketill.IoDeviceObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.controller.EventAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ButtonStateTest {
 
-    private ControllerButton button;
-    private Controller controller;
     private IoDeviceObserver observer;
     private ButtonStateZ internal;
     private ButtonState container;
 
-    private void verifyEmittedEvent(Class<?> type) {
-        verify(observer).onNext(argThat(matcher -> {
-            ControllerButtonEvent event = (ControllerButtonEvent) matcher;
-            return event.getController() == controller
-                    && event.getButton() == button
-                    && event.getClass().isAssignableFrom(type);
-        }));
-    }
-
     @BeforeEach
     void createState() {
-        this.button = new ControllerButton("button");
-
-        this.controller = mock(Controller.class);
+        Controller controller = mock(Controller.class);
         this.observer = mock(IoDeviceObserver.class);
         when(observer.getDevice()).thenReturn(controller);
 
+        ControllerButton button = new ControllerButton("button");
         this.internal = new ButtonStateZ(button, observer);
         this.container = new ButtonState(internal);
     }
 
+    @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
     void testIsPressed() {
         internal.pressed = true;
@@ -44,6 +34,7 @@ class ButtonStateTest {
         assertFalse(container.isPressed());
     }
 
+    @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
     void testIsHeld() {
         internal.held = true;
@@ -56,11 +47,11 @@ class ButtonStateTest {
     void testUpdate() {
         internal.pressed = true;
         internal.update(); /* trigger event emission */
-        verifyEmittedEvent(ControllerButtonPressEvent.class);
+        assertEmitted(observer, ControllerButtonPressEvent.class);
 
         internal.pressed = false; /* release trigger */
         internal.update(); /* trigger event emission */
-        verifyEmittedEvent(ControllerButtonReleaseEvent.class);
+        assertEmitted(observer, ControllerButtonReleaseEvent.class);
     }
 
 }

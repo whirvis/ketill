@@ -4,36 +4,24 @@ import io.ketill.IoDeviceObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.controller.EventAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.anyFloat;
 import static org.mockito.Mockito.*;
 
 class TriggerStateTest {
 
-    private AnalogTrigger trigger;
-    private AnalogTriggerCalibration calibration;
-    private Controller controller;
     private IoDeviceObserver observer;
+    private AnalogTriggerCalibration calibration;
     private TriggerStateZ internal;
     private TriggerState container;
 
-    private void verifyEmittedEvent(Class<?> type) {
-        verify(observer).onNext(argThat(matcher -> {
-            AnalogTriggerEvent event = (AnalogTriggerEvent) matcher;
-            return event.getController() == controller
-                    && event.getTrigger() == trigger
-                    && event.getClass().isAssignableFrom(type);
-        }));
-    }
-
     @BeforeEach
     void createState() {
-        this.trigger = new AnalogTrigger("trigger");
+        AnalogTrigger trigger = new AnalogTrigger("trigger");
         this.calibration = mock(AnalogTriggerCalibration.class);
         when(calibration.apply(anyFloat())).thenAnswer(answer -> answer.getArgument(0, Float.class));
 
-        this.controller = mock(Controller.class);
+        Controller controller = mock(Controller.class);
         this.observer = mock(IoDeviceObserver.class);
         when(observer.getDevice()).thenReturn(controller);
 
@@ -63,6 +51,7 @@ class TriggerStateTest {
         assertEquals(4.56F, container.getForce());
     }
 
+    @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
     void testIsPressed() {
         internal.pressed = true;
@@ -71,6 +60,7 @@ class TriggerStateTest {
         assertFalse(container.isPressed());
     }
 
+    @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
     void testIsHeld() {
         internal.held = true;
@@ -86,11 +76,11 @@ class TriggerStateTest {
 
         internal.force = 1.0F; /* press trigger */
         internal.update(); /* trigger event emission */
-        verifyEmittedEvent(AnalogTriggerPressEvent.class);
+        assertEmitted(observer, AnalogTriggerPressEvent.class);
 
         internal.force = 0.0F; /* release trigger */
         internal.update(); /* trigger event emission */
-        verifyEmittedEvent(AnalogTriggerReleaseEvent.class);
+        assertEmitted(observer, AnalogTriggerReleaseEvent.class);
     }
 
 }

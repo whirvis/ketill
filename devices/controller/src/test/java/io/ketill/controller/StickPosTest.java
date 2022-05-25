@@ -17,7 +17,8 @@ class StickPosTest {
     private StickPosZ internal;
     private StickPos container;
 
-    private void verifyEmittedPressEvent(Direction direction) {
+    /* @formatter:off */
+    private void assertEmittedPress(Direction direction) {
         verify(observer).onNext(argThat(matcher -> {
             if (!(matcher instanceof AnalogStickPressEvent)) {
                 return false;
@@ -28,6 +29,7 @@ class StickPosTest {
                     && event.getDirection() == direction;
         }));
     }
+    /* @formatter:on */
 
     @BeforeEach
     void createState() {
@@ -73,19 +75,19 @@ class StickPosTest {
 
         internal.pos.y = 1.0F; /* facing up */
         internal.update(); /* trigger event emission */
-        verifyEmittedPressEvent(Direction.UP);
+        assertEmittedPress(Direction.UP);
 
         internal.pos.y = -1.0F; /* facing down */
         internal.update(); /* trigger event emission */
-        verifyEmittedPressEvent(Direction.DOWN);
+        assertEmittedPress(Direction.DOWN);
 
         internal.pos.x = -1.0F; /* facing left */
         internal.update(); /* trigger event emission */
-        verifyEmittedPressEvent(Direction.LEFT);
+        assertEmittedPress(Direction.LEFT);
 
         internal.pos.x = 1.0F; /* facing right */
         internal.update(); /* trigger event emission */
-        verifyEmittedPressEvent(Direction.RIGHT);
+        assertEmittedPress(Direction.RIGHT);
     }
 
 }

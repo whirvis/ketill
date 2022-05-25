@@ -4,39 +4,30 @@ import io.ketill.IoDeviceObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.controller.EventAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ControllerButtonObserverTest {
 
-    private Controller controller;
     private IoDeviceObserver deviceObserver;
-    private ControllerButton button;
     private ButtonStateZ internalState;
     private ControllerButtonObserver buttonObserver;
 
-    private void verifyEmittedEvent(Class<?> type) {
-        verify(deviceObserver).onNext(argThat(matcher -> {
-            ControllerButtonEvent event = (ControllerButtonEvent) matcher;
-            return event.getController() == controller
-                    && event.getButton() == button
-                    && event.getClass().isAssignableFrom(type);
-        }));
-    }
-
     @BeforeEach
     void createObserver() {
-        this.controller = mock(Controller.class);
+        Controller controller = mock(Controller.class);
         this.deviceObserver = mock(IoDeviceObserver.class);
         when(deviceObserver.getDevice()).thenReturn(controller);
 
-        this.button = new ControllerButton("button");
+        ControllerButton button = new ControllerButton("button");
         this.internalState = button.getInternalState(deviceObserver);
 
         this.buttonObserver = new ControllerButtonObserver(button,
                 internalState, deviceObserver);
     }
 
+    @SuppressWarnings({"ConstantConditions", "UnusedAssignment"})
     @Test
     void testIsPressedImpl() {
         internalState.pressed = true;
@@ -48,33 +39,43 @@ class ControllerButtonObserverTest {
     @Test
     void testOnPress() {
         buttonObserver.onPress(); /* trigger event emission */
-        verifyEmittedEvent(ControllerButtonPressEvent.class);
+        assertEmitted(deviceObserver, ControllerButtonPressEvent.class);
     }
 
     @Test
     void testOnHold() {
         buttonObserver.onHold(); /* trigger event emission */
-        verifyEmittedEvent(ControllerButtonHoldEvent.class);
+        assertEmitted(deviceObserver, ControllerButtonHoldEvent.class);
     }
 
     @Test
     void testOnRelease() {
         buttonObserver.onRelease(); /* trigger event emission */
-        verifyEmittedEvent(ControllerButtonReleaseEvent.class);
+        assertEmitted(deviceObserver, ControllerButtonReleaseEvent.class);
     }
 
     @Test
     void testPoll() throws InterruptedException {
-
+        /* press button for next test */
         internalState.pressed = true;
-        buttonObserver.poll();
+        buttonObserver.poll(); /* observe press */
 
+        /*
+         * After a button has been pressed for a long enough time to be
+         * considered held down, the button state should be updated by
+         * the observer to indicate that is held down.
+         */
         Thread.sleep(buttonObserver.getConfig().getHoldTime());
-        buttonObserver.poll();
+        buttonObserver.poll(); /* trigger state update */
         assertTrue(internalState.held);
 
+        /*
+         * Once a button has been released (after being press down), the
+         * button state should be updated by the observer to indicate that
+         * it is also no longer held down.
+         */
         internalState.pressed = false;
-        buttonObserver.poll();
+        buttonObserver.poll(); /* trigger state update */
         assertFalse(internalState.held);
     }
 

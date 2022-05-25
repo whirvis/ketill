@@ -20,7 +20,7 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
      *                                  less than or equal to zero.
      */
     public PlayerLed(@NotNull String id, int ledCount) {
-        super(id, LedState::new);
+        super(Controller.class, id, LedState::new);
         if (ledCount <= 0) {
             throw new IllegalArgumentException("ledCount <= 0");
         }
