@@ -1,7 +1,6 @@
 package io.ketill.psx;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.controller.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
@@ -9,6 +8,7 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.Direction;
 import io.ketill.controller.StickPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,16 +77,20 @@ public abstract class PsxController extends Controller {
     /* @formatter:on */
 
     /**
+     * @param typeId          the PlayStation controller type ID.
+     * @param lt              the left analog trigger, may be {@code null}.
+     * @param rt              the right analog trigger, may be {@code null}.
      * @param adapterSupplier the PlayStation controller adapter supplier.
-     * @throws NullPointerException if {@code adapterSupplier} is
-     *                              {@code null}; if the adapter given by
+     * @throws NullPointerException if {@code typeId} or
+     *                              {@code adapterSupplier} are {@code null};
+     *                              if the adapter given by
      *                              {@code adapterSupplier} is {@code null}.
      */
-    public PsxController(@NotNull String id,
+    public PsxController(@NotNull String typeId,
                          @NotNull AdapterSupplier<?> adapterSupplier,
                          @Nullable AnalogTrigger lt,
                          @Nullable AnalogTrigger rt) {
-        super(id, adapterSupplier, STICK_LS, STICK_RS, lt, rt);
+        super(typeId, adapterSupplier, STICK_LS, STICK_RS, lt, rt);
     }
 
 }
