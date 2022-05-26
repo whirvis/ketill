@@ -28,6 +28,10 @@ public final class CursorStateZ implements AutonomousState {
             adapterCanSetPosition;
     /* @formatter:on */
 
+    /**
+     * This should be updated by the adapter to store the current position
+     * of the mouse cursor.
+     */
     public final @NotNull Vector2f currentPos;
 
     /**
