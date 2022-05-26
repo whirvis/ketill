@@ -1,7 +1,6 @@
 package io.ketill.pressable;
 
 import io.ketill.IoDevice;
-import io.ketill.IoDeviceEvent;
 import io.ketill.IoFeature;
 import io.ketill.IoFeatureEvent;
 import org.jetbrains.annotations.NotNull;
@@ -11,16 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class PressableIoFeatureEvent extends IoFeatureEvent {
 
-    /**
-     * Constructs a new {@code PressableIoFeatureEvent}.
-     *
-     * @param device  the device which emitted this event.
-     * @param feature the feature which triggered this event.
-     * @throws NullPointerException if {@code device} or {@code feature}
-     *                              are {@code null}.
-     */
-    public PressableIoFeatureEvent(@NotNull IoDevice device,
-                                   @NotNull IoFeature<?, ?> feature) {
+    PressableIoFeatureEvent(@NotNull IoDevice device,
+                            @NotNull IoFeature<?, ?> feature) {
         super(device, feature);
     }
 
