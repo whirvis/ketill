@@ -15,6 +15,8 @@ public final class PsxAmbiguityEvent extends IoDeviceSeekerEvent {
     private final boolean nowAmbiguous;
 
     /**
+     * Constructs a new {@code PsxAmbiguityEvent}.
+     *
      * @param seeker       the seeker which emitted this event.
      * @param nowAmbiguous {@code true} if there is now an ambiguity
      *                     between PlayStation controllers, {@code false}

@@ -77,6 +77,8 @@ public abstract class PsxController extends Controller {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code PsxController}.
+     *
      * @param typeId          the PlayStation controller type ID.
      * @param lt              the left analog trigger, may be {@code null}.
      * @param rt              the right analog trigger, may be {@code null}.

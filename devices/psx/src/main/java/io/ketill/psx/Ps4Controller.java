@@ -6,9 +6,9 @@ import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.TriggerState;
-import io.ketill.controller.MotorVibration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -65,6 +65,8 @@ public class Ps4Controller extends PsxController {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code Ps4Controller}.
+     *
      * @param adapterSupplier the PlayStation 4 controller adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by

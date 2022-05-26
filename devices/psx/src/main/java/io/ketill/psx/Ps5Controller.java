@@ -47,6 +47,8 @@ public class Ps5Controller extends PsxController {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code Ps5Controller}.
+     *
      * @param adapterSupplier the PlayStation 5 controller adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by

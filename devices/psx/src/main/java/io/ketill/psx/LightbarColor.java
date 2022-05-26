@@ -34,7 +34,7 @@ public final class LightbarColor {
 
     /**
      * To prevent unexpected behavior, the intensity of each color channel
-     * is capped between a value of {@code 0.0F} and {@code 1.0F}.
+     * is capped between {@code 0.0F} and {@code 1.0F}.
      *
      * @param red   the red channel intensity.
      * @param green the green channel intensity.
@@ -52,11 +52,10 @@ public final class LightbarColor {
 
     /**
      * To prevent unexpected behavior, the intensity of each color channel
-     * is capped between a value of {@code 0.0F} and {@code 1.0F}.
+     * is capped between {@code 0.0F} and {@code 1.0F}.
      * <p>
-     * This method is a shorthand for
-     * {@link #setColor(float, float, float, float)}, with the argument for
-     * {@code alpha} being {@code 1.0F}.
+     * <b>Shorthand for:</b> {@link #setColor(float, float, float, float)},
+     * with the argument for {@code alpha} being {@code 1.0F}.
      *
      * @param red   the red channel intensity.
      * @param green the green channel intensity.
@@ -83,8 +82,8 @@ public final class LightbarColor {
     }
 
     /**
-     * This method is a shorthand for {@link #setColor(int, boolean)}, with
-     * the argument for {@code rgba} being {@code rgb} and the argument for
+     * <b>Shorthand for:</b> {@link #setColor(int, boolean)}, with the
+     * argument for {@code rgba} being {@code rgb} and the argument for
      * {@code useAlpha} being {@code false}.
      *
      * @param rgb the RGB color value.
@@ -94,9 +93,9 @@ public final class LightbarColor {
     }
 
     /**
-     * This method is a shorthand for {@link #setColor(int, boolean)},
-     * with the argument for {@code rgba} being {@code color.getRGB()}
-     * and the argument {@code useAlpha} being {@code true}.
+     * <b>Shorthand for:</b> {@link #setColor(int, boolean)}, with the
+     * argument for {@code rgba} being {@code color.getRGB()} and the
+     * argument {@code useAlpha} being {@code true}.
      *
      * @param color the color value. A value of {@code null} is permitted,
      *              and will have the argument for {@code rgba} passed as

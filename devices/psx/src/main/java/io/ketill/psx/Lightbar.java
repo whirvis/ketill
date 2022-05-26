@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public final class Lightbar extends PlainIoFeature<LightbarColor> {
 
     /**
+     * Constructs a new {@code Lightbar}.
+     *
      * @param id the lightbar ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
