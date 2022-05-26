@@ -8,16 +8,67 @@ package io.ketill.controller;
  * feature type will be needed to instantiate it.
  *
  * @see #setNumber(int)
- * @see #setPattern(int)
+ * @see #setBitPattern(int)
  */
 public class LedState {
 
+    /**
+     * The default mode for LEDs. In this mode, the pattern is determined
+     * by a player number. For example, if {@link #getValue()} returns a
+     * value of {@code 3} in this mode, the LEDs on a controller should
+     * look like this:
+     * <pre>
+     *     /---------------\
+     *     | 1 | 2 | 3 | 4 |
+     *     |   |   | * |   |
+     *     \---------------/
+     * </pre>
+     * <p>
+     * <b>Note:</b> If the player number is higher than the LED count, the
+     * behavior is undefined. Included adapters (such as {@code hid-usb-psx}
+     * will follow an additive pattern in this scenario. For example, if
+     * {@link #getValue()} returns a value of {@code 5}:
+     * <pre>
+     *     /---------------\
+     *     | 1 | 2 | 3 | 4 |
+     *     | * |   |   | * |
+     *     \---------------/
+     * </pre>
+     * <p>
+     * Notice how both the first and fourth LED are activated here. Since
+     * {@code 4 + 1} is equal to {@code 5}, this represents player five.
+     * However, this is still limited by the LED count. Since the example
+     * above only has four LEDs, the maximum is {@code 15}.
+     */
     public static final int MODE_NUMBER = 0;
-    public static final int MODE_PATTERN = 1;
 
-    /* protected access for child classes */
-    protected int mode;
-    protected int value;
+    /**
+     * In this mode, the pattern is determined by the activated bits of the
+     * current value for the LED. For example, if {@link #getValue()} returns
+     * a value of {@code 6} in this mode, the LEDs on a controller should
+     * look like this:
+     * <pre>
+     *     /---------------\
+     *     | 1 | 2 | 3 | 4 |
+     *     |   | * |   | * |
+     *     \---------------/
+     * </pre>
+     * <p>
+     * Notice how the second and fourth LED are activated here. This is
+     * due to the fact that, in binary, {@code 6} is {@code 0101}. However,
+     * since the return type of {@link #getValue()} is {@code int}, this is
+     * limited to 32 LEDs.
+     */
+    public static final int MODE_BITWISE = 1;
+
+    /**
+     * Both {@code mode} and {@code value} are used by the adapter
+     * to determine how the LEDs should be set.
+     * <p>
+     * These are {@code protected} so child classes can add their
+     * own setters to modify them accordingly.
+     */
+    protected int mode, value;
 
     /**
      * @param number the initial player number.
@@ -56,7 +107,8 @@ public class LedState {
      * device being enabled or disabled depending on the player number.
      *
      * @param number the player number.
-     * @see #setPattern(int)
+     * @see #MODE_NUMBER
+     * @see #setBitPattern(int)
      */
     public void setNumber(int number) {
         this.mode = MODE_NUMBER;
@@ -69,10 +121,11 @@ public class LedState {
      * Bit 0 is LED 1, bit 1 is LED 2, and so on.
      *
      * @param pattern the bit pattern.
+     * @see #MODE_BITWISE
      * @see #setNumber(int)
      */
-    public void setPattern(int pattern) {
-        this.mode = MODE_PATTERN;
+    public void setBitPattern(int pattern) {
+        this.mode = MODE_BITWISE;
         this.value = pattern;
     }
 

@@ -32,10 +32,10 @@ class LedStateTest {
     }
 
     @Test
-    void testSetPattern() {
-        state.setPattern(0b1111);
+    void testSetBitPattern() {
+        state.setBitPattern(0b1111);
         assertEquals(0b1111, state.getValue());
-        assertEquals(LedState.MODE_PATTERN, state.getMode());
+        assertEquals(LedState.MODE_BITWISE, state.getMode());
     }
 
 }

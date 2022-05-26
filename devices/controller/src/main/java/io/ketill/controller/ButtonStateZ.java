@@ -10,8 +10,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class ButtonStateZ implements AutonomousState {
 
+    /**
+     * This should be updated by the adapter to indicate if the button
+     * is currently pressed.
+     */
     public boolean pressed;
 
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is updated automatically by the state.
+     *
+     * @see #pressed
+     */
     @AutonomousField
     public boolean held;
 
@@ -23,6 +33,10 @@ public final class ButtonStateZ implements AutonomousState {
                 observer);
     }
 
+    /**
+     * Constructs a new {@code ButtonStateZ} with no observer. This exists so
+     * other classes can easily store the state of a pressable feature.
+     */
     public ButtonStateZ() {
         this.buttonObserver = null;
     }

@@ -2,12 +2,39 @@ package io.ketill.controller;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Representations of the basic directions {@link #UP}, {@link #DOWN},
+ * {@link #LEFT}, and {@link #RIGHT}. These values are used by both
+ * {@link ControllerButton} and {@link AnalogStick}.
+ */
 public enum Direction {
 
-    UP(0), DOWN(1), LEFT(2), RIGHT(3);
+    /**
+     * The direction facing upward.<br>
+     * This is layman's terms for {@link #NORTH}.
+     */
+    UP(0),
 
     /**
-     * Aliases for {@link #UP}, {@link #DOWN}, {@link #LEFT}, and
+     * The direction facing downward.<br>
+     * This is layman's terms for {@link #SOUTH}.
+     */
+    DOWN(1),
+
+    /**
+     * The direction facing to the left.<br>
+     * This is layman's terms for {@link #WEST}.
+     */
+    LEFT(2),
+
+    /**
+     * The direction facing to the right.<br>
+     * This is layman's terms for {@link #EAST}.
+     */
+    RIGHT(3);
+
+    /**
+     * Cardinal aliases for {@link #UP}, {@link #DOWN}, {@link #LEFT}, and
      * {@link #RIGHT}.
      */
     /* @formatter:off */

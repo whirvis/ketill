@@ -12,14 +12,35 @@ import org.joml.Vector3f;
  */
 public final class StickPosZ implements AutonomousState {
 
+    /**
+     * This should be updated by the adapter to store the <i>raw</i>
+     * position of the analog stick.
+     */
     public final @NotNull Vector3f pos;
 
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is used by the state to apply calibration, and is set by
+     * the user of their own accord.
+     */
     @AutonomousField
     public @Nullable AnalogStickCalibration calibration;
 
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is updated automatically by the state.
+     *
+     * @see #pos
+     */
     @AutonomousField
     public final @NotNull Vector3f calibratedPos;
 
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is updated automatically by the state.
+     *
+     * @see #pos
+     */
     @AutonomousField
     public final @NotNull ButtonStateZ up, down, left, right;
 
