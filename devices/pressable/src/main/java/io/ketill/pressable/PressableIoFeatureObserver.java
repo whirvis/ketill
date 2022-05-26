@@ -29,8 +29,20 @@ import java.util.function.Supplier;
  */
 public abstract class PressableIoFeatureObserver<Z> implements Observer<PressableIoFeatureEvent> {
 
+    /**
+     * The feature being observed.
+     */
     protected final @NotNull IoFeature<Z, ?> feature;
+
+    /**
+     * The internal state of {@link #feature}. This should be used to
+     * implement methods like {@link #isPressedImpl()}.
+     */
     protected final @NotNull Z internalState;
+
+    /**
+     * The device which owns {@link #feature}.
+     */
     protected final @NotNull IoDevice device;
 
     private final IoDeviceObserver observer;
