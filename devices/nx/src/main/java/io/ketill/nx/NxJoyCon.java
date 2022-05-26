@@ -44,9 +44,11 @@ public abstract class NxJoyCon extends Controller {
     /* @formatter:on */
 
     /**
-     * This constructor is package-private so only this module can actually
-     * extend the class. The class is left public so users can generalize
-     * left and right Joy-Cons.
+     * Constructs a new {@code NxJoyCon}.
+     * <p>
+     * <b>Note:</b> This constructor is package-private so only this module
+     * can extend from this class. However, the class is kept public so users
+     * can generalize left and right Joy-Cons.
      *
      * @param id              the Joy-Con ID.
      * @param adapterSupplier the Joy-Con adapter supplier.

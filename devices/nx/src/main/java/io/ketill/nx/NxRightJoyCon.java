@@ -70,6 +70,8 @@ public class NxRightJoyCon extends NxJoyCon {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code NxRightJoyCon}.
+     *
      * @param adapterSupplier the right Joy-Con adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by

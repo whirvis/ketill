@@ -112,6 +112,8 @@ public class NxProController extends Controller {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code NxProController}.
+     *
      * @param adapterSupplier the Pro Controller adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by
