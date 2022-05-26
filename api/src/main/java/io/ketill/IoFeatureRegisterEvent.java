@@ -11,12 +11,6 @@ public final class IoFeatureRegisterEvent extends IoFeatureEvent {
 
     private final @NotNull RegisteredIoFeature<?, ?, ?> registered;
 
-    /**
-     * @param device     the device which emitted this event.
-     * @param registered the registration of the feature.
-     * @throws NullPointerException if {@code device} or {@code feature}
-     *                              are {@code null}.
-     */
     IoFeatureRegisterEvent(@NotNull IoDevice device,
                            @NotNull RegisteredIoFeature<?, ?, ?> registered) {
         super(device, registered.feature);

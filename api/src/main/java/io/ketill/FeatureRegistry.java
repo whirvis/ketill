@@ -5,6 +5,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * This interface is package private as it exists only to ensure that both
+ * {@link IoDevice} and {@link MappedFeatureRegistry} implement the same
+ * methods.
+ */
 interface FeatureRegistry {
 
     /**

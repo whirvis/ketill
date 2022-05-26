@@ -9,10 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoDeviceDisconnectEvent extends IoDeviceEvent {
 
-    /**
-     * @param device the device which emitted this event.
-     * @throws NullPointerException if {@code device} is {@code null}.
-     */
     IoDeviceDisconnectEvent(@NotNull IoDevice device) {
         super(device);
     }

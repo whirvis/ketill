@@ -25,6 +25,8 @@ public abstract class ContainerState<Z> {
     protected final @NotNull Z internalState;
 
     /**
+     * Constructs a new {@code ContainerState}.
+     *
      * @param internalState the internal state.
      * @throws NullPointerException if {@code internalState} is {@code null}.
      */

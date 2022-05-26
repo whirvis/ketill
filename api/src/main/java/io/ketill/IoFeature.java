@@ -29,6 +29,8 @@ public abstract class IoFeature<Z, S> {
     private final @NotNull String id;
 
     /**
+     * Constructs a new {@code IoFeature}.
+     *
      * @param deviceType the type an {@link IoDevice} must be for it to
      *                   create an instance of this feature's state.
      * @param id         the feature ID.
@@ -50,8 +52,8 @@ public abstract class IoFeature<Z, S> {
     }
 
     /**
-     * Constructs a new {@code IoFeature} which can be registered by any type
-     * of {@link IoDevice}.
+     * Constructs a new {@code IoFeature} which can be registered by any
+     * type of {@link IoDevice}.
      *
      * @param id the feature ID.
      * @throws NullPointerException     if {@code id} is {@code null}.

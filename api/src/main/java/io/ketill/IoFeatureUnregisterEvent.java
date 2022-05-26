@@ -9,12 +9,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoFeatureUnregisterEvent extends IoFeatureEvent {
 
-    /**
-     * @param device  the device which emitted this event.
-     * @param feature the feature which was unregistered.
-     * @throws NullPointerException if {@code device} or {@code feature}
-     *                              are {@code null}.
-     */
     IoFeatureUnregisterEvent(@NotNull IoDevice device,
                              @NotNull IoFeature<?, ?> feature) {
         super(device, feature);

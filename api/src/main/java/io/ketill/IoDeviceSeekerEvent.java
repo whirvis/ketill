@@ -12,6 +12,8 @@ public abstract class IoDeviceSeekerEvent {
     private final @NotNull IoDeviceSeeker<?> seeker;
 
     /**
+     * Constructs a new {@code IoDeviceSeekerEvent}.
+     *
      * @param seeker the seeker which emitted this event.
      * @throws NullPointerException if {@code seeker} is {@code null}.
      */

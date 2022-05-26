@@ -32,6 +32,10 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     }
 
     /**
+     * <b>Note:</b> A feature can be mapped without being registered. This
+     * allows for an adapter to support a feature without being registered
+     * to the device.
+     *
      * @param feature the feature to check.
      * @return {@code true} if {@code feature} has an associated mapping,
      * {@code false} otherwise.
@@ -46,6 +50,10 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * Maps a feature to a state updater. Each time {@link #updateFeatures()}
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
+     * <p>
+     * <b>Note:</b> A feature can be mapped without being registered. This
+     * allows for an adapter to support a feature without being registered
+     * to the device.
      *
      * @param feature the feature to map.
      * @param params  the params to map the feature by. Depending on the
@@ -75,7 +83,11 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
      * <p>
-     * This method is a shorthand for
+     * <b>Note:</b> A feature can be mapped without being registered. This
+     * allows for an adapter to support a feature without being registered
+     * to the device.
+     * <p>
+     * <b>Shorthand for:</b>
      * {@link #mapFeature(IoFeature, Object, StateUpdater)}, with the
      * argument for {@code params} being {@code feature}.
      *
@@ -100,10 +112,14 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
      * is called, every feature with a mapping will have their state updated
      * by their assigned state updater (assuming they have one.)
      * <p>
-     * This method is a shorthand for
-     * {@link #mapFeature(IoFeature, Object, StateUpdater)}, which
-     * passes {@code params} as {@code null} and converts {@code updater}
-     * to an instance of {@link StateUpdater}.
+     * <b>Note:</b> A feature can be mapped without being registered. This
+     * allows for an adapter to support a feature without being registered
+     * to the device.
+     * <p>
+     * <b>Shorthand for:</b>
+     * {@link #mapFeature(IoFeature, Object, StateUpdater)}, which passes
+     * {@code params} as {@code null} and converts {@code updater} to an
+     * instance of {@link StateUpdater}.
      *
      * @param feature the feature to map.
      * @param updater the method to call when updating the state.
@@ -124,6 +140,9 @@ public final class MappedFeatureRegistry implements FeatureRegistry {
     /* @formatter:on */
 
     /**
+     * Unmaps a feature from its current state updater. If the feature was
+     * not previously mapped, this method does nothing.
+     *
      * @param feature the feature to unmap.
      * @return {@code true} if {@code feature} was unmapped from its mapping,
      * {@code false} otherwise.

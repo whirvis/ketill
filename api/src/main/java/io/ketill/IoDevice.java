@@ -56,6 +56,8 @@ public abstract class IoDevice implements FeatureRegistry {
     private boolean connected;
 
     /**
+     * Constructs a new {@code IoDevice}.
+     *
      * @param typeId          the device type ID.
      * @param adapterSupplier the device adapter supplier.
      * @param registerFields  {@code true} if the constructor should call
@@ -116,8 +118,9 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * This is a shorthand for the base constructor with the argument for
-     * {@code registerFields} and {@code initAdapter} being {@code true}.
+     * Constructs a new {@code IoDevice}, automatically registers all fields
+     * marked with the {@link FeaturePresent} annotation, and initializes the
+     * adapter.
      *
      * @param typeId          the device type ID.
      * @param adapterSupplier the device adapter supplier.
@@ -133,6 +136,10 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
+     * Two instances of the same class extending {@code IoDevice} should
+     * share an identical type ID. For example, two XBOX controllers would
+     * both have the type ID {@code "xbox"}.
+     *
      * @return the type ID of this device.
      */
     public final @NotNull String getTypeId() {
@@ -464,8 +471,8 @@ public abstract class IoDevice implements FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * Called when a feature is registered. This will be called before
-     * the corresponding event is emitted to subscribers.
+     * Called when a feature is registered. This will be called before the
+     * corresponding event is emitted to subscribers.
      *
      * @param registered the registered feature.
      * @see #getInternalState(IoFeature)
@@ -475,6 +482,8 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
+     * {@inheritDoc}
+     * <p>
      * @see #featureUnregistered(IoFeature)
      */
     @Override

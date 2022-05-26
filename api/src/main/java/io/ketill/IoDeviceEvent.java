@@ -12,6 +12,8 @@ public abstract class IoDeviceEvent {
     private final @NotNull IoDevice device;
 
     /**
+     * Constructs a new {@code IoDeviceEvent}.
+     *
      * @param device the device which emitted this event.
      * @throws NullPointerException if {@code device} is {@code null}.
      */

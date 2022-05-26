@@ -20,6 +20,8 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     private final @NotNull InitialStateSupplier<@NotNull S> supplier;
 
     /**
+     * Constructs a new {@code PlainIoFeature}.
+     * <p>
      * <b>Note:</b> The state cannot implement {@link AutonomousState} or
      * extend {@link ContainerState} as it is both the internal state and
      * container state.
@@ -42,8 +44,8 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     }
 
     /**
-     * Constructs a new {@code PlainIoFeature} which can be registered by any
-     * type of {@link IoDevice}.
+     * Constructs a new {@code PlainIoFeature} which can be registered by
+     * any type of {@link IoDevice}.
      * <p>
      * <b>Note:</b> The state cannot implement {@link AutonomousState} or
      * extend {@link ContainerState} as it is both the internal state and
@@ -62,6 +64,8 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     }
 
     /**
+     * Constructs a new {@code PlainIoFeature}.
+     * <p>
      * <b>Note:</b> The state cannot implement {@link AutonomousState} or
      * extend {@link ContainerState} as it is both the internal state and
      * container state.
@@ -81,8 +85,8 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     }
 
     /**
-     * Constructs a new {@code PlainIoFeature} which can be registered by any
-     * type of {@link IoDevice}.
+     * Constructs a new {@code PlainIoFeature} which can be registered by
+     * any type of {@link IoDevice}.
      * <p>
      * <b>Note:</b> The state cannot implement {@link AutonomousState} or
      * extend {@link ContainerState} as it is both the internal state and

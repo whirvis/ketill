@@ -12,6 +12,8 @@ public abstract class IoFeatureEvent extends IoDeviceEvent {
     private final IoFeature<?, ?> feature;
 
     /**
+     * Constructs a new {@code IoFeatureEvent}.
+     *
      * @param device  the device which emitted this event.
      * @param feature the feature which triggered this event.
      * @throws NullPointerException if {@code device} or {@code feature}
