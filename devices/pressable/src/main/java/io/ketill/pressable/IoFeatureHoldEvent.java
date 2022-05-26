@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public class IoFeatureHoldEvent extends PressableIoFeatureEvent {
 
     /**
+     * Constructs a new {@code IoFeatureHoldEvent}.
+     *
      * @param device  the device which emitted this event.
      * @param feature the feature which triggered this event.
      * @throws NullPointerException if {@code device} or {@code feature}

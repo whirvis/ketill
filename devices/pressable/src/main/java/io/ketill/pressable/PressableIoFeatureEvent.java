@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class PressableIoFeatureEvent extends IoFeatureEvent {
 
     /**
+     * Constructs a new {@code PressableIoFeatureEvent}.
+     *
      * @param device  the device which emitted this event.
      * @param feature the feature which triggered this event.
      * @throws NullPointerException if {@code device} or {@code feature}

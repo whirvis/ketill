@@ -53,6 +53,8 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
     private long lastPressTime;
 
     /**
+     * Constructs a new {@code PressableIoFeatureObserver}.
+     * <p>
      * Take note that {@code feature}, {@code internalState}, and the device
      * of {@code observer} are accessible as fields to extending classes. To
      * emit events, use {@link #onNext(PressableIoFeatureEvent)}.

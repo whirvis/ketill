@@ -36,6 +36,8 @@ public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
     private long holdPressInterval;
 
     /**
+     * Constructs a new {@code PressableIoFeatureConfig}.
+     *
      * @param holdTime          how long in milliseconds a feature must
      *                          be pressed to be considered held down.
      *                          A negative value will disable holding
