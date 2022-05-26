@@ -18,6 +18,9 @@ public final class LightbarColor {
 
     private final Vector4f vector;
 
+    /**
+     * Constructs a new {@code LightbarColor}.
+     */
     public LightbarColor() {
         this.vector = new Vector4f();
     }
