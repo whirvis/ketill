@@ -2,9 +2,12 @@ package io.ketill.xinput;
 
 import com.github.strikerx3.jxinput.natives.XInputNatives;
 
+/**
+ * Used to check the availability of X-input.
+ *
+ * @see #isAvailable()
+ */
 public class XInputStatus {
-
-    private static final boolean AVAILABLE = XInputNatives.isLoaded();
 
     /**
      * Since X-input may not be available on the current system, it is
@@ -15,11 +18,11 @@ public class XInputStatus {
      * {@code false} otherwise.
      */
     public static boolean isAvailable() {
-        return AVAILABLE;
+        return XInputNatives.isLoaded();
     }
 
-    protected static void requireAvailable() {
-        if (!AVAILABLE) {
+    static void requireAvailable() {
+        if (!isAvailable()) {
             throw new XInputException("X-input is not available");
         }
     }

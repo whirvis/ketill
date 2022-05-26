@@ -3,6 +3,10 @@ package io.ketill.xinput;
 import io.ketill.KetillException;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Signals that an error relating to the X-input adapter for Ketill has
+ * occurred.
+ */
 @SuppressWarnings("unused")
 public class XInputException extends KetillException {
 

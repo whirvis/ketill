@@ -25,6 +25,9 @@ import java.util.Objects;
 
 import static io.ketill.xbox.XboxController.*;
 
+/**
+ * An {@link XboxController} adapter using X-input.
+ */
 public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
 
     private static final int RUMBLE_MIN = 0x0000;

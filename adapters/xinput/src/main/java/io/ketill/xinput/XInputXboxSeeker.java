@@ -7,6 +7,9 @@ import com.github.strikerx3.jxinput.natives.XInputConstants;
 import io.ketill.IoDeviceSeeker;
 import io.ketill.xbox.XboxController;
 
+/**
+ * An {@link XboxController} seeker using X-input.
+ */
 public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
 
     private final XboxController[] controllers;
