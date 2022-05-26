@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class contains special assertions specifically for testing Ketill.
+ */
 public class KetillAssertions {
 
     /**
