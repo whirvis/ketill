@@ -91,6 +91,8 @@ public class XboxController extends Controller {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code XboxController}.
+     *
      * @param adapterSupplier the XBOX controller adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by
