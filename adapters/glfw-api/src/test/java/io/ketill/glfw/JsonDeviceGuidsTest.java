@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JsonDeviceGuidsTest {
 
     private static InputStream getResource(String path) throws IOException {
-        String fullPath = "/json_device_guids/" + path;
+        String fullPath = "/io/ketill/glfw/" + path;
         URL url = JsonDeviceGuidsTest.class.getResource(fullPath);
         if (url == null) {
             throw new IOException("no such resource " + fullPath);
@@ -37,10 +37,9 @@ class JsonDeviceGuidsTest {
     }
 
     private static DeviceGuids loadValid() throws IOException {
-        InputStream in = getResource("valid.json");
-        DeviceGuids guids = JsonDeviceGuids.load(in);
-        in.close(); /* cleanup resource */
-        return guids;
+        /* use loadResource() here for coverage */
+        String path = "/io/ketill/glfw/valid.json";
+        return JsonDeviceGuids.loadResource(path);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -184,10 +183,7 @@ class JsonDeviceGuidsTest {
         assertThrows(IOException.class, () -> JsonDeviceGuids.loadResource(
                 "not_exist.json"));
 
-        assertDoesNotThrow(() -> {
-            String validPath = "/json_device_guids/valid.json";
-            JsonDeviceGuids.loadResource(validPath);
-        });
+        assertDoesNotThrow(JsonDeviceGuidsTest::loadValid);
     }
 
     @Test

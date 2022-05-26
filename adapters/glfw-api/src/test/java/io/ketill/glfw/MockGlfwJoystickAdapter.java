@@ -1,15 +1,15 @@
 package io.ketill.glfw;
 
-import io.ketill.IoDevice;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.Controller;
 import org.jetbrains.annotations.NotNull;
 
-class MockGlfwJoystickAdapter extends GlfwJoystickAdapter<IoDevice> {
+class MockGlfwJoystickAdapter extends GlfwJoystickAdapter<Controller> {
 
-    public MockGlfwJoystickAdapter(@NotNull IoDevice device,
+    public MockGlfwJoystickAdapter(@NotNull Controller controller,
                                    @NotNull MappedFeatureRegistry registry,
                                    long ptr_glfwWindow, int glfwJoystick) {
-        super(device, registry, ptr_glfwWindow, glfwJoystick);
+        super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
     @Override

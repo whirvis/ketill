@@ -3,8 +3,6 @@ package io.ketill.glfw;
 import io.ketill.IoDevice;
 import io.ketill.IoDeviceSeeker;
 
-import java.util.function.BiConsumer;
-
 /**
  * GLFW device seekers scan for I/O devices currently connected to a
  * GLFW window. When a device is connected to the window, the appropriate
@@ -21,15 +19,18 @@ import java.util.function.BiConsumer;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(BiConsumer)
- * @see #onForgetDevice(BiConsumer)
- * @see #onSeekError(BiConsumer)
  * @see GlfwDeviceAdapter
  * @see GlfwJoystickSeeker
  */
 public abstract class GlfwDeviceSeeker<I extends IoDevice>
         extends IoDeviceSeeker<I> {
 
+    /**
+     * The pointer to the GLFW window that this seeker interfaces with.
+     * <p>
+     * This field is {@code protected} so it is visible to child classes.
+     * This allows them to interface with the GLFW window directly.
+     */
     protected final long ptr_glfwWindow;
 
     /**

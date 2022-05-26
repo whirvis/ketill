@@ -1,6 +1,8 @@
 package io.ketill.glfw;
 
 import io.ketill.IoDevice;
+import io.ketill.IoDeviceDiscoverEvent;
+import io.ketill.IoDeviceForgetEvent;
 import io.ketill.KetillException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -65,15 +67,6 @@ class GlfwJoystickSeekerTest {
                 () -> new MockGlfwJoystickSeeker(0x00));
 
         /*
-         * The classes constructed below use the @RelativeGuidPath annotation
-         * incorrectly. As such, they should both throw an exception.
-         */
-        assertThrows(KetillException.class, () -> new MockGlfwJoystickSeeker
-                .WithInvalidPath0(ptr_glfwWindow));
-        assertThrows(KetillException.class, () -> new MockGlfwJoystickSeeker
-                .WithInvalidPath1(ptr_glfwWindow));
-
-        /*
          * It makes no sense for the device type of GLFW joystick seeker to
          * be a null class. Assume this was a mistake by the user and throw
          * an exception.
@@ -93,38 +86,27 @@ class GlfwJoystickSeekerTest {
                 () -> seeker.loadJsonGuids(null));
 
         /*
-         * There are no files located at io/ketill/glfw/ in the classpath.
-         * The class also has no @RelativeGuidPath to redirect the base.
-         * As such, this file should fail to load.
+         * There is no such filed named /io/ketill/glfw/missing.json
+         * in the classpath. As such, this file should fail to load.
          */
         assertThrows(KetillException.class,
-                () -> seeker.loadJsonGuids("valid.json"));
-
-        MockGlfwJoystickSeeker relative = new MockGlfwJoystickSeeker
-                .WithRelativePath(ptr_glfwWindow);
-
-        /* ensure correct value for root path */
-        assertEquals("/", RelativeGuidPath.ROOT);
-
-        /*
-         * To test the  @RelativeGuidPath annotation, load the same file
-         * from a GlfwJoystickSeeker which uses the annotation. It has set
-         * the relative path to the folder containing the file loaded via
-         * absolute path. As such, their contents should match exactly.
-         */
-        Collection<String> guidsViaAbs =
-                seeker.loadJsonGuids("/json_device_guids/valid.json");
-        Collection<String> guidsViaRelative =
-                relative.loadJsonGuids("valid.json");
-        assertIterableEquals(guidsViaAbs, guidsViaRelative);
+                () -> seeker.loadJsonGuids("missing.json"));
 
         /*
          * This file loads successfully, however there are no known systems
          * in this container. An exception must be thrown when this occurs,
          * as it means there won't be any GUIDs to wrangle for a joystick.
+         * An absolute path is used here to ensure absolute paths work.
          */
-        assertThrows(KetillException.class, () -> seeker.loadJsonGuids(
-                "/json_device_guids/alien_system.json"));
+        assertThrows(KetillException.class,
+                () -> seeker.loadJsonGuids("alien_system.json"));
+
+        /*
+         * The test below ensures that both valid JSON GUIDs files load
+         * successfully, and that using an absolute path is functional.
+         */
+        String absolutePath = "/io/ketill/glfw/valid.json";
+        assertDoesNotThrow(() -> seeker.loadJsonGuids(absolutePath));
     }
 
     @Test
@@ -185,8 +167,8 @@ class GlfwJoystickSeekerTest {
                 () -> seeker.wrangleGuids(guids, null));
 
         AtomicBoolean wrangled = new AtomicBoolean();
-        seeker.onWrangleGuid((s, g, w) ->
-                wrangled.set(g.equals(guid) && w == wrangler));
+        seeker.subscribeEvents(WrangleGuidEvent.class,
+                event -> wrangled.set(guid.equals(event.getGuid())));
 
         /* use wrangleGuids() here for full coverage */
         seeker.wrangleGuids(guids, wrangler);
@@ -205,12 +187,6 @@ class GlfwJoystickSeekerTest {
         assertFalse(wrangled.get());
         assertFalse(seeker.wrangledGuid);
 
-        /*
-         * A null value is allowed when setting a callback. This should have
-         * the effect of removing the callback.
-         */
-        assertDoesNotThrow(() -> seeker.onWrangleGuid(null));
-
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             glfw.when(() -> glfwGetJoystickGUID(glfwJoystick))
                     .thenReturn(guid);
@@ -225,7 +201,8 @@ class GlfwJoystickSeekerTest {
             assertThrows(KetillException.class, seeker::seek);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
+            seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
+                    event -> discovered.set(event.getDevice() == device));
 
             /*
              * Now that a valid wrangler has been registered, the device
@@ -236,10 +213,12 @@ class GlfwJoystickSeekerTest {
             assertTrue(discovered.get());
 
             AtomicBoolean released = new AtomicBoolean();
-            seeker.onReleaseGuid((s, g, w) -> released.set(g.equals(guid)));
+            seeker.subscribeEvents(ReleaseGuidEvent.class,
+                    event -> released.set(guid.equals(event.getGuid())));
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
+            seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                    event -> forgot.set(event.getDevice() == device));
 
             /*
              * When the wrangler for a GUID is re-assigned, the GUID in
@@ -278,11 +257,12 @@ class GlfwJoystickSeekerTest {
             seeker.seek();
 
             AtomicBoolean released = new AtomicBoolean();
-            seeker.onReleaseGuid((s, g, w) ->
-                    released.set(g.equals(guid) && w == wrangler));
+            seeker.subscribeEvents(ReleaseGuidEvent.class,
+                    event -> released.set(guid.equals(event.getGuid())));
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
+            seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                    event -> forgot.set(event.getDevice() == device));
 
             /*
              * When a GUID is released, the seeker must forget all currently
@@ -307,12 +287,6 @@ class GlfwJoystickSeekerTest {
             assertFalse(released.get());
             assertFalse(seeker.releasedGuid);
         }
-
-        /*
-         * A null value is allowed when setting a callback. This should have
-         * the effect of removing the callback.
-         */
-        assertDoesNotThrow(() -> seeker.onReleaseGuid(null));
     }
 
     @Test
@@ -322,7 +296,8 @@ class GlfwJoystickSeekerTest {
             seeker.wrangleGuid(guid, wrangler);
 
             AtomicBoolean discovered = new AtomicBoolean();
-            seeker.onDiscoverDevice((s, d) -> discovered.set(d == device));
+            seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
+                    event -> discovered.set(event.getDevice() == device));
 
             /*
              * When the GUID for a joystick is not equal to null, that means
@@ -335,7 +310,8 @@ class GlfwJoystickSeekerTest {
             assertTrue(discovered.get());
 
             AtomicBoolean forgot = new AtomicBoolean();
-            seeker.onForgetDevice((s, d) -> forgot.set(d == device));
+            seeker.subscribeEvents(IoDeviceForgetEvent.class,
+                    event -> forgot.set(event.getDevice() == device));
 
             /*
              * When the GUID for a joystick is equal to null, that means

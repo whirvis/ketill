@@ -24,6 +24,9 @@ import java.util.Objects;
  */
 public abstract class DeviceGuids {
 
+    /**
+     * System IDs for the operating systems supported by default.
+     */
     /* @formatter:off */
     public static final @NotNull String
             ID_WINDOWS = "windows",
@@ -175,6 +178,15 @@ public abstract class DeviceGuids {
         return systems.remove(systemId) != null;
     }
 
+    /**
+     * Implementation for {@link #getGuids(String)}. The returned collection
+     * will be wrapped so that it is unmodifiable by the caller.
+     *
+     * @param systemId the operating system ID.
+     * @return the GUIDs for the device when running on an OS with the
+     * specified ID. If no such set of GUIDs exists, then this method
+     * should return {@code null} (<i>not</i> an empty collection).
+     */
     /* @formatter:off */
     protected abstract @Nullable Collection<@NotNull String>
             getGuidsImpl(@NotNull String systemId);

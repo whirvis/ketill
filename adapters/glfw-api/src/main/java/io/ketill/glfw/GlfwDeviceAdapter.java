@@ -18,6 +18,12 @@ import org.jetbrains.annotations.NotNull;
 public abstract class GlfwDeviceAdapter<I extends IoDevice>
         extends IoDeviceAdapter<I> {
 
+    /**
+     * The pointer to the GLFW window that this adapter interfaces with.
+     * <p>
+     * This field is {@code protected} so it is visible to child classes.
+     * This allows them to interface with the GLFW window directly.
+     */
     protected final long ptr_glfwWindow;
 
     /**

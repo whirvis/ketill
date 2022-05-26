@@ -4,7 +4,6 @@ import io.ketill.IoDevice;
 import io.ketill.KetillException;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -13,10 +12,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import static org.lwjgl.glfw.GLFW.*;
-
 
 /**
  * GLFW joysticks seekers scan for I/O devices currently connected to a
@@ -35,10 +32,6 @@ import static org.lwjgl.glfw.GLFW.*;
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see #onDiscoverDevice(BiConsumer)
- * @see #onForgetDevice(BiConsumer)
- * @see #onSeekError(BiConsumer)
- * @see RelativeGuidPath
  * @see JsonDeviceGuids
  * @see GlfwJoystickAdapter
  */
@@ -48,51 +41,26 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
     private static String getGuidResourcePath(Class<?> clazz) {
-        String path;
-
-        /*
-         * Always return via the "path" variable, as it provides checks even
-         * for default values. This is done as unit testing failed to catch
-         * a bug caused by typo, which was left unchecked.
-         */
-        RelativeGuidPath guidResourcePath =
-                clazz.getAnnotation(RelativeGuidPath.class);
-        if (guidResourcePath != null) {
-            path = guidResourcePath.value();
-        } else {
-            String packageName = clazz.getPackage().getName();
-            path = "/" + packageName.replaceAll("\\.", "/") + "/";
-        }
-
-        if (!path.startsWith("/") || !path.endsWith("/")) {
-            String msg = "@" + RelativeGuidPath.class.getSimpleName();
-            msg += " value must start and end with a forward slash (\"/\")";
-            throw new KetillException(msg);
-        }
-
-        return path;
+        String packageName = clazz.getPackage().getName();
+        return "/" + packageName.replaceAll("\\.", "/") + "/";
     }
 
     private final I[] joysticks;
     private final @NotNull Map<String, GlfwJoystickWrangler<I>> wranglers;
-    private final @NotNull String guidResourcePath;
-
-    private @Nullable GuidCallback wrangleGuidCallback;
-    private @Nullable GuidCallback releaseGuidCallback;
+    private final String guidResourcePath;
 
     /**
      * @param type           the GLFW joystick I/O device type.
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code type} is {@code null};
-     *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
-     * @see #loadJsonGuids(String)
+     * @throws NullPointerException if {@code type} is {@code null};
+     *                              if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
     @SuppressWarnings("unchecked")
     public GlfwJoystickSeeker(@NotNull Class<I> type, long ptr_glfwWindow) {
         super(ptr_glfwWindow);
-        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(type, "type cannot be null");
 
         this.joysticks = (I[]) Array.newInstance(type, JOYSTICK_COUNT);
         this.wranglers = new HashMap<>();
@@ -100,12 +68,14 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     }
 
     /**
-     * The argument for {@code path} can be either relative or absolute.
+     * Loads a JSON GUID file from the classpath and wrangles the stored
+     * GUIDs for the current operating system. Note that the argument for
+     * {@code path} can be either relative or absolute.
      * <p>
-     * When {@code path} starts with {@code "/"}, it is treated as
-     * absolute. Otherwise, it is treated as a relative path. When
-     * the path is relative, it starts from the location of this
-     * seeker's class (the package it resides in).
+     * <b>Note:</b> When {@code path} starts with {@code "/"}, it is treated
+     * as absolute. Otherwise, it is treated as a relative path. When the
+     * path is relative, it starts from the location of this seeker's class
+     * (the package that it resides in).
      *
      * @param path the path of the JSON file.
      * @return the loaded device GUIDs for the current system.
@@ -113,11 +83,10 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @throws KetillException      if an I/O error occurs; if no GUIDs
      *                              exist  for the current OS within the
      *                              loaded JSON file.
-     * @see RelativeGuidPath
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
     protected final @NotNull Collection<String> loadJsonGuids(@NotNull String path) {
-        Objects.requireNonNull(path, "path");
+        Objects.requireNonNull(path, "path cannot be null");
         try {
             String fullPath = path;
             if (!path.startsWith("/")) {
@@ -137,36 +106,6 @@ public class GlfwJoystickSeeker<I extends IoDevice>
     }
 
     /**
-     * Sets the callback for when this seeker begins wrangling a GUID.
-     * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event
-     * should override {@link #guidWrangled(String, GlfwJoystickWrangler)}.
-     * The callback is for users.
-     *
-     * @param callback the code to execute when a GUID is wrangled. A
-     *                 value of {@code null} is permitted, and will
-     *                 result in nothing being executed.
-     */
-    public final void onWrangleGuid(@Nullable GuidCallback callback) {
-        this.wrangleGuidCallback = callback;
-    }
-
-    /**
-     * Sets the callback for when this seeker releases a GUID.
-     * <p>
-     * <b>Note:</b> Extending classes wishing to listen for this event
-     * should override {@link #guidReleased(String, GlfwJoystickWrangler)}.
-     * The callback is for users.
-     *
-     * @param callback the code to execute when a GUID is released. A
-     *                 value of {@code null} is permitted, and will
-     *                 result in nothing being executed.
-     */
-    public final void onReleaseGuid(@Nullable GuidCallback callback) {
-        this.releaseGuidCallback = callback;
-    }
-
-    /**
      * @param guid the joystick GUID, case-sensitive.
      * @return {@code true} if this device seeker is wrangling joysticks
      * with the specified GUID, {@code false} otherwise.
@@ -174,7 +113,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @see #isWranglingWith(String, GlfwJoystickWrangler)
      */
     public final boolean isWrangling(@NotNull String guid) {
-        Objects.requireNonNull(guid, "guid");
+        Objects.requireNonNull(guid, "guid cannot be null");
         return wranglers.containsKey(guid);
     }
 
@@ -189,8 +128,8 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      */
     public final boolean isWranglingWith(@NotNull String guid,
                                          @NotNull GlfwJoystickWrangler<I> wrangler) {
-        Objects.requireNonNull(guid, "guid");
-        Objects.requireNonNull(wrangler, "wrangler");
+        Objects.requireNonNull(guid, "guid cannot be null");
+        Objects.requireNonNull(wrangler, "wrangler cannot be null");
         return wranglers.get(guid) == wrangler;
     }
 
@@ -208,14 +147,13 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @param wrangler the joystick wrangler.
      * @throws NullPointerException if {@code guid} or {@code wrangler}
      *                              are {@code null}.
-     * @see #onWrangleGuid(GuidCallback)
      * @see #releaseGuid(String)
      * @see WranglerMethod
      */
     protected final void wrangleGuid(@NotNull String guid,
                                      @NotNull GlfwJoystickWrangler<I> wrangler) {
-        Objects.requireNonNull(guid, "guid");
-        Objects.requireNonNull(wrangler, "wrangler");
+        Objects.requireNonNull(guid, "guid cannot be null");
+        Objects.requireNonNull(wrangler, "wrangler cannot be null");
 
         /*
          * Not checking for the current wrangler assigned to GUID would lead
@@ -234,9 +172,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
 
         wranglers.put(guid, wrangler);
         this.guidWrangled(guid, wrangler);
-        if (wrangleGuidCallback != null) {
-            wrangleGuidCallback.execute(this, guid, wrangler);
-        }
+        observer.onNext(new WrangleGuidEvent(this, guid, wrangler));
     }
 
     /**
@@ -258,13 +194,12 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @throws NullPointerException if {@code guids} or {@code wrangler}
      *                              are {@code null}; if an element of
      *                              {@code guids} is {@code null}.
-     * @see #onWrangleGuid(GuidCallback)
      * @see #releaseGuids(Collection)
      * @see WranglerMethod
      */
     protected final void wrangleGuids(@NotNull Iterable<@NotNull String> guids,
                                       @NotNull GlfwJoystickWrangler<I> wrangler) {
-        Objects.requireNonNull(guids, "guids");
+        Objects.requireNonNull(guids, "guids cannot be null");
         for (String guid : guids) {
             this.wrangleGuid(guid, wrangler);
         }
@@ -292,11 +227,10 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @throws NullPointerException if {@code toRelease} is {@code null};
      *                              if an element of {@code toRelease} is
      *                              {@code null}.
-     * @see #onReleaseGuid(GuidCallback)
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
     protected final void releaseGuids(@NotNull Collection<@NotNull String> toRelease) {
-        Objects.requireNonNull(toRelease, "toRelease");
+        Objects.requireNonNull(toRelease, "toRelease cannot be null");
 
         /*
          * Since access to the joysticks array is not synchronized, the
@@ -309,13 +243,11 @@ public class GlfwJoystickSeeker<I extends IoDevice>
          * will not be rediscovered by seekImpl().
          */
         for (String guid : toRelease) {
-            Objects.requireNonNull(guid, "guid");
+            Objects.requireNonNull(guid, "guid cannot be null");
             GlfwJoystickWrangler<I> wrangler = wranglers.remove(guid);
             if (wrangler != null) {
                 this.guidReleased(guid, wrangler);
-                if (releaseGuidCallback != null) {
-                    releaseGuidCallback.execute(this, guid, wrangler);
-                }
+                observer.onNext(new ReleaseGuidEvent(this, guid, wrangler));
             }
         }
 
@@ -354,11 +286,10 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      *
      * @param toRelease the GUID to release, case-sensitive.
      * @throws NullPointerException if {@code toDrop} is {@code null}.
-     * @see #onReleaseGuid(GuidCallback)
      * @see #wrangleGuid(String, GlfwJoystickWrangler)
      */
     protected final void releaseGuid(@NotNull String toRelease) {
-        Objects.requireNonNull(toRelease, "toRelease");
+        Objects.requireNonNull(toRelease, "toRelease cannot be null");
         this.releaseGuids(Collections.singletonList(toRelease));
     }
 
@@ -402,10 +333,15 @@ public class GlfwJoystickSeeker<I extends IoDevice>
              */
             if (guid != null && this.isWrangling(guid)) {
                 GlfwJoystickWrangler<I> wrangler = wranglers.get(guid);
+
                 I wrangled = wrangler.wrangleDevice(ptr_glfwWindow, i);
-                Objects.requireNonNull(wrangled,
-                        "wrangler for device GUID " + guid
-                                + "returned null device");
+                {
+                    String msg = wrangler.getClass().getName();
+                    msg += " assigned to device GUID " + guid;
+                    msg += " returned a null device";
+                    Objects.requireNonNull(wrangled, msg);
+                }
+
                 this.joysticks[i] = wrangled;
                 this.discoverDevice(joysticks[i]);
             }

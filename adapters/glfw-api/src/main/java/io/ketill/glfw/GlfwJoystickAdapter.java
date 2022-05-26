@@ -51,12 +51,18 @@ import static org.lwjgl.glfw.GLFW.*;
 public abstract class GlfwJoystickAdapter<I extends IoDevice>
         extends GlfwDeviceAdapter<I> {
 
+    /**
+     * The GLFW joystick this adapter interfaces with.
+     * <p>
+     * This field is {@code protected} so it is visible to child classes.
+     * This allows them to interface with the GLFW joystick directly.
+     */
     protected final int glfwJoystick;
 
     /*
-     * These fields were originally protected, meaning extending
-     * classes could access them directly. They were privatized in
-     * favor of using isPressed() and getAxis(), which are safer.
+     * These fields were originally protected, meaning extending classes
+     * could access them directly. They were made private in favor of the
+     * isPressed() and getAxis() methods, which are safer to use.
      */
     private ByteBuffer buttons;
     private FloatBuffer axes;

@@ -1,8 +1,8 @@
 package io.ketill.glfw;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.IoDevice;
 import io.ketill.MappedFeatureRegistry;
+import io.ketill.controller.Controller;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +53,7 @@ class GlfwJoystickAdapterTest {
 
         AtomicReference<MockGlfwJoystickAdapter> adapter =
                 new AtomicReference<>();
-        AdapterSupplier<IoDevice> adapterSupplier = (c, r) -> {
+        AdapterSupplier<Controller> adapterSupplier = (c, r) -> {
             adapter.set(new MockGlfwJoystickAdapter(c, r,
                     ptr_glfwWindow, glfwJoystick));
             return adapter.get();
@@ -65,7 +65,7 @@ class GlfwJoystickAdapterTest {
 
     @Test
     void testInit() {
-        IoDevice device = mock(IoDevice.class);
+        Controller controller = mock(Controller.class);
         MappedFeatureRegistry registry = mock(MappedFeatureRegistry.class);
 
         /*
@@ -75,7 +75,7 @@ class GlfwJoystickAdapterTest {
          * passed here, a NullPointerException should be thrown.
          */
         assertThrows(NullPointerException.class,
-                () -> new MockGlfwJoystickAdapter(device, registry,
+                () -> new MockGlfwJoystickAdapter(controller, registry,
                         0x00, glfwJoystick));
 
         /*
@@ -84,10 +84,10 @@ class GlfwJoystickAdapterTest {
          * IllegalArgumentException should be thrown.
          */
         assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwJoystickAdapter(device, registry,
+                () -> new MockGlfwJoystickAdapter(controller, registry,
                         ptr_glfwWindow, GLFW_JOYSTICK_1 - 1));
         assertThrows(IllegalArgumentException.class,
-                () -> new MockGlfwJoystickAdapter(device, registry,
+                () -> new MockGlfwJoystickAdapter(controller, registry,
                         ptr_glfwWindow, GLFW_JOYSTICK_LAST + 1));
     }
 
@@ -153,13 +153,13 @@ class GlfwJoystickAdapterTest {
 
             axes.put(glfwXAxis, 1.23F).put(glfwYAxis, 4.56F);
             joystick.poll(); /* update axes */
-            assertEquals(1.23F, joystick.stick.x());
-            assertEquals(4.56F, joystick.stick.y());
+            assertEquals(1.23F, joystick.stick.getPos().x());
+            assertEquals(4.56F, joystick.stick.getPos().y());
 
             axes.put(glfwXAxis, 0.00F).put(glfwYAxis, 0.00F);
             joystick.poll(); /* update axes */
-            assertEquals(0.00F, joystick.stick.x());
-            assertEquals(0.00F, joystick.stick.y());
+            assertEquals(0.00F, joystick.stick.getPos().x());
+            assertEquals(0.00F, joystick.stick.getPos().y());
         }
 
         /* remap stick now with Z-button for next test */
@@ -177,11 +177,11 @@ class GlfwJoystickAdapterTest {
 
             buttons.put(glfwZButton, (byte) GLFW_PRESS);
             joystick.poll(); /* update axes */
-            assertEquals(-1.0F, joystick.stick.z());
+            assertEquals(-1.0F, joystick.stick.getPos().z());
 
             buttons.put(glfwZButton, (byte) GLFW_RELEASE);
             joystick.poll(); /* update axes */
-            assertEquals(0.0F, joystick.stick.z());
+            assertEquals(0.0F, joystick.stick.getPos().z());
         }
     }
 

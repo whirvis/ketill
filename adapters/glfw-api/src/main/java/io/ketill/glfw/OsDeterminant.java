@@ -9,6 +9,10 @@ package io.ketill.glfw;
 @FunctionalInterface
 public interface OsDeterminant {
 
+    /**
+     * @return {@code true} if this determinant believes it is the current
+     * operating system which it represents, {@code false} otherwise.
+     */
     boolean isCurrentOs();
 
 }
