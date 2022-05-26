@@ -28,6 +28,8 @@ public final class AnalogTrigger
     private final @Nullable AnalogTriggerCalibration baseCalibration;
 
     /**
+     * Constructs a new {@code AnalogTrigger}.
+     *
      * @param id              the analog trigger ID.
      * @param baseCalibration the calibration to use when creating a state
      *                        container for this analog trigger. Note that

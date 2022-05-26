@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public final class RumbleMotor extends PlainIoFeature<MotorVibration> {
 
     /**
+     * Constructs a new {@code RumbleMotor}.
+     *
      * @param id the rumble motor ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains

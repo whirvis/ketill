@@ -18,6 +18,8 @@ public final class AnalogTriggerCalibration {
     private final float lowerBound;
 
     /**
+     * Constructs a new {@code AnalogTriggerCalibration}.
+     *
      * @param upperBound the upper bound. This <i>must</i> have a value
      *                   greater than {@code lowerBound}.
      * @param lowerBound the lower bound. This <i>must</i> have a value

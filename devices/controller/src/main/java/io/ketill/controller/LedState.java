@@ -25,7 +25,7 @@ public class LedState {
      * </pre>
      * <p>
      * <b>Note:</b> If the player number is higher than the LED count, the
-     * behavior is undefined. Included adapters (such as {@code hid-usb-psx}
+     * behavior is undefined. Included adapters (such as {@code hid-usb-psx})
      * will follow an additive pattern in this scenario. For example, if
      * {@link #getValue()} returns a value of {@code 5}:
      * <pre>
@@ -71,6 +71,8 @@ public class LedState {
     protected int mode, value;
 
     /**
+     * Constructs a new {@code LedState} in {@link #MODE_NUMBER}.
+     *
      * @param number the initial player number.
      */
     public LedState(int number) {
@@ -78,7 +80,8 @@ public class LedState {
     }
 
     /**
-     * Constructs a new {@code PlayerLed1i} with a player number of {@code 1}.
+     * Constructs a new {@code LedState} in {@link #MODE_NUMBER} with
+     * an initial player number of {@code 1}.
      */
     public LedState() {
         this(1);

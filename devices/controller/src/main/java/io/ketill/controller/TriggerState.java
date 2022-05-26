@@ -48,8 +48,8 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
     }
 
     /**
-     * This method is a shorthand for {@link #getForce(boolean)}, with
-     * the argument for {@code calibrate} being {@code true}.
+     * <b>Shorthand for:</b> {@link #getForce(boolean)}, with the argument
+     * for {@code calibrate} being {@code true}.
      *
      * @return the current force being applied to the analog trigger.
      */

@@ -63,8 +63,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
-     * This method is a shorthand for {@link #getPos(boolean)}, with the
-     * argument for {@code calibrate} being {@code true}.
+     * <b>Shorthand for:</b> {@link #getPos(boolean)}, with the argument for
+     * {@code calibrate} being {@code true}.
      *
      * @return the analog stick's current position.
      * @see #useCalibration(AnalogStickCalibration)

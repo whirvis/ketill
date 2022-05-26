@@ -17,6 +17,8 @@ public final class ControllerButton
     private final @Nullable Direction direction;
 
     /**
+     * Constructs a new {@code ControllerButton}.
+     *
      * @param id        the button ID.
      * @param direction the direction this button represents. A {@code null}
      *                  value is permitted, and indicates that this button
@@ -31,6 +33,8 @@ public final class ControllerButton
     }
 
     /**
+     * Constructs a new {@code ControllerButton}.
+     *
      * @param id the button ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains

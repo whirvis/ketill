@@ -12,6 +12,8 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
     private final int ledCount;
 
     /**
+     * Constructs a new {@code PlayerLed}.
+     *
      * @param id       the player LED ID.
      * @param ledCount the amount of LEDs present.
      * @throws NullPointerException     if {@code id} is {@code null}.

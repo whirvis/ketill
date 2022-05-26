@@ -42,10 +42,11 @@ public abstract class Controller extends IoDevice implements PressableIoFeatureS
     public final @Nullable TriggerState lt, rt;
 
     /**
-     * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
-     * {@code lt}, or {@code rt} are not {@code null}, they will be
-     * registered automatically during construction (assuming they are not
-     * already registered via the {@link FeaturePresent} annotation.)
+     * Constructs a new {@code Controller}.
+     * <p>
+     * <b>Note:</b> If {@code ls}, {@code rs}, {@code lt}, or {@code rt} are
+     * not {@code null}, they will be registered at construction (assuming
+     * they were not already registered with {@link FeaturePresent}).
      *
      * @param typeId          the controller type ID.
      * @param adapterSupplier the controller adapter supplier.
@@ -93,13 +94,13 @@ public abstract class Controller extends IoDevice implements PressableIoFeatureS
     }
 
     /**
-     * Constructs a new {@code Controller}. If {@code ls}, {@code rs},
-     * {@code lt}, or {@code rt} are not {@code null}, they will be
-     * registered automatically during construction (assuming they are not
-     * already registered via the {@link FeaturePresent} annotation.)
+     * Constructs a new {@code Controller}, automatically registers all fields
+     * marked with the {@link FeaturePresent} annotation, and initializes the
+     * adapter.
      * <p>
-     * This is a shorthand for the base constructor with the argument for
-     * {@code registerFields} and {@code initAdapter} being {@code true}.
+     * <b>Note:</b> If {@code ls}, {@code rs}, {@code lt}, or {@code rt} are
+     * not {@code null}, they will be registered at construction (assuming
+     * they were not already registered with {@link FeaturePresent}).
      *
      * @param typeId          the controller type ID.
      * @param adapterSupplier the controller adapter supplier.

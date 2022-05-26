@@ -27,6 +27,8 @@ public final class AnalogStickCalibration {
     private final @NotNull Vector2fc lowerBound;
 
     /**
+     * Constructs a new {@code AnalogStickCalibration}.
+     *
      * @param upperBound the upper bound. This <i>must</i> have a value
      *                   greater than {@code lowerBound}.
      *                   <b>Note:</b> Only the current value of this vector
@@ -61,6 +63,8 @@ public final class AnalogStickCalibration {
     }
 
     /**
+     * Constructs a new {@code AnalogStickCalibration}.
+     *
      * @param upperBoundX the X-axis value for the upper bound. This
      *                    <i>must</i> be greater than {@code lowerBoundX}.
      * @param upperBoundY the Y-axis value for the upper bound. This

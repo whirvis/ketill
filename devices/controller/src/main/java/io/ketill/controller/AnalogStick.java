@@ -25,7 +25,8 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      * @param direction the direction to check for.
      * @return {@code true} if {@code pos} is pointing towards
      * {@code direction}, {@code false} otherwise.
-     * @throws NullPointerException if {@code direction} is {@code null}.
+     * @throws NullPointerException if {@code pos} or {@code direction}
+     *                              are {@code null}.
      */
     public static boolean isPressed(@NotNull Vector3fc pos,
                                     @NotNull Direction direction) {
@@ -45,22 +46,28 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     }
 
     /**
-     * @param pos       the analog stick position.
+     * <b>Shorthand for:</b> {@link #isPressed(Vector3fc, Direction)}, with
+     * the argument for {@code pos} being {@code state.getPos(true)}.
+     *
+     * @param state     the analog stick position.
      * @param direction the direction to check for.
-     * @return {@code true} if {@code pos} is pointing towards
+     * @return {@code true} if {@code state} is pointing towards
      * {@code direction}, {@code false} otherwise.
-     * @throws NullPointerException if {@code direction} is {@code null}.
+     * @throws NullPointerException if {@code state} or {@code direction}
+     *                              are {@code null}.
      */
-    public static boolean isPressed(@NotNull StickPos pos,
+    public static boolean isPressed(@NotNull StickPos state,
                                     @NotNull Direction direction) {
-        Objects.requireNonNull(direction, "pos cannot be null");
-        return isPressed(pos.getPos(true), direction);
+        Objects.requireNonNull(direction, "state cannot be null");
+        return isPressed(state.getPos(true), direction);
     }
 
     private final @Nullable ControllerButton zButton;
     private final @Nullable AnalogStickCalibration baseCalibration;
 
     /**
+     * Constructs a new {@code AnalogStick}.
+     *
      * @param id              the analog stick ID.
      * @param zButton         the button that, when pressed, should result in
      *                        the Z-axis of this analog stick being decreased
