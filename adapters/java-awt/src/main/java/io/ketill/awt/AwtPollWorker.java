@@ -71,6 +71,10 @@ public final class AwtPollWorker<I extends IoDevice> {
         return this.device;
     }
 
+    /**
+     * @return {@code true} if this worker has been cancelled via
+     * {@link #cancel()}, {@code false} otherwise.
+     */
     public boolean isCancelled() {
         return this.cancelled;
     }

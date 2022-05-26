@@ -19,6 +19,9 @@ import java.util.Objects;
 
 import static io.ketill.pc.Mouse.*;
 
+/**
+ * A {@link Mouse} adapter using Java AWT.
+ */
 public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
 
     /* @formatter:off */

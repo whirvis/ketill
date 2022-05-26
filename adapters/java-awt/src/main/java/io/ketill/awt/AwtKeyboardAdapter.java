@@ -17,6 +17,13 @@ import java.util.Objects;
 import static io.ketill.pc.Keyboard.*;
 import static java.awt.event.KeyEvent.*;
 
+/**
+ * A {@link Keyboard} adapter using Java AWT.
+ * <p>
+ * <b>Note:</b> Unlike the {@code glfw} module, this adapter uses virtual
+ * key codes to map keyboard keys. As a result, the physical location of
+ * a key changes based on the current keyboard layout of the system.
+ */
 public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
 
     private static final int VK_F25 = VK_F24 + 1;
