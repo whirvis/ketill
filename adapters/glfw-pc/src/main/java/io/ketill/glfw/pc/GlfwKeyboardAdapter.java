@@ -15,13 +15,16 @@ import java.util.Objects;
 import static io.ketill.pc.Keyboard.*;
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * A {@link Keyboard} adapter using GLFW.
+ */
 public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return the wrangled keyboard.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     @WranglerMethod
     public static @NotNull Keyboard wrangle(long ptr_glfwWindow) {
@@ -30,13 +33,15 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     /**
-     * @param keyboard       the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * Constructs a new {@code GlfwKeyboardAdapter}.
+     *
+     * @param keyboard       the keyboard which owns this adapter.
+     * @param registry       the keyboard's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code keyboard} or
-     *                                  {@code registry} are {@code null};
-     *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code keyboard} or
+     *                              {@code registry} are {@code null};
+     *                              if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     public GlfwKeyboardAdapter(@NotNull Keyboard keyboard,
                                @NotNull MappedFeatureRegistry registry,

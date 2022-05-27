@@ -5,10 +5,10 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
 import io.ketill.glfw.WranglerMethod;
-import io.ketill.pc.MouseClickZ;
 import io.ketill.pc.CursorStateZ;
 import io.ketill.pc.Mouse;
 import io.ketill.pc.MouseButton;
+import io.ketill.pc.MouseClickZ;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
 
@@ -17,13 +17,16 @@ import java.util.Objects;
 import static io.ketill.pc.Mouse.*;
 import static org.lwjgl.glfw.GLFW.*;
 
+/**
+ * A {@link Mouse} adapter using GLFW.
+ */
 public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return the wrangled mouse.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     @WranglerMethod
     public static @NotNull Mouse wrangle(long ptr_glfwWindow) {
@@ -36,13 +39,15 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     protected boolean wasCursorVisible;
 
     /**
-     * @param mouse          the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * Constructs a new {@code GlfwMouseAdapter}.
+     *
+     * @param mouse          the mouse which owns this adapter.
+     * @param registry       the mouse's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code mouse} or
-     *                                  {@code registry} are {@code null};
-     *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code mouse} or
+     *                              {@code registry} are {@code null};
+     *                              if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     public GlfwMouseAdapter(@NotNull Mouse mouse,
                             @NotNull MappedFeatureRegistry registry,
