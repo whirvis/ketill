@@ -45,8 +45,8 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     /**
      * Constructs a new {@code GlfwXboxAdapter}.
      *
-     * @param controller     the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * @param controller     the controller which owns this adapter.
+     * @param registry       the controller's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @throws NullPointerException     if {@code controller} or
