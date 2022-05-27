@@ -5,12 +5,17 @@ import io.ketill.nx.NxJoyCon;
 
 import java.util.Collection;
 
+/**
+ * An {@link NxJoyCon} seeker using GLFW.
+ */
 public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
 
-    public final boolean seekingLeftJoyCons;
-    public final boolean seekingRightJoyCons;
+    private final boolean seekingLeftJoyCons;
+    private final boolean seekingRightJoyCons;
 
     /**
+     * Constructs a new {@code GlfwNxJoyConSeeker}.
+     *
      * @param ptr_glfwWindow     the GLFW window pointer.
      * @param seekNxLeftJoyCons  {@code true} if this GLFW joystick seeker
      *                           should seek out Nintendo Switch left
@@ -49,11 +54,27 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
      * being {@code true}.
      *
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     public GlfwNxJoyConSeeker(long ptr_glfwWindow) {
         this(ptr_glfwWindow, true, true);
+    }
+
+    /**
+     * @return {@code true} if this seeker is seeking out left JoyCons,
+     * {@code false} otherwise.
+     */
+    public boolean isSeekingLeftJoyCons() {
+        return this.seekingLeftJoyCons;
+    }
+
+    /**
+     * @return {@code true} if this seeker is seeking out right JoyCons,
+     * {@code false} otherwise.
+     */
+    public boolean isSeekingRightJoyCons() {
+        return this.seekingRightJoyCons;
     }
 
     private void wrangleLeftJoyCons() {

@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.util.Random;
 
 import static io.ketill.KetillAssertions.*;
+import static io.ketill.glfw.nx.GlfwNxProAdapter.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -38,8 +39,7 @@ class GlfwNxProAdapterTest {
 
     @BeforeEach
     void wrangleJoystick() {
-        this.controller = GlfwNxProAdapter.wrangle(ptr_glfwWindow,
-                glfwJoystick);
+        this.controller = wrangle(ptr_glfwWindow, glfwJoystick);
     }
 
     @Test
@@ -57,28 +57,28 @@ class GlfwNxProAdapterTest {
             /* update LS axes for next test */
             Vector3f ls = new Vector3f(RANDOM.nextFloat(),
                     RANDOM.nextFloat(), 0.00F);
-            axes.put(GlfwNxProAdapter.MAPPING_LS.glfwXAxis, ls.x);
-            axes.put(GlfwNxProAdapter.MAPPING_LS.glfwYAxis, ls.y);
+            axes.put(MAPPING_LS.glfwXAxis, ls.x);
+            axes.put(MAPPING_LS.glfwYAxis, ls.y);
 
             controller.poll(); /* update sticks */
 
             ls.y *= -1.0F;
-            controller.calibration.applyLs(ls);
-            assertEquals(ls.x, controller.ls.x());
-            assertEquals(ls.y, controller.ls.y());
+            NxProController.CALIBRATION.applyTo(ls);
+            assertEquals(ls.x, controller.ls.getPos().x());
+            assertEquals(ls.y, controller.ls.getPos().y());
 
             /* update RS axes for next test */
             Vector3f rs = new Vector3f(RANDOM.nextFloat(),
                     RANDOM.nextFloat(), 0.00F);
-            axes.put(GlfwNxProAdapter.MAPPING_RS.glfwXAxis, rs.x);
-            axes.put(GlfwNxProAdapter.MAPPING_RS.glfwYAxis, rs.y);
+            axes.put(MAPPING_RS.glfwXAxis, rs.x);
+            axes.put(MAPPING_RS.glfwYAxis, rs.y);
 
             controller.poll(); /* update sticks */
 
             rs.y *= -1.0F;
-            controller.calibration.applyRs(rs);
-            assertEquals(rs.x, controller.rs.x());
-            assertEquals(rs.y, controller.rs.y());
+            NxProController.CALIBRATION.applyTo(rs);
+            assertEquals(rs.x, controller.rs.getPos().x());
+            assertEquals(rs.y, controller.rs.getPos().y());
         }
     }
 
@@ -90,20 +90,20 @@ class GlfwNxProAdapterTest {
                     .thenReturn(buttons);
 
             /* update button states for next test */
-            buttons.put(GlfwNxProAdapter.ZL_INDEX, (byte) GLFW_PRESS);
-            buttons.put(GlfwNxProAdapter.ZR_INDEX, (byte) GLFW_PRESS);
+            buttons.put(ZL_INDEX, (byte) GLFW_PRESS);
+            buttons.put(ZR_INDEX, (byte) GLFW_PRESS);
 
             controller.poll(); /* update triggers */
-            assertEquals(1.0F, controller.lt.getForce());
-            assertEquals(1.0F, controller.rt.getForce());
+            assertEquals(1.0F, controller.zl.getForce());
+            assertEquals(1.0F, controller.zr.getForce());
 
             /* update button states for next test */
-            buttons.put(GlfwNxProAdapter.ZL_INDEX, (byte) GLFW_RELEASE);
-            buttons.put(GlfwNxProAdapter.ZR_INDEX, (byte) GLFW_RELEASE);
+            buttons.put(ZL_INDEX, (byte) GLFW_RELEASE);
+            buttons.put(ZR_INDEX, (byte) GLFW_RELEASE);
 
             controller.poll(); /* update triggers */
-            assertEquals(0.0F, controller.lt.getForce());
-            assertEquals(0.0F, controller.rt.getForce());
+            assertEquals(0.0F, controller.zl.getForce());
+            assertEquals(0.0F, controller.zr.getForce());
         }
     }
 

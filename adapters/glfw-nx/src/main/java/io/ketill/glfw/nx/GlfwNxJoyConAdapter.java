@@ -11,22 +11,9 @@ import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.nx.NxJoyCon;
 import org.jetbrains.annotations.NotNull;
 
-abstract class GlfwNxJoyConAdapter<I extends NxJoyCon>
-        extends GlfwJoystickAdapter<I> {
+abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapter<J> {
 
-    /**
-     * @param joycon         the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
-     * @param ptr_glfwWindow the GLFW window pointer.
-     * @param glfwJoystick   the GLFW joystick.
-     * @throws NullPointerException     if {@code joycon} or
-     *                                  {@code registry} are {@code null};
-     *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
-     * @throws IllegalArgumentException if {@code glfwJoystick} is not a
-     *                                  valid GLFW joystick.
-     */
-    GlfwNxJoyConAdapter(@NotNull I joycon,
+    GlfwNxJoyConAdapter(@NotNull J joycon,
                         @NotNull MappedFeatureRegistry registry,
                         long ptr_glfwWindow, int glfwJoystick) {
         super(joycon, registry, ptr_glfwWindow, glfwJoystick);

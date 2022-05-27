@@ -7,15 +7,21 @@ import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.nx.NxRightJoyCon.*;
 
-public class GlfwNxRightJoyConAdapter
-        extends GlfwNxJoyConAdapter<NxRightJoyCon> {
+/**
+ * An {@link NxRightJoyCon} adapter using GLFW.
+ */
+public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon> {
 
+    /**
+     * Mapping for {@link NxRightJoyCon#STICK_RS}.
+     */
     /* @formatter:off */
     protected static final @NotNull JoyConStickMapping
             MAPPING_RS = new JoyConStickMapping(17,19,16,18, 11);
     /* @formatter:on */
 
-    protected static final int ZR_INDEX = 15;
+    /* declared here for GlfwNxRightJoyConAdapterTest */
+    static final int ZR_INDEX = 15;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -36,6 +42,8 @@ public class GlfwNxRightJoyConAdapter
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code GlfwNxRightJoyConAdapter}.
+     *
      * @param joycon         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -65,7 +73,6 @@ public class GlfwNxRightJoyConAdapter
         this.mapButton(BUTTON_R_THUMB, 11);
         this.mapButton(BUTTON_HOME, 12);
         this.mapButton(BUTTON_R, 14);
-        this.mapButton(BUTTON_ZR, 15);
 
         this.mapJoyConStick(STICK_RS, MAPPING_RS);
 

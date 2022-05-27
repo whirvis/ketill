@@ -2,6 +2,7 @@ package io.ketill.glfw.nx;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +18,13 @@ class GlfwNxJoyConSeekerTest {
         assumeTrue(glfwInit());
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         ptr_glfwWindow = glfwCreateWindow(1024, 768, "window", 0L, 0L);
+    }
+
+    private GlfwNxJoyConSeeker seeker;
+
+    @BeforeEach
+    void createSeeker() {
+        this.seeker = new GlfwNxJoyConSeeker(ptr_glfwWindow);
     }
 
     @Test
@@ -36,6 +44,16 @@ class GlfwNxJoyConSeekerTest {
          * are missing for the current operating system.
          */
         assertDoesNotThrow(() -> new GlfwNxJoyConSeeker(ptr_glfwWindow));
+    }
+
+    @Test
+    void testIsSeekingLeftJoyCons() {
+        assertTrue(seeker.isSeekingLeftJoyCons());
+    }
+
+    @Test
+    void testIsSeekingRightJoyCons() {
+        assertTrue(seeker.isSeekingRightJoyCons());
     }
 
     @AfterAll

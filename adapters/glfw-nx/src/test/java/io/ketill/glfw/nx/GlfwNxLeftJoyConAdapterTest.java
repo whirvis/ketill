@@ -32,8 +32,7 @@ class GlfwNxLeftJoyConAdapterTest {
 
     @BeforeEach
     void wrangleJoystick() {
-        this.joycon = GlfwNxLeftJoyConAdapter.wrangle(ptr_glfwWindow,
-                GLFW_JOYSTICK_1);
+        this.joycon = wrangle(ptr_glfwWindow, GLFW_JOYSTICK_1);
     }
 
     @Test
@@ -57,9 +56,9 @@ class GlfwNxLeftJoyConAdapterTest {
 
             joycon.poll(); /* update analog sticks */
 
-            assertEquals(1.0F, joycon.ls.x());
-            assertEquals(1.0F, joycon.ls.y());
-            assertEquals(-1.0F, joycon.ls.z());
+            assertEquals(1.0F, joycon.ls.getPos().x());
+            assertEquals(1.0F, joycon.ls.getPos().y());
+            assertEquals(-1.0F, joycon.ls.getPos().z());
 
             /* update button states for next test */
             buttons.put(MAPPING_LS.glfwUp, (byte) GLFW_RELEASE);
@@ -70,9 +69,9 @@ class GlfwNxLeftJoyConAdapterTest {
 
             joycon.poll(); /* update analog sticks */
 
-            assertEquals(-1.0F, joycon.ls.x());
-            assertEquals(-1.0F, joycon.ls.y());
-            assertEquals(0.0F, joycon.ls.z());
+            assertEquals(-1.0F, joycon.ls.getPos().x());
+            assertEquals(-1.0F, joycon.ls.getPos().y());
+            assertEquals(0.0F, joycon.ls.getPos().z());
         }
     }
 

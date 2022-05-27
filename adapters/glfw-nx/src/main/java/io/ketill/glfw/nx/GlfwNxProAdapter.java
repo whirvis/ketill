@@ -14,15 +14,23 @@ import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.nx.NxProController.*;
 
+/**
+ * An {@link NxProController} adapter using GLFW.
+ */
 public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
 
+    /**
+     * Mappings for {@link NxProController#STICK_LS} and
+     * {@link NxProController#STICK_RS}.
+     */
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
             MAPPING_LS = new GlfwStickMapping(0, 1, 10),
             MAPPING_RS = new GlfwStickMapping(2, 3, 11);
     /* @formatter:on */
 
-    protected static final int ZL_INDEX = 6, ZR_INDEX = 7;
+    /* declared here for GlfwNxProAdapterTest */
+    static final int ZL_INDEX = 6, ZR_INDEX = 7;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -43,6 +51,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code GlfwNxProAdapter}.
+     *
      * @param controller     the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -73,8 +83,6 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapButton(BUTTON_X, 3);
         this.mapButton(BUTTON_L, 4);
         this.mapButton(BUTTON_R, 5);
-        this.mapButton(BUTTON_ZL, ZL_INDEX);
-        this.mapButton(BUTTON_ZR, ZR_INDEX);
         this.mapButton(BUTTON_MINUS, 8);
         this.mapButton(BUTTON_PLUS, 9);
         this.mapButton(BUTTON_L_THUMB, 10);
@@ -91,8 +99,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapStick(STICK_LS, MAPPING_LS);
         this.mapStick(STICK_RS, MAPPING_RS);
 
-        this.mapProTrigger(TRIGGER_LT, ZL_INDEX);
-        this.mapProTrigger(TRIGGER_RT, ZR_INDEX);
+        this.mapProTrigger(TRIGGER_ZL, ZL_INDEX);
+        this.mapProTrigger(TRIGGER_ZR, ZR_INDEX);
     }
 
     @Override

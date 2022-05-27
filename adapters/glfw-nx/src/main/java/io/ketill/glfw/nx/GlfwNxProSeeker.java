@@ -5,12 +5,17 @@ import io.ketill.nx.NxProController;
 
 import java.util.Collection;
 
+/**
+ * An {@link NxProController} seeker using GLFW.
+ */
 public final class GlfwNxProSeeker extends GlfwJoystickSeeker<NxProController> {
 
     /**
+     * Constructs a new {@code GlfwNxProSeeker}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     public GlfwNxProSeeker(long ptr_glfwWindow) {
         super(NxProController.class, ptr_glfwWindow);
