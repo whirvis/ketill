@@ -106,6 +106,13 @@ public class NxProController extends Controller {
             zl = Objects.requireNonNull(super.lt),
             zr = Objects.requireNonNull(super.rt);
 
+    /**
+     * Aliases for {@link #zl} and {@link #zr}.
+     */
+    @FeatureState
+    public final @NotNull TriggerState
+            lt = zl, rt = zr;
+
     @FeatureState
     public final @NotNull LedState
             led = this.getState(FEATURE_LED);

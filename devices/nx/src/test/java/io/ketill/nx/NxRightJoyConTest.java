@@ -32,6 +32,8 @@ class NxRightJoyConTest {
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rs, STICK_RS);
 
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rt, TRIGGER_ZR);
+
+        assertSame(nxRightJoyCon.zr, nxRightJoyCon.rt);
     }
 
     @Test

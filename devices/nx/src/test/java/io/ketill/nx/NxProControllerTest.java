@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.ketill.KetillAssertions.*;
 import static io.ketill.nx.NxProController.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NxProControllerTest {
 
@@ -41,6 +42,9 @@ class NxProControllerTest {
 
         assertFeatureOwnsState(nxPro, nxPro.zl, TRIGGER_ZL);
         assertFeatureOwnsState(nxPro, nxPro.zr, TRIGGER_ZR);
+
+        assertSame(nxPro.zl, nxPro.lt);
+        assertSame(nxPro.zr, nxPro.rt);
 
         assertFeatureOwnsState(nxPro, nxPro.led, FEATURE_LED);
     }

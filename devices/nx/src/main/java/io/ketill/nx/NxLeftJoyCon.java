@@ -66,7 +66,14 @@ public class NxLeftJoyCon extends NxJoyCon {
 
     @FeatureState
     public final @NotNull TriggerState
-            lt = Objects.requireNonNull(super.lt);
+            zl = Objects.requireNonNull(super.lt);
+
+    /**
+     * Alias for {@link #zl}.
+     */
+    @FeatureState
+    public final @NotNull TriggerState
+            lt = zl;
     /* @formatter:on */
 
     /**

@@ -66,7 +66,14 @@ public class NxRightJoyCon extends NxJoyCon {
 
     @FeatureState
     public final @NotNull TriggerState
-            rt = Objects.requireNonNull(super.rt);
+            zr = Objects.requireNonNull(super.rt);
+
+    /**
+     * Alias for {@link #zr}.
+     */
+    @FeatureState
+    public final @NotNull TriggerState
+            rt = zr;
     /* @formatter:on */
 
     /**

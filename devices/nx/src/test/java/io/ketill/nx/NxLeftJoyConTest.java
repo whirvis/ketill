@@ -32,6 +32,8 @@ class NxLeftJoyConTest {
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.ls, STICK_LS);
 
         assertFeatureOwnsState(nxLeftJoyCon, nxLeftJoyCon.lt, TRIGGER_ZL);
+
+        assertSame(nxLeftJoyCon.zl, nxLeftJoyCon.lt);
     }
 
     @Test
