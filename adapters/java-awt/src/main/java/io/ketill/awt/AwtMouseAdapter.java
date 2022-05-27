@@ -79,8 +79,8 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     /**
      * Constructs a new {@code AwtMouseAdapter}.
      *
-     * @param mouse     the device which owns this adapter.
-     * @param registry  the device's mapped feature registry.
+     * @param mouse     the mouse which owns this adapter.
+     * @param registry  the mouse's mapped feature registry.
      * @param component the AWT component.
      * @throws NullPointerException if {@code device}, {@code registry},
      *                              or {@code component} are {@code null}.
@@ -140,17 +140,29 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         this.wasCursorVisible = cursor.visible;
     }
 
+    /**
+     * Updater for mouse buttons mapped via
+     * {@link #mapButton(MouseButton, int)}.
+     *
+     * @param state the button state.
+     * @param id    the button ID.
+     */
     @FeatureAdapter
-    protected void updateButton(@NotNull MouseClickZ click, int id) {
-        click.pressed = mouseListener.isPressed(id);
+    protected void updateButton(@NotNull MouseClickZ state, int id) {
+        state.pressed = mouseListener.isPressed(id);
     }
 
+    /**
+     * Updater for {@link Mouse#FEATURE_CURSOR}.
+     *
+     * @param state the cursor state.
+     */
     @FeatureAdapter
-    protected void updateCursor(@NotNull CursorStateZ cursor) {
-        Vector2fc requested = cursor.requestedPos;
-        cursor.requestedPos = null;
+    protected void updateCursor(@NotNull CursorStateZ state) {
+        Vector2fc requested = state.requestedPos;
+        state.requestedPos = null;
         if (requested != null && robot != null) {
-            cursor.currentPos.set(requested);
+            state.currentPos.set(requested);
             robot.mouseMove((int) requested.x(), (int) requested.y());
         } else {
             Point cursorLoc = MouseInfo.getPointerInfo().getLocation();
@@ -164,14 +176,14 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
             double relativeX = cursorLoc.getX() - componentLoc.getX();
             double relativeY = cursorLoc.getY() - componentLoc.getY();
 
-            cursor.currentPos.x = (float) relativeX;
-            cursor.currentPos.y = (float) relativeY;
+            state.currentPos.x = (float) relativeX;
+            state.currentPos.y = (float) relativeY;
         }
 
-        if (!wasCursorVisible && cursor.visible) {
+        if (!wasCursorVisible && state.visible) {
             component.setCursor(null);
             this.wasCursorVisible = true;
-        } else if (wasCursorVisible && !cursor.visible) {
+        } else if (wasCursorVisible && !state.visible) {
             component.setCursor(INVISIBLE_CURSOR);
             this.wasCursorVisible = false;
         }

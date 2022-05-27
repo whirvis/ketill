@@ -65,8 +65,8 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     /**
      * Constructs a new {@code AwtKeyboardAdapter}.
      *
-     * @param keyboard  the device which owns this adapter.
-     * @param registry  the device's mapped feature registry.
+     * @param keyboard  the keyboard which owns this adapter.
+     * @param registry  the keyboard's mapped feature registry.
      * @param component the AWT component.
      * @throws NullPointerException if {@code device}, {@code registry},
      *                              or {@code component} are {@code null}.
@@ -244,10 +244,17 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
         this.mapMethodKeys();
     }
 
+    /**
+     * Updater for keyboard keys mapped via
+     * {@link #mapKey(KeyboardKey, int, int)}.
+     *
+     * @param state   the key state.
+     * @param mapping the key mapping.
+     */
     @FeatureAdapter
-    protected void updateKey(@NotNull KeyPressZ key,
+    protected void updateKey(@NotNull KeyPressZ state,
                              @NotNull KeyMapping mapping) {
-        key.pressed = keyboardListener.isPressed(mapping);
+        state.pressed = keyboardListener.isPressed(mapping);
     }
 
     @Override
