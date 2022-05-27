@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.xbox.XboxController.*;
 
+/**
+ * An {@link XboxController} adapter using GLFW.
+ */
 public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
 
     /* @formatter:off */
@@ -40,6 +43,8 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     /* @formatter:on */
 
     /**
+     * Constructs a new {@code GlfwXboxAdapter}.
+     *
      * @param controller     the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
