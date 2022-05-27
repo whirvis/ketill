@@ -44,8 +44,8 @@ public class GlfwNxLeftJoyConAdapter extends GlfwNxJoyConAdapter<NxLeftJoyCon> {
     /**
      * Constructs a new {@code GlfwNxLeftJoyConAdapter}.
      *
-     * @param joycon         the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * @param joycon         the controller which owns this adapter.
+     * @param registry       the controller's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @throws NullPointerException     if {@code controller} or
