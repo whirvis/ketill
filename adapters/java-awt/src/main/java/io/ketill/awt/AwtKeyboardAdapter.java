@@ -63,16 +63,18 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     private final @NotNull AwtKeyboardListener keyboardListener;
 
     /**
-     * @param device    the device which owns this adapter.
+     * Constructs a new {@code AwtKeyboardAdapter}.
+     *
+     * @param keyboard  the device which owns this adapter.
      * @param registry  the device's mapped feature registry.
      * @param component the AWT component.
      * @throws NullPointerException if {@code device}, {@code registry},
      *                              or {@code component} are {@code null}.
      */
-    public AwtKeyboardAdapter(@NotNull Keyboard device,
+    public AwtKeyboardAdapter(@NotNull Keyboard keyboard,
                               @NotNull MappedFeatureRegistry registry,
                               @NotNull Component component) {
-        super(device, registry);
+        super(keyboard, registry);
         Objects.requireNonNull(component, "component cannot be null");
         this.keyboardListener = new AwtKeyboardListener(component);
     }

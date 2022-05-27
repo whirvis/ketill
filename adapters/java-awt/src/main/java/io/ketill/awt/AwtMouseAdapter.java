@@ -77,16 +77,18 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     private boolean wasCursorVisible;
 
     /**
-     * @param device    the device which owns this adapter.
+     * Constructs a new {@code AwtMouseAdapter}.
+     *
+     * @param mouse     the device which owns this adapter.
      * @param registry  the device's mapped feature registry.
      * @param component the AWT component.
      * @throws NullPointerException if {@code device}, {@code registry},
      *                              or {@code component} are {@code null}.
      */
-    public AwtMouseAdapter(@NotNull Mouse device,
+    public AwtMouseAdapter(@NotNull Mouse mouse,
                            @NotNull MappedFeatureRegistry registry,
                            @NotNull Component component) {
-        super(device, registry);
+        super(mouse, registry);
         this.component = Objects.requireNonNull(component,
                 "component cannot be null");
         this.mouseListener = new AwtMouseListener(component);
