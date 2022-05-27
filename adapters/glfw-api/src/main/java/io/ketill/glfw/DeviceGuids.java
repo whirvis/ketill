@@ -59,6 +59,8 @@ public abstract class DeviceGuids {
     private final Map<String, OsDeterminant> systems;
 
     /**
+     * Constructs a new instance of {@code DeviceGuids}.
+     * <p>
      * If the argument for {@code useDefaultSystems} is set to {@code true},
      * determinants for the following systems are added:
      * <ul>

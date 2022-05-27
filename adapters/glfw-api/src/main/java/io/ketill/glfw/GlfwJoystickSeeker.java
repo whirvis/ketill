@@ -20,16 +20,15 @@ import static org.lwjgl.glfw.GLFW.*;
  * GLFW window as a joystick. When a joystick is connected to the window,
  * the appropriate {@code IoDevice} instance and adapter will be created
  * using a {@link GlfwJoystickWrangler}. Devices must be polled manually
- * after creation using {@link IoDevice#poll()}.
+ * after creation using {@link Controller#poll()}. This can also be done
+ * using {@link #pollDevices()}.
  * <p>
- * Implementations should call
- * {@link #wrangleGuid(String, GlfwJoystickWrangler)} to tell the seeker
- * what GUIDs belong to which joystick. When a joystick with a matching
- * GUID is located, it will be wrangled and then discovered automatically.
- * <p>
- * <b>Note:</b> For a GLFW joystick seeker to work as expected, scans must be
- * performed periodically via {@link #seek()}. It is recommended to perform
- * a scan once every application update.
+ * <b>Note:</b> For a GLFW joystick seeker to work as expected, the child
+ * class <i>must</i> call {@link #wrangleGuid(String, GlfwJoystickWrangler)}
+ * to tell the seeker which GUIDs belong to which joystick.
+ * An {@code IllegalStateException} will be thrown if this is neglected.
+ * Furthermore, scans must be performed periodically via {@link #seek()}.
+ * It is recommended to perform a scan once every application update.
  *
  * @param <C> the controller type.
  * @see JsonDeviceGuids
@@ -50,6 +49,8 @@ public class GlfwJoystickSeeker<C extends Controller>
     private final String guidResourcePath;
 
     /**
+     * Constructs a new {@code GlfwJoystickSeeker}.
+     *
      * @param type           the GLFW joystick I/O device type.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException if {@code type} is {@code null};
@@ -280,8 +281,8 @@ public class GlfwJoystickSeeker<C extends Controller>
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
      * <p>
-     * This method is a shorthand for {@link #releaseGuids(Collection)}, with
-     * {@code toDrop} being passed as a collection via
+     * This method is a shorthand for {@link #releaseGuids(Collection)},
+     * with {@code toDrop} being passed as a collection via
      * {@link Collections#singletonList(Object)}.
      *
      * @param toRelease the GUID to release, case-sensitive.

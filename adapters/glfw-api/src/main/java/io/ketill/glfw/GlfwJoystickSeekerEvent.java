@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class GlfwJoystickSeekerEvent extends GlfwDeviceSeekerEvent {
 
     /**
+     * Constructs a new {@code GlfwJoystickSeekerEvent}.
+     *
      * @param seeker the seeker which emitted this event.
      * @throws NullPointerException if {@code seeker} is {@code null}.
      */

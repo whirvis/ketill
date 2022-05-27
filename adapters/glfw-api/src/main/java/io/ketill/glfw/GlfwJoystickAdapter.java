@@ -68,6 +68,8 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     private FloatBuffer axes;
 
     /**
+     * Constructs a new {@code GlfwJoystickAdapter}.
+     *
      * @param device         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.

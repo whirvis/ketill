@@ -54,6 +54,8 @@ public class GlfwStickMapping {
     }
 
     /**
+     * Constructs a new {@code GlfwStickMapping}.
+     *
      * @param glfwXAxis   the GLFW axis for the X-axis.
      * @param glfwYAxis   the GLFW axis for the Y-axis.
      * @param glfwZButton the GLFW button for the thumb button.
@@ -66,6 +68,8 @@ public class GlfwStickMapping {
     }
 
     /**
+     * Constructs a new {@code GlfwStickMapping} with no thumb button.
+     *
      * @param glfwAxisX the GLFW axis for the X-axis.
      * @param glfwAxisY the GLFW axis for the Y-axis.
      * @throws IllegalArgumentException if {@code glfwXAxis} or

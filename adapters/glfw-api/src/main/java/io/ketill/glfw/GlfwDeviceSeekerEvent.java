@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class GlfwDeviceSeekerEvent extends IoDeviceSeekerEvent {
 
     /**
+     * Constructs a new {@code GlfwDeviceSeekerEvent}.
+     *
      * @param seeker the seeker which emitted this event.
      * @throws NullPointerException if {@code seeker} is {@code null}.
      */

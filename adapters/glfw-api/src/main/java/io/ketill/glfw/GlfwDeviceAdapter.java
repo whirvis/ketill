@@ -27,6 +27,8 @@ public abstract class GlfwDeviceAdapter<I extends IoDevice>
     protected final long ptr_glfwWindow;
 
     /**
+     * Constructs a new {@code GlfwDeviceAdapter}.
+     *
      * @param device         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
