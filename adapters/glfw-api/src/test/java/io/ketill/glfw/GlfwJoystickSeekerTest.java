@@ -1,9 +1,9 @@
 package io.ketill.glfw;
 
-import io.ketill.IoDevice;
 import io.ketill.IoDeviceDiscoverEvent;
 import io.ketill.IoDeviceForgetEvent;
 import io.ketill.KetillException;
+import io.ketill.controller.Controller;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,16 +42,16 @@ class GlfwJoystickSeekerTest {
         glfwJoystick = RANDOM.nextInt(GLFW_JOYSTICK_LAST + 1);
     }
 
-    private IoDevice device;
+    private Controller controller;
     private String guid;
-    private GlfwJoystickWrangler<IoDevice> wrangler;
+    private GlfwJoystickWrangler<Controller> wrangler;
     private MockGlfwJoystickSeeker seeker;
 
     @BeforeEach
     void createSeeker() {
-        this.device = mock(IoDevice.class);
+        this.controller = mock(Controller.class);
         this.guid = Integer.toHexString(RANDOM.nextInt());
-        this.wrangler = (g, w) -> device;
+        this.wrangler = (g, w) -> controller;
         this.seeker = new MockGlfwJoystickSeeker(ptr_glfwWindow);
     }
 
@@ -202,7 +202,7 @@ class GlfwJoystickSeekerTest {
 
             AtomicBoolean discovered = new AtomicBoolean();
             seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
-                    event -> discovered.set(event.getDevice() == device));
+                    event -> discovered.set(event.getDevice() == controller));
 
             /*
              * Now that a valid wrangler has been registered, the device
@@ -218,7 +218,7 @@ class GlfwJoystickSeekerTest {
 
             AtomicBoolean forgot = new AtomicBoolean();
             seeker.subscribeEvents(IoDeviceForgetEvent.class,
-                    event -> forgot.set(event.getDevice() == device));
+                    event -> forgot.set(event.getDevice() == controller));
 
             /*
              * When the wrangler for a GUID is re-assigned, the GUID in
@@ -226,7 +226,7 @@ class GlfwJoystickSeekerTest {
              * wrangler. This is to ensure the proper state handling of
              * joysticks.
              */
-            seeker.wrangleGuid(guid, (g, w) -> device);
+            seeker.wrangleGuid(guid, (g, w) -> controller);
             assertTrue(released.get());
             assertTrue(forgot.get());
             assertTrue(seeker.isWrangling(guid));
@@ -262,7 +262,7 @@ class GlfwJoystickSeekerTest {
 
             AtomicBoolean forgot = new AtomicBoolean();
             seeker.subscribeEvents(IoDeviceForgetEvent.class,
-                    event -> forgot.set(event.getDevice() == device));
+                    event -> forgot.set(event.getDevice() == controller));
 
             /*
              * When a GUID is released, the seeker must forget all currently
@@ -292,12 +292,18 @@ class GlfwJoystickSeekerTest {
     @Test
     void testSeekImpl() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
+            /*
+             * It would not make sense to seek when no GUIDs are wrangled.
+             * Assume this was a user mistake and throw an exception.
+             */
+            assertThrows(KetillException.class, seeker::seek);
+
             /* wrangle GUID for next tests */
             seeker.wrangleGuid(guid, wrangler);
 
             AtomicBoolean discovered = new AtomicBoolean();
             seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
-                    event -> discovered.set(event.getDevice() == device));
+                    event -> discovered.set(event.getDevice() == controller));
 
             /*
              * When the GUID for a joystick is not equal to null, that means
@@ -311,7 +317,7 @@ class GlfwJoystickSeekerTest {
 
             AtomicBoolean forgot = new AtomicBoolean();
             seeker.subscribeEvents(IoDeviceForgetEvent.class,
-                    event -> forgot.set(event.getDevice() == device));
+                    event -> forgot.set(event.getDevice() == controller));
 
             /*
              * When the GUID for a joystick is equal to null, that means
@@ -335,7 +341,7 @@ class GlfwJoystickSeekerTest {
              * not null). When this occurs, the seeker should forget the
              * device anyway.
              */
-            when(device.isConnected()).thenReturn(false);
+            when(controller.isConnected()).thenReturn(false);
             seeker.seek();
             assertTrue(forgot.get());
         }

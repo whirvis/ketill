@@ -1,7 +1,7 @@
 package io.ketill.glfw;
 
-import io.ketill.IoDevice;
 import io.ketill.KetillException;
+import io.ketill.controller.Controller;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +31,12 @@ import static org.lwjgl.glfw.GLFW.*;
  * performed periodically via {@link #seek()}. It is recommended to perform
  * a scan once every application update.
  *
- * @param <I> the I/O device type.
+ * @param <C> the controller type.
  * @see JsonDeviceGuids
  * @see GlfwJoystickAdapter
  */
-public class GlfwJoystickSeeker<I extends IoDevice>
-        extends GlfwDeviceSeeker<I> {
+public class GlfwJoystickSeeker<C extends Controller>
+        extends GlfwDeviceSeeker<C> {
 
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
@@ -45,8 +45,8 @@ public class GlfwJoystickSeeker<I extends IoDevice>
         return "/" + packageName.replaceAll("\\.", "/") + "/";
     }
 
-    private final I[] joysticks;
-    private final @NotNull Map<String, GlfwJoystickWrangler<I>> wranglers;
+    private final C[] joysticks;
+    private final @NotNull Map<String, GlfwJoystickWrangler<C>> wranglers;
     private final String guidResourcePath;
 
     /**
@@ -58,11 +58,11 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
     @SuppressWarnings("unchecked")
-    public GlfwJoystickSeeker(@NotNull Class<I> type, long ptr_glfwWindow) {
+    public GlfwJoystickSeeker(@NotNull Class<C> type, long ptr_glfwWindow) {
         super(ptr_glfwWindow);
         Objects.requireNonNull(type, "type cannot be null");
 
-        this.joysticks = (I[]) Array.newInstance(type, JOYSTICK_COUNT);
+        this.joysticks = (C[]) Array.newInstance(type, JOYSTICK_COUNT);
         this.wranglers = new HashMap<>();
         this.guidResourcePath = getGuidResourcePath(this.getClass());
     }
@@ -127,7 +127,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @see #isWrangling(String)
      */
     public final boolean isWranglingWith(@NotNull String guid,
-                                         @NotNull GlfwJoystickWrangler<I> wrangler) {
+                                         @NotNull GlfwJoystickWrangler<C> wrangler) {
         Objects.requireNonNull(guid, "guid cannot be null");
         Objects.requireNonNull(wrangler, "wrangler cannot be null");
         return wranglers.get(guid) == wrangler;
@@ -151,7 +151,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @see WranglerMethod
      */
     protected final void wrangleGuid(@NotNull String guid,
-                                     @NotNull GlfwJoystickWrangler<I> wrangler) {
+                                     @NotNull GlfwJoystickWrangler<C> wrangler) {
         Objects.requireNonNull(guid, "guid cannot be null");
         Objects.requireNonNull(wrangler, "wrangler cannot be null");
 
@@ -161,7 +161,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
          * previously assigned to the GUID. If a joystick was discovered with
          * that wrangler, it would linger on with an outdated wrangler.
          */
-        GlfwJoystickWrangler<I> currentWrangler = wranglers.get(guid);
+        GlfwJoystickWrangler<C> currentWrangler = wranglers.get(guid);
         if (currentWrangler != null) {
             if (currentWrangler == wrangler) {
                 return; /* nothing to do */
@@ -198,7 +198,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @see WranglerMethod
      */
     protected final void wrangleGuids(@NotNull Iterable<@NotNull String> guids,
-                                      @NotNull GlfwJoystickWrangler<I> wrangler) {
+                                      @NotNull GlfwJoystickWrangler<C> wrangler) {
         Objects.requireNonNull(guids, "guids cannot be null");
         for (String guid : guids) {
             this.wrangleGuid(guid, wrangler);
@@ -214,7 +214,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @param wrangler the wrangler assigned to {@code guid}.
      */
     protected void guidWrangled(@NotNull String guid,
-                                @NotNull GlfwJoystickWrangler<I> wrangler) {
+                                @NotNull GlfwJoystickWrangler<C> wrangler) {
         /* optional implement */
     }
 
@@ -244,7 +244,7 @@ public class GlfwJoystickSeeker<I extends IoDevice>
          */
         for (String guid : toRelease) {
             Objects.requireNonNull(guid, "guid cannot be null");
-            GlfwJoystickWrangler<I> wrangler = wranglers.remove(guid);
+            GlfwJoystickWrangler<C> wrangler = wranglers.remove(guid);
             if (wrangler != null) {
                 this.guidReleased(guid, wrangler);
                 observer.onNext(new ReleaseGuidEvent(this, guid, wrangler));
@@ -302,17 +302,21 @@ public class GlfwJoystickSeeker<I extends IoDevice>
      * @param wrangler the wrangler assigned to {@code guid}.
      */
     protected void guidReleased(@NotNull String guid,
-                                @NotNull GlfwJoystickWrangler<I> wrangler) {
+                                @NotNull GlfwJoystickWrangler<C> wrangler) {
         /* optional implement */
     }
 
     @Override
     @MustBeInvokedByOverriders
     protected void seekImpl() {
+        if (wranglers.isEmpty()) {
+            throw new IllegalStateException("no GUIDs wrangled");
+        }
+
         for (int i = 0; i < joysticks.length; i++) {
             String guid = glfwGetJoystickGUID(i);
 
-            I joystick = this.joysticks[i];
+            C joystick = this.joysticks[i];
             if (joystick != null) {
                 /*
                  * Although joystick.isConnected() is generally trusted, this
@@ -332,9 +336,9 @@ public class GlfwJoystickSeeker<I extends IoDevice>
              * GUID. This makes a call to glfwJoystickPresent() redundant.
              */
             if (guid != null && this.isWrangling(guid)) {
-                GlfwJoystickWrangler<I> wrangler = wranglers.get(guid);
+                GlfwJoystickWrangler<C> wrangler = wranglers.get(guid);
 
-                I wrangled = wrangler.wrangleDevice(ptr_glfwWindow, i);
+                C wrangled = wrangler.wrangleDevice(ptr_glfwWindow, i);
                 {
                     String msg = wrangler.getClass().getName();
                     msg += " assigned to device GUID " + guid;

@@ -2,12 +2,12 @@ package io.ketill.glfw;
 
 import io.ketill.AdapterSupplier;
 import io.ketill.FeatureAdapter;
-import io.ketill.IoDevice;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonStateZ;
+import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
 import io.ketill.controller.StickPosZ;
 import io.ketill.controller.TriggerStateZ;
@@ -41,15 +41,15 @@ import static org.lwjgl.glfw.GLFW.*;
  *     }
  * </pre>
  *
- * @param <I> the I/O device type.
+ * @param <C> the controller type.
  * @see #mapButton(ControllerButton, int)
  * @see #mapStick(AnalogStick, GlfwStickMapping)
  * @see #mapTrigger(AnalogTrigger, int)
  * @see AdapterSupplier
  * @see GlfwJoystickSeeker
  */
-public abstract class GlfwJoystickAdapter<I extends IoDevice>
-        extends GlfwDeviceAdapter<I> {
+public abstract class GlfwJoystickAdapter<C extends Controller>
+        extends GlfwDeviceAdapter<C> {
 
     /**
      * The GLFW joystick this adapter interfaces with.
@@ -79,7 +79,7 @@ public abstract class GlfwJoystickAdapter<I extends IoDevice>
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
-    public GlfwJoystickAdapter(@NotNull I device,
+    public GlfwJoystickAdapter(@NotNull C device,
                                @NotNull MappedFeatureRegistry registry,
                                long ptr_glfwWindow, int glfwJoystick) {
         super(device, registry, ptr_glfwWindow);
