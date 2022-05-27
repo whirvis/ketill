@@ -14,8 +14,18 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class MouseClickZ implements AutonomousState {
 
+    /**
+     * This should be updated by the adapter to indicate if the button
+     * is currently pressed.
+     */
     public boolean pressed;
 
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is updated automatically by the state.
+     *
+     * @see #pressed
+     */
     @AutonomousField
     public boolean held;
 

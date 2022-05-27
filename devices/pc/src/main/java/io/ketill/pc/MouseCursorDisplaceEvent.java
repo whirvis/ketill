@@ -4,8 +4,6 @@ import io.ketill.IoFeatureEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
 
-import java.util.Objects;
-
 /**
  * Emitted by {@link Mouse} when a {@link MouseCursor} has moved position.
  */
@@ -14,18 +12,11 @@ public final class MouseCursorDisplaceEvent extends IoFeatureEvent
 
     private final Vector2fc displacement;
 
-    /**
-     * @param mouse  the mouse which emitted this event.
-     * @param cursor the cursor which triggered this event.
-     * @throws NullPointerException if {@code device} or {@code cursor}
-     *                              are{@code null}.
-     */
-    public MouseCursorDisplaceEvent(@NotNull Mouse mouse,
-                                    @NotNull MouseCursor cursor,
-                                    @NotNull Vector2fc displacement) {
+    MouseCursorDisplaceEvent(@NotNull Mouse mouse,
+                             @NotNull MouseCursor cursor,
+                             @NotNull Vector2fc displacement) {
         super(mouse, cursor);
-        this.displacement = Objects.requireNonNull(displacement,
-                "displacement cannot be null");
+        this.displacement = displacement;
     }
 
     @Override

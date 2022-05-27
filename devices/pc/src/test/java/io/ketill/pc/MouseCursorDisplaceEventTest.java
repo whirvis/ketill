@@ -24,17 +24,6 @@ class MouseCursorDisplaceEventTest {
     }
 
     @Test
-    void testInit() {
-        /*
-         * It would not make sense to emit a mouse cursor displace event with
-         * a null displacement. As such, assume this was a mistake by the user
-         * and throw an exception.
-         */
-        assertThrows(NullPointerException.class,
-                () -> new MouseCursorDisplaceEvent(mouse, cursor, null));
-    }
-
-    @Test
     void testGetMouse() {
         assertSame(mouse, event.getMouse());
     }

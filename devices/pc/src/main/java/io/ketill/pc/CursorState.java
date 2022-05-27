@@ -61,8 +61,8 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * Alternative to {@link #setVisible(boolean)} which only sets the
-     * cursor's visibility if the adapter has the ability to do so.
+     * <b>Alternative to:</b> {@link #setVisible(boolean)}, which only sets
+     * the cursor's visibility if the adapter has the ability to do so.
      *
      * @param visible {@code true} if the mouse cursor should be visible,
      *                {@code false} otherwise.
@@ -122,8 +122,9 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * Alternative to {@link #setPosition(Vector2fc)} which only sets the
-     * cursor's current position if the adapter has the ability to do so.
+     * <b>Alternative to:</b> {@link #setPosition(Vector2fc)}, which only
+     * sets the cursor's current position if the adapter has the ability to
+     * do so.
      *
      * @param pos the position to set the cursor to.
      * @return {@code true} if the cursor position was successfully updated,
@@ -154,8 +155,9 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * Alternative to {@link #setPosition(float, float)} which only sets the
-     * cursor's current position if the adapter has the ability to do so.
+     * <b>Alternative to:</b> {@link #setPosition(float, float)}, which only
+     * sets the cursor's current position if the adapter has the ability to
+     * do so.
      *
      * @param xPos the X-axis position to set the cursor to.
      * @param yPos the Y-axis position to set the cursor to.

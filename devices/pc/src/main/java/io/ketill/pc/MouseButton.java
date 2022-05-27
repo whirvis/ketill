@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public final class MouseButton extends IoFeature<MouseClickZ, MouseClick> {
 
     /**
+     * Constructs a new {@code MouseButton}.
+     *
      * @param id the mouse button ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains

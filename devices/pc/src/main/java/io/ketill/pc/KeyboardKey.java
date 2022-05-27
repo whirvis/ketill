@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public final class KeyboardKey extends IoFeature<KeyPressZ, KeyPress> {
 
     /**
+     * Constructs a new {@code KeyboardKey}.
+     *
      * @param id the keyboard key ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains

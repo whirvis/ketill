@@ -276,6 +276,8 @@ public class Keyboard extends IoDevice implements PressableIoFeatureSupport {
     private @NotNull PressableIoFeatureConfigView pressableConfig;
 
     /**
+     * Constructs a new {@code Keyboard}.
+     *
      * @param adapterSupplier the keyboard adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by

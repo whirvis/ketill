@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public final class MouseCursor extends IoFeature<CursorStateZ, CursorState> {
 
     /**
+     * Constructs a new {@code MouseCursor}.
+     *
      * @param id the mouse cursor ID.
      * @throws NullPointerException     if {@code id} is {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains

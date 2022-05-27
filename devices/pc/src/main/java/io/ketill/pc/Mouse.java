@@ -64,6 +64,8 @@ public class Mouse extends IoDevice
     private @NotNull PressableIoFeatureConfigView pressableConfig;
 
     /**
+     * Constructs a new {@code Mouse}.
+     *
      * @param adapterSupplier the mouse adapter supplier.
      * @throws NullPointerException if {@code adapterSupplier} is
      *                              {@code null}; if the adapter given by
