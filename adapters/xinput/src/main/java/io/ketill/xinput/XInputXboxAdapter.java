@@ -40,6 +40,8 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     private int rumbleFine;
 
     /**
+     * Constructs a new {@code XInputXboxAdapter}.
+     *
      * @param controller the controller which owns this adapter.
      * @param registry   the controller's mapped feature registry.
      * @param xDevice    the X-input device.

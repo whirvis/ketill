@@ -16,6 +16,8 @@ public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
     private final boolean xinput14;
 
     /**
+     * Constructs a new {@code XInputXboxSeeker}.
+     *
      * @throws XInputException if X-input is not available.
      * @see XInputStatus#isAvailable()
      */
