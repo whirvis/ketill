@@ -483,7 +483,7 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * {@inheritDoc}
-     * <p>
+     *
      * @see #featureUnregistered(IoFeature)
      */
     @Override
