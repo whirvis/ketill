@@ -20,7 +20,7 @@ public interface GlfwJoystickWrangler<C extends Controller> {
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled controller.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */

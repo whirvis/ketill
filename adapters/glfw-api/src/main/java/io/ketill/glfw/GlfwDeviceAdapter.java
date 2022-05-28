@@ -36,10 +36,10 @@ public abstract class GlfwDeviceAdapter<I extends IoDevice>
      * @param device         the device which owns this adapter.
      * @param registry       the device's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code device} or {@code registry}
-     *                                  are {@code null};
-     *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code device} or {@code registry}
+     *                              are {@code null};
+     *                              if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero).
      */
     public GlfwDeviceAdapter(@NotNull I device,
                              @NotNull MappedFeatureRegistry registry,

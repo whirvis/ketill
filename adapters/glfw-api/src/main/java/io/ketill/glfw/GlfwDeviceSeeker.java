@@ -37,8 +37,8 @@ public abstract class GlfwDeviceSeeker<I extends IoDevice>
      * Constructs a new {@code GlfwDeviceSeeker}.
      *
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero).
      */
     public GlfwDeviceSeeker(long ptr_glfwWindow) {
         this.ptr_glfwWindow = GlfwUtils.requireWindow(ptr_glfwWindow);

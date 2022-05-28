@@ -55,7 +55,7 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException if {@code type} is {@code null};
      *                              if {@code ptr_glfwWindow} is a null
-     *                              pointer (has a value of zero.)
+     *                              pointer (has a value of zero).
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
     @SuppressWarnings("unchecked")

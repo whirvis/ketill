@@ -100,7 +100,7 @@ class GlfwJoystickAdapterTest {
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapButton(null, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.mapButton(MockJoystick.BUTTON, -1));
 
         /* map random button for next test */
@@ -194,7 +194,7 @@ class GlfwJoystickAdapterTest {
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapTrigger(null, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.mapTrigger(MockJoystick.TRIGGER, -1));
 
         /* map random trigger for next test */
@@ -244,14 +244,6 @@ class GlfwJoystickAdapterTest {
     @Test
     void testIsPressed() {
         /*
-         * It would not make sense to get the value of a button with a
-         * negative index. As such, assume this was a user mistake and
-         * throw an exception.
-         */
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> adapter.isPressed(-1));
-
-        /*
          * If the internal buttons buffer has yet to be set, return a value
          * of 0.0F. This will correct itself to a current value after the
          * first poll. This is to prevent the user from having to check the
@@ -282,6 +274,8 @@ class GlfwJoystickAdapterTest {
          * by the user and throw an exception.
          */
         assertThrows(IndexOutOfBoundsException.class,
+                () -> adapter.isPressed(-1));
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.isPressed(buttons.limit()));
     }
 
@@ -309,14 +303,6 @@ class GlfwJoystickAdapterTest {
 
     @Test
     void testGetAxis() {
-        /*
-         * It would not make sense to get the current value of an axis with a
-         * negative index. As such, assume this was a mistake by the user and
-         * throw an exception.
-         */
-        assertThrows(IndexOutOfBoundsException.class,
-                () -> adapter.getAxis(-1));
-
         /*
          * If the internal axes buffer has yet to be set, return a value of
          * 0.0F. This will correct itself to a current value after the first
@@ -347,6 +333,8 @@ class GlfwJoystickAdapterTest {
          * joystick's axes. When this occurs, assume it was a mistake by the
          * user and throw an exception.
          */
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> adapter.getAxis(-1));
         assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.getAxis(axes.limit()));
     }

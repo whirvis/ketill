@@ -14,11 +14,11 @@ class GlfwStickMappingTest {
          * guaranteed to result in an exception when querying joystick axis
          * or button data in GLFW. Assume this was an error by the user.
          */
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwStickMapping(-1, 0, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwStickMapping(0, -1, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwStickMapping(0, 0, -1));
 
         /*

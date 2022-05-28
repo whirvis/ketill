@@ -57,9 +57,9 @@ public class GlfwStickMapping {
      * @param glfwXAxis   the GLFW axis for the X-axis.
      * @param glfwYAxis   the GLFW axis for the Y-axis.
      * @param glfwZButton the GLFW button for the thumb button.
-     * @throws IllegalArgumentException if {@code glfwXAxis},
-     *                                  {@code glfwYAxis}, or
-     *                                  {@code glfwZButton} are negative.
+     * @throws IndexOutOfBoundsException if {@code glfwXAxis},
+     *                                   {@code glfwYAxis}, or
+     *                                   {@code glfwZButton} are negative.
      */
     public GlfwStickMapping(int glfwXAxis, int glfwYAxis, int glfwZButton) {
         this(glfwXAxis, glfwYAxis, glfwZButton, true);
@@ -70,8 +70,8 @@ public class GlfwStickMapping {
      *
      * @param glfwAxisX the GLFW axis for the X-axis.
      * @param glfwAxisY the GLFW axis for the Y-axis.
-     * @throws IllegalArgumentException if {@code glfwXAxis} or
-     *                                  {@code glfwYAxis} are negative.
+     * @throws IndexOutOfBoundsException if {@code glfwXAxis} or
+     *                                   {@code glfwYAxis} are negative.
      */
     public GlfwStickMapping(int glfwAxisX, int glfwAxisY) {
         this(glfwAxisX, glfwAxisY, -1, false);

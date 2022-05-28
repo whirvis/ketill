@@ -80,7 +80,7 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
      * @throws NullPointerException     if {@code device} or {@code registry}
      *                                  are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
@@ -94,8 +94,8 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     /**
      * @param button     the button to map.
      * @param glfwButton the GLFW button to map {@code button} to.
-     * @throws NullPointerException     if {@code button} is {@code null}.
-     * @throws IllegalArgumentException if {@code glfwButton} is negative.
+     * @throws NullPointerException      if {@code button} is {@code null}.
+     * @throws IndexOutOfBoundsException if {@code glfwButton} is negative.
      * @see #updateButton(ButtonStateZ, int)
      */
     @MappingMethod

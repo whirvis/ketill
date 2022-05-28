@@ -79,20 +79,20 @@ class GlfwUtilsTest {
          */
         assertThrows(NullPointerException.class,
                 () -> GlfwUtils.requireButton(0, null));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireButton(0, ""));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireButton(0, " "));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireButton(0, -1));
 
         /*
          * When an invalid GLFW button is passed to this method, it should
-         * throw an IllegalArgumentException to the caller.
+         * throw an IndexOutOfBoundsException to the caller.
          */
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireButton(-1));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireButton(1, 0));
 
         /*
@@ -116,20 +116,20 @@ class GlfwUtilsTest {
          */
         assertThrows(NullPointerException.class,
                 () -> GlfwUtils.requireAxis(0, null));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireAxis(0, ""));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireAxis(0, " "));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireAxis(0, -1));
 
         /*
          * When an invalid GLFW axis is passed to this method, it should
-         * throw an IllegalArgumentException to the caller.
+         * throw an IndexOutOfBoundsException to the caller.
          */
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireAxis(-1));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> GlfwUtils.requireAxis(1, 0));
 
         /*

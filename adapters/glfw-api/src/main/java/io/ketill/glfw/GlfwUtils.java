@@ -71,11 +71,11 @@ public final class GlfwUtils {
      * @param buttonCount the amount of available buttons.
      * @param paramName   the parameter being validated.
      * @return {@code glfwButton} if valid.
-     * @throws NullPointerException     if {@code paramName} is {@code null},
-     *                                  empty, or surrounded by whitespace.
-     * @throws IllegalArgumentException if {@code buttonCount} is negative;
-     *                                  if {@code glfwButton} is negative or
-     *                                  not lower than {@code buttonCount}.
+     * @throws NullPointerException      if {@code paramName} is {@code null},
+     *                                   empty, or surrounded by whitespace.
+     * @throws IndexOutOfBoundsException if {@code buttonCount} is negative;
+     *                                   if {@code glfwButton} is negative or
+     *                                   not lower than {@code buttonCount}.
      */
     public static int requireButton(int glfwButton, int buttonCount,
                                     @NotNull String paramName) {
@@ -83,21 +83,21 @@ public final class GlfwUtils {
 
         if (paramName.isEmpty()) {
             String msg = "paramName cannot be empty";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (!paramName.trim().equals(paramName)) {
             String msg = "paramName cannot be surrounded by whitespace";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (buttonCount < 0) {
             String msg = "buttonCount cannot be negative";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         }
 
         if (glfwButton < 0) {
             String msg = paramName + " cannot be negative";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (glfwButton >= buttonCount) {
             String msg = paramName + " must be lower than " + buttonCount;
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         }
 
         return glfwButton;
@@ -112,8 +112,8 @@ public final class GlfwUtils {
      * @param glfwButton the GLFW button to validate.
      * @param paramName  the parameter being validated.
      * @return {@code glfwButton} if valid.
-     * @throws NullPointerException     if {@code paramName} is {@code null}.
-     * @throws IllegalArgumentException if {@code glfwButton} is negative.
+     * @throws NullPointerException      if {@code paramName} is {@code null}.
+     * @throws IndexOutOfBoundsException if {@code glfwButton} is negative.
      */
     public static int requireButton(int glfwButton, @NotNull String paramName) {
         return requireButton(glfwButton, Integer.MAX_VALUE, paramName);
@@ -128,9 +128,9 @@ public final class GlfwUtils {
      * @param glfwButton  the GLFW button to validate.
      * @param buttonCount the amount of available buttons.
      * @return {@code glfwButton} if valid.
-     * @throws IllegalArgumentException if {@code buttonCount} is negative;
-     *                                  if {@code glfwButton} is negative or
-     *                                  not lower than {@code buttonCount}.
+     * @throws IndexOutOfBoundsException if {@code buttonCount} is negative;
+     *                                   if {@code glfwButton} is negative or
+     *                                   not lower than {@code buttonCount}.
      */
     public static int requireButton(int glfwButton, int buttonCount) {
         return requireButton(glfwButton, buttonCount, "GLFW button");
@@ -145,7 +145,7 @@ public final class GlfwUtils {
      *
      * @param glfwButton the GLFW button to validate.
      * @return {@code glfwButton} if valid.
-     * @throws IllegalArgumentException if {@code glfwButton} is negative.
+     * @throws IndexOutOfBoundsException if {@code glfwButton} is negative.
      */
     public static int requireButton(int glfwButton) {
         return requireButton(glfwButton, Integer.MAX_VALUE);
@@ -158,11 +158,11 @@ public final class GlfwUtils {
      * @param axisCount the amount of available axes.
      * @param paramName the parameter being validated.
      * @return {@code glfwAxis} if valid.
-     * @throws NullPointerException     if {@code paramName} is {@code null},
-     *                                  empty, or surrounded by whitespace.
-     * @throws IllegalArgumentException if {@code axisCount} is negative;
-     *                                  if {@code glfwAxis} is negative or
-     *                                  not lower than {@code axisCount}.
+     * @throws NullPointerException      if {@code paramName} is {@code null},
+     *                                   empty, or surrounded by whitespace.
+     * @throws IndexOutOfBoundsException if {@code axisCount} is negative;
+     *                                   if {@code glfwAxis} is negative or
+     *                                   not lower than {@code axisCount}.
      */
     public static int requireAxis(int glfwAxis, int axisCount,
                                   @NotNull String paramName) {
@@ -170,21 +170,21 @@ public final class GlfwUtils {
 
         if (paramName.isEmpty()) {
             String msg = "paramName cannot be empty";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (!paramName.trim().equals(paramName)) {
             String msg = "paramName cannot be surrounded by whitespace";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (axisCount < 0) {
             String msg = "axisCount cannot be negative";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         }
 
         if (glfwAxis < 0) {
             String msg = paramName + " cannot be negative";
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         } else if (glfwAxis >= axisCount) {
             String msg = paramName + " must be lower than " + axisCount;
-            throw new IllegalArgumentException(msg);
+            throw new IndexOutOfBoundsException(msg);
         }
 
         return glfwAxis;
@@ -199,8 +199,8 @@ public final class GlfwUtils {
      * @param glfwAxis  the GLFW axis to validate.
      * @param paramName the parameter being validated.
      * @return {@code glfwAxis} if valid.
-     * @throws NullPointerException     if {@code paramName} is {@code null}.
-     * @throws IllegalArgumentException if {@code glfwAxis} is negative.
+     * @throws NullPointerException      if {@code paramName} is {@code null}.
+     * @throws IndexOutOfBoundsException if {@code glfwAxis} is negative.
      */
     public static int requireAxis(int glfwAxis, @NotNull String paramName) {
         return requireAxis(glfwAxis, Integer.MAX_VALUE, paramName);
@@ -215,9 +215,9 @@ public final class GlfwUtils {
      * @param glfwAxis  the GLFW axis  to validate.
      * @param axisCount the amount of available axes.
      * @return {@code glfwAxis} if valid.
-     * @throws IllegalArgumentException if {@code axisCount} is negative;
-     *                                  if {@code glfwAxis} is negative or
-     *                                  not lower than {@code axisCount}.
+     * @throws IndexOutOfBoundsException if {@code axisCount} is negative;
+     *                                   if {@code glfwAxis} is negative or
+     *                                   not lower than {@code axisCount}.
      */
     public static int requireAxis(int glfwAxis, int axisCount) {
         return requireAxis(glfwAxis, axisCount, "GLFW axis");
@@ -232,7 +232,7 @@ public final class GlfwUtils {
      *
      * @param glfwAxis the GLFW axis to validate.
      * @return {@code glfwAxis} if valid.
-     * @throws IllegalArgumentException if {@code glfwAxis} is negative.
+     * @throws IndexOutOfBoundsException if {@code glfwAxis} is negative.
      */
     public static int requireAxis(int glfwAxis) {
         return requireAxis(glfwAxis, Integer.MAX_VALUE);
