@@ -86,14 +86,11 @@ class AwtMouseAdapterTest {
                 component);
 
         /*
-         * It would not make sense to map a null button or for a button
-         * to be mapped to a negative index. Assume these were mistakes
-         * by the user and throw an exception.
+         * It would not make sense to map a null button. As such, assume this
+         * was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapButton(null, MouseEvent.BUTTON1));
-        assertThrows(IllegalArgumentException.class,
-                () -> adapter.mapButton(Mouse.BUTTON_M1, -1));
     }
 
     @Test

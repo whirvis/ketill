@@ -74,14 +74,11 @@ class AwtKeyboardAdapterTest {
                 registry, component);
 
         /*
-         * It would not make sense to map a null key or for a key to be
-         * mapped to a negative index. Assume these were mistakes by the
-         * user and throw an exception.
+         * It would not make sense to map a null key. As such, assume this
+         * was a mistake by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapKey(null, KeyEvent.VK_SPACE));
-        assertThrows(IllegalArgumentException.class,
-                () -> adapter.mapKey(Keyboard.KEY_SPACE, -1));
     }
 
     @Test
