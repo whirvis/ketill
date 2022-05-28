@@ -9,6 +9,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * GLFW adapters map data from a GLFW window to an {@link IoDevice}. These
  * allow for seamless integration with LWJGL's bindings to the GLFW API.
+ * <p>
+ * <b>Note:</b> The {@code glfwPollEvents()} <i>must</i> be called before
+ * the adapter is polled. Failure to do so will result in GLFW returning
+ * out-of-date input data to the adapter.
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier

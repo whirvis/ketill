@@ -25,6 +25,10 @@ import static org.lwjgl.glfw.GLFW.*;
  * which specialize in mapping data from GLFW joysticks. An assortment
  * of utility methods are provided for mapping features.
  * <p>
+ * <b>Note:</b> The {@code glfwPollEvents()} <i>must</i> be called before
+ * the adapter is polled. Failure to do so will result in GLFW returning
+ * out-of-date input data to the adapter.
+ * <p>
  * Feature adapters like {@link #updateStick(StickPosZ, GlfwStickMapping)}
  * can also be overridden to modify data returned from GLFW. An example of
  * this would be switching the polarity of an axis. This is done in the
