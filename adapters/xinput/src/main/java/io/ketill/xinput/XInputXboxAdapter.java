@@ -140,14 +140,14 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     }
 
     @FeatureAdapter
-    private void updateMotor(@NotNull MotorVibration vibration,
+    private void updateMotor(@NotNull MotorVibration state,
                              @NotNull RumbleMotor motor) {
         /*
          * The X-input API will throw an exception if it receives a motor
          * force that is out of its valid bounds. Clamping the force will
          * prevent this from occurring.
          */
-        int force = (int) Math.ceil(RUMBLE_MAX * vibration.getStrength());
+        int force = (int) Math.ceil(RUMBLE_MAX * state.getStrength());
         force = Math.min(Math.max(force, RUMBLE_MIN), RUMBLE_MAX);
 
         /*
