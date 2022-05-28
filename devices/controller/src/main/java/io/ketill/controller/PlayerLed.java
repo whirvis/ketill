@@ -24,7 +24,8 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
     public PlayerLed(@NotNull String id, int ledCount) {
         super(Controller.class, id, LedState::new);
         if (ledCount <= 0) {
-            throw new IllegalArgumentException("ledCount <= 0");
+            String msg = "ledCount cannot be negative";
+            throw new IllegalArgumentException(msg);
         }
         this.ledCount = ledCount;
     }
