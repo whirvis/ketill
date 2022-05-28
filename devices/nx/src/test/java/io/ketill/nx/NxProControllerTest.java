@@ -24,6 +24,8 @@ class NxProControllerTest {
         assertFeatureOwnsState(nxPro, nxPro.x, BUTTON_X);
         assertFeatureOwnsState(nxPro, nxPro.l, BUTTON_L);
         assertFeatureOwnsState(nxPro, nxPro.r, BUTTON_R);
+        assertFeatureOwnsState(nxPro, nxPro.zl, BUTTON_ZL);
+        assertFeatureOwnsState(nxPro, nxPro.zr, BUTTON_ZR);
         assertFeatureOwnsState(nxPro, nxPro.minus, BUTTON_MINUS);
         assertFeatureOwnsState(nxPro, nxPro.plus, BUTTON_PLUS);
         assertFeatureOwnsState(nxPro, nxPro.lThumb, BUTTON_L_THUMB);
@@ -40,13 +42,16 @@ class NxProControllerTest {
         assertFeatureOwnsState(nxPro, nxPro.ls, STICK_LS);
         assertFeatureOwnsState(nxPro, nxPro.rs, STICK_RS);
 
-        assertFeatureOwnsState(nxPro, nxPro.zl, TRIGGER_ZL);
-        assertFeatureOwnsState(nxPro, nxPro.zr, TRIGGER_ZR);
-
-        assertSame(nxPro.zl, nxPro.lt);
-        assertSame(nxPro.zr, nxPro.rt);
+        assertFeatureOwnsState(nxPro, nxPro.lt, TRIGGER_LT);
+        assertFeatureOwnsState(nxPro, nxPro.rt, TRIGGER_RT);
 
         assertFeatureOwnsState(nxPro, nxPro.led, FEATURE_LED);
+    }
+
+    @Test
+    void ensureBaseCalibrationsSet() {
+        assertSame(CALIBRATION, STICK_LS.getBaseCalibration());
+        assertSame(CALIBRATION, STICK_RS.getBaseCalibration());
     }
 
 }

@@ -28,12 +28,11 @@ class NxRightJoyConTest {
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rThumb, BUTTON_R_THUMB);
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.home, BUTTON_HOME);
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.r, BUTTON_R);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.zr, BUTTON_ZR);
 
         assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rs, STICK_RS);
 
-        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rt, TRIGGER_ZR);
-
-        assertSame(nxRightJoyCon.zr, nxRightJoyCon.rt);
+        assertFeatureOwnsState(nxRightJoyCon, nxRightJoyCon.rt, TRIGGER_RT);
     }
 
     @Test

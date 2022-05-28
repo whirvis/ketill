@@ -90,20 +90,20 @@ class GlfwNxProAdapterTest {
                     .thenReturn(buttons);
 
             /* update button states for next test */
-            buttons.put(ZL_INDEX, (byte) GLFW_PRESS);
-            buttons.put(ZR_INDEX, (byte) GLFW_PRESS);
+            buttons.put(INDEX_ZL, (byte) GLFW_PRESS);
+            buttons.put(INDEX_ZR, (byte) GLFW_PRESS);
 
             controller.poll(); /* update triggers */
-            assertEquals(1.0F, controller.zl.getForce());
-            assertEquals(1.0F, controller.zr.getForce());
+            assertEquals(1.0F, controller.lt.getForce());
+            assertEquals(1.0F, controller.rt.getForce());
 
             /* update button states for next test */
-            buttons.put(ZL_INDEX, (byte) GLFW_RELEASE);
-            buttons.put(ZR_INDEX, (byte) GLFW_RELEASE);
+            buttons.put(INDEX_ZL, (byte) GLFW_RELEASE);
+            buttons.put(INDEX_ZR, (byte) GLFW_RELEASE);
 
             controller.poll(); /* update triggers */
-            assertEquals(0.0F, controller.zl.getForce());
-            assertEquals(0.0F, controller.zr.getForce());
+            assertEquals(0.0F, controller.lt.getForce());
+            assertEquals(0.0F, controller.rt.getForce());
         }
     }
 

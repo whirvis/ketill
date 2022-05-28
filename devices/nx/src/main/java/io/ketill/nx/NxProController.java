@@ -37,6 +37,8 @@ public class NxProController extends Controller {
             BUTTON_X = new ControllerButton("x"),
             BUTTON_L = new ControllerButton("l"),
             BUTTON_R = new ControllerButton("r"),
+            BUTTON_ZL = new ControllerButton("zl"),
+            BUTTON_ZR = new ControllerButton("zr"),
             BUTTON_MINUS = new ControllerButton("minus"),
             BUTTON_PLUS = new ControllerButton("plus"),
             BUTTON_L_THUMB = new ControllerButton("l_thumb"),
@@ -56,18 +58,13 @@ public class NxProController extends Controller {
             STICK_RS = new AnalogStick("rs", BUTTON_R_THUMB, CALIBRATION);
 
     /**
-     * These features are both presented as an {@link AnalogTrigger} (rather
-     * than a {@link ControllerButton}) even though they can only be fully
-     * pressed or fully released. This is because most other controllers have
-     * a proper analog trigger, so this continues the pattern.
-     * <p>
-     * Feature adapters should set the force to {@code 1.0F} when the
-     * trigger button is pressed, and {@code 0.0F} when it is released.
+     * These triggers act as wrappers for {@link #BUTTON_ZL} and
+     * {@link #BUTTON_ZR}.
      */
     @FeaturePresent
     public static final @NotNull AnalogTrigger
-            TRIGGER_ZL = new AnalogTrigger("lt"),
-            TRIGGER_ZR = new AnalogTrigger("rt");
+            TRIGGER_LT = new AnalogTrigger("lt"),
+            TRIGGER_RT = new AnalogTrigger("rt");
 
     @FeaturePresent
     public static final @NotNull PlayerLed
@@ -83,6 +80,8 @@ public class NxProController extends Controller {
             x = this.getState(BUTTON_X),
             l = this.getState(BUTTON_L),
             r = this.getState(BUTTON_R),
+            zl = this.getState(BUTTON_ZL),
+            zr = this.getState(BUTTON_ZR),
             minus = this.getState(BUTTON_MINUS),
             plus = this.getState(BUTTON_PLUS),
             lThumb = this.getState(BUTTON_L_THUMB),
@@ -101,17 +100,18 @@ public class NxProController extends Controller {
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 
-    @FeatureState
-    public final @NotNull TriggerState
-            zl = Objects.requireNonNull(super.lt),
-            zr = Objects.requireNonNull(super.rt);
-
     /**
-     * Aliases for {@link #zl} and {@link #zr}.
+     * The force of these triggers are dependent on the state of {@link #zl}
+     * and {@link #zr}. If their corresponding button is pressed, the force
+     * of the trigger will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     *
+     * @see #TRIGGER_LT
+     * @see #TRIGGER_RT
      */
     @FeatureState
     public final @NotNull TriggerState
-            lt = zl, rt = zr;
+            lt = Objects.requireNonNull(super.lt),
+            rt = Objects.requireNonNull(super.rt);
 
     @FeatureState
     public final @NotNull LedState
@@ -128,7 +128,7 @@ public class NxProController extends Controller {
      */
     public NxProController(@NotNull AdapterSupplier<NxProController> adapterSupplier) {
         super("nx_pro", adapterSupplier,
-                STICK_LS, STICK_RS, TRIGGER_ZL, TRIGGER_ZR);
+                STICK_LS, STICK_RS, TRIGGER_LT, TRIGGER_RT);
     }
 
 }

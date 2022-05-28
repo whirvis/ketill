@@ -21,9 +21,10 @@ public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon>
     /* @formatter:on */
 
     /**
-     * Mapping for {@link NxRightJoyCon#TRIGGER_ZR}.
+     * Mapping for {@link NxRightJoyCon#BUTTON_ZR} and
+     * {@link  NxRightJoyCon#TRIGGER_RT}.
      */
-    protected static final int ZR_INDEX = 15;
+    protected static final int INDEX_ZR = 15;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -75,10 +76,11 @@ public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon>
         this.mapButton(BUTTON_R_THUMB, 11);
         this.mapButton(BUTTON_HOME, 12);
         this.mapButton(BUTTON_R, 14);
+        this.mapButton(BUTTON_ZR, INDEX_ZR);
 
         this.mapJoyConStick(STICK_RS, MAPPING_RS);
 
-        this.mapJoyConTrigger(TRIGGER_ZR, ZR_INDEX);
+        this.mapJoyConTrigger(TRIGGER_RT, INDEX_ZR);
     }
 
 }

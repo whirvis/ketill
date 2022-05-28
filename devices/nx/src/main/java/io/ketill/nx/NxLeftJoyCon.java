@@ -28,24 +28,19 @@ public class NxLeftJoyCon extends NxJoyCon {
             BUTTON_MINUS = new ControllerButton("minus"),
             BUTTON_L_THUMB = new ControllerButton("l_thumb"),
             BUTTON_SNAPSHOT = new ControllerButton("snapshot"),
-            BUTTON_L = new ControllerButton("l");
+            BUTTON_L = new ControllerButton("l"),
+            BUTTON_ZL = new ControllerButton("zl");
 
     @FeaturePresent
     public static final AnalogStick
             STICK_LS = new AnalogStick("ls");
 
     /**
-     * This feature is presented as an {@link AnalogTrigger} (rather than a
-     * {@link ControllerButton}) even though it can only be fully pressed or
-     * fully released. This is because most other controllers have a proper
-     * analog trigger, so this continues the pattern.
-     * <p>
-     * Feature adapters should set the force to {@code 1.0F} when the ZL
-     * button is pressed, and {@code 0.0F} when it is released.
+     * This trigger acts as a wrapper for {@link #BUTTON_ZL}.
      */
     @FeaturePresent
     public static final AnalogTrigger
-            TRIGGER_ZL = new AnalogTrigger("zl");
+            TRIGGER_LT = new AnalogTrigger("lt");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -58,22 +53,23 @@ public class NxLeftJoyCon extends NxJoyCon {
             minus = this.getState(BUTTON_MINUS),
             lThumb = this.getState(BUTTON_L_THUMB),
             snapshot = this.getState(BUTTON_SNAPSHOT),
-            l = this.getState(BUTTON_L);
+            l = this.getState(BUTTON_L),
+            zl = this.getState(BUTTON_ZL);
 
     @FeatureState
     public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls);
 
-    @FeatureState
-    public final @NotNull TriggerState
-            zl = Objects.requireNonNull(super.lt);
-
     /**
-     * Alias for {@link #zl}.
+     * The force of this trigger is dependent on the state of {@link #zl}.
+     * If the button is pressed, the force of this trigger will be
+     * {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     *
+     * @see #TRIGGER_LT
      */
     @FeatureState
     public final @NotNull TriggerState
-            lt = zl;
+            lt = Objects.requireNonNull(super.lt);
     /* @formatter:on */
 
     /**
@@ -86,7 +82,7 @@ public class NxLeftJoyCon extends NxJoyCon {
      */
     public NxLeftJoyCon(@NotNull AdapterSupplier<NxLeftJoyCon> adapterSupplier) {
         super("nx_joycon_left", adapterSupplier,
-                STICK_LS, null, TRIGGER_ZL, null);
+                STICK_LS, null, TRIGGER_LT, null);
     }
 
 }

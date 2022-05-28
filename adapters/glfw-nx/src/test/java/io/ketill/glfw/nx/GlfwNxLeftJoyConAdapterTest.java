@@ -82,11 +82,11 @@ class GlfwNxLeftJoyConAdapterTest {
             glfw.when(() -> glfwGetJoystickButtons(GLFW_JOYSTICK_1))
                     .thenReturn(buttons);
 
-            buttons.put(ZL_INDEX, (byte) GLFW_PRESS);
+            buttons.put(INDEX_ZL, (byte) GLFW_PRESS);
             joycon.poll(); /* update analog triggers */
             assertEquals(1.0F, joycon.lt.getForce());
 
-            buttons.put(ZL_INDEX, (byte) GLFW_RELEASE);
+            buttons.put(INDEX_ZL, (byte) GLFW_RELEASE);
             joycon.poll(); /* update analog triggers */
             assertEquals(0.0F, joycon.lt.getForce());
         }

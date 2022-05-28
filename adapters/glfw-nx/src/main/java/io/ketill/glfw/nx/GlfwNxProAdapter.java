@@ -30,10 +30,10 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     /* @formatter:on */
 
     /**
-     * Mappings for {@link NxProController#TRIGGER_ZL} and
-     * {@link NxProController#TRIGGER_ZR}.
+     * Mappings for {@link NxProController#TRIGGER_LT} and
+     * {@link NxProController#TRIGGER_RT}.
      */
-    protected static final int ZL_INDEX = 6, ZR_INDEX = 7;
+    protected static final int INDEX_ZL = 6, INDEX_ZR = 7;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
@@ -86,6 +86,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapButton(BUTTON_X, 3);
         this.mapButton(BUTTON_L, 4);
         this.mapButton(BUTTON_R, 5);
+        this.mapButton(BUTTON_ZL, INDEX_ZL);
+        this.mapButton(BUTTON_ZR, INDEX_ZR);
         this.mapButton(BUTTON_MINUS, 8);
         this.mapButton(BUTTON_PLUS, 9);
         this.mapButton(BUTTON_L_THUMB, 10);
@@ -102,8 +104,8 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         this.mapStick(STICK_LS, MAPPING_LS);
         this.mapStick(STICK_RS, MAPPING_RS);
 
-        this.mapProTrigger(TRIGGER_ZL, ZL_INDEX);
-        this.mapProTrigger(TRIGGER_ZR, ZR_INDEX);
+        this.mapProTrigger(TRIGGER_LT, INDEX_ZL);
+        this.mapProTrigger(TRIGGER_RT, INDEX_ZR);
     }
 
     @Override
