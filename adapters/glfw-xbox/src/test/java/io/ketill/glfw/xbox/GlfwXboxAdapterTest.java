@@ -12,6 +12,7 @@ import java.nio.FloatBuffer;
 import java.util.Random;
 
 import static io.ketill.KetillAssertions.*;
+import static io.ketill.glfw.xbox.GlfwXboxAdapter.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -36,7 +37,7 @@ class GlfwXboxAdapterTest {
 
     @BeforeEach
     void wrangleJoystick() {
-        this.controller = GlfwXboxAdapter.wrangle(ptr_glfwWindow, glfwJoystick);
+        this.controller = wrangle(ptr_glfwWindow, glfwJoystick);
     }
 
     @Test
@@ -54,8 +55,8 @@ class GlfwXboxAdapterTest {
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
             float rsYValue = RANDOM.nextFloat();
-            axes.put(GlfwXboxAdapter.MAPPING_LS.glfwYAxis, lsYValue);
-            axes.put(GlfwXboxAdapter.MAPPING_RS.glfwYAxis, rsYValue);
+            axes.put(MAPPING_LS.glfwYAxis, lsYValue);
+            axes.put(MAPPING_RS.glfwYAxis, rsYValue);
 
             controller.poll(); /* update sticks */
 
@@ -75,8 +76,8 @@ class GlfwXboxAdapterTest {
             /* generate axis values for next test */
             float ltValue = RANDOM.nextFloat();
             float rtValue = RANDOM.nextFloat();
-            axes.put(GlfwXboxAdapter.AXIS_LT, ltValue);
-            axes.put(GlfwXboxAdapter.AXIS_RT, rtValue);
+            axes.put(AXIS_LT, ltValue);
+            axes.put(AXIS_RT, rtValue);
 
             controller.poll(); /* update triggers */
 
