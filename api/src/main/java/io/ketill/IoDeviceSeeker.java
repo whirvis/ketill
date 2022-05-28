@@ -135,9 +135,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Called when a device is discovered. Overriding this method allows
-     * for an I/O device seeker to know when a device has been discovered
-     * without needing to set themselves as the callback.
+     * Called when a device is discovered. This will be called before
+     * the corresponding event is emitted to subscribers.
      *
      * @param device the discovered device.
      */
@@ -168,9 +167,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Called when a device is forgotten. Overriding this method allows
-     * for an I/O device seeker to know when a device has been forgotten
-     * without needing to set themselves as the callback.
+     * Called when a device is forgotten. This will be called before
+     * the corresponding event is emitted to subscribers.
      *
      * @param device the forgotten device.
      */
