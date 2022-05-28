@@ -1,6 +1,6 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api project(':adapters:glfw-api')
+    api project(':adapter:glfw-api')
     api project(':device:pc')
 }
