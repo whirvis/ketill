@@ -1,5 +1,0 @@
-/* I'm a little teapot! */
-
-dependencies {
-    api project(":devices:pressable")
-}

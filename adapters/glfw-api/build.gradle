@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api project(':devices:controller')
+    api project(':device:controller')
     api 'com.google.code.gson:gson:2.9.0'
 
     implementation 'org.apache.commons:commons-lang3:3.12.0'

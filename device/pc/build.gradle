@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
 
 dependencies {
-    api project(':devices:controller')
+    api project(":device:pressable")
 }

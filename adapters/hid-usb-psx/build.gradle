@@ -2,5 +2,5 @@ apply plugin: 'java-library'
 
 dependencies {
     api project(':adapters:hid-usb-api')
-    api project(':devices:psx')
+    api project(':device:psx')
 }

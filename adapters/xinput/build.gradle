@@ -24,7 +24,7 @@ publishing {
 }
 
 dependencies {
-    api project(':devices:xbox')
+    api project(':device:xbox')
 
     implementation 'com.github.strikerx3:jxinput:1.0.0'
 }
