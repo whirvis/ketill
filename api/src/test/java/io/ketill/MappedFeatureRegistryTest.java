@@ -241,7 +241,8 @@ class MappedFeatureRegistryTest {
          */
         RegisteredIoFeature<?, ?, ?> registeredFeature =
                 registry.registerFeature(feature);
-        assertSame(registeredFeature, registry.getFeatureRegistration(feature));
+        assertSame(registeredFeature,
+                registry.getFeatureRegistration(feature));
 
         /*
          * It makes no sense to get the registration of a null feature.
@@ -273,7 +274,8 @@ class MappedFeatureRegistryTest {
          * state of a feature that is not yet registered. As such, assume
          * these were mistakes by the user and throw an exception.
          */
-        assertThrows(NullPointerException.class, () -> registry.getState(null));
+        assertThrows(NullPointerException.class,
+                () -> registry.getState(null));
         assertThrows(IllegalStateException.class,
                 () -> registry.getState(feature));
 
@@ -319,7 +321,8 @@ class MappedFeatureRegistryTest {
          * It makes no sense to retrieve the state of a null feature.
          * Assume this was a user mistake and throw an exception.
          */
-        assertThrows(NullPointerException.class, () -> registry.getState(null));
+        assertThrows(NullPointerException.class,
+                () -> registry.getState(null));
         assertThrows(IllegalStateException.class,
                 () -> registry.getState(feature));
 
