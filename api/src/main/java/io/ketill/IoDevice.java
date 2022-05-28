@@ -270,7 +270,7 @@ public abstract class IoDevice implements FeatureRegistry {
         /* @formatter:off */
         if (!IoFeature.class.isAssignableFrom(field.getType())) {
             throw new KetillException(fieldDesc + " must be assignable from "
-                    + this.getClass().getName());
+                    + IoFeature.class.getName());
         }
         /* @formatter:on */
 
