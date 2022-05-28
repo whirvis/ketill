@@ -97,14 +97,12 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @FeatureAdapter
-    @MustBeInvokedByOverriders
     protected void updateButton(@NotNull MouseClickZ click, int glfwButton) {
         int status = glfwGetMouseButton(ptr_glfwWindow, glfwButton);
         click.pressed = status >= GLFW_PRESS;
     }
 
     @FeatureAdapter
-    @MustBeInvokedByOverriders
     protected void updateCursor(@NotNull CursorStateZ cursor) {
         Vector2fc requested = cursor.requestedPos;
         cursor.requestedPos = null;
@@ -132,7 +130,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @Override
-    protected boolean isDeviceConnected() {
+    protected final boolean isDeviceConnected() {
         return true; /* mouse is always connected */
     }
 

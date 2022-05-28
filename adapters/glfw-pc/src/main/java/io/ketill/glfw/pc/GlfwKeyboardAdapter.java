@@ -200,7 +200,6 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     @FeatureAdapter
-    @MustBeInvokedByOverriders
     protected void updateKey(@NotNull KeyPressZ key, int glfwKey) {
         int status = glfwGetKey(ptr_glfwWindow, glfwKey);
         key.pressed = status >= GLFW_PRESS;
@@ -217,7 +216,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     @Override
-    protected boolean isDeviceConnected() {
+    protected final boolean isDeviceConnected() {
         return true; /* keyboard is always connected */
     }
 
