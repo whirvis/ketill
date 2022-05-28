@@ -29,8 +29,11 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
             MAPPING_RS = new GlfwStickMapping(2, 3, 11);
     /* @formatter:on */
 
-    /* declared here for GlfwNxProAdapterTest */
-    static final int ZL_INDEX = 6, ZR_INDEX = 7;
+    /**
+     * Mappings for {@link NxProController#TRIGGER_ZL} and
+     * {@link NxProController#TRIGGER_ZR}.
+     */
+    protected static final int ZL_INDEX = 6, ZR_INDEX = 7;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.

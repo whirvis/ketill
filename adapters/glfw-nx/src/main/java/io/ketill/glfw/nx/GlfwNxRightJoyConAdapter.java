@@ -20,8 +20,10 @@ public class GlfwNxRightJoyConAdapter extends GlfwNxJoyConAdapter<NxRightJoyCon>
             MAPPING_RS = new JoyConStickMapping(17,19,16,18, 11);
     /* @formatter:on */
 
-    /* declared here for GlfwNxRightJoyConAdapterTest */
-    static final int ZR_INDEX = 15;
+    /**
+     * Mapping for {@link NxRightJoyCon#TRIGGER_ZR}.
+     */
+    protected static final int ZR_INDEX = 15;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.

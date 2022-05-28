@@ -20,8 +20,10 @@ public class GlfwNxLeftJoyConAdapter extends GlfwNxJoyConAdapter<NxLeftJoyCon> {
             MAPPING_LS = new JoyConStickMapping(19, 17, 18, 16, 10);
     /* @formatter:on */
 
-    /* declared here for GlfwNxLeftJoyConAdapterTest */
-    static final int ZL_INDEX = 15;
+    /**
+     * Mapping for {@link NxLeftJoyCon#TRIGGER_ZL}.
+     */
+    protected static final int ZL_INDEX = 15;
 
     /**
      * @param ptr_glfwWindow the GLFW window pointer.
