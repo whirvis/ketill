@@ -26,7 +26,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return the wrangled keyboard.
      * @throws NullPointerException if {@code ptr_glfwWindow} is a null
-     *                              pointer (has a value of zero.)
+     *                              pointer (has a value of zero).
      */
     @WranglerMethod
     public static @NotNull Keyboard wrangle(long ptr_glfwWindow) {
@@ -43,7 +43,7 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
      * @throws NullPointerException if {@code keyboard} or
      *                              {@code registry} are {@code null};
      *                              if {@code ptr_glfwWindow} is a null
-     *                              pointer (has a value of zero.)
+     *                              pointer (has a value of zero).
      */
     public GlfwKeyboardAdapter(@NotNull Keyboard keyboard,
                                @NotNull MappedFeatureRegistry registry,

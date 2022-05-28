@@ -44,7 +44,7 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled Switch Pro controller.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
@@ -67,7 +67,7 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
      * @throws NullPointerException     if {@code controller} or
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */

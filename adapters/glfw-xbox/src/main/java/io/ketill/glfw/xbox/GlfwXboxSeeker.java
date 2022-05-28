@@ -15,7 +15,7 @@ public class GlfwXboxSeeker extends GlfwJoystickSeeker<XboxController> {
      *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException if {@code ptr_glfwWindow} is a null
-     *                              pointer (has a value of zero.)
+     *                              pointer (has a value of zero).
      */
     public GlfwXboxSeeker(long ptr_glfwWindow) {
         super(XboxController.class, ptr_glfwWindow);

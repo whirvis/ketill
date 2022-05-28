@@ -25,7 +25,7 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled PlayStation 5 controller.
      * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
@@ -48,7 +48,7 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
      * @throws NullPointerException     if {@code controller} or
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */

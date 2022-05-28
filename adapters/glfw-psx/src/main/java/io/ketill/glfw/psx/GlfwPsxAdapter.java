@@ -44,7 +44,7 @@ public abstract class GlfwPsxAdapter<C extends PsxController>
      * @throws NullPointerException     if {@code controller} or
      *                                  {@code registry} are {@code null};
      *                                  if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
+     *                                  pointer (has a value of zero).
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */

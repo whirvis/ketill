@@ -29,7 +29,7 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker<Ps4Controller>
      *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @throws NullPointerException if {@code ptr_glfwWindow} is a null
-     *                              pointer (has a value of zero.)
+     *                              pointer (has a value of zero).
      */
     public GlfwPs4Seeker(long ptr_glfwWindow) {
         super(Ps4Controller.class, ptr_glfwWindow);
