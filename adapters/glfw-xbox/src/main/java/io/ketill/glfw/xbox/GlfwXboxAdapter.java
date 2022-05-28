@@ -7,6 +7,7 @@ import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.xbox.XboxController;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.xbox.XboxController.*;
@@ -71,6 +72,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapButton(BUTTON_A, 0);
         this.mapButton(BUTTON_B, 1);
@@ -95,6 +97,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(state, mapping);
@@ -104,6 +107,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
         super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {

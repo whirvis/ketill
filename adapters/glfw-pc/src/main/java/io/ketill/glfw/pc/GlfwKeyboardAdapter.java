@@ -8,6 +8,7 @@ import io.ketill.glfw.WranglerMethod;
 import io.ketill.pc.KeyPressZ;
 import io.ketill.pc.Keyboard;
 import io.ketill.pc.KeyboardKey;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -192,20 +193,27 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapPrintableKeys();
         this.mapMethodKeys();
     }
 
     @FeatureAdapter
+    @MustBeInvokedByOverriders
     protected void updateKey(@NotNull KeyPressZ key, int glfwKey) {
         int status = glfwGetKey(ptr_glfwWindow, glfwKey);
         key.pressed = status >= GLFW_PRESS;
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void pollDevice() {
-        /* nothing to poll */
+        /*
+         * Although there is currently nothing to poll here, annotate this
+         * method with @MustBeInvokedByOverriders in case there is something
+         * to poll in a later version.
+         */
     }
 
     @Override

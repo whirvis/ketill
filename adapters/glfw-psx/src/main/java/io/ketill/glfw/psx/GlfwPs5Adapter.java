@@ -4,6 +4,7 @@ import io.ketill.MappedFeatureRegistry;
 import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.psx.Ps5Controller;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.psx.Ps5Controller.*;
@@ -58,6 +59,7 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         super.initAdapter();
 
@@ -76,6 +78,7 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
         super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {

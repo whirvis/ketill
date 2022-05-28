@@ -9,6 +9,7 @@ import io.ketill.pc.CursorStateZ;
 import io.ketill.pc.Mouse;
 import io.ketill.pc.MouseButton;
 import io.ketill.pc.MouseClickZ;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2fc;
 
@@ -75,6 +76,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     public void initAdapter() {
         this.mapButton(BUTTON_M1, GLFW_MOUSE_BUTTON_1);
         this.mapButton(BUTTON_M2, GLFW_MOUSE_BUTTON_2);
@@ -95,12 +97,14 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @FeatureAdapter
+    @MustBeInvokedByOverriders
     protected void updateButton(@NotNull MouseClickZ click, int glfwButton) {
         int status = glfwGetMouseButton(ptr_glfwWindow, glfwButton);
         click.pressed = status >= GLFW_PRESS;
     }
 
     @FeatureAdapter
+    @MustBeInvokedByOverriders
     protected void updateCursor(@NotNull CursorStateZ cursor) {
         Vector2fc requested = cursor.requestedPos;
         cursor.requestedPos = null;
@@ -122,6 +126,7 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void pollDevice() {
         glfwGetCursorPos(ptr_glfwWindow, xPos, yPos);
     }

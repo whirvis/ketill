@@ -81,6 +81,7 @@ public abstract class GlfwPsxAdapter<C extends PsxController>
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(state, mapping);
