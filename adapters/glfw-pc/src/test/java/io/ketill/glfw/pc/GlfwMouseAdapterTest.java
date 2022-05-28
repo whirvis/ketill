@@ -50,7 +50,7 @@ class GlfwMouseAdapterTest {
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapButton(null, GLFW_MOUSE_BUTTON_1));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.mapButton(Mouse.BUTTON_M1, -1));
     }
 

@@ -49,7 +49,7 @@ class GlfwKeyboardAdapterTest {
          */
         assertThrows(NullPointerException.class,
                 () -> adapter.mapKey(null, GLFW_KEY_SPACE));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> adapter.mapKey(Keyboard.KEY_SPACE, -1));
     }
 
