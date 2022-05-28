@@ -16,12 +16,20 @@ import static io.ketill.xbox.XboxController.*;
  */
 public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
 
+    /**
+     * Mappings for {@link XboxController#STICK_LS} and
+     * {@link XboxController#STICK_RS}.
+     */
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
             MAPPING_LS = new GlfwStickMapping(0, 1, 8),
             MAPPING_RS = new GlfwStickMapping(2, 3, 9);
     /* @formatter:on */
 
+    /**
+     * Mappings for {@link XboxController#TRIGGER_LT} and
+     * {@link XboxController#TRIGGER_RT}.
+     */
     protected static final int AXIS_LT = 4, AXIS_RT = 5;
 
     /**
