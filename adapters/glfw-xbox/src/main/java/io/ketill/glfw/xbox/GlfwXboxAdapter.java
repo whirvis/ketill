@@ -97,7 +97,6 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     }
 
     @Override
-    @MustBeInvokedByOverriders
     protected void updateStick(@NotNull StickPosZ state,
                                @NotNull GlfwStickMapping mapping) {
         super.updateStick(state, mapping);
@@ -107,7 +106,6 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     }
 
     @Override
-    @MustBeInvokedByOverriders
     protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
         super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
