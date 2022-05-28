@@ -36,9 +36,9 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
                 ptr_glfwWindow));
     }
 
-    protected final double[] xPos;
-    protected final double[] yPos;
-    protected boolean wasCursorVisible;
+    private final double[] xPos;
+    private final double[] yPos;
+    private boolean wasCursorVisible;
 
     /**
      * Constructs a new {@code GlfwMouseAdapter}.
