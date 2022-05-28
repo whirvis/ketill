@@ -68,8 +68,8 @@ public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
     /**
      * Sets how long in milliseconds a feature must be pressed for it to
      * be considered held down. Once a feature is held down, the feature
-     * press callback (if set) will be automatically fired. The virtual
-     * press rate is determined by {@link #getHoldPressInterval()}.
+     * press event will be emitted. The virtual press rate is determined
+     * by {@link #getHoldPressInterval()}.
      *
      * @param holdTime how long in milliseconds a feature must be pressed
      *                 to be considered held down. A negative value will
