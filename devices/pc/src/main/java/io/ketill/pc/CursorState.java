@@ -111,7 +111,7 @@ public final class CursorState extends ContainerState<CursorStateZ> {
      * @see #trySetPosition(Vector2fc)
      */
     public void setPosition(@NotNull Vector2fc pos) {
-        Objects.requireNonNull(pos, "pos");
+        Objects.requireNonNull(pos, "pos cannot be null");
         if (!this.canSetPosition()) {
             String msg = "cannot set position with current adapter";
             msg += ", did it forget to set adapterCanSetPosition";
@@ -132,7 +132,7 @@ public final class CursorState extends ContainerState<CursorStateZ> {
      * @throws NullPointerException if {@code pos} is {@code null}.
      */
     public boolean trySetPosition(@NotNull Vector2fc pos) {
-        Objects.requireNonNull(pos, "pos");
+        Objects.requireNonNull(pos, "pos cannot be null");
         if (!this.canSetPosition()) {
             return false;
         }
