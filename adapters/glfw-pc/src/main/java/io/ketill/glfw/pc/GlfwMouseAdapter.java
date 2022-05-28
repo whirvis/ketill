@@ -96,28 +96,40 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
         this.wasCursorVisible = cursor.visible;
     }
 
+    /**
+     * Updater for mouse buttons mapped via
+     * {@link #mapButton(MouseButton, int)}.
+     *
+     * @param state      the button state.
+     * @param glfwButton the GLFW button.
+     */
     @FeatureAdapter
-    protected void updateButton(@NotNull MouseClickZ click, int glfwButton) {
+    protected void updateButton(@NotNull MouseClickZ state, int glfwButton) {
         int status = glfwGetMouseButton(ptr_glfwWindow, glfwButton);
-        click.pressed = status >= GLFW_PRESS;
+        state.pressed = status >= GLFW_PRESS;
     }
 
+    /**
+     * Updater for {@link Mouse#FEATURE_CURSOR}.
+     *
+     * @param state the cursor state.
+     */
     @FeatureAdapter
-    protected void updateCursor(@NotNull CursorStateZ cursor) {
-        Vector2fc requested = cursor.requestedPos;
-        cursor.requestedPos = null;
+    protected void updateCursor(@NotNull CursorStateZ state) {
+        Vector2fc requested = state.requestedPos;
+        state.requestedPos = null;
         if (requested != null) {
-            cursor.currentPos.set(requested);
+            state.currentPos.set(requested);
             glfwSetCursorPos(ptr_glfwWindow, requested.x(), requested.y());
         } else {
-            cursor.currentPos.x = (float) this.xPos[0];
-            cursor.currentPos.y = (float) this.yPos[0];
+            state.currentPos.x = (float) this.xPos[0];
+            state.currentPos.y = (float) this.yPos[0];
         }
 
-        if (!wasCursorVisible && cursor.visible) {
+        if (!wasCursorVisible && state.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             this.wasCursorVisible = true;
-        } else if (wasCursorVisible && !cursor.visible) {
+        } else if (wasCursorVisible && !state.visible) {
             glfwSetInputMode(ptr_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
             this.wasCursorVisible = false;
         }

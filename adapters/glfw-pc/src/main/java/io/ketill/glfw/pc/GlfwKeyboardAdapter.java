@@ -199,10 +199,17 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
         this.mapMethodKeys();
     }
 
+    /**
+     * Updater for keyboard keys mapped via
+     * {@link #mapKey(KeyboardKey, int)}.
+     *
+     * @param state   the key state.
+     * @param glfwKey the GLFW key.
+     */
     @FeatureAdapter
-    protected void updateKey(@NotNull KeyPressZ key, int glfwKey) {
+    protected void updateKey(@NotNull KeyPressZ state, int glfwKey) {
         int status = glfwGetKey(ptr_glfwWindow, glfwKey);
-        key.pressed = status >= GLFW_PRESS;
+        state.pressed = status >= GLFW_PRESS;
     }
 
     @Override
