@@ -32,15 +32,14 @@ import static org.lwjgl.glfw.GLFW.*;
  * Feature adapters like {@link #updateStick(StickPosZ, GlfwStickMapping)}
  * can also be overridden to modify data returned from GLFW. An example of
  * this would be switching the polarity of an axis. This is done in the
- * {@code glfw.psx} module, and can be seen in {@code GlfwPs4Adapter}.
+ * {@code glfw.xbox} module, and can be seen in {@code GlfwXboxAdapter}.
  * <pre>
  *     &#64;Override
- *     protected void updateTrigger(@NotNull Trigger1f trigger,
- *                                  int glfwAxis) {
- *         super.updateTrigger(trigger, glfwAxis);
- *         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
- *             trigger.force += 1.0F;
- *             trigger.force /= 2.0F;
+ *     protected void updateStick(&#64;NotNull StickPosZ state,
+ *                                &#64;NotNull GlfwStickMapping mapping) {
+ *         super.updateStick(state, mapping);
+ *         if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
+ *             state.pos.y *= -1.0F;
  *         }
  *     }
  * </pre>
