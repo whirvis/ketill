@@ -13,6 +13,7 @@ import org.mockito.MockedStatic;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -126,6 +127,26 @@ class GlfwJoystickSeekerTest {
     }
 
     @Test
+    void testGetWrangled() {
+        /*
+         * The getWrangled() method provides a read-only view of all
+         * wrangled GUIDs in a GLFW joystick seeker. Ensure that it
+         * never returns null (even when empty) and is unmodifiable.
+         */
+        Collection<String> wrangled = seeker.getWrangled();
+        assertNotNull(wrangled); /* this should never be null, only empty */
+        assertThrows(UnsupportedOperationException.class, wrangled::clear);
+
+        /*
+         * After assigning a GUID to a wrangler, it must be contained
+         * in the collection returned by the getWrangled() method.
+         */
+        List<String> guids = Collections.singletonList(guid);
+        seeker.wrangleGuids(guids, wrangler);
+        assertIterableEquals(guids, seeker.getWrangled());
+    }
+
+    @Test
     void testIsWranglingWith() {
         /*
          * It would not make sense to check if a null GUID is currently being
@@ -143,6 +164,13 @@ class GlfwJoystickSeekerTest {
          * GUIDs yet, this should return false.
          */
         assertFalse(seeker.isWranglingWith(guid, wrangler));
+    }
+
+    @Test
+    void testGetWrangler() {
+        assertNull(seeker.getWrangler(guid));
+        seeker.wrangleGuid(guid, wrangler);
+        assertSame(wrangler, seeker.getWrangler(guid));
     }
 
     @Test

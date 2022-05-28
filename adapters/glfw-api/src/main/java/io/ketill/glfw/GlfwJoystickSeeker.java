@@ -4,6 +4,7 @@ import io.ketill.KetillException;
 import io.ketill.controller.Controller;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -34,8 +35,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @see JsonDeviceGuids
  * @see GlfwJoystickAdapter
  */
-public class GlfwJoystickSeeker<C extends Controller>
-        extends GlfwDeviceSeeker<C> {
+public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C> {
 
     private static final int JOYSTICK_COUNT = GLFW_JOYSTICK_LAST + 1;
 
@@ -86,7 +86,7 @@ public class GlfwJoystickSeeker<C extends Controller>
      *                              loaded JSON file.
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
-    protected final @NotNull Collection<String> loadJsonGuids(@NotNull String path) {
+    public @NotNull Collection<String> loadJsonGuids(@NotNull String path) {
         Objects.requireNonNull(path, "path cannot be null");
         try {
             String fullPath = path;
@@ -112,10 +112,18 @@ public class GlfwJoystickSeeker<C extends Controller>
      * with the specified GUID, {@code false} otherwise.
      * @throws NullPointerException if {@code guid} is {@code null}.
      * @see #isWranglingWith(String, GlfwJoystickWrangler)
+     * @see #getWrangler(String)
      */
     public final boolean isWrangling(@NotNull String guid) {
         Objects.requireNonNull(guid, "guid cannot be null");
         return wranglers.containsKey(guid);
+    }
+
+    /**
+     * @return all GUID's currently being wrangled by this seeker.
+     */
+    public final @NotNull Collection<@NotNull String> getWrangled() {
+        return Collections.unmodifiableSet(wranglers.keySet());
     }
 
     /**
@@ -126,12 +134,26 @@ public class GlfwJoystickSeeker<C extends Controller>
      * @throws NullPointerException if {@code guid} or {@code wrangler}
      *                              are {@code null}.
      * @see #isWrangling(String)
+     * @see #getWrangler(String)
      */
     public final boolean isWranglingWith(@NotNull String guid,
                                          @NotNull GlfwJoystickWrangler<C> wrangler) {
         Objects.requireNonNull(guid, "guid cannot be null");
         Objects.requireNonNull(wrangler, "wrangler cannot be null");
         return wranglers.get(guid) == wrangler;
+    }
+
+    /**
+     * @param guid the joystick GUID, case-sensitive.
+     * @return the wrangler assigned to {@code guid}, {@code null} if no
+     * wrangler has been assigned.
+     * @throws NullPointerException if {@code guid} is {@code null}.
+     * @see #isWrangling(String)
+     * @see #isWranglingWith(String, GlfwJoystickWrangler)
+     */
+    public final @Nullable GlfwJoystickWrangler<C> getWrangler(@NotNull String guid) {
+        Objects.requireNonNull(guid, "guid cannot be null");
+        return wranglers.get(guid);
     }
 
     /**
@@ -151,8 +173,8 @@ public class GlfwJoystickSeeker<C extends Controller>
      * @see #releaseGuid(String)
      * @see WranglerMethod
      */
-    protected final void wrangleGuid(@NotNull String guid,
-                                     @NotNull GlfwJoystickWrangler<C> wrangler) {
+    public void wrangleGuid(@NotNull String guid,
+                            @NotNull GlfwJoystickWrangler<C> wrangler) {
         Objects.requireNonNull(guid, "guid cannot be null");
         Objects.requireNonNull(wrangler, "wrangler cannot be null");
 
@@ -186,30 +208,29 @@ public class GlfwJoystickSeeker<C extends Controller>
      * However, if the argument for {@code wrangler} matches its current
      * wrangler, nothing will occur.
      * <p>
-     * This method is a shorthand for
+     * <b>Shorthand for:</b>
      * {@link #wrangleGuid(String, GlfwJoystickWrangler)}, with each element
-     * being passed as the argument for {@code guid}.
+     * of {@code guids} being passed as the argument for {@code guid}.
      *
-     * @param guids    the joystick GUIDs, case-sensitive.
-     * @param wrangler the joystick wrangler.
+     * @param toWrangle the joystick GUIDs, case-sensitive.
+     * @param wrangler  the joystick wrangler.
      * @throws NullPointerException if {@code guids} or {@code wrangler}
      *                              are {@code null}; if an element of
      *                              {@code guids} is {@code null}.
      * @see #releaseGuids(Collection)
      * @see WranglerMethod
      */
-    protected final void wrangleGuids(@NotNull Iterable<@NotNull String> guids,
-                                      @NotNull GlfwJoystickWrangler<C> wrangler) {
-        Objects.requireNonNull(guids, "guids cannot be null");
-        for (String guid : guids) {
+    public final void wrangleGuids(@NotNull Iterable<@NotNull String> toWrangle,
+                                   @NotNull GlfwJoystickWrangler<C> wrangler) {
+        Objects.requireNonNull(toWrangle, "toWrangle cannot be null");
+        for (String guid : toWrangle) {
             this.wrangleGuid(guid, wrangler);
         }
     }
 
     /**
-     * Called when a GUID is being wrangled. Overriding this method allows
-     * for a GLFW joystick seeker to know when a GUID is being wrangled
-     * without needing to set themselves as the callback.
+     * Called when a GUID is being wrangled. This will be called before
+     * the corresponding event is emitted to subscribers.
      *
      * @param guid     the GUID.
      * @param wrangler the wrangler assigned to {@code guid}.
@@ -230,7 +251,7 @@ public class GlfwJoystickSeeker<C extends Controller>
      *                              {@code null}.
      * @see #wrangleGuids(Iterable, GlfwJoystickWrangler)
      */
-    protected final void releaseGuids(@NotNull Collection<@NotNull String> toRelease) {
+    public void releaseGuids(@NotNull Collection<@NotNull String> toRelease) {
         Objects.requireNonNull(toRelease, "toRelease cannot be null");
 
         /*
@@ -281,23 +302,22 @@ public class GlfwJoystickSeeker<C extends Controller>
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
      * <p>
-     * This method is a shorthand for {@link #releaseGuids(Collection)},
-     * with {@code toDrop} being passed as a collection via
+     * <b>Shorthand for:</b> {@link #releaseGuids(Collection)}, with
+     * {@code toDrop} being passed as a collection via
      * {@link Collections#singletonList(Object)}.
      *
      * @param toRelease the GUID to release, case-sensitive.
      * @throws NullPointerException if {@code toDrop} is {@code null}.
      * @see #wrangleGuid(String, GlfwJoystickWrangler)
      */
-    protected final void releaseGuid(@NotNull String toRelease) {
+    public final void releaseGuid(@NotNull String toRelease) {
         Objects.requireNonNull(toRelease, "toRelease cannot be null");
         this.releaseGuids(Collections.singletonList(toRelease));
     }
 
     /**
-     * Called when a GUID has been released. Overriding this method allows
-     * for a GLFW joystick seeker to know when a GUID has been released
-     * without needing to set themselves as the callback.
+     * Called when a GUID has been released. This will be called before
+     * the corresponding event is emitted to subscribers.
      *
      * @param guid     the GUID.
      * @param wrangler the wrangler assigned to {@code guid}.
