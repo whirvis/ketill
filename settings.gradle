@@ -21,4 +21,4 @@ include ':adapters:hid-usb-psx'
 include ':adapters:java-awt'
 include ':adapters:xinput'
 
-include ':testing'
+include ':test'

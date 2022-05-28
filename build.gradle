@@ -39,8 +39,8 @@ subprojects {
         testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
         testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.10'
 
-        if(project.name != "testing") {
-            testImplementation project(':testing')
+        if(project.name != "test") {
+            testImplementation project(':test')
         }
     }
 
