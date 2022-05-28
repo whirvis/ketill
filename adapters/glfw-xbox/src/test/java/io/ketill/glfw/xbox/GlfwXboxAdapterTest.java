@@ -62,8 +62,8 @@ class GlfwXboxAdapterTest {
 
             lsYValue *= -1.0F;
             rsYValue *= -1.0F;
-            assertEquals(lsYValue, controller.ls.getPos().y());
-            assertEquals(rsYValue, controller.rs.getPos().y());
+            assertEquals(lsYValue, controller.ls.getY());
+            assertEquals(rsYValue, controller.rs.getY());
         }
     }
 

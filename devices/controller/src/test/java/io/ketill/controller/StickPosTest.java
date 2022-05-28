@@ -69,6 +69,30 @@ class StickPosTest {
     }
 
     @Test
+    void testGetX() {
+        internal.pos.x = 1.23F;
+        assertEquals(1.23F, container.getX(false));
+        internal.calibratedPos.x = 4.56F;
+        assertEquals(4.56F, container.getX());
+    }
+
+    @Test
+    void testGetY() {
+        internal.pos.y = 1.23F;
+        assertEquals(1.23F, container.getY(false));
+        internal.calibratedPos.y = 4.56F;
+        assertEquals(4.56F, container.getY());
+    }
+
+    @Test
+    void testGetZ() {
+        internal.pos.z = 1.23F;
+        assertEquals(1.23F, container.getZ(false));
+        internal.calibratedPos.z = 4.56F;
+        assertEquals(4.56F, container.getZ());
+    }
+
+    @Test
     void testUpdate() {
         internal.update(); /* trigger calibration */
         verify(calibration).applyTo((Vector3f) any());

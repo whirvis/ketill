@@ -73,4 +73,70 @@ public final class StickPos extends ContainerState<StickPosZ> {
         return this.getPos(true);
     }
 
+    /**
+     * <b>Shorthand for:</b> {@code getPos(calibrate).x()}
+     *
+     * @param calibrate {@code true} if the calibrated position should
+     *                  be returned, {@code false} for the raw value.
+     * @return the X-axis of the analog stick's current position.
+     * @see #getPos(boolean)
+     */
+    public float getX(boolean calibrate) {
+        return this.getPos(calibrate).x();
+    }
+
+    /**
+     * <b>Shorthand for:</b> {@link #getX(boolean)}, with the argument for
+     * {@code calibrate} being {@code true}.
+     *
+     * @return the X-axis of the analog stick's current position.
+     */
+    public float getX() {
+        return this.getX(true);
+    }
+
+    /**
+     * <b>Shorthand for:</b> {@code getPos(calibrate).y()}
+     *
+     * @param calibrate {@code true} if the calibrated position should
+     *                  be returned, {@code false} for the raw value.
+     * @return the Y-axis of the analog stick's current position.
+     * @see #getPos(boolean)
+     */
+    public float getY(boolean calibrate) {
+        return this.getPos(calibrate).y();
+    }
+
+    /**
+     * <b>Shorthand for:</b> {@link #getY(boolean)}, with the argument for
+     * {@code calibrate} being {@code true}.
+     *
+     * @return the Y-axis of the analog stick's current position.
+     */
+    public float getY() {
+        return this.getY(true);
+    }
+
+    /**
+     * <b>Shorthand for:</b> {@code getPos(calibrate).z()}
+     *
+     * @param calibrate {@code true} if the calibrated position should
+     *                  be returned, {@code false} for the raw value.
+     * @return the Z-axis of the analog stick's current position.
+     * @see #getPos(boolean)
+     */
+    public float getZ(boolean calibrate) {
+        return this.getPos(calibrate).z();
+    }
+
+    /**
+     * <b>Shorthand for:</b> {@link #getZ(boolean)}, with the argument for
+     * {@code calibrate} being {@code true}.
+     *
+     * @return the Z-axis of the analog stick's current position.
+     */
+    public float getZ() {
+        return this.getZ(true);
+    }
+
 }

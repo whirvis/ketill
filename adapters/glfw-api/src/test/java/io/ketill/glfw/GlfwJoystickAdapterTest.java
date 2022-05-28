@@ -153,13 +153,13 @@ class GlfwJoystickAdapterTest {
 
             axes.put(glfwXAxis, 1.23F).put(glfwYAxis, 4.56F);
             joystick.poll(); /* update axes */
-            assertEquals(1.23F, joystick.stick.getPos().x());
-            assertEquals(4.56F, joystick.stick.getPos().y());
+            assertEquals(1.23F, joystick.stick.getX());
+            assertEquals(4.56F, joystick.stick.getY());
 
             axes.put(glfwXAxis, 0.00F).put(glfwYAxis, 0.00F);
             joystick.poll(); /* update axes */
-            assertEquals(0.00F, joystick.stick.getPos().x());
-            assertEquals(0.00F, joystick.stick.getPos().y());
+            assertEquals(0.00F, joystick.stick.getX());
+            assertEquals(0.00F, joystick.stick.getY());
         }
 
         /* remap stick now with Z-button for next test */
@@ -177,11 +177,11 @@ class GlfwJoystickAdapterTest {
 
             buttons.put(glfwZButton, (byte) GLFW_PRESS);
             joystick.poll(); /* update axes */
-            assertEquals(-1.0F, joystick.stick.getPos().z());
+            assertEquals(-1.0F, joystick.stick.getZ());
 
             buttons.put(glfwZButton, (byte) GLFW_RELEASE);
             joystick.poll(); /* update axes */
-            assertEquals(0.0F, joystick.stick.getPos().z());
+            assertEquals(0.0F, joystick.stick.getZ());
         }
     }
 

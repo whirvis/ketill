@@ -64,8 +64,8 @@ class GlfwNxProAdapterTest {
 
             ls.y *= -1.0F;
             NxProController.CALIBRATION.applyTo(ls);
-            assertEquals(ls.x, controller.ls.getPos().x());
-            assertEquals(ls.y, controller.ls.getPos().y());
+            assertEquals(ls.x, controller.ls.getX());
+            assertEquals(ls.y, controller.ls.getY());
 
             /* update RS axes for next test */
             Vector3f rs = new Vector3f(RANDOM.nextFloat(),
@@ -77,8 +77,8 @@ class GlfwNxProAdapterTest {
 
             rs.y *= -1.0F;
             NxProController.CALIBRATION.applyTo(rs);
-            assertEquals(rs.x, controller.rs.getPos().x());
-            assertEquals(rs.y, controller.rs.getPos().y());
+            assertEquals(rs.x, controller.rs.getX());
+            assertEquals(rs.y, controller.rs.getY());
         }
     }
 

@@ -56,9 +56,9 @@ class GlfwNxLeftJoyConAdapterTest {
 
             joycon.poll(); /* update analog sticks */
 
-            assertEquals(1.0F, joycon.ls.getPos().x());
-            assertEquals(1.0F, joycon.ls.getPos().y());
-            assertEquals(-1.0F, joycon.ls.getPos().z());
+            assertEquals(1.0F, joycon.ls.getX());
+            assertEquals(1.0F, joycon.ls.getY());
+            assertEquals(-1.0F, joycon.ls.getZ());
 
             /* update button states for next test */
             buttons.put(MAPPING_LS.glfwUp, (byte) GLFW_RELEASE);
@@ -69,9 +69,9 @@ class GlfwNxLeftJoyConAdapterTest {
 
             joycon.poll(); /* update analog sticks */
 
-            assertEquals(-1.0F, joycon.ls.getPos().x());
-            assertEquals(-1.0F, joycon.ls.getPos().y());
-            assertEquals(0.0F, joycon.ls.getPos().z());
+            assertEquals(-1.0F, joycon.ls.getX());
+            assertEquals(-1.0F, joycon.ls.getY());
+            assertEquals(0.0F, joycon.ls.getZ());
         }
     }
 

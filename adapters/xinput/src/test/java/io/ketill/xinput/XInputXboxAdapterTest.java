@@ -79,13 +79,13 @@ class XInputXboxAdapterTest {
 
         controller.poll(); /* update stick positions */
 
-        assertEquals(0.123F, controller.ls.getPos().x());
-        assertEquals(0.456F, controller.ls.getPos().y());
-        assertEquals(0.0F, controller.ls.getPos().z());
+        assertEquals(0.123F, controller.ls.getX());
+        assertEquals(0.456F, controller.ls.getY());
+        assertEquals(0.0F, controller.ls.getZ());
 
-        assertEquals(0.789F, controller.rs.getPos().x());
-        assertEquals(1.011F, controller.rs.getPos().y());
-        assertEquals(-1.0F, controller.rs.getPos().z());
+        assertEquals(0.789F, controller.rs.getX());
+        assertEquals(1.011F, controller.rs.getY());
+        assertEquals(-1.0F, controller.rs.getZ());
     }
 
     @Test
