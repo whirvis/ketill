@@ -13,15 +13,15 @@ class GlfwNxJoyConStickMappingTest {
          * with a non-existant GLFW button. As such, assume this was a user
          * mistake and throw an exception.
          */
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(-1, 0, 0, 0, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(0, -1, 0, 0, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(0, 0, -1, 0, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(0, 0, 0, -1, 0));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(0, 0, 0, 0, -1));
     }
 
