@@ -8,6 +8,7 @@ import io.ketill.controller.StickPosZ;
 import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
+import io.ketill.glfw.GlfwUtils;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxProController;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -94,6 +95,7 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     protected void mapProTrigger(@NotNull AnalogTrigger trigger,
                                  int glfwButton) {
         Objects.requireNonNull(trigger, "trigger cannot be null");
+        GlfwUtils.requireButton(glfwButton, "glfwButton");
         registry.mapFeature(trigger, glfwButton, this::updateProTrigger);
     }
 

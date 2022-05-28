@@ -4,6 +4,7 @@ import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
+import io.ketill.glfw.GlfwUtils;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.pc.KeyPressZ;
 import io.ketill.pc.Keyboard;
@@ -59,10 +60,8 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
      */
     @MappingMethod
     protected void mapKey(@NotNull KeyboardKey key, int glfwKey) {
-        Objects.requireNonNull(key, "key");
-        if (glfwKey < 0) {
-            throw new IllegalArgumentException("glfwKey < 0");
-        }
+        Objects.requireNonNull(key, "key cannot be null");
+        GlfwUtils.requireButton(glfwKey, "glfwKey");
         registry.mapFeature(key, glfwKey, this::updateKey);
     }
 

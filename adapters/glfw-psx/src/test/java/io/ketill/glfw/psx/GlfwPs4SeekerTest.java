@@ -56,7 +56,7 @@ class GlfwPs4SeekerTest {
             /*
              * When only one controller is connected, the current PS4
              * controllers are not ambiguous. As such, isAmbiguous()
-             * should return false and the callback should not be fired.
+             * should return false and the event should not be emitted.
              */
             seeker.connectJoystick(glfw, GLFW_JOYSTICK_1);
             assertFalse(seeker.isAmbiguous());
@@ -65,8 +65,8 @@ class GlfwPs4SeekerTest {
             /*
              * Now that two controllers are connected, it is unknown if the
              * two PS4 controllers are the same physical device are not. As
-             * such, isAmbiguous() should now return true and the callback
-             * should be fired.
+             * such, isAmbiguous() should now return true and the event
+             * should be emitted.
              */
             seeker.connectJoystick(glfw, GLFW_JOYSTICK_2);
             assertTrue(seeker.isAmbiguous());
@@ -75,7 +75,7 @@ class GlfwPs4SeekerTest {
             /*
              * Now that there is only one controller again, the current PS4
              * controllers are no longer ambiguous. Seeing as state the of
-             * ambiguity has changed, the callback should be fired again.
+             * ambiguity has changed, the event should be emitted again.
              */
             seeker.disconnectJoystick(glfw, GLFW_JOYSTICK_2);
             assertFalse(seeker.isAmbiguous());

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
 
+@SuppressWarnings("ConstantConditions")
 class GlfwUtilsTest {
 
     private static long ptr_glfwWindow;
@@ -66,6 +67,80 @@ class GlfwUtilsTest {
          */
         int joystick = new Random().nextInt(last + 1);
         assertEquals(joystick, GlfwUtils.requireJoystick(joystick));
+    }
+
+    @Test
+    void testRequireButton() {
+        /*
+         * It would not make sense to check a parameter with a name that is
+         * null, empty, or surrounded by whitespace. It would also not make
+         * sense to have a negative button count. As such, assume this was
+         * a mistake by the user and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> GlfwUtils.requireButton(0, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireButton(0, ""));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireButton(0, " "));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireButton(0, -1));
+
+        /*
+         * When an invalid GLFW button is passed to this method, it should
+         * throw an IllegalArgumentException to the caller.
+         */
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireButton(-1));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireButton(1, 0));
+
+        /*
+         * When a valid GLFW button is passed to this method, it should
+         * return the same value passed to it. This is to follow the
+         * pattern of Objects.requireNonNull().
+         */
+        assertEquals(0, GlfwUtils.requireButton(0, 4, "glfwButton"));
+        assertEquals(1, GlfwUtils.requireButton(1, "glfwButton"));
+        assertEquals(2, GlfwUtils.requireButton(2, 4));
+        assertEquals(3, GlfwUtils.requireButton(3));
+    }
+
+    @Test
+    void testRequireAxis() {
+        /*
+         * It would not make sense to check a parameter with a name that is
+         * null, empty, or surrounded by whitespace. It would also not make
+         * sense to have a negative axis count. As such, assume this was
+         * a mistake by the user and throw an exception.
+         */
+        assertThrows(NullPointerException.class,
+                () -> GlfwUtils.requireAxis(0, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireAxis(0, ""));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireAxis(0, " "));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireAxis(0, -1));
+
+        /*
+         * When an invalid GLFW axis is passed to this method, it should
+         * throw an IllegalArgumentException to the caller.
+         */
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireAxis(-1));
+        assertThrows(IllegalArgumentException.class,
+                () -> GlfwUtils.requireAxis(1, 0));
+
+        /*
+         * When a valid GLFW axis is passed to this method, it should
+         * return the same value passed to it. This is to follow the
+         * pattern of Objects.requireNonNull().
+         */
+        assertEquals(0, GlfwUtils.requireAxis(0, 4, "glfwAxis"));
+        assertEquals(1, GlfwUtils.requireAxis(1, "glfwAxis"));
+        assertEquals(2, GlfwUtils.requireAxis(2, 4));
+        assertEquals(3, GlfwUtils.requireAxis(3));
     }
 
     @AfterAll

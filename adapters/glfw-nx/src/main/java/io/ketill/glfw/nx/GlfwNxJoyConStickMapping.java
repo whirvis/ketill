@@ -2,6 +2,7 @@ package io.ketill.glfw.nx;
 
 import io.ketill.MappingType;
 import io.ketill.controller.AnalogStick;
+import io.ketill.glfw.GlfwUtils;
 
 /**
  * A mapping for an {@link AnalogStick} used by {@link GlfwNxJoyConAdapter}.
@@ -10,14 +11,6 @@ import io.ketill.controller.AnalogStick;
  */
 @MappingType
 public final class GlfwNxJoyConStickMapping {
-
-    private static int requireButton(int glfwButton, String paramName) {
-        if (glfwButton < 0) {
-            String msg = paramName + " cannot be negative";
-            throw new IllegalArgumentException(msg);
-        }
-        return glfwButton;
-    }
 
     /**
      * The GLFW button for up.
@@ -58,11 +51,11 @@ public final class GlfwNxJoyConStickMapping {
      */
     public GlfwNxJoyConStickMapping(int glfwUp, int glfwDown, int glfwLeft,
                                     int glfwRight, int glfwThumb) {
-        this.glfwUp = requireButton(glfwUp, "glfwUp");
-        this.glfwDown = requireButton(glfwDown, "glfwDown");
-        this.glfwLeft = requireButton(glfwLeft, "glfwLeft");
-        this.glfwRight = requireButton(glfwRight, "glfwRight");
-        this.glfwThumb = requireButton(glfwThumb, "glfwThumb");
+        this.glfwUp = GlfwUtils.requireButton(glfwUp, "glfwUp");
+        this.glfwDown = GlfwUtils.requireButton(glfwDown, "glfwDown");
+        this.glfwLeft = GlfwUtils.requireButton(glfwLeft, "glfwLeft");
+        this.glfwRight = GlfwUtils.requireButton(glfwRight, "glfwRight");
+        this.glfwThumb = GlfwUtils.requireButton(glfwThumb, "glfwThumb");
     }
 
 }

@@ -8,6 +8,7 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.StickPosZ;
 import io.ketill.controller.TriggerStateZ;
 import io.ketill.glfw.GlfwJoystickAdapter;
+import io.ketill.glfw.GlfwUtils;
 import io.ketill.nx.NxJoyCon;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,6 +63,7 @@ abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapt
     protected void mapJoyConTrigger(@NotNull AnalogTrigger trigger,
                                     int glfwButton) {
         Objects.requireNonNull(trigger, "trigger cannot be null");
+        GlfwUtils.requireButton(glfwButton, "glfwButton");
         registry.mapFeature(trigger, glfwButton, this::updateJoyConTrigger);
     }
 

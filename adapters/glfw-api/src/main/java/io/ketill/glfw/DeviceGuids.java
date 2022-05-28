@@ -126,7 +126,7 @@ public abstract class DeviceGuids {
      * @throws NullPointerException if {@code systemId} is {@code null}.
      */
     public final boolean supportsSystem(@NotNull String systemId) {
-        Objects.requireNonNull(systemId, "systemId");
+        Objects.requireNonNull(systemId, "systemId cannot be null");
         return systems.containsKey(systemId);
     }
 
@@ -143,8 +143,8 @@ public abstract class DeviceGuids {
      */
     public final void addSystem(@NotNull String systemId,
                                 @NotNull OsDeterminant determinant) {
-        Objects.requireNonNull(systemId, "systemId");
-        Objects.requireNonNull(determinant, "determinant");
+        Objects.requireNonNull(systemId, "systemId cannot be null");
+        Objects.requireNonNull(determinant, "determinant cannot be null");
 
         if (systemId.isEmpty()) {
             String msg = "systemId cannot be empty";
@@ -176,7 +176,7 @@ public abstract class DeviceGuids {
      * @throws NullPointerException if {@code systemId} is {@code null}.
      */
     public final boolean removeSystem(@NotNull String systemId) {
-        Objects.requireNonNull(systemId, "systemId");
+        Objects.requireNonNull(systemId, "systemId cannot be null");
         return systems.remove(systemId) != null;
     }
 
@@ -204,7 +204,7 @@ public abstract class DeviceGuids {
     /* @formatter:off */
     public final @Nullable Collection<@NotNull String>
             getGuids(@NotNull String systemId) {
-        Objects.requireNonNull(systemId, "systemId");
+        Objects.requireNonNull(systemId, "systemId cannot be null");
         Collection<String> guids = this.getGuidsImpl(systemId);
         if(guids == null) {
             return null;

@@ -4,6 +4,7 @@ import io.ketill.FeatureAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.glfw.GlfwDeviceAdapter;
+import io.ketill.glfw.GlfwUtils;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.pc.CursorStateZ;
 import io.ketill.pc.Mouse;
@@ -68,10 +69,8 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
      */
     @MappingMethod
     protected void mapButton(@NotNull MouseButton button, int glfwButton) {
-        Objects.requireNonNull(button, "button");
-        if (glfwButton < 0) {
-            throw new IllegalArgumentException("glfwButton < 0");
-        }
+        Objects.requireNonNull(button, "button cannot be null");
+        GlfwUtils.requireButton(glfwButton, "glfwButton");
         registry.mapFeature(button, glfwButton, this::updateButton);
     }
 

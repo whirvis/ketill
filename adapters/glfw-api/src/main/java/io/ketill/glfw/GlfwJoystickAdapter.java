@@ -100,10 +100,8 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
      */
     @MappingMethod
     protected void mapButton(@NotNull ControllerButton button, int glfwButton) {
-        Objects.requireNonNull(button, "button");
-        if (glfwButton < 0) {
-            throw new IllegalArgumentException("glfwButton < 0");
-        }
+        Objects.requireNonNull(button, "button cannot be null");
+        GlfwUtils.requireButton(glfwButton, "glfwButton");
         registry.mapFeature(button, glfwButton, this::updateButton);
     }
 
@@ -117,8 +115,8 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     @MappingMethod
     protected void mapStick(@NotNull AnalogStick stick,
                             @NotNull GlfwStickMapping mapping) {
-        Objects.requireNonNull(stick, "stick");
-        Objects.requireNonNull(mapping, "mapping");
+        Objects.requireNonNull(stick, "stick cannot be null");
+        Objects.requireNonNull(mapping, "mapping cannot be null");
         registry.mapFeature(stick, mapping, this::updateStick);
     }
 
@@ -131,10 +129,8 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
      */
     @MappingMethod
     protected void mapTrigger(@NotNull AnalogTrigger trigger, int glfwAxis) {
-        Objects.requireNonNull(trigger, "trigger");
-        if (glfwAxis < 0) {
-            throw new IllegalArgumentException("glfwAxis < 0");
-        }
+        Objects.requireNonNull(trigger, "trigger cannot be null");
+        GlfwUtils.requireAxis(glfwAxis, "glfwAxis");
         registry.mapFeature(trigger, glfwAxis, this::updateTrigger);
     }
 
@@ -154,14 +150,10 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
      *                                   not smaller than the button count.
      */
     protected final boolean isPressed(int glfwButton) {
-        if (glfwButton < 0) {
-            throw new IndexOutOfBoundsException("glfwButton < 0");
-        } else if (buttons == null) {
-            return false; /* buttons have yet to set, ignore */
-        } else if (glfwButton >= buttons.limit()) {
-            throw new IndexOutOfBoundsException(
-                    "glfwButton >= buttons.limit()");
+        if (buttons == null) {
+            return false; /* buttons have yet to be set */
         }
+        GlfwUtils.requireButton(glfwButton, buttons.limit(), "glfwButton");
         return buttons.get(glfwButton) != 0;
     }
 
@@ -180,13 +172,10 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
      *                                   not smaller than the axis count.
      */
     protected final float getAxis(int glfwAxis) {
-        if (glfwAxis < 0) {
-            throw new IndexOutOfBoundsException("glfwAxis < 0");
-        } else if (axes == null) {
+        if (axes == null) {
             return 0.0F; /* axes have yet to be set, ignore */
-        } else if (glfwAxis >= axes.limit()) {
-            throw new IndexOutOfBoundsException("glfwAxis >= axes.limit()");
         }
+        GlfwUtils.requireAxis(glfwAxis, axes.limit(), "glfwAxis");
         return axes.get(glfwAxis);
     }
 

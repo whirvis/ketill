@@ -99,15 +99,11 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
      * @param button      the mouse button to map.
      * @param mouseButton the button to map {@code button} to.
      * @throws NullPointerException     if {@code button} is {@code null}.
-     * @throws IllegalArgumentException if {@code mouseButton} is negative.
      * @see #updateButton(MouseClickZ, int)
      */
     @MappingMethod
     protected void mapButton(@NotNull MouseButton button, int mouseButton) {
-        Objects.requireNonNull(button, "button");
-        if (mouseButton < 0) {
-            throw new IllegalArgumentException("mouseButton < 0");
-        }
+        Objects.requireNonNull(button, "button cannot be null");
         registry.mapFeature(button, mouseButton, this::updateButton);
     }
 

@@ -39,12 +39,10 @@ public class GlfwStickMapping {
 
     private GlfwStickMapping(int glfwXAxis, int glfwYAxis, int glfwZButton,
                              boolean hasZButton) {
-        if (glfwXAxis < 0) {
-            throw new IllegalArgumentException("glfwXAxis < 0");
-        } else if (glfwYAxis < 0) {
-            throw new IllegalArgumentException("glfwYAxis < 0");
-        } else if (glfwZButton < 0 && hasZButton) {
-            throw new IllegalArgumentException("glfwZButton < 0");
+        GlfwUtils.requireAxis(glfwXAxis, "glfwXAxis");
+        GlfwUtils.requireAxis(glfwYAxis, "glfwYAxis");
+        if (hasZButton) {
+            GlfwUtils.requireButton(glfwZButton, "glfwZButton");
         }
 
         this.glfwXAxis = glfwXAxis;

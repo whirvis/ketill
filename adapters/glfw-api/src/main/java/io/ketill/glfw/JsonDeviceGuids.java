@@ -73,7 +73,7 @@ public class JsonDeviceGuids extends DeviceGuids {
      *                              for a JSON device GUIDs container.
      */
     public static @NotNull DeviceGuids load(@NotNull InputStream in) {
-        Objects.requireNonNull(in, "in");
+        Objects.requireNonNull(in, "in cannot be null");
 
         JsonDeviceGuids guids = new JsonDeviceGuids();
         InputStreamReader isr = new InputStreamReader(in);
@@ -161,7 +161,7 @@ public class JsonDeviceGuids extends DeviceGuids {
     /* @formatter:off */
     public static @NotNull DeviceGuids
             loadResource(@NotNull String path) throws IOException {
-        Objects.requireNonNull(path, "path");
+        Objects.requireNonNull(path, "path cannot be null");
         URL url = DeviceGuids.class.getResource(path);
         if (url == null) {
             throw new IOException("no such resource " + path);
@@ -191,7 +191,7 @@ public class JsonDeviceGuids extends DeviceGuids {
     /* @formatter:off */
     public static @NotNull DeviceGuids
             loadFile(@NotNull File file) throws IOException {
-        Objects.requireNonNull(file, "file");
+        Objects.requireNonNull(file, "file cannot be null");
 
         FileInputStream in = new FileInputStream(file);
         DeviceGuids guids = load(in);
@@ -221,7 +221,7 @@ public class JsonDeviceGuids extends DeviceGuids {
     /* @formatter:off */
     public static @NotNull DeviceGuids
             loadFile(@NotNull String path) throws IOException {
-        Objects.requireNonNull(path, "path");
+        Objects.requireNonNull(path, "path cannot be null");
         return loadFile(new File(path));
     }
     /* @formatter:on */

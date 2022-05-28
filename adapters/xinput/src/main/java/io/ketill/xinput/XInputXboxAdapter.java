@@ -55,7 +55,8 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
                              @NotNull XInputDevice xDevice) {
         super(controller, registry);
         XInputStatus.requireAvailable();
-        this.xDevice = Objects.requireNonNull(xDevice, "xDevice");
+        this.xDevice = Objects.requireNonNull(xDevice,
+                "xDevice cannot be null");
     }
 
     @MappingMethod

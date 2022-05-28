@@ -84,16 +84,12 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
      * @param keyCode     the keycode to map {@code key} to.
      * @param keyLocation the location of the key.
      * @throws NullPointerException     if {@code key} is {@code null}.
-     * @throws IllegalArgumentException if {@code keyCode} is negative.
      * @see #updateKey(KeyPressZ, KeyMapping)
      */
     @MappingMethod
     protected void mapKey(@NotNull KeyboardKey key, int keyCode,
                           int keyLocation) {
         Objects.requireNonNull(key, "key cannot be null");
-        if (keyCode < 0) {
-            throw new IllegalArgumentException("keyCode < 0");
-        }
         registry.mapFeature(key, new KeyMapping(keyCode, keyLocation),
                 this::updateKey);
     }
@@ -110,7 +106,6 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
      */
     @MappingMethod
     protected final void mapKey(@NotNull KeyboardKey key, int keyCode) {
-        Objects.requireNonNull(key, "key cannot be null");
         this.mapKey(key, keyCode, KEY_LOCATION_STANDARD);
     }
 
