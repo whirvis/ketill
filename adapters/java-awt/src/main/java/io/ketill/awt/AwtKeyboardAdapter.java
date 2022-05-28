@@ -239,6 +239,7 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapPrintableKeys();
         this.mapMethodKeys();
@@ -266,7 +267,7 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     }
 
     @Override
-    protected boolean isDeviceConnected() {
+    protected final boolean isDeviceConnected() {
         return true; /* keyboard is always connected */
     }
 

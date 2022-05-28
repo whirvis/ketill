@@ -112,6 +112,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapButton(BUTTON_M1, 1);
 
@@ -198,7 +199,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     }
 
     @Override
-    protected boolean isDeviceConnected() {
+    protected final boolean isDeviceConnected() {
         return true; /* mouse is always connected */
     }
 
