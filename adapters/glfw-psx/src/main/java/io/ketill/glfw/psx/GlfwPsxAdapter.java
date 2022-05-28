@@ -17,12 +17,17 @@ import static io.ketill.psx.PsxController.*;
  * controller. If a GLFW adapter for PlayStation 1 controllers is added
  * in the future, the class will be named {@code GlfwPs1Adapter}.
  *
+ * @param <C> the PlayStation controller type.
  * @see GlfwPs4Adapter
  * @see GlfwPs5Adapter
  */
-public abstract class GlfwPsxAdapter<I extends PsxController>
-        extends GlfwJoystickAdapter<I> {
+public abstract class GlfwPsxAdapter<C extends PsxController>
+        extends GlfwJoystickAdapter<C> {
 
+    /**
+     * Mappings for {@link PsxController#STICK_LS} and
+     * {@link PsxController#STICK_RS}.
+     */
     /* @formatter:off */
     protected static final @NotNull GlfwStickMapping
             MAPPING_LS = new GlfwStickMapping(0, 1, 8),
@@ -30,8 +35,10 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
     /* @formatter:on */
 
     /**
-     * @param controller     the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * Constructs a new {@code GlfwPsxAdapter}.
+     *
+     * @param controller     the controller which owns this adapter.
+     * @param registry       the controller's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @throws NullPointerException     if {@code controller} or
@@ -41,7 +48,7 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
      * @throws IllegalArgumentException if {@code glfwJoystick} is not a
      *                                  valid GLFW joystick.
      */
-    public GlfwPsxAdapter(@NotNull I controller,
+    public GlfwPsxAdapter(@NotNull C controller,
                           @NotNull MappedFeatureRegistry registry,
                           long ptr_glfwWindow, int glfwJoystick) {
         super(controller, registry, ptr_glfwWindow, glfwJoystick);
@@ -58,8 +65,16 @@ public abstract class GlfwPsxAdapter<I extends PsxController>
         this.mapButton(BUTTON_R1, 5);
         this.mapButton(BUTTON_L2, 6);
         this.mapButton(BUTTON_R2, 7);
-        this.mapButton(BUTTON_L_THUMB, 8);
-        this.mapButton(BUTTON_R_THUMB, 9);
+
+        /*
+         * The "share" and "options" button are not mapped here as they
+         * are not features present in PsxController. As such, mapping
+         * them here is impossible. However, the L and R thumb buttons
+         * are present in PsxController. Their GLFW IDs come after the
+         * IDs for the previously mentioned buttons.
+         */
+        this.mapButton(BUTTON_L_THUMB, 10); /* not a typo */
+        this.mapButton(BUTTON_R_THUMB, 11); /* not a typo */
 
         this.mapStick(STICK_LS, MAPPING_LS);
         this.mapStick(STICK_RS, MAPPING_RS);

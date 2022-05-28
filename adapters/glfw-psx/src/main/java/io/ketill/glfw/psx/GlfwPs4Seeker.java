@@ -2,30 +2,34 @@ package io.ketill.glfw.psx;
 
 import io.ketill.glfw.GlfwJoystickSeeker;
 import io.ketill.psx.Ps4Controller;
-import io.ketill.psx.PsxAmbiguityCallback;
 import io.ketill.psx.PsxAmbiguityCandidate;
+import io.ketill.psx.PsxAmbiguityEvent;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
+/**
+ * A {@link Ps4Controller} seeker using GLFW.
+ * <p>
+ * <b>Note:</b> Since both USB and Bluetooth controllers can connect, there
+ * exists a possibility a single PlayStation 4 controller will report itself
+ * as both a USB controller and a Bluetooth controller.
+ *
+ * @see #isAmbiguous()
+ * @see PsxAmbiguityEvent
+ */
 public class GlfwPs4Seeker extends GlfwJoystickSeeker<Ps4Controller>
-        implements PsxAmbiguityCandidate<Ps4Controller> {
+        implements PsxAmbiguityCandidate {
 
     private boolean ambiguous;
-    private @Nullable PsxAmbiguityCallback<Ps4Controller> ambiguityCallback;
 
     /**
-     * Since both USB and Bluetooth controllers can connect, there exists
-     * a possibility a single PlayStation 4 controller will report itself
-     * as both a USB controller and a Bluetooth controller.
+     * Constructs a new {@code GlfwPs4Seeker}.
      *
      * @param ptr_glfwWindow the GLFW window pointer.
-     * @throws NullPointerException     if {@code ptr_glfwWindow} is a null
-     *                                  pointer (has a value of zero.)
-     * @see #isAmbiguous()
-     * @see #onAmbiguity(PsxAmbiguityCallback)
+     * @throws NullPointerException if {@code ptr_glfwWindow} is a null
+     *                              pointer (has a value of zero.)
      */
     public GlfwPs4Seeker(long ptr_glfwWindow) {
         super(Ps4Controller.class, ptr_glfwWindow);
@@ -40,22 +44,13 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker<Ps4Controller>
         return this.ambiguous;
     }
 
-    @Override
-    public final void onAmbiguity(@Nullable PsxAmbiguityCallback<Ps4Controller> callback) {
-        this.ambiguityCallback = callback;
-    }
-
     private void checkAmbiguity() {
         boolean nowAmbiguous = this.getDeviceCount() > 1;
         if (!this.ambiguous && nowAmbiguous) {
-            if (ambiguityCallback != null) {
-                ambiguityCallback.execute(this, true);
-            }
+            observer.onNext(new PsxAmbiguityEvent(this, true));
             this.ambiguous = true;
         } else if (this.ambiguous && !nowAmbiguous) {
-            if (ambiguityCallback != null) {
-                ambiguityCallback.execute(this, false);
-            }
+            observer.onNext(new PsxAmbiguityEvent(this, false));
             this.ambiguous = false;
         }
     }

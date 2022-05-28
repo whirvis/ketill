@@ -1,5 +1,6 @@
 package io.ketill.glfw.psx;
 
+import io.ketill.psx.PsxAmbiguityEvent;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,10 @@ class GlfwPs4SeekerTest {
     @Test
     void testCheckAmbiguity() {
         AtomicBoolean ambiguous = new AtomicBoolean();
-        seeker.onAmbiguity((s, a) -> ambiguous.set(a));
+        seeker.subscribeEvents(PsxAmbiguityEvent.class, event -> {
+            boolean nowAmbiguous = event.isNowAmbiguous();
+            ambiguous.set(nowAmbiguous);
+        });
 
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             /*

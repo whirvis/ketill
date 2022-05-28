@@ -61,8 +61,8 @@ class GlfwPs5AdapterTest {
 
             lsYValue *= -1.0F;
             rsYValue *= -1.0F;
-            assertEquals(lsYValue, controller.ls.y());
-            assertEquals(rsYValue, controller.rs.y());
+            assertEquals(lsYValue, controller.ls.getPos().y());
+            assertEquals(rsYValue, controller.rs.getPos().y());
         }
     }
 

@@ -8,8 +8,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.psx.Ps4Controller.*;
 
+/**
+ * A {@link Ps4Controller} adapter using GLFW.
+ */
 public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
 
+    /**
+     * Mappings for {@link Ps4Controller#TRIGGER_LT} and
+     * {@link Ps4Controller#TRIGGER_RT}.
+     */
     protected static final int AXIS_LT = 3, AXIS_RT = 4;
 
     /**
@@ -31,8 +38,10 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
     /* @formatter:on */
 
     /**
-     * @param controller     the device which owns this adapter.
-     * @param registry       the device's mapped feature registry.
+     * Constructs a new {@code GlfwPs4Adapter}.
+     *
+     * @param controller     the controller which owns this adapter.
+     * @param registry       the controller's mapped feature registry.
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @throws NullPointerException     if {@code controller} or
