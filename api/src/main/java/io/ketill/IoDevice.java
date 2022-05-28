@@ -254,25 +254,23 @@ public abstract class IoDevice implements FeatureRegistry {
          * to force the user to make their class public if they did
          * not make use of the feature which requires it.
          */
-        /* @formatter:off */
         Class<?> clazz = field.getDeclaringClass();
         boolean sharePkg = clazz.getPackage() == IoDevice.class.getPackage();
         if(!Modifier.isPublic(clazz.getModifiers()) && !sharePkg) {
-            throw new KetillException("class " + clazz.getName() +
-                    " declaring " + field.getName() + " must be public");
+            String msg = "class " + clazz.getName() + " declaring ";
+            msg += field.getName() + " must be public";
+            throw new KetillException(msg);
         }
-        /* @formatter:on */
 
         String fieldDesc = "@" + FeaturePresent.class.getSimpleName();
         fieldDesc += " annotated field \"" + field.getName() + "\"";
         fieldDesc += " in class " + this.getClass().getName();
 
-        /* @formatter:off */
         if (!IoFeature.class.isAssignableFrom(field.getType())) {
-            throw new KetillException(fieldDesc + " must be assignable from "
-                    + IoFeature.class.getName());
+            String msg = fieldDesc + " must be assignable from ";
+            msg += IoFeature.class.getName();
+            throw new KetillException(msg);
         }
-        /* @formatter:on */
 
         /*
          * It would make no sense for @FeaturePresent annotated
