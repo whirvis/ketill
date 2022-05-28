@@ -77,7 +77,6 @@ public class GlfwPs4Adapter extends GlfwPsxAdapter<Ps4Controller> {
     }
 
     @Override
-    @MustBeInvokedByOverriders
     protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
         super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {

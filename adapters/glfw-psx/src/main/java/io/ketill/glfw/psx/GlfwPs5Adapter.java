@@ -78,7 +78,6 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
     }
 
     @Override
-    @MustBeInvokedByOverriders
     protected void updateTrigger(@NotNull TriggerStateZ state, int glfwAxis) {
         super.updateTrigger(state, glfwAxis);
         if (glfwAxis == AXIS_LT || glfwAxis == AXIS_RT) {
