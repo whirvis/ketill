@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * connected to the system. When such a device is detected, the appropriate
  * {@code IoDevice} instance and adapter will be created. Devices must be
  * polled manually after creation using {@link IoDevice#poll()}. This can
- * be done using {@link #pollDevices()}.
+ * also be done using {@link #pollDevices()}.
  * <p>
  * Implementations should call {@link #discoverDevice(IoDevice)} when a
  * device is discovered and {@link #forgetDevice(IoDevice)} when a device
