@@ -65,7 +65,7 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
      * @return {@code true} if this seeker is seeking out left JoyCons,
      * {@code false} otherwise.
      */
-    public boolean isSeekingLeftJoyCons() {
+    public final boolean isSeekingLeftJoyCons() {
         return this.seekingLeftJoyCons;
     }
 
@@ -73,7 +73,7 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
      * @return {@code true} if this seeker is seeking out right JoyCons,
      * {@code false} otherwise.
      */
-    public boolean isSeekingRightJoyCons() {
+    public final boolean isSeekingRightJoyCons() {
         return this.seekingRightJoyCons;
     }
 

@@ -3,6 +3,7 @@ package io.ketill.glfw.nx;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxLeftJoyCon;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
 
 import static io.ketill.nx.NxLeftJoyCon.*;
@@ -16,8 +17,8 @@ public class GlfwNxLeftJoyConAdapter extends GlfwNxJoyConAdapter<NxLeftJoyCon> {
      * Mapping for {@link NxLeftJoyCon#STICK_LS}.
      */
     /* @formatter:off */
-    protected static final @NotNull JoyConStickMapping
-            MAPPING_LS = new JoyConStickMapping(19, 17, 18, 16, 10);
+    protected static final @NotNull GlfwNxJoyConStickMapping
+            MAPPING_LS = new GlfwNxJoyConStickMapping(19, 17, 18, 16, 10);
     /* @formatter:on */
 
     /**
@@ -65,6 +66,7 @@ public class GlfwNxLeftJoyConAdapter extends GlfwNxJoyConAdapter<NxLeftJoyCon> {
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapButton(BUTTON_LEFT, 0);
         this.mapButton(BUTTON_DOWN, 1);

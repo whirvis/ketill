@@ -8,7 +8,7 @@ import java.util.Collection;
 /**
  * An {@link NxProController} seeker using GLFW.
  */
-public final class GlfwNxProSeeker extends GlfwJoystickSeeker<NxProController> {
+public class GlfwNxProSeeker extends GlfwJoystickSeeker<NxProController> {
 
     /**
      * Constructs a new {@code GlfwNxProSeeker}.

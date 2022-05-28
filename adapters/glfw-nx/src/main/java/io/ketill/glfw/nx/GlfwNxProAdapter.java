@@ -10,7 +10,10 @@ import io.ketill.glfw.GlfwJoystickAdapter;
 import io.ketill.glfw.GlfwStickMapping;
 import io.ketill.glfw.WranglerMethod;
 import io.ketill.nx.NxProController;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import static io.ketill.nx.NxProController.*;
 
@@ -73,12 +76,29 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         super(controller, registry, ptr_glfwWindow, glfwJoystick);
     }
 
+    /**
+     * Since Switch Pro Controllers use buttons for analog triggers,
+     * rather than proper triggers, the force of an analog trigger will
+     * depend solely on if its button is pressed.
+     * <p>
+     * When the corresponding button for a trigger is pressed, it's force
+     * will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     *
+     * @param trigger    the analog trigger to map.
+     * @param glfwButton the GLFW button to map {@code trigger} to.
+     * @throws NullPointerException     if {@code trigger} is {@code null}.
+     * @throws IllegalArgumentException if {@code glfwButton} is negative.
+     * @see #updateProTrigger(TriggerStateZ, int)
+     */
     @MappingMethod
-    private void mapProTrigger(@NotNull AnalogTrigger trigger, int glfwButton) {
+    protected void mapProTrigger(@NotNull AnalogTrigger trigger,
+                                 int glfwButton) {
+        Objects.requireNonNull(trigger, "trigger cannot be null");
         registry.mapFeature(trigger, glfwButton, this::updateProTrigger);
     }
 
     @Override
+    @MustBeInvokedByOverriders
     protected void initAdapter() {
         this.mapButton(BUTTON_B, 0);
         this.mapButton(BUTTON_A, 1);
@@ -117,9 +137,16 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
         }
     }
 
+    /**
+     * Updater for Switch Pro Controller triggers mapped via
+     * {@link #mapProTrigger(AnalogTrigger, int)}.
+     *
+     * @param state      the analog trigger state.
+     * @param glfwButton the GLFW button.
+     */
     @FeatureAdapter
-    private void updateProTrigger(@NotNull TriggerStateZ state,
-                                  int glfwButton) {
+    protected void updateProTrigger(@NotNull TriggerStateZ state,
+                                    int glfwButton) {
         if (this.isPressed(glfwButton)) {
             state.force = 1.0F;
         } else {
