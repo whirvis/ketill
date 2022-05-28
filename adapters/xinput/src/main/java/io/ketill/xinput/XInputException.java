@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * occurred.
  */
 @SuppressWarnings("unused")
-public class XInputException extends KetillException {
+public final class XInputException extends KetillException {
 
     /**
      * Constructs a new {@code XInputException} with the specified detail
@@ -24,8 +24,7 @@ public class XInputException extends KetillException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public XInputException(@Nullable String message,
-                           @Nullable Throwable cause) {
+    XInputException(@Nullable String message, @Nullable Throwable cause) {
         super(message, cause);
     }
 
@@ -36,7 +35,7 @@ public class XInputException extends KetillException {
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    public XInputException(@Nullable String message) {
+    XInputException(@Nullable String message) {
         super(message);
     }
 
@@ -51,14 +50,14 @@ public class XInputException extends KetillException {
      *              value is permitted, and indicates that the cause is
      *              nonexistent or unknown.
      */
-    public XInputException(@Nullable Throwable cause) {
+    XInputException(@Nullable Throwable cause) {
         super(cause);
     }
 
     /**
      * Constructs a new {@code XInputException} with no detail message.
      */
-    public XInputException() {
+    XInputException() {
         super();
     }
 

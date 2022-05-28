@@ -7,7 +7,11 @@ import com.github.strikerx3.jxinput.natives.XInputNatives;
  *
  * @see #isAvailable()
  */
-public class XInputStatus {
+public final class XInputStatus {
+
+    private XInputStatus() {
+        /* prevent instantiation */
+    }
 
     /**
      * Since X-input may not be available on the current system, it is
