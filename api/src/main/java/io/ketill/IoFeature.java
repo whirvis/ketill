@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * I/O features provide a definition of a capability present on an
- * {@link IoDevice}. Examples include (but are not limited to), a
+ * {@link IoDevice}. Examples include (but are not limited to): a
  * button, an analog stick, a rumble motor, or an LED indicator.
  *
  * @param <Z> the internal state type. This is visible to {@link IoDevice},
