@@ -57,7 +57,7 @@ subprojects {
      * Gradle will output JARs for them, even though they have
      * no source code. The closures below disable this behavior.
      */
-    def blankModules = ["adapters", "devices"]
+    def blankModules = ["adapter", "device"]
     if(blankModules.contains(project.name)) {
         tasks.jar.enabled = false
         tasks.sourcesJar.enabled = false
