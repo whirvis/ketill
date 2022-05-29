@@ -41,8 +41,9 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
                 return pos.x() <= -STICK_PRESS;
             case RIGHT:
                 return pos.x() >= STICK_PRESS;
+            default:
+                throw new KetillException("this is a bug");
         }
-        throw new KetillException("this is a bug");
     }
 
     /**
