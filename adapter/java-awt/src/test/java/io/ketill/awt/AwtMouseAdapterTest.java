@@ -11,6 +11,7 @@ import org.mockito.MockedStatic;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
 import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,11 +30,12 @@ class AwtMouseAdapterTest {
         this.component = mock(Component.class);
 
         /*
-         * Component.getLocationOnScreen() is used by the AWT mouse adapter
-         * to get the relative position of the mouse on the screen. To keep
-         * things simple, make the component position (0, 0).
+         * Component.getLocation and Component.getLocationOnScreen() are
+         * both used by the AWT mouse adapter for different purposes. To
+         * keep things simple, make the component position (0, 0).
          */
         Point point = new Point(0, 0);
+        doReturn(point).when(component).getLocation();
         doReturn(point).when(component).getLocationOnScreen();
 
         /*
@@ -201,6 +203,38 @@ class AwtMouseAdapterTest {
              */
             mouse.poll(); /* update mouse cursor */
             verify(component, times(1)).setCursor(null);
+
+            /*
+             * When the mouse cursor icon is set to null, the adapter should
+             * simply set the cursor to default. For Java AWT, the default
+             * cursor is simply null.
+             */
+            mouse.cursor.setIcon(null);
+            mouse.poll(); /* update mouse cursor */
+            verify(component, times(2)).setCursor(null);
+
+            /*
+             * When the mouse cursor icon is set to a non-null value, the
+             * adapter should set the cursor to a non-null value (presumably
+             * a cursor which uses the provided image as its icon).
+             */
+            BufferedImage img = new BufferedImage(16, 16,
+                    BufferedImage.TYPE_INT_ARGB);
+            mouse.cursor.setIcon(img);
+            mouse.poll(); /* update mouse cursor */
+            verify(component, times(2)).setCursor(notNull());
+
+            /*
+             * If the mouse cursor is not visible when its icon is set to
+             * any value, the adapter should not make a call to update the
+             * current cursor. This is because doing so would erroneously
+             * make the cursor visible again. The custom cursor will be
+             * visible when the user sets the cursor to be visible again.
+             */
+            mouse.cursor.setVisible(false);
+            mouse.cursor.setIcon(null);
+            mouse.poll(); /* update mouse cursor */
+            verify(component, times(2)).setCursor(null);
         }
     }
 

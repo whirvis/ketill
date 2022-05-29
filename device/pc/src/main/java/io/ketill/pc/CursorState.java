@@ -2,9 +2,11 @@ package io.ketill.pc;
 
 import io.ketill.ContainerState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+import java.awt.*;
 import java.util.Objects;
 
 /**
@@ -30,6 +32,14 @@ public final class CursorState extends ContainerState<CursorStateZ> {
      */
     public boolean canSetPosition() {
         return internalState.adapterCanSetPosition;
+    }
+
+    /**
+     * @return {code true} if the adapter has the ability to update the
+     * cursor's current icon, {@code false} otherwise.
+     */
+    public boolean canSetIcon() {
+        return internalState.adapterCanSetIcon;
     }
 
     /**
@@ -166,6 +176,62 @@ public final class CursorState extends ContainerState<CursorStateZ> {
      */
     public boolean trySetPosition(float xPos, float yPos) {
         return this.trySetPosition(new Vector2f(xPos, yPos));
+    }
+
+    /**
+     * @return the current icon of this cursor. A value of {@code null} may
+     * be returned, and indicates the default icon is in use.
+     */
+    public @Nullable Image getIcon() {
+        return internalState.icon;
+    }
+
+    /**
+     * <b>Note:</b> Only the current contents of {@code icon} will be used.
+     * If its contents are updated afterwards, this method must be called
+     * again for the changes to be reflected.
+     *
+     * @param icon the image to use for the cursor icon. A value of
+     *             {@code null} is permitted, and indicates the default
+     *             cursor should be used.
+     * @throws UnsupportedOperationException if the internal state of this
+     *                                       state indicates that the adapter
+     *                                       does not have the ability to set
+     *                                       the cursor's icon.
+     * @see #canSetIcon()
+     * @see #trySetIcon(Image)
+     */
+    public void setIcon(@Nullable Image icon) {
+        if (!this.canSetIcon()) {
+            String msg = "cannot set icon with current adapter";
+            msg += ", did it forget to set adapterCanSetIcon";
+            msg += " to true in the internal state?";
+            throw new UnsupportedOperationException(msg);
+        }
+        internalState.icon = icon;
+        internalState.updatedIcon = true;
+    }
+
+    /**
+     * <b>Alternative to:</b> {@link #setIcon(Image)}, which only sets the
+     * cursor's icon if the adapter has the ability to do so.
+     * <p>
+     * <b>Note:</b> Only the current contents of {@code icon} will be used.
+     * If its contents are updated afterwards, this method must be called
+     * again for the changes to be reflected.
+     *
+     * @param icon the image to use for the cursor icon. A value of
+     *             {@code null} is permitted, and indicates the default
+     *             cursor should be used.
+     * @return {@code true} if the cursor icon was successfully updated,
+     * {@code false} otherwise.
+     */
+    public boolean trySetIcon(@Nullable Image icon) {
+        if (!this.canSetIcon()) {
+            return false;
+        }
+        this.setIcon(icon);
+        return true;
     }
 
 }

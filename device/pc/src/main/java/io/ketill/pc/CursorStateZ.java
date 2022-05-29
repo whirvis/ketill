@@ -1,11 +1,14 @@
 package io.ketill.pc;
 
+import io.ketill.AutonomousField;
 import io.ketill.AutonomousState;
 import io.ketill.IoDeviceObserver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
+
+import java.awt.*;
 
 /**
  * Contains the state of a {@link MouseCursor}.
@@ -25,7 +28,8 @@ public final class CursorStateZ implements AutonomousState {
     /* @formatter:off */
     public boolean
             adapterCanSetVisible,
-            adapterCanSetPosition;
+            adapterCanSetPosition,
+            adapterCanSetIcon;
     /* @formatter:on */
 
     /**
@@ -50,6 +54,22 @@ public final class CursorStateZ implements AutonomousState {
      * @see #adapterCanSetPosition
      */
     public @Nullable Vector2fc requestedPos;
+
+    /**
+     * This should <i>not</i> be modified by the adapter.<br>
+     * It is updated automatically by the state.
+     *
+     * @see #updatedIcon
+     */
+    @AutonomousField
+    public Image icon;
+
+    /**
+     * When this value is {@code true}, the adapter should update the
+     * icon of the cursor to reflect the contents of {@link #icon}.
+     * Afterwards, this value should be set back to {@code false}.
+     */
+    public boolean updatedIcon;
 
     private final MouseCursor cursor;
     private final Mouse mouse;

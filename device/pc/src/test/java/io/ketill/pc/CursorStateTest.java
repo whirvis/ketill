@@ -6,6 +6,7 @@ import org.joml.Vector2fc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,8 +35,7 @@ class CursorStateTest {
 
     @Test
     void testInit() {
-        assertThrows(NullPointerException.class,
-                () -> new CursorState(null));
+        assertThrows(NullPointerException.class, () -> new CursorState(null));
     }
 
     @SuppressWarnings("UnusedAssignment")
@@ -54,6 +54,15 @@ class CursorStateTest {
         assertTrue(container.canSetPosition());
         internal.adapterCanSetPosition = false;
         assertFalse(container.canSetPosition());
+    }
+
+    @SuppressWarnings("UnusedAssignment")
+    @Test
+    void testCanSetIcon() {
+        internal.adapterCanSetIcon = true;
+        assertTrue(container.canSetIcon());
+        internal.adapterCanSetIcon = false;
+        assertFalse(container.canSetIcon());
     }
 
     @SuppressWarnings("UnusedAssignment")
@@ -163,6 +172,50 @@ class CursorStateTest {
         assertTrue(container.trySetPosition(0.0F, 0.0F));
         internal.adapterCanSetPosition = false;
         assertFalse(container.trySetPosition(0.0F, 0.0F));
+    }
+
+    @Test
+    void testGetIcon() {
+        internal.icon = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        assertSame(internal.icon, container.getIcon());
+    }
+
+    @Test
+    void testSetIcon() {
+        /*
+         * By default, the internal state assumes that adapter does not have
+         * the ability to set the icon of the mouse cursor. As such, the
+         * call below should result in an exception. Afterwards, it will
+         * be explicitly enabled for the next tests.
+         */
+        assertThrows(UnsupportedOperationException.class,
+                () -> container.setIcon(null));
+        internal.adapterCanSetIcon = true;
+
+        /*
+         * Now that the internal state indicates the adapter has the ability
+         * to set the icon of the mouse cursor, testing can continue.
+         */
+        BufferedImage img = new BufferedImage(16, 16,
+                BufferedImage.TYPE_INT_ARGB);
+        container.setIcon(img);
+
+        /*
+         * When setting the icon, it is the responsibility of the adapter to
+         * update the current cursor icon. However, it must first be notified
+         * that there is a new icon to use.
+         */
+        assertSame(img, container.getIcon());
+        assertSame(img, internal.icon);
+        assertTrue(internal.updatedIcon);
+    }
+
+    @Test
+    void testTrySetIcon() {
+        internal.adapterCanSetIcon = true;
+        assertTrue(container.trySetIcon(null));
+        internal.adapterCanSetIcon = false;
+        assertFalse(container.trySetIcon(null));
     }
 
     @Test

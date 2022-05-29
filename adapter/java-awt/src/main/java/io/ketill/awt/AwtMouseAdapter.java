@@ -21,14 +21,21 @@ import static io.ketill.pc.Mouse.*;
 
 /**
  * A {@link Mouse} adapter using Java AWT.
+ * <p>
+ * <b>Note:</b> Unlike the {@code glfw-pc} module, the cursor icon will
+ * always be resized depending on the settings of the operating system.
+ * This means that a cursor icon with dimensions of {@code 128x128} may
+ * could be resized to {@code 64x64} (or some other size).
  */
 public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
 
+    private static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
+
     /* @formatter:off */
     private static final @NotNull Cursor INVISIBLE_CURSOR =
-            Toolkit.getDefaultToolkit().createCustomCursor(
+            TOOLKIT.createCustomCursor(
                     new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
-                    new Point(0, 0), "invisible_cursor");
+                    new Point(0, 0), "cursor_invisible");
     /* @formatter:on */
 
     /**
@@ -75,6 +82,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     private final @NotNull AwtMouseListener mouseListener;
     private final @Nullable Robot robot;
     private boolean wasCursorVisible;
+    private @Nullable Cursor currentCursor;
 
     /**
      * Constructs a new {@code AwtMouseAdapter}.
@@ -98,7 +106,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     /**
      * @param button      the mouse button to map.
      * @param mouseButton the button to map {@code button} to.
-     * @throws NullPointerException     if {@code button} is {@code null}.
+     * @throws NullPointerException if {@code button} is {@code null}.
      * @see #updateButton(MouseClickZ, int)
      */
     @MappingMethod
@@ -133,6 +141,7 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         CursorStateZ cursor = registry.getInternalState(FEATURE_CURSOR);
         cursor.adapterCanSetVisible = true;
         cursor.adapterCanSetPosition = robot != null;
+        cursor.adapterCanSetIcon = true;
 
         this.wasCursorVisible = cursor.visible;
     }
@@ -178,11 +187,37 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         }
 
         if (!wasCursorVisible && state.visible) {
-            component.setCursor(null);
+            component.setCursor(currentCursor);
             this.wasCursorVisible = true;
         } else if (wasCursorVisible && !state.visible) {
             component.setCursor(INVISIBLE_CURSOR);
             this.wasCursorVisible = false;
+        }
+
+        if (state.updatedIcon) {
+            /*
+             * If the icon for the cursor is null, it indicates the default
+             * icon should be used. In Java AWT, null represents the default
+             * cursor. Attempting to create a cursor with a null icon would
+             * also likely result in a NullPointerException being thrown.
+             */
+            if (state.icon == null) {
+                this.currentCursor = null;
+            } else {
+                this.currentCursor = TOOLKIT.createCustomCursor(state.icon,
+                        component.getLocation(), "cursor_custom");
+            }
+
+            /*
+             * If the cursor is currently visible, it should be updated here.
+             * If it is currently invisible, the component's cursor will be
+             * updated when the user makes the cursor visible.
+             */
+            if (state.visible) {
+                component.setCursor(currentCursor);
+            }
+
+            state.updatedIcon = false;
         }
     }
 
