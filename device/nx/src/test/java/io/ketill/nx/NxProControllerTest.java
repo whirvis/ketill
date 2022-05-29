@@ -48,6 +48,8 @@ class NxProControllerTest {
         assertFeatureOwnsState(nxPro, nxPro.accelerometer, SENSOR_ACCELEROMETER);
         assertFeatureOwnsState(nxPro, nxPro.gyroscope, SENSOR_GYROSCOPE);
 
+        assertFeatureOwnsState(nxPro, nxPro.battery, INTERNAL_BATTERY);
+
         assertFeatureOwnsState(nxPro, nxPro.led, FEATURE_LED);
     }
 

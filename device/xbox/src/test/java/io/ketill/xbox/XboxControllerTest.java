@@ -7,14 +7,14 @@ import static io.ketill.KetillAssertions.*;
 import static io.ketill.xbox.XboxController.*;
 
 class XboxControllerTest {
-    
+
     private XboxController xbox;
-    
+
     @BeforeEach
     void createController() {
         this.xbox = new XboxController(MockXboxAdapter::new);
     }
-    
+
     @Test
     void ensureAllStatesValid() {
         assertFeatureOwnsState(xbox, xbox.a, BUTTON_A);
@@ -37,6 +37,8 @@ class XboxControllerTest {
 
         assertFeatureOwnsState(xbox, xbox.lt, TRIGGER_LT);
         assertFeatureOwnsState(xbox, xbox.rt, TRIGGER_RT);
+
+        assertFeatureOwnsState(xbox, xbox.battery, INTERNAL_BATTERY);
 
         assertFeatureOwnsState(xbox, xbox.rumbleCoarse, MOTOR_COARSE);
         assertFeatureOwnsState(xbox, xbox.rumbleFine, MOTOR_FINE);

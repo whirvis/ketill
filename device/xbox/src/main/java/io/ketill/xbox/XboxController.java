@@ -1,18 +1,20 @@
 package io.ketill.xbox;
 
 import io.ketill.AdapterSupplier;
-import io.ketill.controller.Direction;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.BatteryLevel;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.Direction;
+import io.ketill.controller.InternalBattery;
+import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
-import io.ketill.controller.MotorVibration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -51,6 +53,10 @@ public class XboxController extends Controller {
             TRIGGER_RT = new AnalogTrigger("rt");
 
     @FeaturePresent
+    public static final @NotNull InternalBattery
+            INTERNAL_BATTERY = new InternalBattery("battery");
+
+    @FeaturePresent
     public static final @NotNull RumbleMotor
             MOTOR_COARSE = new RumbleMotor("rumble_coarse"),
             MOTOR_FINE = new RumbleMotor("rumble_fine");
@@ -83,6 +89,10 @@ public class XboxController extends Controller {
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
+
+    @FeatureState
+    public final @NotNull BatteryLevel
+            battery = this.getState(INTERNAL_BATTERY);
 
     @FeatureState
     public final @NotNull MotorVibration

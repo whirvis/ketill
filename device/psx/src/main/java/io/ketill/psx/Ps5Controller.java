@@ -4,9 +4,11 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.BatteryLevel;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.ControllerButton;
 import io.ketill.controller.GenericSensor;
+import io.ketill.controller.InternalBattery;
 import io.ketill.controller.SensorValue;
 import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +38,10 @@ public class Ps5Controller extends PsxController {
     public static final @NotNull GenericSensor
             SENSOR_ACCELEROMETER = new GenericSensor("accelerometer"),
             SENSOR_GYROSCOPE = new GenericSensor("gyroscope");
+
+    @FeaturePresent
+    public static final @NotNull InternalBattery
+            INTERNAL_BATTERY = new InternalBattery("battery");
     /* @formatter:on */
 
     /* @formatter:off */
@@ -56,6 +62,10 @@ public class Ps5Controller extends PsxController {
     public final @NotNull SensorValue
             accelerometer = this.getState(SENSOR_ACCELEROMETER),
             gyroscope = this.getState(SENSOR_GYROSCOPE);
+
+    @FeatureState
+    public final @NotNull BatteryLevel
+            battery = this.getState(INTERNAL_BATTERY);
     /* @formatter:on */
 
     /**

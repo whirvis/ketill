@@ -37,9 +37,11 @@ class GlfwNxLeftJoyConAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        assertAllFeaturesSupported(joycon, NxLeftJoyCon.FEATURE_LED,
+        assertAllFeaturesSupported(joycon,
                 NxLeftJoyCon.SENSOR_ACCELEROMETER,
-                NxLeftJoyCon.SENSOR_GYROSCOPE);
+                NxLeftJoyCon.SENSOR_GYROSCOPE,
+                NxLeftJoyCon.INTERNAL_BATTERY,
+                NxLeftJoyCon.FEATURE_LED);
     }
 
     @Test

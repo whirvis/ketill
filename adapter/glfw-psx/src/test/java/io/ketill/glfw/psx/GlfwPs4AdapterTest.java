@@ -43,8 +43,9 @@ class GlfwPs4AdapterTest {
     void ensureIntendedFeaturesSupported() {
         assertAllFeaturesSupported(controller,
                 Ps4Controller.SENSOR_ACCELEROMETER,
-                Ps4Controller.SENSOR_GYROSCOPE, Ps4Controller.MOTOR_STRONG,
-                Ps4Controller.MOTOR_WEAK, Ps4Controller.FEATURE_LIGHTBAR);
+                Ps4Controller.SENSOR_GYROSCOPE, Ps4Controller.INTERNAL_BATTERY,
+                Ps4Controller.MOTOR_STRONG, Ps4Controller.MOTOR_WEAK,
+                Ps4Controller.FEATURE_LIGHTBAR);
     }
 
     @Test

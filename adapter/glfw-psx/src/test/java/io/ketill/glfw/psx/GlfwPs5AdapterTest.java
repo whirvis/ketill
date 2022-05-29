@@ -43,7 +43,8 @@ class GlfwPs5AdapterTest {
     void ensureIntendedFeaturesSupported() {
         assertAllFeaturesSupported(controller,
                 Ps5Controller.SENSOR_ACCELEROMETER,
-                Ps5Controller.SENSOR_GYROSCOPE);
+                Ps5Controller.SENSOR_GYROSCOPE,
+                Ps5Controller.INTERNAL_BATTERY);
     }
 
     @Test

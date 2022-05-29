@@ -26,6 +26,8 @@ class Ps3ControllerTest {
         assertFeatureOwnsState(ps3, ps3.accelerometer, SENSOR_ACCELEROMETER);
         assertFeatureOwnsState(ps3, ps3.gyroscope, SENSOR_GYROSCOPE);
 
+        assertFeatureOwnsState(ps3, ps3.battery, INTERNAL_BATTERY);
+
         assertFeatureOwnsState(ps3, ps3.rumbleStrong, MOTOR_STRONG);
         assertFeatureOwnsState(ps3, ps3.rumbleWeak, MOTOR_WEAK);
 

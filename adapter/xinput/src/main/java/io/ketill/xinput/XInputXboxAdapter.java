@@ -1,16 +1,21 @@
 package io.ketill.xinput;
 
 import com.github.strikerx3.jxinput.XInputAxes;
+import com.github.strikerx3.jxinput.XInputBatteryInformation;
 import com.github.strikerx3.jxinput.XInputButtons;
 import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice;
+import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.enums.XInputAxis;
+import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
+import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
 import io.ketill.FeatureAdapter;
 import io.ketill.IoDeviceAdapter;
 import io.ketill.MappedFeatureRegistry;
 import io.ketill.MappingMethod;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.BatteryLevelZ;
 import io.ketill.controller.ButtonStateZ;
 import io.ketill.controller.ControllerButton;
 import io.ketill.controller.MotorVibration;
@@ -27,6 +32,11 @@ import static io.ketill.xbox.XboxController.*;
 
 /**
  * An {@link XboxController} adapter using X-input.
+ * <p>
+ * <b>Note:</b> X-input does not return an exact value for the controller's
+ * battery level. As such, the battery level must be approximated.<br>
+ * Furthermore, determining the battery level is only functional if the
+ * current version of X-input on this machine is 1.4 or higher.
  */
 public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
 
@@ -34,6 +44,7 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     private static final int RUMBLE_MAX = 0xFFFF;
 
     private final XInputDevice xDevice;
+    private final XInputDevice14 xDevice14;
     private XInputButtons buttons;
     private XInputAxes axes;
     private int rumbleCoarse;
@@ -57,6 +68,17 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
         XInputStatus.requireAvailable();
         this.xDevice = Objects.requireNonNull(xDevice,
                 "xDevice cannot be null");
+
+        /*
+         * If the X-input device is from X-input 1.4, then cast it here
+         * so casting isn't necessary in the future. Instead, a null check
+         * will be used to determine if 1.4 is the current version.
+         */
+        if (xDevice instanceof XInputDevice14) {
+            this.xDevice14 = (XInputDevice14) xDevice;
+        } else {
+            this.xDevice14 = null;
+        }
     }
 
     @MappingMethod
@@ -110,6 +132,8 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
         this.mapXTrigger(TRIGGER_LT, XInputAxis.LEFT_TRIGGER);
         this.mapXTrigger(TRIGGER_RT, XInputAxis.RIGHT_TRIGGER);
 
+        registry.mapFeature(INTERNAL_BATTERY, this::updateBattery);
+
         this.mapXMotor(MOTOR_COARSE);
         this.mapXMotor(MOTOR_FINE);
     }
@@ -138,6 +162,39 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     private void updateTrigger(@NotNull TriggerStateZ state,
                                @NotNull XInputAxis axis) {
         state.force = axes.get(axis);
+    }
+
+    @FeatureAdapter
+    private void updateBattery(@NotNull BatteryLevelZ state) {
+        if (xDevice14 == null) {
+            return; /* battery level unknown */
+        }
+
+        XInputBatteryDeviceType deviceType = XInputBatteryDeviceType.GAMEPAD;
+        XInputBatteryInformation batteryInfo =
+                xDevice14.getBatteryInformation(deviceType);
+        XInputBatteryLevel batteryLevel = batteryInfo.getLevel();
+
+        if (batteryLevel == null) {
+            state.level = -1.0F;
+        } else {
+            switch (batteryLevel) {
+                case EMPTY:
+                    state.level = 0.00F;
+                    break;
+                case LOW:
+                    state.level = 0.25F;
+                    break;
+                case MEDIUM:
+                    state.level = 0.50F;
+                    break;
+                case FULL:
+                    state.level = 1.00F;
+                    break;
+                default:
+                    throw new XInputException("this is a bug");
+            }
+        }
     }
 
     @FeatureAdapter

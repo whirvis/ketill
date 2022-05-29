@@ -42,7 +42,8 @@ class GlfwXboxAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        assertAllFeaturesSupported(controller, XboxController.MOTOR_COARSE,
+        assertAllFeaturesSupported(controller,
+                XboxController.INTERNAL_BATTERY, XboxController.MOTOR_COARSE,
                 XboxController.MOTOR_FINE);
     }
 
@@ -50,7 +51,8 @@ class GlfwXboxAdapterTest {
     void testUpdateStick() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
@@ -71,7 +73,8 @@ class GlfwXboxAdapterTest {
     void testUpdateTrigger() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float ltValue = RANDOM.nextFloat();

@@ -24,6 +24,8 @@ class NxJoyConTest {
         assertFeatureOwnsState(nxJoyCon, nxJoyCon.accelerometer, SENSOR_ACCELEROMETER);
         assertFeatureOwnsState(nxJoyCon, nxJoyCon.gyroscope, SENSOR_GYROSCOPE);
 
+        assertFeatureOwnsState(nxJoyCon, nxJoyCon.battery, INTERNAL_BATTERY);
+
         assertFeatureOwnsState(nxJoyCon, nxJoyCon.led, FEATURE_LED);
     }
 

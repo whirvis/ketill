@@ -44,9 +44,11 @@ class GlfwNxProAdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        assertAllFeaturesSupported(controller, NxProController.FEATURE_LED,
+        assertAllFeaturesSupported(controller,
                 NxProController.SENSOR_ACCELEROMETER,
-                NxProController.SENSOR_GYROSCOPE);
+                NxProController.SENSOR_GYROSCOPE,
+                NxProController.INTERNAL_BATTERY,
+                NxProController.FEATURE_LED);
     }
 
     @Test

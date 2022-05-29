@@ -5,10 +5,12 @@ import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.controller.AnalogStick;
 import io.ketill.controller.AnalogTrigger;
+import io.ketill.controller.BatteryLevel;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
 import io.ketill.controller.GenericSensor;
+import io.ketill.controller.InternalBattery;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
 import io.ketill.controller.SensorValue;
@@ -35,6 +37,10 @@ public abstract class NxJoyCon extends Controller {
             SENSOR_GYROSCOPE = new GenericSensor("gyroscope");
 
     @FeaturePresent
+    public static final @NotNull InternalBattery
+            INTERNAL_BATTERY = new InternalBattery("battery");
+
+    @FeaturePresent
     public static final @NotNull PlayerLed
             FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
@@ -49,6 +55,10 @@ public abstract class NxJoyCon extends Controller {
     public final @NotNull SensorValue
             accelerometer = this.getState(SENSOR_ACCELEROMETER),
             gyroscope = this.getState(SENSOR_GYROSCOPE);
+
+    @FeatureState
+    public final @NotNull BatteryLevel
+            battery = this.getState(INTERNAL_BATTERY);
 
     @FeatureState
     public final @NotNull LedState
