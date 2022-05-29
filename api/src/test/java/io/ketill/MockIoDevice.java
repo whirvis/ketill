@@ -30,6 +30,7 @@ class MockIoDevice extends IoDevice {
     public final Object featureContainerState, featureInternalState;
 
     boolean executedTask;
+    boolean adapterInitialized, fieldsRegistered;
     boolean featureRegistered, featureUnregistered;
     boolean deviceConnected, deviceDisconnected;
     boolean polled;
@@ -60,6 +61,16 @@ class MockIoDevice extends IoDevice {
 
     void executeTask() {
         this.executedTask = true;
+    }
+
+    @Override
+    protected void adapterInitialized() {
+        this.adapterInitialized = true;
+    }
+
+    @Override
+    protected void fieldsRegistered() {
+        this.fieldsRegistered = true;
     }
 
     @Override

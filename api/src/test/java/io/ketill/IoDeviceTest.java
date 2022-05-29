@@ -74,7 +74,7 @@ class IoDeviceTest {
 
     @Test
     void ensureRegistryMethodsFinal() {
-
+        // todo
     }
 
     @Test
@@ -134,6 +134,21 @@ class IoDeviceTest {
         assertTrue(adapter.isInitialized());
 
         /*
+         * For the next test, a device must be created which does not
+         * automatically initialize its adapter. There must also be a
+         * subscriber before it is manually initialized.
+         */
+        MockIoDevice uninitialized = new MockIoDevice("uninitialized",
+                MockIoDeviceAdapter::new, false, false);
+        AtomicBoolean initialized = new AtomicBoolean();
+        uninitialized.subscribeEvents(AdapterInitializedEvent.class,
+                event -> initialized.set(true));
+
+        uninitialized.initAdapter();
+        assertTrue(device.adapterInitialized);
+        assertTrue(initialized.get());
+
+        /*
          * Attempting to call initAdapter() again should result in an
          * IllegalStateException being thrown. Initializing the adapter
          * twice makes no sense, and would lead to bugs.
@@ -150,6 +165,21 @@ class IoDeviceTest {
          * annotated with @FeaturePresent.
          */
         assertTrue(device.isFeatureRegistered(MockIoDevice.FEATURE));
+
+        /*
+         * For the next test, a device must be created which does not
+         * automatically register fields annotated with FeaturePresent.
+         * There must also be a subscriber before registering them.
+         */
+        MockIoDevice unregistered = new MockIoDevice("unregistered",
+                MockIoDeviceAdapter::new, false, false);
+        AtomicBoolean registered = new AtomicBoolean();
+        unregistered.subscribeEvents(FieldsRegisteredEvent.class,
+                event -> registered.set(true));
+
+        unregistered.registerFields();
+        assertTrue(device.fieldsRegistered);
+        assertTrue(registered.get());
 
         /*
          * Attempting to call registerFields() again should result in an

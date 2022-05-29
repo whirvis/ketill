@@ -197,6 +197,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * to call this method themselves.
      *
      * @throws IllegalStateException if this has already been called.
+     * @see #adapterInitialized()
      */
     @MustBeInvokedByOverriders
     protected void initAdapter() {
@@ -205,6 +206,17 @@ public abstract class IoDevice implements FeatureRegistry {
         }
         adapter.initAdapter();
         this.initializedAdapter = true;
+
+        this.adapterInitialized();
+        observer.onNext(new AdapterInitializedEvent(this));
+    }
+
+    /**
+     * Called when the adapter has been initialized. This will be called
+     * before the corresponding event is emitted to subscribers.
+     */
+    protected void adapterInitialized() {
+        /* optional implement */
     }
 
     /**
@@ -215,6 +227,7 @@ public abstract class IoDevice implements FeatureRegistry {
      *
      * @throws IllegalStateException if this has already been called.
      * @see #registerFeature(IoFeature)
+     * @see #fieldsRegistered()
      */
     @MustBeInvokedByOverriders
     protected void registerFields() {
@@ -232,6 +245,18 @@ public abstract class IoDevice implements FeatureRegistry {
         }
 
         this.registeredFields = true;
+
+        this.fieldsRegistered();
+        observer.onNext(new FieldsRegisteredEvent(this));
+    }
+
+    /**
+     * Called when all fields present in this class annotated with
+     * {@link FeaturePresent} have been registered. This will be called
+     * before the corresponding event is emitted to subscribers.
+     */
+    protected void fieldsRegistered() {
+        /* optional implement */
     }
 
     /* @formatter:off */
