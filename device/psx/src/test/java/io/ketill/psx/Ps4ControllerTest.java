@@ -25,6 +25,9 @@ class Ps4ControllerTest {
         assertFeatureOwnsState(ps4, ps4.lt, TRIGGER_LT);
         assertFeatureOwnsState(ps4, ps4.rt, TRIGGER_RT);
 
+        assertFeatureOwnsState(ps4, ps4.accelerometer, SENSOR_ACCELEROMETER);
+        assertFeatureOwnsState(ps4, ps4.gyroscope, SENSOR_GYROSCOPE);
+
         assertFeatureOwnsState(ps4, ps4.rumbleStrong, MOTOR_STRONG);
         assertFeatureOwnsState(ps4, ps4.rumbleWeak, MOTOR_WEAK);
 

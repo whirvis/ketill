@@ -6,8 +6,10 @@ import io.ketill.FeatureState;
 import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.GenericSensor;
 import io.ketill.controller.MotorVibration;
 import io.ketill.controller.RumbleMotor;
+import io.ketill.controller.SensorValue;
 import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,6 +34,11 @@ public class Ps4Controller extends PsxController {
             TRIGGER_RT = new AnalogTrigger("rt");
 
     @FeaturePresent
+    public static final @NotNull GenericSensor
+            SENSOR_ACCELEROMETER = new GenericSensor("accelerometer"),
+            SENSOR_GYROSCOPE = new GenericSensor("gyroscope");
+
+    @FeaturePresent
     public static final @NotNull RumbleMotor
             MOTOR_STRONG = new RumbleMotor("rumble_strong"),
             MOTOR_WEAK = new RumbleMotor("rumble_weak");
@@ -53,6 +60,11 @@ public class Ps4Controller extends PsxController {
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
+
+    @FeatureState
+    public final @NotNull SensorValue
+            accelerometer = this.getState(SENSOR_ACCELEROMETER),
+            gyroscope = this.getState(SENSOR_GYROSCOPE);
 
     @FeatureState
     public final @NotNull MotorVibration

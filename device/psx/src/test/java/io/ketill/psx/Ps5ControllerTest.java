@@ -25,6 +25,9 @@ class Ps5ControllerTest {
 
         assertFeatureOwnsState(ps5, ps5.lt, TRIGGER_LT);
         assertFeatureOwnsState(ps5, ps5.rt, TRIGGER_RT);
+
+        assertFeatureOwnsState(ps5, ps5.accelerometer, SENSOR_ACCELEROMETER);
+        assertFeatureOwnsState(ps5, ps5.gyroscope, SENSOR_GYROSCOPE);
     }
 
 }

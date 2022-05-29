@@ -41,7 +41,9 @@ class GlfwPs4AdapterTest {
 
     @Test
     void ensureIntendedFeaturesSupported() {
-        assertAllFeaturesSupported(controller, Ps4Controller.MOTOR_STRONG,
+        assertAllFeaturesSupported(controller,
+                Ps4Controller.SENSOR_ACCELEROMETER,
+                Ps4Controller.SENSOR_GYROSCOPE, Ps4Controller.MOTOR_STRONG,
                 Ps4Controller.MOTOR_WEAK, Ps4Controller.FEATURE_LIGHTBAR);
     }
 
@@ -49,7 +51,8 @@ class GlfwPs4AdapterTest {
     void testUpdateStick() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float lsYValue = RANDOM.nextFloat();
@@ -70,7 +73,8 @@ class GlfwPs4AdapterTest {
     void testUpdateTrigger() {
         try (MockedStatic<GLFW> glfw = mockStatic(GLFW.class)) {
             FloatBuffer axes = FloatBuffer.allocate(16);
-            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick)).thenReturn(axes);
+            glfw.when(() -> glfwGetJoystickAxes(glfwJoystick))
+                    .thenReturn(axes);
 
             /* generate axis values for next test */
             float ltValue = RANDOM.nextFloat();

@@ -10,8 +10,10 @@ import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
 import io.ketill.controller.Direction;
+import io.ketill.controller.GenericSensor;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
+import io.ketill.controller.SensorValue;
 import io.ketill.controller.StickPos;
 import io.ketill.controller.TriggerState;
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +69,11 @@ public class NxProController extends Controller {
             TRIGGER_RT = new AnalogTrigger("rt");
 
     @FeaturePresent
+    public static final @NotNull GenericSensor
+            SENSOR_ACCELEROMETER = new GenericSensor("accelerometer"),
+            SENSOR_GYROSCOPE = new GenericSensor("gyroscope");
+
+    @FeaturePresent
     public static final @NotNull PlayerLed
             FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
@@ -112,6 +119,11 @@ public class NxProController extends Controller {
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
+
+    @FeatureState
+    public final @NotNull SensorValue
+            accelerometer = this.getState(SENSOR_ACCELEROMETER),
+            gyroscope = this.getState(SENSOR_GYROSCOPE);
 
     @FeatureState
     public final @NotNull LedState

@@ -8,8 +8,10 @@ import io.ketill.controller.AnalogTrigger;
 import io.ketill.controller.ButtonState;
 import io.ketill.controller.Controller;
 import io.ketill.controller.ControllerButton;
+import io.ketill.controller.GenericSensor;
 import io.ketill.controller.LedState;
 import io.ketill.controller.PlayerLed;
+import io.ketill.controller.SensorValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +30,11 @@ public abstract class NxJoyCon extends Controller {
             BUTTON_SR = new ControllerButton("sr");
 
     @FeaturePresent
+    public static final @NotNull GenericSensor
+            SENSOR_ACCELEROMETER = new GenericSensor("accelerometer"),
+            SENSOR_GYROSCOPE = new GenericSensor("gyroscope");
+
+    @FeaturePresent
     public static final @NotNull PlayerLed
             FEATURE_LED = new PlayerLed("led");
     /* @formatter:on */
@@ -37,6 +44,11 @@ public abstract class NxJoyCon extends Controller {
     public final @NotNull ButtonState
             sl = this.getState(BUTTON_SL),
             sr = this.getState(BUTTON_SR);
+
+    @FeatureState
+    public final @NotNull SensorValue
+            accelerometer = this.getState(SENSOR_ACCELEROMETER),
+            gyroscope = this.getState(SENSOR_GYROSCOPE);
 
     @FeatureState
     public final @NotNull LedState
@@ -64,8 +76,7 @@ public abstract class NxJoyCon extends Controller {
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    NxJoyCon(@NotNull String id,
-             @NotNull AdapterSupplier<?> adapterSupplier,
+    NxJoyCon(@NotNull String id, @NotNull AdapterSupplier<?> adapterSupplier,
              @Nullable AnalogStick ls, @Nullable AnalogStick rs,
              @Nullable AnalogTrigger lt, @Nullable AnalogTrigger rt) {
         super(id, adapterSupplier, ls, rs, lt, rt);
