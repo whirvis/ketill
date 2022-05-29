@@ -20,9 +20,9 @@ import static java.awt.event.KeyEvent.*;
 /**
  * A {@link Keyboard} adapter using Java AWT.
  * <p>
- * <b>Note:</b> Unlike the {@code glfw} module, this adapter uses virtual
- * key codes to map keyboard keys. As a result, the physical location of
- * a key changes based on the current keyboard layout of the system.
+ * <b>Note:</b> Unlike the {@code glfw-pc} module, this adapter uses virtual
+ * key codes to map keyboard keys. This means that the physical location of
+ * a key will change based on the current keyboard layout of the system.
  */
 public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
 
