@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Emitted by {@link IoDevice} when it has registered all fields
  * present in its class annotated with {@link FeaturePresent}.
  */
-public class FieldsRegisteredEvent extends IoDeviceEvent {
+public final class FieldsRegisteredEvent extends IoDeviceEvent {
 
     /**
      * Constructs a new {@code FieldsRegisteredEvent}.

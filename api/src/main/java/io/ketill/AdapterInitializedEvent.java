@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
  * Emitted by {@link IoDevice} when its {@link IoDeviceAdapter} has been
  * initialized.
  */
-public class AdapterInitializedEvent extends IoDeviceEvent {
+public final class AdapterInitializedEvent extends IoDeviceEvent {
 
     /**
      * Constructs a new {@code AdapterInitializedEvent}.
