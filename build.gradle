@@ -1,4 +1,15 @@
 subprojects {
+    /*
+     * Some modules in this project are blank modules. They are simply folders
+     * which contain for real modules. By default, Gradle will run tasks for
+     * them, even though they have no source code. The closure below disables
+     * this undesirable behavior.
+     */
+    def blankModules = ["adapter", "device"]
+    if(blankModules.contains(project.name)) {
+        tasks.whenTaskAdded { task -> task.enabled = false}
+    }
+
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
@@ -50,20 +61,4 @@ subprojects {
     }
 
     archivesBaseName = "${rootProject.name}-${project.name}"
-
-    /*
-     * Some modules in this project are blank modules. They are
-     * simply folders which contain for real modules. By default,
-     * Gradle will output JARs for them, even though they have
-     * no source code. The closures below disable this behavior.
-     */
-    def blankModules = ["adapter", "device"]
-    if(blankModules.contains(project.name)) {
-        tasks.jar.enabled = false
-        tasks.sourcesJar.enabled = false
-        tasks.javadocJar.enabled = false
-		
-		tasks.publishMavenPublicationToMavenLocal.enabled = false
-    }
-
 }
