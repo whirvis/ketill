@@ -71,10 +71,6 @@ chmod +x ./gradlew # unix only
 ./gradlew publishToMavenLocal
 ```
 
-# ⚗️ Examples
-
-This section is a work in progress.
-
 # 🖥️ Technologies
 
 | Category          | Technologies                                                                                                                                                                                                                               |
