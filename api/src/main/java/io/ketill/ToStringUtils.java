@@ -54,7 +54,7 @@ public final class ToStringUtils {
      * call, using the result as the prefix for the new string joiner. The
      * delimeter and suffix shall be the same.
      *
-     * @param prev the original result of {@code toString()}.
+     * @param prev the result of {@code super.toString()}.
      * @param obj  the object being converted to a string.
      * @return the string joiner.
      * @throws NullPointerException if {@code prev} or {@code obj}
