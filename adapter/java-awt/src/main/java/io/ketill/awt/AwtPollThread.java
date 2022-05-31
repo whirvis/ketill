@@ -15,6 +15,7 @@ final class AwtPollThread extends Thread {
      */
     boolean interruptLowerCPU = false;
 
+    volatile boolean running;
     final List<IoDevice> devices;
 
     AwtPollThread() {
@@ -30,13 +31,15 @@ final class AwtPollThread extends Thread {
             }
             Thread.sleep(0, 1);
         } catch (InterruptedException e) {
+            this.running = false;
             this.interrupt();
         }
     }
 
     @Override
     public void run() {
-        while (!this.isInterrupted()) {
+        this.running = true;
+        while (this.running) {
             synchronized (devices) {
                 for (IoDevice device : devices) {
                     device.poll();

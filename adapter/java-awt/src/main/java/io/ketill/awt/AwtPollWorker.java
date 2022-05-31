@@ -51,7 +51,7 @@ public final class AwtPollWorker<I extends IoDevice> {
              * device is added later, a new thread will be created.
              */
             if (pollThread.devices.isEmpty()) {
-                pollThread.interrupt();
+                pollThread.running = false;
                 pollThread = null;
             }
         }
