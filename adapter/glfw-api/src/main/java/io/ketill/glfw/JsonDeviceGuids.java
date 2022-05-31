@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,6 +66,8 @@ public class JsonDeviceGuids extends DeviceGuids {
      * follow specifications, a {@code JsonIOException} will be thrown.
      * <p>
      * An example of a valid container is given in the class JavaDocs.
+     * <p>
+     * <b>Note:</b> This method expects {@code UTF-8} encoding.
      *
      * @param in the input stream to read from.
      * @return the loaded device GUIDs.
@@ -76,7 +79,8 @@ public class JsonDeviceGuids extends DeviceGuids {
         Objects.requireNonNull(in, "in cannot be null");
 
         JsonDeviceGuids guids = new JsonDeviceGuids();
-        InputStreamReader isr = new InputStreamReader(in);
+        InputStreamReader isr = new InputStreamReader(in,
+                StandardCharsets.UTF_8);
 
         /*
          * The root JSON element is expected to be a JSON object. This
@@ -149,6 +153,9 @@ public class JsonDeviceGuids extends DeviceGuids {
      * will be thrown.
      * <p>
      * An example of a valid container is given in the class JavaDocs.
+     * <p>
+     * <b>Note:</b> This method expects the resource to have {@code UTF-8}
+     * encoding.
      *
      * @param path the path of the resource to read from.
      * @return the loaded device GUIDs.
@@ -179,6 +186,9 @@ public class JsonDeviceGuids extends DeviceGuids {
      * will be thrown.
      * <p>
      * An example of a valid container is given in the class JavaDocs.
+     * <p>
+     * <b>Note:</b> This method expects the file to have {@code UTF-8}
+     * encoding.
      *
      * @param file the file to read from.
      * @return the loaded device GUIDs.
@@ -209,6 +219,9 @@ public class JsonDeviceGuids extends DeviceGuids {
      * not follow specifications, a {@code JsonIOException} will be thrown.
      * <p>
      * An example of a valid container is given in the class JavaDocs.
+     * <p>
+     * <b>Note:</b> This method expects the file to have {@code UTF-8}
+     * encoding.
      *
      * @param path the path of the file to read from.
      * @return the loaded device GUIDs.
