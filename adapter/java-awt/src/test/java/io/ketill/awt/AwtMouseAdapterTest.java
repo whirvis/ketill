@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 
 import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -28,20 +29,21 @@ class AwtMouseAdapterTest {
     @BeforeEach
     void captureMouse() {
         this.component = mock(Component.class);
+        when(component.isVisible()).thenReturn(true);
 
         /*
-         * Component.getLocation and Component.getLocationOnScreen() are
-         * both used by the AWT mouse adapter for different purposes. To
-         * keep things simple, make the component position (0, 0).
+         * Component.getLocation() and Component.getLocationOnScreen()
+         * are both used by the AWT mouse adapter for different purposes.
+         * To keep things simple, make the component position (0, 0).
          */
         Point point = new Point(0, 0);
         doReturn(point).when(component).getLocation();
         doReturn(point).when(component).getLocationOnScreen();
 
         /*
-         * The AWT mouse listener will call addMouseListener() on component
-         * when it is initialized. The mock below captures it, allowing it
-         * to be directly interacted with in later tests.
+         * The AWT mouse listener will call addMouseListener() on the
+         * component when it is initialized. The mock below captures it,
+         * allowing it to be directly interacted with in later tests.
          */
         doAnswer(a -> {
             this.listener = a.getArgument(0);
@@ -115,12 +117,78 @@ class AwtMouseAdapterTest {
     }
 
     @Test
-    void testUpdateCursor() {
+    void testUpdateCursorPos() {
         try (MockedStatic<MouseInfo> mouseInfo = mockStatic(MouseInfo.class)) {
-            Point cursorLoc = new Point(123, 456);
+            Point cursorLoc = new Point();
             PointerInfo pointerInfo = mock(PointerInfo.class);
             when(pointerInfo.getLocation()).thenReturn(cursorLoc);
             mouseInfo.when(MouseInfo::getPointerInfo).thenReturn(pointerInfo);
+
+            /*
+             * The mouse cursor is polled at the beginning of this test to
+             * initialize the mouse listener. This causes the position to be
+             * a non-zero value, which we don't want yet. The code below has
+             * the cursor position to be reset to zero, and then prepares it
+             * to be set to (123, 456) on the next valid call to poll().
+             */
+            cursorLoc.setLocation(0, 0);
+            mouse.poll(); /* update cursor position */
+            cursorLoc.setLocation(123, 456);
+
+            try (MockedStatic<GraphicsEnvironment> graphics =
+                         mockStatic(GraphicsEnvironment.class)) {
+                /* mock headless graphics environment */
+                graphics.when(GraphicsEnvironment::isHeadless).thenReturn(true);
+
+                /*
+                 * In a headless environment, the cursor position should not
+                 * be updated. No errors should be thrown as it is assumed
+                 * the user may eventually plug a display, keyboard, and/or
+                 * mouse into the computer.
+                 */
+                mouse.poll(); /* update cursor position */
+                assertEquals(0, mouse.cursor.getX());
+                assertEquals(0, mouse.cursor.getY());
+
+                /*
+                 * If a mouse is created without being able to instantiate
+                 * a robot, it should indicate it does not have the ability
+                 * to move the cursor to a different position.
+                 */
+                Mouse mouseWithoutRobot = AwtMouseAdapter.capture(component);
+                assertFalse(mouseWithoutRobot.cursor.canSetPosition());
+            }
+
+            /* further testing requires non-headless environment */
+            assumeFalse(GraphicsEnvironment.isHeadless());
+
+            /*
+             * When the component is not currently visible, it becomes
+             * impossible to retrieve the current position of the mouse
+             * cursor. As such, the method should return and not update
+             * the cursor position.
+             */
+            when(component.isVisible()).thenReturn(false);
+            mouse.poll(); /* update cursor position */
+            assertEquals(0, mouse.cursor.getX());
+            assertEquals(0, mouse.cursor.getY());
+            when(component.isVisible()).thenReturn(true);
+
+            /* cache previous location for next test */
+            Point locationOnScreen = component.getLocationOnScreen();
+
+            /*
+             * Sometimes, the component will not update isVisible() in time
+             * for this method to return. The method should catch this, and
+             * return from the method when this occurs.
+             */
+            doThrow(IllegalComponentStateException.class)
+                    .when(component).getLocationOnScreen();
+            mouse.poll(); /* update cursor position */
+            assertEquals(0, mouse.cursor.getX());
+            assertEquals(0, mouse.cursor.getY());
+            doReturn(locationOnScreen)
+                    .when(component).getLocationOnScreen();
 
             /*
              * When polled, the mouse adapter should set the value of the
@@ -171,71 +239,116 @@ class AwtMouseAdapterTest {
             assertEquals(123, mouse.cursor.getX());
             assertEquals(456, mouse.cursor.getY());
             verify(robot, times(1)).mouseMove(789, 101);
-
-            /*
-             * When the user sets the mouse to no longer be visible, the
-             * device adapter must complete that request on the next poll.
-             */
-            mouse.cursor.setVisible(false);
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(1)).setCursor(notNull());
-
-            /*
-             * If the user doesn't change the state of mouse visibility, the
-             * adapter must not fulfill the request again. This is done in an
-             * attempt to increase performance.
-             */
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(1)).setCursor(notNull());
-
-            /*
-             * When the user sets the mouse to now be visible at this moment,
-             * the device adapter must complete that request on the next poll.
-             */
-            mouse.cursor.setVisible(true);
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(1)).setCursor(null);
-
-            /*
-             * If the user doesn't change the state of mouse visibility, the
-             * adapter must not fulfill the request again. This is done in an
-             * attempt to increase performance.
-             */
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(1)).setCursor(null);
-
-            /*
-             * When the mouse cursor icon is set to null, the adapter should
-             * simply set the cursor to default. For Java AWT, the default
-             * cursor is simply null.
-             */
-            mouse.cursor.setIcon(null);
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(2)).setCursor(null);
-
-            /*
-             * When the mouse cursor icon is set to a non-null value, the
-             * adapter should set the cursor to a non-null value (presumably
-             * a cursor which uses the provided image as its icon).
-             */
-            BufferedImage img = new BufferedImage(16, 16,
-                    BufferedImage.TYPE_INT_ARGB);
-            mouse.cursor.setIcon(img);
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(2)).setCursor(notNull());
-
-            /*
-             * If the mouse cursor is not visible when its icon is set to
-             * any value, the adapter should not make a call to update the
-             * current cursor. This is because doing so would erroneously
-             * make the cursor visible again. The custom cursor will be
-             * visible when the user sets the cursor to be visible again.
-             */
-            mouse.cursor.setVisible(false);
-            mouse.cursor.setIcon(null);
-            mouse.poll(); /* update mouse cursor */
-            verify(component, times(2)).setCursor(null);
         }
+    }
+
+    @Test
+    void testUpdateCursorVisibility() {
+        try (MockedStatic<GraphicsEnvironment> graphics =
+                     mockStatic(GraphicsEnvironment.class)) {
+            /* mock headless graphics environment */
+            graphics.when(GraphicsEnvironment::isHeadless).thenReturn(true);
+
+            /*
+             * In a headless environment, the cursor visibility should not
+             * be updated even if the user changes it. No errors should be
+             * thrown as it is assumed the user may later plug a display,
+             * keyboard, and/or mouse into the computer.
+             */
+            mouse.cursor.setVisible(false);
+            mouse.poll(); /* update mouse cursor */
+            verify(component, never()).setCursor(any());
+        }
+
+        /* further testing requires non-headless environment */
+        assumeFalse(GraphicsEnvironment.isHeadless());
+
+        /*
+         * When the user sets the mouse to no longer be visible, the
+         * device adapter must complete that request on the next poll.
+         */
+        mouse.cursor.setVisible(false);
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(notNull());
+
+        /*
+         * If the user doesn't change the state of mouse visibility, the
+         * adapter must not fulfill the request again. This is done in an
+         * attempt to increase performance.
+         */
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(notNull());
+
+        /*
+         * When the user sets the mouse to now be visible at this moment,
+         * the device adapter must complete that request on the next poll.
+         */
+        mouse.cursor.setVisible(true);
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(null);
+
+        /*
+         * If the user doesn't change the state of mouse visibility, the
+         * adapter must not fulfill the request again. This is done in an
+         * attempt to increase performance.
+         */
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(null);
+    }
+
+
+    @Test
+    void testUpdateCursorIcon() {
+        try (MockedStatic<GraphicsEnvironment> graphics =
+                     mockStatic(GraphicsEnvironment.class)) {
+            /* mock headless graphics environment */
+            graphics.when(GraphicsEnvironment::isHeadless).thenReturn(true);
+
+            /*
+             * In a headless environment, the cursor icon should not be
+             * updated even if the user changes it. No errors should be
+             * thrown as it is assumed the user may later plug a display,
+             * keyboard, and/or mouse into the computer.
+             */
+            mouse.cursor.setIcon(null);
+            mouse.poll(); /* update mouse cursor */
+            verify(component, never()).setCursor(any());
+        }
+
+        /* further testing requires non-headless environment */
+        assumeFalse(GraphicsEnvironment.isHeadless());
+
+        /*
+         * When the mouse cursor icon is set to null, the adapter should
+         * simply set the cursor to default. For Java AWT, the default
+         * cursor is simply null.
+         */
+        mouse.cursor.setIcon(null);
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(null);
+
+        /*
+         * When the mouse cursor icon is set to a non-null value, the
+         * adapter should set the cursor to a non-null value (presumably
+         * a cursor which uses the provided image as its icon).
+         */
+        BufferedImage img = new BufferedImage(16, 16,
+                BufferedImage.TYPE_INT_ARGB);
+        mouse.cursor.setIcon(img);
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(notNull());
+
+        /*
+         * If the mouse cursor is not visible when its icon is set to
+         * any value, the adapter should not make a call to update the
+         * current cursor. This is because doing so would erroneously
+         * make the cursor visible again. The custom cursor will be
+         * visible when the user sets the cursor to be visible again.
+         */
+        mouse.cursor.setVisible(false);
+        mouse.cursor.setIcon(null);
+        mouse.poll(); /* update mouse cursor */
+        verify(component, times(1)).setCursor(null);
     }
 
     @Test

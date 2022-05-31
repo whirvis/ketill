@@ -31,12 +31,25 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
 
     private static final Toolkit TOOLKIT = Toolkit.getDefaultToolkit();
 
-    /* @formatter:off */
-    private static final @NotNull Cursor INVISIBLE_CURSOR =
-            TOOLKIT.createCustomCursor(
-                    new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB),
+    private static @Nullable Cursor invisibleCursor;
+
+    private static @NotNull Cursor getInvisibleCursor() {
+        if (invisibleCursor == null) {
+            BufferedImage clearIcon = new BufferedImage(16, 16,
+                    BufferedImage.TYPE_INT_ARGB);
+            invisibleCursor = TOOLKIT.createCustomCursor(clearIcon,
                     new Point(0, 0), "cursor_invisible");
-    /* @formatter:on */
+        }
+        return invisibleCursor;
+    }
+
+    private static @Nullable Robot createRobot() {
+        try {
+            return new Robot();
+        } catch (AWTException e) {
+            return null;
+        }
+    }
 
     /**
      * @param component the AWT component.
@@ -69,14 +82,6 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         return AwtPollWorker.pollInBackground(mouse);
     }
     /* @formatter:on */
-
-    private static @Nullable Robot createRobot() {
-        try {
-            return new Robot();
-        } catch (AWTException e) {
-            return null;
-        }
-    }
 
     private final @NotNull Component component;
     private final @NotNull AwtMouseListener mouseListener;
@@ -158,6 +163,91 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
         state.pressed = mouseListener.isPressed(id);
     }
 
+    private void updateCursorPos(@NotNull CursorStateZ state) {
+        if (GraphicsEnvironment.isHeadless() || !component.isVisible()) {
+            state.currentPos.set(0, 0);
+            return; /* cursor position not available */
+        }
+
+        Vector2fc requested = state.requestedPos;
+        state.requestedPos = null;
+        if (requested != null && robot != null) {
+            state.currentPos.set(requested);
+            robot.mouseMove((int) requested.x(), (int) requested.y());
+            return; /* position already set */
+        }
+
+        /*
+         * It's common for isVisible() to return false just too late before
+         * calling getLocationOnScreen(), causing an exception to be thrown
+         * here. As such, just ignore this exception and return.
+         */
+        Point componentLoc;
+        try {
+            componentLoc = component.getLocationOnScreen();
+        } catch (IllegalComponentStateException e) {
+            return; /* cannot continue from here */
+        }
+
+        /*
+         * MouseInfo returns the location of the mouse cursor relative to
+         * the screen. We want to return the coordinates relative to the
+         * component being used to listen for mouse input.
+         */
+        Point cursorLoc = MouseInfo.getPointerInfo().getLocation();
+        double relativeX = cursorLoc.getX() - componentLoc.getX();
+        double relativeY = cursorLoc.getY() - componentLoc.getY();
+
+        state.currentPos.x = (float) relativeX;
+        state.currentPos.y = (float) relativeY;
+    }
+
+    private void updateCursorVisibility(@NotNull CursorStateZ state) {
+        if (GraphicsEnvironment.isHeadless()) {
+            return; /* cannot update visibility */
+        }
+
+        if (!wasCursorVisible && state.visible) {
+            component.setCursor(currentCursor);
+            this.wasCursorVisible = true;
+        } else if (wasCursorVisible && !state.visible) {
+            component.setCursor(getInvisibleCursor());
+            this.wasCursorVisible = false;
+        }
+    }
+
+    private void updateCursorIcon(@NotNull CursorStateZ state) {
+        if (GraphicsEnvironment.isHeadless()) {
+            return; /* cannot create cursor icons */
+        } else if (!state.updatedIcon) {
+            return; /* icon has not been updated */
+        }
+
+        /*
+         * If the icon for the cursor is null, it indicates the default
+         * icon should be used. In Java AWT, null represents the default
+         * cursor. Attempting to create a cursor with a null icon would
+         * also likely result in a NullPointerException being thrown.
+         */
+        if (state.icon == null) {
+            this.currentCursor = null;
+        } else {
+            this.currentCursor = TOOLKIT.createCustomCursor(state.icon,
+                    component.getLocation(), "cursor_custom");
+        }
+
+        /*
+         * If the cursor is currently visible, it should be updated here.
+         * If it is currently invisible, the component's cursor will be
+         * updated when the user makes the cursor visible again.
+         */
+        if (state.visible) {
+            component.setCursor(currentCursor);
+        }
+
+        state.updatedIcon = false;
+    }
+
     /**
      * Updater for {@link Mouse#FEATURE_CURSOR}.
      *
@@ -165,60 +255,9 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
      */
     @FeatureAdapter
     protected void updateCursor(@NotNull CursorStateZ state) {
-        Vector2fc requested = state.requestedPos;
-        state.requestedPos = null;
-        if (requested != null && robot != null) {
-            state.currentPos.set(requested);
-            robot.mouseMove((int) requested.x(), (int) requested.y());
-        } else {
-            Point cursorLoc = MouseInfo.getPointerInfo().getLocation();
-            Point componentLoc = component.getLocationOnScreen();
-
-            /*
-             * MouseInfo returns the location of the mouse cursor relative
-             * to the screen. We want to return the coordinates relative to
-             * the component being used to listen for mouse input.
-             */
-            double relativeX = cursorLoc.getX() - componentLoc.getX();
-            double relativeY = cursorLoc.getY() - componentLoc.getY();
-
-            state.currentPos.x = (float) relativeX;
-            state.currentPos.y = (float) relativeY;
-        }
-
-        if (!wasCursorVisible && state.visible) {
-            component.setCursor(currentCursor);
-            this.wasCursorVisible = true;
-        } else if (wasCursorVisible && !state.visible) {
-            component.setCursor(INVISIBLE_CURSOR);
-            this.wasCursorVisible = false;
-        }
-
-        if (state.updatedIcon) {
-            /*
-             * If the icon for the cursor is null, it indicates the default
-             * icon should be used. In Java AWT, null represents the default
-             * cursor. Attempting to create a cursor with a null icon would
-             * also likely result in a NullPointerException being thrown.
-             */
-            if (state.icon == null) {
-                this.currentCursor = null;
-            } else {
-                this.currentCursor = TOOLKIT.createCustomCursor(state.icon,
-                        component.getLocation(), "cursor_custom");
-            }
-
-            /*
-             * If the cursor is currently visible, it should be updated here.
-             * If it is currently invisible, the component's cursor will be
-             * updated when the user makes the cursor visible.
-             */
-            if (state.visible) {
-                component.setCursor(currentCursor);
-            }
-
-            state.updatedIcon = false;
-        }
+        this.updateCursorPos(state);
+        this.updateCursorVisibility(state);
+        this.updateCursorIcon(state);
     }
 
     @Override
