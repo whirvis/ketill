@@ -1,8 +1,11 @@
 package io.ketill.glfw.nx;
 
 import io.ketill.MappingType;
+import io.ketill.ToStringUtils;
 import io.ketill.controller.AnalogStick;
 import io.ketill.glfw.GlfwUtils;
+
+import java.util.Objects;
 
 /**
  * A mapping for an {@link AnalogStick} used by {@link GlfwNxJoyConAdapter}.
@@ -57,5 +60,31 @@ public final class GlfwNxJoyConStickMapping {
         this.glfwRight = GlfwUtils.requireButton(glfwRight, "glfwRight");
         this.glfwThumb = GlfwUtils.requireButton(glfwThumb, "glfwThumb");
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(glfwUp, glfwDown, glfwLeft, glfwRight, glfwThumb);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GlfwNxJoyConStickMapping that = (GlfwNxJoyConStickMapping) o;
+        return glfwUp == that.glfwUp && glfwDown == that.glfwDown
+                && glfwLeft == that.glfwLeft && glfwRight == that.glfwRight
+                && glfwThumb == that.glfwThumb;
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("glfwUp=" + glfwUp).add("glfwDown=" + glfwDown)
+                .add("glfwLeft=" + glfwLeft).add("glfwRight=" + glfwRight)
+                .add("glfwThumb=" + glfwThumb)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

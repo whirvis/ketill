@@ -1,6 +1,7 @@
 package io.ketill.awt;
 
 import io.ketill.IoDevice;
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,5 +92,15 @@ public final class AwtPollWorker<I extends IoDevice> {
         quitPolling(device);
         this.cancelled = true;
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("device=" + device)
+                .add("cancelled=" + cancelled)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

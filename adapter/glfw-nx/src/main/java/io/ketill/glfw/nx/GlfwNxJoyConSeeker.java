@@ -1,5 +1,6 @@
 package io.ketill.glfw.nx;
 
+import io.ketill.ToStringUtils;
 import io.ketill.glfw.GlfwJoystickSeeker;
 import io.ketill.nx.NxJoyCon;
 
@@ -88,5 +89,15 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
         Collection<String> nxRightGuids = this.loadJsonGuids(guidsPath);
         this.wrangleGuids(nxRightGuids, GlfwNxRightJoyConAdapter::wrangle);
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("seekingLeftJoyCons=" + seekingLeftJoyCons)
+                .add("seekingRightJoyCons=" + seekingRightJoyCons)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

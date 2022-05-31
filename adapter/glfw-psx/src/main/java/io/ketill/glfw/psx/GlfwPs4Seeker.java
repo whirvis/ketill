@@ -1,5 +1,6 @@
 package io.ketill.glfw.psx;
 
+import io.ketill.ToStringUtils;
 import io.ketill.glfw.GlfwJoystickSeeker;
 import io.ketill.psx.Ps4Controller;
 import io.ketill.psx.PsxAmbiguityCandidate;
@@ -66,5 +67,14 @@ public class GlfwPs4Seeker extends GlfwJoystickSeeker<Ps4Controller>
     protected void deviceForgotten(@NotNull Ps4Controller controller) {
         this.checkAmbiguity();
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("ambiguous=" + ambiguous)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

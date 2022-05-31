@@ -1,7 +1,10 @@
 package io.ketill.glfw;
 
 import io.ketill.MappingType;
+import io.ketill.ToStringUtils;
 import io.ketill.controller.AnalogStick;
+
+import java.util.Objects;
 
 /**
  * A mapping for an {@link AnalogStick} used by {@link GlfwJoystickAdapter}.
@@ -76,5 +79,33 @@ public class GlfwStickMapping {
     public GlfwStickMapping(int glfwAxisX, int glfwAxisY) {
         this(glfwAxisX, glfwAxisY, -1, false);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(glfwXAxis, glfwYAxis, glfwZButton, hasZButton);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GlfwStickMapping that = (GlfwStickMapping) o;
+        return glfwXAxis == that.glfwXAxis
+                && glfwYAxis == that.glfwYAxis
+                && glfwZButton == that.glfwZButton
+                && hasZButton == that.hasZButton;
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("glfwXAxis=" + glfwXAxis)
+                .add("glfwYAxis=" + glfwYAxis)
+                .add("glfwZButton=" + glfwZButton)
+                .add("hasZButton=" + hasZButton)
+                .toString();
+    }
+    /* @formatter:off */
 
 }
