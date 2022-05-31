@@ -26,17 +26,9 @@ class AwtKeyboardAdapterTest {
         this.component = mock(Component.class);
 
         /*
-         * Component.getLocationOnScreen() is used by the AWT mouse adapter
-         * to get the relative position of the mouse on the screen. To keep
-         * things simple, make the component position (0, 0).
-         */
-        Point point = new Point(0, 0);
-        doReturn(point).when(component).getLocationOnScreen();
-
-        /*
-         * The AWT mouse listener will call addMouseListener() on component
-         * when it is initialized. The mock below captures it, allowing it
-         * to be directly interacted with in later tests.
+         * The AWT keyboard listener will call addKeyboardListener() on
+         * the component when it is initialized. The mock below captures
+         * it, allowing it to be directly interacted with in later tests.
          */
         doAnswer(a -> {
             this.listener = a.getArgument(0);
