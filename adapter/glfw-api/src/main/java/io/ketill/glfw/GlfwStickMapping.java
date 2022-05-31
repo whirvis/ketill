@@ -73,8 +73,8 @@ public final class GlfwStickMapping {
      *
      * @param glfwAxisX the GLFW axis for the X-axis.
      * @param glfwAxisY the GLFW axis for the Y-axis.
-     * @throws IndexOutOfBoundsException if {@code glfwXAxis} or
-     *                                   {@code glfwYAxis} are negative.
+     * @throws IndexOutOfBoundsException if {@code glfwAxisX} or
+     *                                   {@code glfwAxisY} are negative.
      */
     public GlfwStickMapping(int glfwAxisX, int glfwAxisY) {
         this(glfwAxisX, glfwAxisY, -1, false);
