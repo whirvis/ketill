@@ -1,18 +1,14 @@
 package io.ketill.awt;
 
 import io.ketill.IoDevice;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
 
 final class AwtPollThread extends Thread {
 
-    /**
-     * Package-private field for testing. When {@code true}, an
-     * {@code InterruptedException} will be thrown by {@link #lowerCPU()}.
-     * This is meant for testing only, and should never be {@code true}
-     * in production!
-     */
+    @TestOnly
     boolean interruptLowerCPU = false;
 
     volatile boolean running;
