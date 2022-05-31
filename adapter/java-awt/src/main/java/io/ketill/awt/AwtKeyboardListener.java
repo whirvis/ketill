@@ -42,7 +42,7 @@ final class AwtKeyboardListener implements KeyListener {
         return this.getState(keyCode, keyLocation).pressed;
     }
 
-    boolean isPressed(@NotNull KeyMapping mapping) {
+    boolean isPressed(@NotNull AwtKeyMapping mapping) {
         return this.isPressed(mapping.keyCode, mapping.keyLocation);
     }
 

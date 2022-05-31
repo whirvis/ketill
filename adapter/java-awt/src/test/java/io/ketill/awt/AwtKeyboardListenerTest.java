@@ -14,13 +14,13 @@ class AwtKeyboardListenerTest {
 
     private Component component;
     private AwtKeyboardListener listener;
-    private KeyMapping mapping;
+    private AwtKeyMapping mapping;
 
     @BeforeEach
     void createListener() {
         this.component = mock(Component.class);
         this.listener = new AwtKeyboardListener(component);
-        this.mapping = new KeyMapping(KeyEvent.VK_SPACE,
+        this.mapping = new AwtKeyMapping(KeyEvent.VK_SPACE,
                 KeyEvent.KEY_LOCATION_STANDARD);
     }
 
