@@ -45,11 +45,11 @@ required to get device I/O up and running. They also serve as examples for those
 
 The following is a list of modules included with Ketill:
 
-| Module     | Description                                                        |
-|------------|--------------------------------------------------------------------|
-| `api`      | The base API for Ketill.                                           |
-| `devices`  | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
-| `adapters` | Provided implementations using GLFW, X-input, etc.                 |
+| Module    | Description                                                        |
+|-----------|--------------------------------------------------------------------|
+| `api`     | The base API for Ketill.                                           |
+| `device`  | Provided definitions (`Keyboard`, `Mouse`, `XboxController`, etc.) |
+| `adapter` | Provided implementations using GLFW, X-input, etc.                 |
 
 # 🛠️ Building
 
