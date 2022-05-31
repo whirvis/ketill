@@ -9,7 +9,11 @@ import java.util.Objects;
 /**
  * This class contains special assertions specifically for testing Ketill.
  */
-public class KetillAssertions {
+public final class KetillAssertions {
+
+    private KetillAssertions() {
+        /* prevent instantiation */
+    }
 
     /**
      * Asserts than I/O device supports all features registered to it when
