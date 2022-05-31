@@ -1,6 +1,7 @@
 package io.ketill.controller;
 
 import io.ketill.PlainIoFeature;
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,5 +50,14 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
     public int getLedCount() {
         return this.ledCount;
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("ledCount=" + ledCount)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

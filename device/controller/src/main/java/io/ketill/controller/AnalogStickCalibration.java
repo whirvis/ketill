@@ -1,5 +1,6 @@
 package io.ketill.controller;
 
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -133,5 +134,29 @@ public final class AnalogStickCalibration {
         vec.x = normalize(vec.x, upperBound.x(), lowerBound.x());
         vec.y = normalize(vec.y, upperBound.y(), lowerBound.y());
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(upperBound, lowerBound);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnalogStickCalibration that = (AnalogStickCalibration) o;
+        return upperBound.equals(that.upperBound)
+                && lowerBound.equals(that.lowerBound);
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("upperBound=" + upperBound)
+                .add("lowerBound=" + lowerBound)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

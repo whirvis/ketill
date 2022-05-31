@@ -2,6 +2,7 @@ package io.ketill.controller;
 
 import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,5 +62,14 @@ public final class ControllerButton
     protected @NotNull ButtonState getContainerState(@NotNull ButtonStateZ internalState) {
         return new ButtonState(internalState);
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("direction=" + direction)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

@@ -3,6 +3,7 @@ package io.ketill.controller;
 import io.ketill.IoDeviceObserver;
 import io.ketill.IoFeature;
 import io.ketill.KetillException;
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3fc;
@@ -164,5 +165,15 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     protected @NotNull StickPos getContainerState(@NotNull StickPosZ internalState) {
         return new StickPos(internalState);
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("zButton=" + zButton)
+                .add("baseCalibration=" + baseCalibration)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

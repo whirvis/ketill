@@ -1,5 +1,9 @@
 package io.ketill.controller;
 
+import io.ketill.ToStringUtils;
+
+import java.util.Objects;
+
 /**
  * Used by {@link AnalogTrigger} and {@link TriggerState} to calibrate
  * the current force of an analog trigger to the appropriate bounds of
@@ -67,5 +71,29 @@ public final class AnalogTriggerCalibration {
     public float apply(float value) {
         return normalize(value, upperBound, lowerBound);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(upperBound, lowerBound);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AnalogTriggerCalibration that = (AnalogTriggerCalibration) o;
+        return Float.compare(that.upperBound, upperBound) == 0
+                && Float.compare(that.lowerBound, lowerBound) == 0;
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("upperBound=" + upperBound)
+                .add("lowerBound=" + lowerBound)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

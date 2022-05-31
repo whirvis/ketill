@@ -5,6 +5,7 @@ import io.ketill.FeaturePresent;
 import io.ketill.IoDevice;
 import io.ketill.IoFeature;
 import io.ketill.RegisteredIoFeature;
+import io.ketill.ToStringUtils;
 import io.ketill.pressable.PressableIoFeatureConfig;
 import io.ketill.pressable.PressableIoFeatureConfigView;
 import io.ketill.pressable.PressableIoFeatureSupport;
@@ -197,5 +198,16 @@ public abstract class Controller extends IoDevice implements PressableIoFeatureS
             }
         }
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("ls=" + ls).add("rs=" + rs)
+                .add("lt=" + lt).add("rt=" + rt)
+                .add("pressableConfig=" + pressableConfig)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

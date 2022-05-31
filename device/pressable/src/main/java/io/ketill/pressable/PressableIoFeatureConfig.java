@@ -1,7 +1,10 @@
 package io.ketill.pressable;
 
+import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * Used by {@link PressableIoFeatureObserver} to decide if a pressable feature
@@ -99,5 +102,29 @@ public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
     public void setHoldPressInterval(long holdPressInterval) {
         this.holdPressInterval = holdPressInterval;
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(holdTime, holdPressInterval);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PressableIoFeatureConfig that = (PressableIoFeatureConfig) o;
+        return holdTime == that.holdTime
+                && holdPressInterval == that.holdPressInterval;
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("holdTime=" + holdTime)
+                .add("holdPressInterval=" + holdPressInterval)
+                .toString();
+    }
+    /* @formatter:on */
 
 }

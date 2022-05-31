@@ -4,6 +4,7 @@ import io.ketill.AdapterSupplier;
 import io.ketill.FeaturePresent;
 import io.ketill.FeatureState;
 import io.ketill.IoDevice;
+import io.ketill.ToStringUtils;
 import io.ketill.pressable.PressableIoFeatureConfig;
 import io.ketill.pressable.PressableIoFeatureConfigView;
 import io.ketill.pressable.PressableIoFeatureSupport;
@@ -297,5 +298,14 @@ public class Keyboard extends IoDevice implements PressableIoFeatureSupport {
     public final void usePressableConfig(@Nullable PressableIoFeatureConfigView view) {
         this.pressableConfig = PressableIoFeatureConfig.valueOf(view);
     }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(super.toString(), this)
+                .add("pressableConfig=" + pressableConfig)
+                .toString();
+    }
+    /* @formatter:on */
 
 }
