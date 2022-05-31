@@ -171,4 +171,14 @@ public abstract class IoFeature<Z, S> {
      */
     protected abstract @NotNull S getContainerState(@NotNull Z internalState);
 
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("id='" + id + "'")
+                .add("deviceType=" + deviceType)
+                .toString();
+    }
+    /* @formatter: on*/
+
 }

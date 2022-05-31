@@ -305,4 +305,13 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         this.closed = true;
     }
 
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("closed=" + closed)
+                .toString();
+    }
+    /* @formatter:on */
+
 }

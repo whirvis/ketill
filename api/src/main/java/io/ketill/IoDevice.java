@@ -599,4 +599,16 @@ public abstract class IoDevice implements FeatureRegistry {
         registry.updateFeatures();
     }
 
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("typeId='" + typeId + "'")
+                .add("initializedAdapter=" + initializedAdapter)
+                .add("registeredFields=" + registeredFields)
+                .add("connected=" + connected)
+                .toString();
+    }
+    /* @formatter:on */
+
 }

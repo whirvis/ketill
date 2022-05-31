@@ -71,4 +71,13 @@ public final class RegisteredIoFeature<F extends IoFeature<Z, S>, Z, S> {
         return this.containerState;
     }
 
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return ToStringUtils.getJoiner(this)
+                .add("feature=" + feature)
+                .toString();
+    }
+    /* @formatter:on */
+
 }
