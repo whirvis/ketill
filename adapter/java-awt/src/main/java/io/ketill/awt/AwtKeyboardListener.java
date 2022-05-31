@@ -10,6 +10,10 @@ import java.util.Map;
 
 final class AwtKeyboardListener implements KeyListener {
 
+    static class KeyState {
+        boolean pressed;
+    }
+
     private final Component component;
     private final Map<Integer, Map<Integer, KeyState>> keys;
     private boolean initialized;
