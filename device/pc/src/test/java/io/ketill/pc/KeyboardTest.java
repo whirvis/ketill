@@ -167,4 +167,9 @@ class KeyboardTest {
                 keyboard.getPressableConfig());
     }
 
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(Keyboard.class, keyboard);
+    }
+
 }

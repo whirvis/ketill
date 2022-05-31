@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
@@ -82,6 +83,11 @@ class ControllerTest {
         controller.unregisterFeature(motor);
         controller.rumble(0.5F);
         assertEquals(0.0F, vibration.getStrength());
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(Controller.class, controller);
     }
 
 }

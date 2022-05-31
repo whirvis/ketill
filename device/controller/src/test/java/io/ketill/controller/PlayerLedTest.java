@@ -3,6 +3,7 @@ package io.ketill.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -31,6 +32,11 @@ class PlayerLedTest {
     @Test
     void testGetLedCount() {
         assertEquals(4, led.getLedCount());
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(PlayerLed.class, led);
     }
 
 }

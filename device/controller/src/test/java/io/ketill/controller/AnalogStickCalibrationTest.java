@@ -1,11 +1,13 @@
 package io.ketill.controller;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -92,6 +94,17 @@ class AnalogStickCalibrationTest {
         assertEquals(calibrated2f.x, calibrated3f.x);
         assertEquals(calibrated2f.y, calibrated3f.y);
         assertEquals(0.0F, calibrated3f.z);
+    }
+
+    @Test
+    void verifyEquals() {
+        EqualsVerifier.forClass(AnalogStickCalibration.class)
+                .withNonnullFields("upperBound", "lowerBound").verify();
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(AnalogStickCalibration.class, calibration);
     }
 
 }

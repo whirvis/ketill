@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -54,6 +55,11 @@ class GlfwNxJoyConSeekerTest {
     @Test
     void testIsSeekingRightJoyCons() {
         assertTrue(seeker.isSeekingRightJoyCons());
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(GlfwNxJoyConSeeker.class, seeker);
     }
 
     @AfterAll

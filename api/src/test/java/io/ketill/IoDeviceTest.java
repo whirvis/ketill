@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -464,6 +465,11 @@ class IoDeviceTest {
          * This ensures errors do not occur silently.
          */
         assertThrows(KetillException.class, device::poll);
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(IoDevice.class, device);
     }
 
 }

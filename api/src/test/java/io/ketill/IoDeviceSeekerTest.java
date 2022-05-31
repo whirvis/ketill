@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("ConstantConditions")
@@ -229,6 +230,11 @@ class IoDeviceSeekerTest {
          * interface as provided by Java.
          */
         assertDoesNotThrow(seeker::close);
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(IoDeviceSeeker.class, seeker);
     }
 
 }

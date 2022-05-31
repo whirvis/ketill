@@ -1,7 +1,9 @@
 package io.ketill.glfw.nx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GlfwNxJoyConStickMappingTest {
@@ -23,6 +25,18 @@ class GlfwNxJoyConStickMappingTest {
                 () -> new GlfwNxJoyConStickMapping(0, 0, 0, -1, 0));
         assertThrows(IndexOutOfBoundsException.class,
                 () -> new GlfwNxJoyConStickMapping(0, 0, 0, 0, -1));
+    }
+
+    @Test
+    void verifyEquals() {
+        EqualsVerifier.forClass(GlfwNxJoyConStickMapping.class).verify();
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        GlfwNxJoyConStickMapping mapping =
+                new GlfwNxJoyConStickMapping(0, 0, 0, 0, 0);
+        assertImplementsToString(GlfwNxJoyConStickMapping.class, mapping);
     }
 
 }

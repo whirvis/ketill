@@ -10,6 +10,7 @@ import org.mockito.MockedStatic;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -81,6 +82,11 @@ class GlfwPs4SeekerTest {
             assertFalse(seeker.isAmbiguous());
             assertFalse(ambiguous.get());
         }
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(GlfwPs4Seeker.class, seeker);
     }
 
     @AfterAll

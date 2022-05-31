@@ -3,6 +3,7 @@ package io.ketill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -129,6 +130,11 @@ class IoFeatureTest {
         assertNotNull(pair);
         assertSame(pair.internal, feature.internalState);
         assertSame(pair.container, feature.containerState);
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(IoFeature.class, feature);
     }
 
 }

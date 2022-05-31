@@ -3,6 +3,7 @@ package io.ketill;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +32,8 @@ class RegisteredIoFeatureTest {
          * with a feature with a non-autonomous state, it should have set
          * its autonomous updater to the no-op runnable.
          */
-        assertSame(registered.autonomousUpdater, RegisteredIoFeature.NO_UPDATER);
+        assertSame(registered.autonomousUpdater,
+                RegisteredIoFeature.NO_UPDATER);
 
         /* use autonomous state for next test */
         AutonomousState autonomousState = mock(AutonomousState.class);
@@ -63,6 +65,11 @@ class RegisteredIoFeatureTest {
     @Test
     void testGetState() {
         assertSame(feature.containerState, registered.getState());
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(RegisteredIoFeature.class, registered);
     }
 
 }

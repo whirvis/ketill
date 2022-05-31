@@ -4,8 +4,6 @@ import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * Used by {@link PressableIoFeatureObserver} to decide if a pressable feature
  * is being held down, how quickly it should be virtually pressed, etc.
@@ -101,20 +99,6 @@ public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
      */
     public void setHoldPressInterval(long holdPressInterval) {
         this.holdPressInterval = holdPressInterval;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(holdTime, holdPressInterval);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PressableIoFeatureConfig that = (PressableIoFeatureConfig) o;
-        return holdTime == that.holdTime
-                && holdPressInterval == that.holdPressInterval;
     }
 
     /* @formatter:off */

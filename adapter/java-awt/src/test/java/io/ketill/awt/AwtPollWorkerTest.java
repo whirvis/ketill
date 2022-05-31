@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -55,6 +56,11 @@ class AwtPollWorkerTest {
          * without problem. It just shouldn't do anything.
          */
         assertDoesNotThrow(() -> worker.cancel());
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(AwtPollWorker.class, worker);
     }
 
     @AfterEach

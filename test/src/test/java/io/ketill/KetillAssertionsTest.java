@@ -113,4 +113,46 @@ class KetillAssertionsTest {
         assertFeatureOwnsState(device, state, feature);
     }
 
+    @Test
+    void testAssertImplementsToString() {
+        /*
+         * todo
+         */
+        assertThrows(NullPointerException.class,
+                () -> assertImplementsToString(null, new Object()));
+        assertThrows(NullPointerException.class,
+                () -> assertImplementsToString(Object.class, null));
+
+        /*
+         * todo
+         */
+        assertThrows(UnsupportedOperationException.class,
+                () -> assertImplementsToString(Object.class, new Object()));
+
+        /*
+         * The assertion requires that the toString() method to be overridden
+         * by the given class. The class below does not do this. As a result,
+         * the assertion should fail.
+         */
+        assertThrows(AssertionError.class,
+                () -> assertImplementsToString(MockThing.NoOverride.class,
+                        new MockThing.NoOverride()));
+
+        /*
+         * The assertion requires that the toString() method to not return
+         * the result of calling Object.toString(). However, the class below
+         * calls it. As a result, the assertion should fail.
+         */
+        assertThrows(AssertionError.class,
+                () -> assertImplementsToString(MockThing.ReturnsSuper.class,
+                        new MockThing.ReturnsSuper()));
+
+        /*
+         * The class below both implements toString() and does not return
+         * super.toString(). As such, the assertion below should pass.
+         */
+        assertImplementsToString(MockThing.ProperToString.class,
+                new MockThing.ProperToString());
+    }
+
 }

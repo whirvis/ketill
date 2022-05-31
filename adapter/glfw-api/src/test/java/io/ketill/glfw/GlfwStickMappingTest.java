@@ -1,7 +1,9 @@
 package io.ketill.glfw;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GlfwStickMappingTest {
@@ -29,6 +31,17 @@ class GlfwStickMappingTest {
         GlfwStickMapping noZButton = new GlfwStickMapping(0, 0);
         assertTrue(noZButton.glfwZButton < 0);
         assertFalse(noZButton.hasZButton);
+    }
+
+    @Test
+    void verifyEquals() {
+        EqualsVerifier.forClass(GlfwStickMapping.class).verify();
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        GlfwStickMapping mapping = new GlfwStickMapping(0, 0);
+        assertImplementsToString(GlfwStickMapping.class, mapping);
     }
 
 }

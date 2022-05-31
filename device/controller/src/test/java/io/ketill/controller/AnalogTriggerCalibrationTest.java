@@ -1,8 +1,10 @@
 package io.ketill.controller;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnalogTriggerCalibrationTest {
@@ -39,6 +41,16 @@ class AnalogTriggerCalibrationTest {
     void testApply() {
         float value = 0.1925F; /* pressed by one quarter */
         assertEquals(0.25F, calibration.apply(value));
+    }
+
+    @Test
+    void verifyEquals() {
+        EqualsVerifier.forClass(AnalogTriggerCalibration.class).verify();
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(AnalogTriggerCalibration.class, calibration);
     }
 
 }

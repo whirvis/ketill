@@ -6,6 +6,7 @@ import org.joml.Vector3fc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -97,6 +98,11 @@ class AnalogStickTest {
 
         StickPos container = stick.getContainerState(internal);
         assertNotNull(container);
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(AnalogStick.class, stick);
     }
 
 }

@@ -2,6 +2,7 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -83,8 +84,8 @@ public final class KetillAssertions {
     }
 
     /**
-     * Asserts that a state object is owned by an I/O feature. For this
-     * assertion to pass, the following must be true:
+     * Asserts that a state object is owned by an I/O feature.<br>
+     * For this assertion to pass, the following must be true:
      * <pre>
      *     device.getFeature(state) == feature
      * </pre>
@@ -114,5 +115,61 @@ public final class KetillAssertions {
             throw new AssertionError(msg);
         }
     }
+
+    /**
+     * Asserts that a class instance implements {@code toString()}.<br>
+     * For this assertion to pass, the following must be true:
+     * <ul>
+     *     <li>The class must override {@code toString()}.</li>
+     *     <li>It must not return {@link Object#toString()}.</li>
+     * </ul>
+     * An object instance is required so a call to {@code toString()} can
+     * be made. The result of this method call will be used to determine
+     * if the requirements for the contract are met.
+     *
+     * @param clazz the class of which to verify.
+     * @param obj   the object instance to verify with.
+     * @param <T>   the object type.
+     * @throws NullPointerException          if {@code clazz} or {@code obj}
+     *                                       are {@code null}.
+     * @throws UnsupportedOperationException if the argument for {@code clazz}
+     *                                       is equal to {@code Object.class}.
+     * @throws AssertionError                if {@code clazz} does not
+     *                                       override {@code toString()};
+     *                                       if {@code obj.toString()} returns
+     *                                       {@code Object.toString()}.
+     */
+    /* @formatter:off */
+    public static <T> void
+            assertImplementsToString(@NotNull Class<T> clazz,
+                                     @NotNull T obj) {
+        Objects.requireNonNull(clazz, "clazz cannot be null");
+        Objects.requireNonNull(obj, "obj cannot be null");
+
+        if (clazz == Object.class) {
+            String msg = "cannot verify Object";
+            throw new UnsupportedOperationException(msg);
+        }
+
+        try {
+            Method toString = clazz.getMethod("toString");
+            if (toString.getDeclaringClass() != clazz) {
+                String msg = clazz.getName() + " must override toString()";
+                throw new AssertionError(msg);
+            }
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
+        String clazzName = obj.getClass().getName();
+        String hashCode = Integer.toHexString(obj.hashCode());
+        String objStr = clazzName + "@" + hashCode;
+
+        if (obj.toString().equals(objStr)) {
+            String msg = "toString() must not return Object.toString()";
+            throw new AssertionError(msg);
+        }
+    }
+    /* @formatter:on */
 
 }

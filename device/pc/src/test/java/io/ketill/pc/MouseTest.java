@@ -56,4 +56,9 @@ class MouseTest {
                 mouse.getPressableConfig());
     }
 
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(Mouse.class, mouse);
+    }
+
 }

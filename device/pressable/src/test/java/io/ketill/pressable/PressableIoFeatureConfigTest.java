@@ -1,10 +1,12 @@
 package io.ketill.pressable;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
+import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PressableIoFeatureConfigTest {
@@ -98,6 +100,11 @@ class PressableIoFeatureConfigTest {
          */
         assertSame(PressableIoFeatureConfig.DEFAULT,
                 PressableIoFeatureConfig.valueOf(null));
+    }
+
+    @Test
+    void ensureImplementsToString() {
+        assertImplementsToString(PressableIoFeatureConfig.class, config);
     }
 
 }

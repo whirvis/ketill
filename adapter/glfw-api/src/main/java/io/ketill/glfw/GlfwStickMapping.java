@@ -12,7 +12,7 @@ import java.util.Objects;
  * @see GlfwJoystickAdapter#mapStick(AnalogStick, GlfwStickMapping)
  */
 @MappingType
-public class GlfwStickMapping {
+public final class GlfwStickMapping {
 
     /**
      * The GLFW axis for the X-axis.
