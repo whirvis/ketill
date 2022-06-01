@@ -12,7 +12,6 @@ import java.util.Objects;
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier
- * @see IoDeviceSeeker
  * @see FeatureAdapter
  * @see MappingMethod
  * @see MappingType
@@ -29,12 +28,12 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     /**
      * The mapped feature registry of {@link #device}. This should be used
      * by the adapter to map existing features to feature adapter methods.
-     *
-     * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
      */
     protected final @NotNull MappedFeatureRegistry registry;
 
     /**
+     * Constructs a new {@code IoDeviceAdapter}.
+     *
      * @param device   the device which owns this adapter.
      * @param registry the device's mapped feature registry.
      * @throws NullPointerException if {@code device} or {@code registry}
@@ -49,30 +48,32 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     }
 
     /**
-     * Called by {@code device} at the end of construction. This is where
-     * most, if not all, adapter setup should take place. The registry should
-     * be used give mappings to I/O features. Take note that {@code device}
-     * and {@code registry} are fields accessible to the extending class.
+     * Called before {@link IoDevice#poll()} is called for the first time.
+     * This is where most, if not all, adapter setup should take place.
+     * The feature registry should be used give mappings to I/O features.
      *
-     * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
+     * @see #device
+     * @see #registry
      */
     protected abstract void initAdapter();
 
     /**
-     * Called by {@code device} when it is polled. This should update the
-     * information necessary for mappings to check the current state of their
-     * assigned features.
+     * Called by {@code device} when it is polled. This should update
+     * the information necessary for mappings to check the current state
+     * of their assigned features.
      * <p>
-     * This method can throw any exception without needing to catch it.
-     * When an exception is thrown, {@link IoDevice#poll()} wrap it into
-     * a {@link KetillException} and throw it to the caller.
+     * Any exceptions thrown by this method will be wrapped into a
+     * {@link KetillException} and thrown back to the caller.
+     * Take note that if the exception is a {@link KetillException}
+     * instance, it will be thrown as-is without a wrapper.
      *
      * @throws Exception if an error occurs.
      */
     protected abstract void pollDevice() throws Exception;
 
     /**
-     * Called by {@code device} when its connection status is requested.
+     * Called by {@code device} when its connection status is requested
+     * via {@link IoDevice#isConnected()}.
      *
      * @return {@code true} if {@code device} is connected, {@code false}
      * otherwise.
