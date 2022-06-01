@@ -68,14 +68,14 @@ public abstract class IoFeature<Z, S> {
      * @return the type an {@link IoDevice} must be for it to create an
      * instance of this feature's state.
      */
-    public @NotNull Class<? extends IoDevice> getDeviceType() {
+    public final @NotNull Class<? extends IoDevice> getDeviceType() {
         return this.deviceType;
     }
 
     /**
      * @return the ID of this feature.
      */
-    public @NotNull String getId() {
+    public final @NotNull String getId() {
         return this.id;
     }
 
