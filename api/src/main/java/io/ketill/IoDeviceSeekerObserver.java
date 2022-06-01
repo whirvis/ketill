@@ -43,11 +43,13 @@ public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEv
     @Override
     public void onNext(@NotNull IoDeviceSeekerEvent event) {
         Objects.requireNonNull(event, "event cannot be null");
+
         if (event.getSeeker() != seeker) {
             String msg = "event must be from the device seeker";
             msg += " which created this observer";
             throw new IllegalArgumentException(msg);
         }
+
         subject.onNext(event);
     }
 
