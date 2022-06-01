@@ -177,9 +177,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Called by {@link #seek()}, this method can throw any exception without
-     * needing to catch it. When an exception is thrown, {@link #seek()} will
-     * wrap it into a {@link KetillException} and throw it to the caller.
+     * Implementation for {@link #seek()}.
+     * <p>
+     * Any exceptions thrown by this method will be wrapped into a
+     * {@link KetillException} and thrown back to the caller.
+     * Take note that if the exception is a {@link KetillException}
+     * instance, it will be thrown as-is without a wrapper.
      *
      * @throws Exception if an error occurs.
      */
@@ -201,6 +204,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         try {
             this.seekImpl();
         } catch (Throwable cause) {
+            if (cause instanceof KetillException) {
+                throw (KetillException) cause;
+            }
             String msg = "error in " + this.getClass().getName();
             throw new KetillException(msg, cause);
         }
@@ -240,7 +246,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @see #getDevices()
      */
     /* @formatter:off */
-    public final synchronized IoDeviceSeeker<I>
+    public final IoDeviceSeeker<I>
             forEachDevice(@NotNull Consumer<@NotNull I> action) {
         Objects.requireNonNull(action, "action cannot be null");
         this.requireOpen();
@@ -258,7 +264,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
-    public final synchronized IoDeviceSeeker<I> pollDevices() {
+    public final IoDeviceSeeker<I> pollDevices() {
         return this.forEachDevice(IoDevice::poll);
     }
 
@@ -267,7 +273,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *                               closed via {@link #close()}.
      */
     protected final void requireOpen() {
-        if (closed) {
+        if (this.isClosed()) {
             throw new IllegalStateException("seeker closed");
         }
     }
@@ -276,7 +282,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @return {@code true} if this I/O device seeker has been closed via
      * {@link #close()}, {@code false} otherwise.
      */
-    public final boolean isClosed() {
+    public final synchronized boolean isClosed() {
         return this.closed;
     }
 
