@@ -409,6 +409,15 @@ public abstract class IoDevice implements FeatureRegistry {
      * @see #isFeatureSupported(IoFeature)
      */
     public final boolean isFeatureSupported(@NotNull Object featureState) {
+        Objects.requireNonNull(featureState, "featureState cannot be null");
+        if (featureState instanceof IoFeature<?, ?>) {
+            /*
+             * If this overload method is somehow called with an IoFeature,
+             * likely due to a mistaken cast, just call the original method.
+             * This is to prevent headaches on the side of the user.
+             */
+            return this.isFeatureSupported((IoFeature<?, ?>) featureState);
+        }
         IoFeature<?, ?> feature = this.getFeature(featureState);
         return feature != null && this.isFeatureSupported(feature);
     }
