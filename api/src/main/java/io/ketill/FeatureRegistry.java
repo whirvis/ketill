@@ -31,7 +31,9 @@ interface FeatureRegistry {
      * @throws NullPointerException if {@code id} is {@code null}.
      * @see #registerFeature(IoFeature)
      */
-    boolean isFeatureWithIdRegistered(@NotNull String id);
+    default boolean isFeatureWithIdRegistered(@NotNull String id) {
+        return this.getFeatureById(id) != null;
+    }
 
     /**
      * Returns the registered feature count.
