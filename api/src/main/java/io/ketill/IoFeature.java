@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * I/O features provide a definition of a capability present on an
- * {@link IoDevice}. Examples include (but are not limited to): a
- * button, an analog stick, a rumble motor, or an LED indicator.
+ * Provides the definition for a capability present on an {@link IoDevice}.
+ * Examples include (but are not limited to): a controller button, an analog
+ * stick, a rumble motor, or an LED indicator.
  *
  * @param <Z> the internal state type. This is visible to {@link IoDevice},
  *            {@link IoDeviceAdapter}, and {@link FeatureRegistry}. This
@@ -19,7 +19,6 @@ import java.util.Objects;
  * @see IoDevice#registerFeature(IoFeature)
  * @see AutonomousState
  * @see ContainerState
- * @see PlainIoFeature
  * @see FeaturePresent
  * @see FeatureState
  */
