@@ -13,6 +13,8 @@ import java.util.Collection;
 interface FeatureRegistry {
 
     /**
+     * Returns if a feature is registered.
+     *
      * @param feature the feature whose registration to check.
      * @return {@code true} if {@code feature} is registered, {@code false}
      * otherwise.
@@ -21,6 +23,8 @@ interface FeatureRegistry {
     boolean isFeatureRegistered(@NotNull IoFeature<?, ?> feature);
 
     /**
+     * Returns if a feature with a given ID is registered.
+     *
      * @param id the ID of the feature to check, case-sensitive.
      * @return {@code true} if a feature with the specified ID is registered,
      * {@code false} otherwise.
@@ -30,12 +34,16 @@ interface FeatureRegistry {
     boolean isFeatureWithIdRegistered(@NotNull String id);
 
     /**
+     * Returns the registered feature count.
+     *
      * @return the amount of registered features.
      * @see #getFeatures()
      */
     int getFeatureCount();
 
     /**
+     * Returns a feature with the given ID.
+     *
      * @param id the ID of the feature to fetch, case-sensitive.
      * @return the registered feature with the specified ID, {@code null} if
      * no such feature is registered.
@@ -44,6 +52,8 @@ interface FeatureRegistry {
     @Nullable IoFeature<?, ?> getFeatureById(@NotNull String id);
 
     /**
+     * Returns all registered features.
+     *
      * @return all registered features.
      * @see #getFeatureCount()
      * @see #getFeatureRegistrations()
@@ -51,6 +61,8 @@ interface FeatureRegistry {
     @NotNull Collection<@NotNull IoFeature<?, ?>> getFeatures();
 
     /**
+     * Returns the registration of a feature.
+     *
      * @param feature the feature whose registration to fetch.
      * @param <Z>     the internal state type.
      * @param <S>     the state container type.
@@ -63,7 +75,9 @@ interface FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * @return the registration of all registered features.
+     * Returns the registration of all features.
+     *
+     * @return the registration of all features.
      * @see #getFeatureCount()
      * @see #getFeatures()
      */
@@ -73,9 +87,11 @@ interface FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * Unlike {@link #requestState(IoFeature)}, this method will not return
-     * {@code null} if {@code feature} is not registered. Rather, it will
-     * throw an {@code IllegalStateException}.
+     * Gets the current state of a feature.
+     * <p>
+     * <b>Note:</b> Unlike {@link #requestState(IoFeature)}, this method
+     * will not return {@code null} if {@code feature} is not registered.
+     * Instead, it will throw an {@code IllegalStateException}.
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
@@ -94,9 +110,11 @@ interface FeatureRegistry {
     }
 
     /**
-     * Unlike {@link #getState(IoFeature)}, this method will not throw an
-     * {@code IllegalStateException} if {@code feature} is not registered.
-     * Rather, it will simply return {@code null}.
+     * Gets the current state of a feature.
+     * <p>
+     * <b>Note:</b> Unlike {@link #getState(IoFeature)}, this method will
+     * not throw an {@code IllegalStateException} if {@code feature} is not
+     * registered. Instead, it will simply return {@code null}.
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
@@ -111,6 +129,8 @@ interface FeatureRegistry {
     }
 
     /**
+     * Registers a feature.
+     *
      * @param feature the feature to register.
      * @param <F>     the device feature type.
      * @param <Z>     the internal state type.
@@ -124,7 +144,7 @@ interface FeatureRegistry {
      *                               regardless of casing;
      *                               if the {@code internalState} or
      *                               {@code containerState} supplied by
-     *                               {@code feature} belong to a previously
+     *                               {@code feature} belongs to a previously
      *                               registered feature.
      */
     /* @formatter:off */
@@ -133,6 +153,8 @@ interface FeatureRegistry {
     /* @formatter:on */
 
     /**
+     * Unregisters a feature.
+     *
      * @param feature the feature to unregister.
      * @throws NullPointerException  if {@code feature} is {@code null}.
      * @throws IllegalStateException if {@code feature} is not registered.
