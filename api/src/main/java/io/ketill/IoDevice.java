@@ -28,10 +28,9 @@ import java.util.function.Consumer;
  * periodically via the {@link #poll()} method. It is recommended to
  * poll the device once every application update.
  *
- * @see IoDeviceSeeker
- * @see IoDeviceAdapter
  * @see IoFeature
- * @see FeaturePresent
+ * @see IoDeviceAdapter
+ * @see IoDeviceSeeker
  */
 public abstract class IoDevice implements FeatureRegistry {
 
