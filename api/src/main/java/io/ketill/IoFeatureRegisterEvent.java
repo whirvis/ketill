@@ -3,7 +3,7 @@ package io.ketill;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Emitted by {@link IoDevice} when a feature is registered.
+ * Emitted by {@link IoDevice} when an {@link IoFeature} is registered.
  *
  * @see IoDevice#registerFeature(IoFeature)
  */
