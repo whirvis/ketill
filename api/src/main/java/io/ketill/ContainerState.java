@@ -8,9 +8,9 @@ import java.util.Objects;
  * A utility class for classes which contain the internal state of
  * an {@link IoFeature}.
  * <p>
- * <b>Note:</b> This class can be extended by the container state
- * only. When extended by the internal state, it will result in
- * an {@code UnsupportedOperationException} during creation.
+ * <b>Note:</b> This class can be extended by the container state only.
+ * When extended by the internal state, it will result in an
+ * {@code UnsupportedOperationException} being thrown at instantiation.
  *
  * @param <Z> the internal state type.
  * @see AutonomousState
@@ -18,9 +18,9 @@ import java.util.Objects;
 public abstract class ContainerState<Z> {
 
     /**
-     * The internal state which this state contains. This should be kept
-     * hidden from the user. Its data made visible and/or modifiable via
-     * special methods that limit how it can be interacted with.
+     * The internal state which this state contains. This should (usually)
+     * be kept hidden from the user. Its data should be made visible and/or
+     * modifiable via methods that limit interaction.
      */
     protected final @NotNull Z internalState;
 

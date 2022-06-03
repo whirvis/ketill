@@ -21,6 +21,8 @@ public final class IoDeviceDiscoverEvent extends IoDeviceSeekerEvent {
     }
 
     /**
+     * Returns the device which was discovered.
+     *
      * @return the device which was discovered.
      */
     public @NotNull IoDevice getDevice() {

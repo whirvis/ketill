@@ -3,13 +3,14 @@ package io.ketill;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An I/O feature that's registered to an {@link IoDevice}. This container
- * exists to group together the information necessary to fetch and update
- * the state of a device feature.
+ * An {@link IoFeature} that's been registered to an {@link IoDevice}.
  * <p>
- * For optimal performance, it is best to cache the state of a device feature
- * to a field for later retrieval. The container state of a device feature can
- * be fetched via {@link IoDevice#getState(IoFeature)}.
+ * This container exists to group together the information necessary to
+ * fetch and update the state of an I/O feature.
+ * <p>
+ * <b>Note:</b> For optimal performance, it is best to cache the state
+ * of a feature to a field for later retrieval. The container state of
+ * feature can be fetched via {@link IoDevice#getState(IoFeature)}.
  *
  * @param <F> the I/O feature type. Users can access this via the
  *            {@link #getFeature()} method when registering a feature.
@@ -58,6 +59,8 @@ public final class RegisteredIoFeature<F extends IoFeature<Z, S>, Z, S> {
     }
 
     /**
+     * Returns the registered I/O feature.
+     *
      * @return the registered I/O feature.
      */
     public @NotNull F getFeature() {
@@ -65,6 +68,8 @@ public final class RegisteredIoFeature<F extends IoFeature<Z, S>, Z, S> {
     }
 
     /**
+     * Returns the current state of the feature.
+     *
      * @return the current state of the feature.
      */
     public @NotNull S getState() {

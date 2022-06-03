@@ -7,11 +7,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, indicates a method is a shorthand for mapping a feature
- * in a {@link MappedFeatureRegistry}. Mapping shorthands are generally
- * found in an {@link IoDeviceAdapter}, mainly to pretty up the code to
- * map features. Use of this annotation is optional, but recommended as
- * it improves code readability.
+ * When present, indicates a method is a <i>shorthand</i> for mapping an
+ * {@link IoFeature} in a {@link MappedFeatureRegistry}. The usage of
+ * these methods can provide parameter checks and improve the overall
+ * readability of feature mapping.
+ * <p>
+ * <b>Note:</b> Use of this annotation is optional. However, it is
+ * recommended as it improves code readability.
  *
  * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
  */

@@ -21,6 +21,8 @@ public final class IoDeviceForgetEvent extends IoDeviceSeekerEvent {
     }
 
     /**
+     * Returns the device which was forgotten.
+     *
      * @return the device which was forgotten.
      */
     public @NotNull IoDevice getDevice() {

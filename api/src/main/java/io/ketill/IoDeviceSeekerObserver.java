@@ -21,7 +21,9 @@ public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEv
     }
 
     /**
-     * @return the device seeker from which this emits events.
+     * Returns the seeker from which this emits events.
+     *
+     * @return the seeker from which this emits events.
      */
     public @NotNull IoDeviceSeeker<?> getSeeker() {
         return this.seeker;

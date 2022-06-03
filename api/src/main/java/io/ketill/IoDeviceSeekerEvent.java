@@ -22,6 +22,8 @@ public abstract class IoDeviceSeekerEvent {
     }
 
     /**
+     * Returns the seeker which emitted this event.
+     *
      * @return the seeker which emitted this event.
      */
     public final @NotNull IoDeviceSeeker<?> getSeeker() {

@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <Z> the internal state type.
  * @param <P> the mapping parameters type.
- * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
  * @see FeatureAdapter
  */
 @FunctionalInterface
@@ -18,13 +17,13 @@ public interface StateUpdater<Z, P> {
      * A {@link StateUpdater} which takes in no parameters.
      *
      * @param <Z> the internal state type.
-     * @see MappedFeatureRegistry#mapFeature(IoFeature, NoParams)
+     * @see FeatureAdapter
      */
     @FunctionalInterface
     interface NoParams<Z> {
 
         /**
-         * Called by the input device when updating {@code feature}.
+         * Called by the device when updating {@code feature}.
          *
          * @param state the state to update.
          */
@@ -33,9 +32,9 @@ public interface StateUpdater<Z, P> {
     }
 
     /**
-     * Called by the input device when updating {@code feature}.
+     * Called by the device when updating {@code feature}.
      *
-     * @param state the state to update.
+     * @param state  the state to update.
      * @param params the mapping parameters.
      */
     void update(@NotNull Z state, @Nullable P params);

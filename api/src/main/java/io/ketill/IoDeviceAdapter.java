@@ -5,10 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Device adapters map data from a source (such as GLFW or X-Input) to an
- * {@link IoDevice}. This allows the same device to be used with different
- * implementations. This provides portability and a way to enable extra
- * features, such as rumble or gyroscopes.
+ * Maps data from a source (such as GLFW or X-Input) to the features of
+ * an {@link IoDevice}. This allows for the same device to be used with
+ * different implementations. This provides both portability and a way to
+ * enable extra features like rumble motors or gyroscopes.
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier
@@ -48,9 +48,8 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     }
 
     /**
-     * Called before {@link IoDevice#poll()} is called for the first time.
+     * Called before {@code device} is polled for the first time.
      * This is where most, if not all, adapter setup should take place.
-     * The feature registry should be used give mappings to I/O features.
      *
      * @see #device
      * @see #registry
@@ -58,22 +57,26 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     protected abstract void initAdapter();
 
     /**
-     * Called by {@code device} when it is polled. This should update
-     * the information necessary for mappings to check the current state
-     * of their assigned features.
+     * Called by {@code device} each time it is polled.
      * <p>
-     * Any exceptions thrown by this method will be wrapped into a
-     * {@link KetillException} and thrown back to the caller.
-     * Take note that if the exception is a {@link KetillException}
-     * instance, it will be thrown as-is without a wrapper.
+     * This should update the information necessary for mapped
+     * {@link FeatureAdapter} methods to fetch and then update
+     * the current state of their assigned features.
+     * <p>
+     * <b>Note:</b> Any exceptions thrown by this method that are
+     * not an instance of {@link KetillException} will be wrapped
+     * into one and thrown back to the caller.
      *
      * @throws Exception if an error occurs.
+     * @see IoDevice#poll()
      */
     protected abstract void pollDevice() throws Exception;
 
     /**
-     * Called by {@code device} when its connection status is requested
-     * via {@link IoDevice#isConnected()}.
+     * Called by {@link IoDevice#isConnected()}.
+     * <p>
+     * <b>Note:</b> This <i>must</i> return an up-to-date value without
+     * a call to {@link #pollDevice()} being necessary beforehand.
      *
      * @return {@code true} if {@code device} is connected, {@code false}
      * otherwise.

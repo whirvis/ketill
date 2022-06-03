@@ -27,6 +27,8 @@ public abstract class IoFeatureEvent extends IoDeviceEvent {
     }
 
     /**
+     * Returns the feature which triggered this event.
+     *
      * @return the feature which triggered this event.
      */
     public final @NotNull IoFeature<?, ?> getFeature() {

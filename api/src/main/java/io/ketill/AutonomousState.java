@@ -10,7 +10,7 @@ package io.ketill;
  * <p>
  * <b>Note:</b> This interface can be implemented by the internal state
  * only. When implemented by the container state, it will result in an
- * {@code UnsupportedOperationException} during creation.
+ * {@code UnsupportedOperationException} being thrown at instantiation.
  *
  * @see AutonomousField
  * @see ContainerState

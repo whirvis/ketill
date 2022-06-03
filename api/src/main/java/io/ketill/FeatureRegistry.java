@@ -87,7 +87,7 @@ interface FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * Gets the current state of a feature.
+     * Returns the current state of a feature.
      * <p>
      * <b>Note:</b> Unlike {@link #requestState(IoFeature)}, this method
      * will not return {@code null} if {@code feature} is not registered.
@@ -110,7 +110,7 @@ interface FeatureRegistry {
     }
 
     /**
-     * Gets the current state of a feature.
+     * Returns the current state of a feature.
      * <p>
      * <b>Note:</b> Unlike {@link #getState(IoFeature)}, this method will
      * not throw an {@code IllegalStateException} if {@code feature} is not

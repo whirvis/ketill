@@ -8,9 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * When present, indicates that a field present in an I/O feature state
- * is updated by the state itself (and thus, should not be modified by
- * the adapter). Use of this annotation is optional, but recommended as
- * it improves code readability.
+ * class is updated by the state itself (and thus, should not be modified
+ * by the adapter).
+ * <p>
+ * <b>Note:</b> Use of this annotation is optional. However, it is
+ * recommended as it improves code readability.
  */
 @Documented
 @Target(ElementType.FIELD)

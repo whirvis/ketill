@@ -136,9 +136,11 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * Two instances of the same class extending {@code IoDevice} should
+     * Returns the type ID of this device.
+     * <p>
+     * <b>Note:</b> Two instances of the same {@code IoDevice} class should
      * share an identical type ID. For example, two XBOX controllers would
-     * both have the type ID {@code "xbox"}.
+     * have the type ID {@code "xbox"}.
      *
      * @return the type ID of this device.
      */
@@ -191,10 +193,11 @@ public abstract class IoDevice implements FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * Initializes the adapter instantiated at construction. This method
-     * is called automatically if the argument for {@code initAdapter} at
-     * construction was {@code true}. Otherwise, a child class is expected
-     * to call this method themselves.
+     * Initializes the adapter instantiated at construction.
+     * <p>
+     * <b>Note:</b> This method is called automatically only if the
+     * argument for {@code initAdapter} at construction was {@code true}.
+     * Otherwise, a child class must call this method.
      *
      * @throws IllegalStateException if this has already been called.
      * @see #adapterInitialized()
@@ -220,10 +223,12 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * Registers all fields present in this class annotated with
-     * {@link FeaturePresent}. This method is called automatically if the
+     * Registers all fields annotated with {@link FeaturePresent} that are
+     * present in this class.
+     * <p>
+     * <b>Note:</b> This method is called automatically only if the
      * argument for {@code registerFields} at construction was {@code true}.
-     * Otherwise, a child class is expected to call this method themselves.
+     * Otherwise, a child class must call this method.
      *
      * @throws IllegalStateException if this has already been called.
      * @see #registerFeature(IoFeature)
@@ -334,8 +339,8 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * Returns the feature associated with the given state. If no feature
-     * owning {@code featureState} is registered to this device,
-     * {@code null} is returned and no exception is thrown.
+     * owning {@code featureState} is currently registered to this device,
+     * {@code null} is returned and no exception will be thrown.
      *
      * @param featureState the state of the feature to fetch. This can be
      *                     either the internal state of the container state.
@@ -364,12 +369,15 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * Returns if this device, with its adapter provided at construction,
-     * supports the specified feature. A feature is considered supported
-     * if it currently has a mapping assigned by its adapter.
+     * supports a given feature. A feature is considered supported if it
+     * currently has a mapping assigned by its adapter.
      * <p>
      * When a feature is not supported, any reads will return its initial
      * state (or the last value before being unmapped.) If the state of a
      * feature is writable, any writes will effectively be a no-op.
+     * <p>
+     * <b>Note:</b> It is possible for a feature to be considered supported
+     * <i>without</i> being registered to this device.
      *
      * @param feature the feature to check.
      * @return {@code true} if {@code feature} is supported, {@code false}
@@ -383,12 +391,15 @@ public abstract class IoDevice implements FeatureRegistry {
 
     /**
      * Returns if this device, with its adapter provided at construction,
-     * supports the specified feature. A feature is considered supported
-     * if it currently has a mapping assigned by its adapter.
+     * supports a given feature. A feature is considered supported if it
+     * currently has a mapping assigned by its adapter.
      * <p>
      * When a feature is not supported, any reads will return its initial
      * state (or the last value before being unmapped.) If the state of a
      * feature is writable, any writes will effectively be a no-op.
+     * <p>
+     * <b>Note:</b> It is possible for a feature to be considered supported
+     * <i>without</i> being registered to this device.
      *
      * @param featureState the state of the feature to check. This can be
      *                     either the internal state of the container state.
@@ -447,8 +458,8 @@ public abstract class IoDevice implements FeatureRegistry {
     /**
      * {@inheritDoc}
      * <p>
-     * <b>Note:</b> I/O devices needing to access the internal state of
-     * a feature can do so via {@link #getInternalState(IoFeature)}.
+     * <b>Note:</b> Extending classes needing to access the internal state
+     * of a feature can do so via {@link #getInternalState(IoFeature)}.
      */
     @Override
     public final <S> @NotNull S getState(@NotNull IoFeature<?, S> feature) {
@@ -456,8 +467,11 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * This method exists for the benefit of extending classes. The internal
-     * state of an I/O feature should <i>not</i> be publicly accessible.
+     * Returns the internal state of an I/O feature.
+     * <p>
+     * <b>Note:</b> This method exists <i>only</i> for the benefit of
+     * extending classes. The internal state of an I/O feature should
+     * (usually) <i>not</i> be publicly accessible.
      *
      * @param feature the feature whose state to fetch.
      * @param <Z>     the internal state type.
@@ -473,8 +487,9 @@ public abstract class IoDevice implements FeatureRegistry {
     /**
      * {@inheritDoc}
      * <p>
-     * <b>Note:</b> This method can be called before {@code IoDevice} is
-     * finished constructing by the {@link #registerField(Field)} method.
+     * <b>Note:</b> When using {@link FeaturePresent}, it is possible for
+     * this method to be called by {@link #registerField(Field)} before an
+     * {@code IoDevice} has finished construction.
      *
      * @see #featureRegistered(RegisteredIoFeature)
      */
@@ -494,8 +509,11 @@ public abstract class IoDevice implements FeatureRegistry {
     /* @formatter:on */
 
     /**
-     * Called when a feature is registered. This will be called before the
-     * corresponding event is emitted to subscribers.
+     * Called when a feature is registered. This will be called before
+     * the corresponding event is emitted to subscribers.
+     * <p>
+     * <b>Note:</b> It is possible for this method to be called before
+     * an {@code IoDevice} has finished construction.
      *
      * @param registered the registered feature.
      * @see #getInternalState(IoFeature)
@@ -527,8 +545,10 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * <b>Note:</b> This method returns up-to-date values without the need to
-     * call {@link #poll()}.
+     * Returns if this device is currently connected.
+     * <p>
+     * <b>Note:</b> This method returns up-to-date values without needing
+     * to call {@link #poll()}.
      *
      * @return {@code true} if this device is currently connected,
      * {@code false} otherwise.
@@ -581,6 +601,9 @@ public abstract class IoDevice implements FeatureRegistry {
         try {
             adapter.pollDevice();
         } catch (Throwable cause) {
+            if (cause instanceof KetillException) {
+                throw (KetillException) cause;
+            }
             String msg = "error while polling ";
             msg += adapter.getClass().getName();
             throw new KetillException(msg, cause);

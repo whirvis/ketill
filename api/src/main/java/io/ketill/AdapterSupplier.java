@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A supplier of an {@link IoDeviceAdapter}, used by {@link IoDevice} during
- * construction. This allows for the adapter to be initialized by the device.
+ * construction. This is used by the device to initialize the adapter.
  *
  * @param <I> the I/O device type.
  */

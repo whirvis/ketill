@@ -18,7 +18,9 @@ public final class IoFeatureRegisterEvent extends IoFeatureEvent {
     }
 
     /**
-     * @return the registration of the feature.
+     * Returns the feature registration.
+     *
+     * @return the feature registration.
      */
     public @NotNull RegisteredIoFeature<?, ?, ?> getRegistration() {
         return this.registered;

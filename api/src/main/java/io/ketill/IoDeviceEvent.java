@@ -22,6 +22,8 @@ public abstract class IoDeviceEvent {
     }
 
     /**
+     * Returns the device which emitted this event.
+     *
      * @return the device which emitted this event.
      */
     public final @NotNull IoDevice getDevice() {

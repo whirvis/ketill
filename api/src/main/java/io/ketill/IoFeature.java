@@ -65,15 +65,22 @@ public abstract class IoFeature<Z, S> {
     }
 
     /**
-     * @return the type an {@link IoDevice} must be for it to create an
-     * instance of this feature's state.
+     * Returns the required {@link IoDevice} type.
+     * <p>
+     * This is used by classes like {@code AnalogStick} (found in the
+     * {@code controller} module) to ensure the device they belong to
+     * is guaranteed to be an instance of {@code Controller}.
+     *
+     * @return the required {@link IoDevice} type.
      */
     public final @NotNull Class<? extends IoDevice> getDeviceType() {
         return this.deviceType;
     }
 
     /**
-     * @return the ID of this feature.
+     * Returns the ID of this I/O feature.
+     *
+     * @return the ID of this I/O feature.
      */
     public final @NotNull String getId() {
         return this.id;
@@ -146,8 +153,10 @@ public abstract class IoFeature<Z, S> {
     /* @formatter:on */
 
     /**
-     * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
-     * to prevent possible headaches with other methods.
+     * Constructs a new instance of the feature's internal state.
+     * <p>
+     * <b>Note:</b> This cannot be an {@link IoFeature} instance.
+     * This is to prevent possible headaches with other methods.
      *
      * @param observer an observer of the I/O device which owns this state.
      *                 This can be used to emit events if desired.
@@ -160,8 +169,11 @@ public abstract class IoFeature<Z, S> {
     /* @formatter:on */
 
     /**
-     * <b>Note:</b> This cannot be an {@link IoFeature} instance. This is
-     * to prevent possible headaches with other methods.
+     * Constructs a new instance of the feature's container state.
+     * <p>
+     * <b>Note:</b> This cannot be an {@link IoFeature} instance.
+     * This is to prevent possible headaches with other methods,
+     * such as {@link IoDevice#getFeature(Object)}.
      *
      * @param internalState the internal state. This can be used to access
      *                      sensitive data without while limiting the user

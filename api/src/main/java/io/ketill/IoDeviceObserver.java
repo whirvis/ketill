@@ -21,6 +21,8 @@ public final class IoDeviceObserver extends EventObserver<IoDeviceEvent> {
     }
 
     /**
+     * Returns the device from which this emits events.
+     *
      * @return the device from which this emits events.
      */
     public @NotNull IoDevice getDevice() {

@@ -14,22 +14,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
- * The purpose of an I/O device seeker is to scan for I/O devices currently
- * connected to the system. When such a device is detected, the appropriate
- * {@code IoDevice} instance and adapter will be created. Devices must be
- * polled manually after creation using {@link IoDevice#poll()}. This can
- * also be done using {@link #pollDevices()}.
+ * Scans for I/O devices currently connected to the system.
  * <p>
- * Implementations should call {@link #discoverDevice(IoDevice)} when a
- * device is discovered and {@link #forgetDevice(IoDevice)} when a device
- * is forgotten.
+ * When a device being sought after has been detected, the appropriate
+ * {@link IoDevice} and will be instantiated automatically. However,
+ * it must be polled manually afterwards. This can be accomplished
+ * via the {@link #pollDevices()} helper method.
  * <p>
- * <b>Note:</b> For a I/O device seeker to work as expected, scans must be
+ * <b>Note:</b> For an I/O device seeker to work as expected, scans must be
  * performed periodically via {@link #seek()}. It is recommended to perform
  * a scan once every application update.
  *
  * @param <I> the I/O device type.
- * @see IoDeviceAdapter
+ * @see #discoverDevice(IoDevice)
+ * @see #forgetDevice(IoDevice)
  */
 public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
@@ -179,10 +177,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /**
      * Implementation for {@link #seek()}.
      * <p>
-     * Any exceptions thrown by this method will be wrapped into a
-     * {@link KetillException} and thrown back to the caller.
-     * Take note that if the exception is a {@link KetillException}
-     * instance, it will be thrown as-is without a wrapper.
+     * <b>Note:</b> Any exceptions thrown by this method that are not
+     * an instance of {@link KetillException} will be wrapped into one
+     * and thrown back to the caller.
      *
      * @throws Exception if an error occurs.
      */
@@ -190,8 +187,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     /**
      * Performs a <i>single</i> scan for devices connected to this system.
-     * For continuous scanning, this method must be called periodically once
-     * every application update.
+     * For continuous scanning, this method must be called periodically.
+     * It is recommended to call this method once every application update.
      *
      * @return this device seeker.
      * @throws IllegalStateException if this I/O device seeker has been
@@ -214,7 +211,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * @return the amount of currently discovered devices.
+     * Returns the discovered device count.
+     *
+     * @return the discovered device count.
      * @see #getDevices()
      * @see #forEachDevice(Consumer)
      */
@@ -223,6 +222,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
+     * Returns all currently discovered devices.
+     *
      * @return all currently discovered devices.
      * @see #getDeviceCount()
      * @see #forEachDevice(Consumer)
@@ -269,6 +270,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
+     * Requires that this I/O device seeker to not be closed before
+     * continuing execution.
+     *
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
      */
@@ -279,6 +283,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
+     * Returns if this I/O device seeker has been closed via {@link #close()}.
+     *
      * @return {@code true} if this I/O device seeker has been closed via
      * {@link #close()}, {@code false} otherwise.
      */
