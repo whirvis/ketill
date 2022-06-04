@@ -5,7 +5,7 @@ import io.ketill.ContainerState;
 /**
  * Read-only view of a battery level.
  */
-public class BatteryLevel extends ContainerState<BatteryLevelZ> {
+public final class BatteryLevel extends ContainerState<BatteryLevelZ> {
 
     BatteryLevel(BatteryLevelZ internalState) {
         super(internalState);
