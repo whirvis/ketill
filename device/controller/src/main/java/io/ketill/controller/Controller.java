@@ -203,8 +203,6 @@ public abstract class Controller extends IoDevice implements PressableIoFeatureS
     @Override
     public String toString() {
         return ToStringUtils.getJoiner(super.toString(), this)
-                .add("ls=" + ls).add("rs=" + rs)
-                .add("lt=" + lt).add("rt=" + rt)
                 .add("pressableConfig=" + pressableConfig)
                 .toString();
     }
