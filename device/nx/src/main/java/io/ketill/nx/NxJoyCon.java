@@ -93,6 +93,8 @@ public abstract class NxJoyCon extends Controller {
     }
 
     /**
+     * Returns if this is a left Joy-Con.
+     *
      * @return {@code true} if this a left Joy-Con, {@code false} otherwise.
      * @see #asLeftJoyCon()
      */
@@ -101,7 +103,9 @@ public abstract class NxJoyCon extends Controller {
     }
 
     /**
-     * @return this instance as an {@link NxLeftJoyCon} instance.
+     * Returns this instance as an {@link NxLeftJoyCon}.
+     *
+     * @return this instance as an {@link NxLeftJoyCon}.
      * @throws UnsupportedOperationException if this is not a left Joy-Con.
      * @see #isLeftJoyCon()
      */
@@ -113,6 +117,8 @@ public abstract class NxJoyCon extends Controller {
     }
 
     /**
+     * Returns if this is a right Joy-Con.
+     *
      * @return {@code true} if this a right Joy-Con, {@code false} otherwise.
      * @see #asRightJoyCon()
      */
@@ -121,7 +127,9 @@ public abstract class NxJoyCon extends Controller {
     }
 
     /**
-     * @return this instance as an {@link NxRightJoyCon} instance.
+     * Returns this instance as an {@link NxRightJoyCon}.
+     *
+     * @return this instance as an {@link NxRightJoyCon}.
      * @throws UnsupportedOperationException if this is not a right Joy-Con.
      * @see #isRightJoyCon()
      */
