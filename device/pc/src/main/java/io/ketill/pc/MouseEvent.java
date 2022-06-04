@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface MouseEvent {
 
     /**
+     * Returns the mouse which emitted this event.
+     *
      * @return the mouse which emitted this event.
      */
     @NotNull Mouse getMouse();

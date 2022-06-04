@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface KeyboardKeyEvent extends KeyboardEvent {
 
     /**
+     * Returns the key which triggered this event.
+     *
      * @return the key which triggered this event.
      */
     @NotNull KeyboardKey getKey();

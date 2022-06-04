@@ -30,6 +30,8 @@ public final class MouseCursorDisplaceEvent extends IoFeatureEvent
     }
 
     /**
+     * Returns how many pixels the cursor moved.
+     *
      * @return how many pixels the cursor moved.
      */
     public @NotNull Vector2fc getDisplacement() {

@@ -19,6 +19,9 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Returns if the adapter has the ability to update the cursor's
+     * visibility.
+     *
      * @return {@code true} if the adapter has the ability to update the
      * cursor's visibility, {@code false} otherwise.
      */
@@ -27,6 +30,9 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Returns if the adapter has the ability to update the cursor's
+     * current position.
+     *
      * @return {@code true} if the adapter has the ability to update the
      * cursor's current position, {@code false} otherwise.
      */
@@ -35,7 +41,10 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * @return {code true} if the adapter has the ability to update the
+     * Returns if the adapter has the ability to update the cursor's
+     * current icon.
+     *
+     * @return {@code true} if the adapter has the ability to update the
      * cursor's current icon, {@code false} otherwise.
      */
     public boolean canSetIcon() {
@@ -43,7 +52,9 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * @return {@code true} if the mouse cursor is currently visible,
+     * Returns if the cursor is currently visible.
+     *
+     * @return {@code true} if the cursor is currently visible,
      * {@code false} otherwise.
      */
     public boolean isVisible() {
@@ -51,10 +62,12 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * @param visible {@code true} if the mouse cursor should be visible,
+     * Sets the cursor's visibility.
+     *
+     * @param visible {@code true} if the cursor should be visible,
      *                {@code false} otherwise.
      * @throws UnsupportedOperationException if the internal state of this
-     *                                       state indicates that the adapter
+     *                                       cursor indicates that the adapter
      *                                       does not have the ability to set
      *                                       the cursor's visibility.
      * @see #canSetVisible()
@@ -71,10 +84,12 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Attempts to set the cursor's visibility.
+     * <p>
      * <b>Alternative to:</b> {@link #setVisible(boolean)}, which only sets
      * the cursor's visibility if the adapter has the ability to do so.
      *
-     * @param visible {@code true} if the mouse cursor should be visible,
+     * @param visible {@code true} if the cursor should be visible,
      *                {@code false} otherwise.
      * @return {@code true} if the cursor visibility was successfully
      * updated, {@code false} otherwise.
@@ -88,6 +103,8 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Returns the position of the cursor.
+     *
      * @return the position of the cursor.
      */
     public @NotNull Vector2fc getPosition() {
@@ -95,6 +112,10 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Returns the X-axis position of the cursor.
+     * <p>
+     * <b>Shorthand for:</b> {@code getPosition().x()}
+     *
      * @return the X-axis position of the cursor.
      * @see #getPosition()
      */
@@ -103,6 +124,10 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Returns the Y-axis position of the cursor.
+     * <p>
+     * <b>Shorthand for:</b> {@code getPosition().y()}
+     *
      * @return the Y-axis position of the cursor.
      * @see #getPosition()
      */
@@ -111,10 +136,12 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Sets the cursor's position.
+     *
      * @param pos the position to set the cursor to.
      * @throws NullPointerException          if {@code pos} is {@code null}.
      * @throws UnsupportedOperationException if the internal state of this
-     *                                       state indicates that the adapter
+     *                                       cursor indicates that the adapter
      *                                       does not have the ability to set
      *                                       the cursor's current position.
      * @see #canSetPosition()
@@ -132,6 +159,8 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Attempts to set the cursor's position.
+     * <p>
      * <b>Alternative to:</b> {@link #setPosition(Vector2fc)}, which only
      * sets the cursor's current position if the adapter has the ability to
      * do so.
@@ -151,10 +180,12 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Sets the cursor's position.
+     *
      * @param xPos the X-axis position to set the cursor to.
      * @param yPos the Y-axis position to set the cursor to.
      * @throws UnsupportedOperationException if the internal state of this
-     *                                       state indicates that the adapter
+     *                                       cursor indicates that the adapter
      *                                       does not have the ability to set
      *                                       the cursor's current position.
      * @see #canSetPosition()
@@ -165,6 +196,8 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
+     * Attempts to set the cursor's position.
+     * <p>
      * <b>Alternative to:</b> {@link #setPosition(float, float)}, which only
      * sets the cursor's current position if the adapter has the ability to
      * do so.
@@ -179,14 +212,18 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * @return the current icon of this cursor. A value of {@code null} may
-     * be returned, and indicates the default icon is in use.
+     * Returns the current icon of the cursor.
+     *
+     * @return the current icon of the cursor. A value of {@code null}
+     * indicates that the default icon is currently in use.
      */
     public @Nullable Image getIcon() {
         return internalState.icon;
     }
 
     /**
+     * Sets the cursor's icon.
+     * <p>
      * <b>Note:</b> Only the current contents of {@code icon} will be used.
      * If its contents are updated afterwards, this method must be called
      * again for the changes to be reflected.
@@ -195,7 +232,7 @@ public final class CursorState extends ContainerState<CursorStateZ> {
      *             {@code null} is permitted, and indicates the default
      *             cursor should be used.
      * @throws UnsupportedOperationException if the internal state of this
-     *                                       state indicates that the adapter
+     *                                       cursor indicates that the adapter
      *                                       does not have the ability to set
      *                                       the cursor's icon.
      * @see #canSetIcon()
@@ -213,12 +250,14 @@ public final class CursorState extends ContainerState<CursorStateZ> {
     }
 
     /**
-     * <b>Alternative to:</b> {@link #setIcon(Image)}, which only sets the
-     * cursor's icon if the adapter has the ability to do so.
+     * Attempts to set the cursor's icon.
      * <p>
      * <b>Note:</b> Only the current contents of {@code icon} will be used.
      * If its contents are updated afterwards, this method must be called
      * again for the changes to be reflected.
+     * <p>
+     * <b>Alternative to:</b> {@link #setIcon(Image)}, which only sets the
+     * cursor's icon if the adapter has the ability to do so.
      *
      * @param icon the image to use for the cursor icon. A value of
      *             {@code null} is permitted, and indicates the default

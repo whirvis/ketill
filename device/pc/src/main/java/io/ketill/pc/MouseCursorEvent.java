@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface MouseCursorEvent extends MouseEvent {
 
     /**
+     * Returns the cursor which triggered this event.
+     *
      * @return the cursor which triggered this event.
      */
     @NotNull MouseCursor getCursor();

@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface MouseButtonEvent extends MouseEvent {
 
     /**
+     * Returns the button which triggered this event.
+     *
      * @return the button which triggered this event.
      */
     @NotNull MouseButton getButton();
