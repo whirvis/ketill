@@ -14,9 +14,12 @@ import org.jetbrains.annotations.Nullable;
 public interface PressableIoFeatureSupport {
 
     /**
-     * @return the configuration governing pressable features. These are used
-     * to determine if a feature is being held down, how quickly they should
-     * be virtually pressed, etc.
+     * Returns the configuration governing pressable features.
+     * <p>
+     * This configuration is used to determine if a feature is being held
+     * down, how quickly they should be virtually pressed, etc.
+     *
+     * @return the configuration governing pressable features.
      */
     @NotNull PressableIoFeatureConfigView getPressableConfig();
 

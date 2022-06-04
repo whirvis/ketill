@@ -12,6 +12,8 @@ public class PressableIoFeatureConfig implements PressableIoFeatureConfigView {
 
     /* @formatter:off */
     /**
+     * Filters the specified configuration view.
+     *
      * @param view the configuration view to filter.
      * @return {@code view} as given if not {@code null},
      * {@link PressableIoFeatureConfig#DEFAULT} otherwise.

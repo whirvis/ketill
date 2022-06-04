@@ -7,12 +7,16 @@ package io.ketill.pressable;
 public interface PressableState {
 
     /**
+     * Returns if this state is currently pressed.
+     *
      * @return {@code true} if this state is currently pressed,
      * {@code false} otherwise.
      */
     boolean isPressed();
 
     /**
+     * Returns if this state is currently held down.
+     *
      * @return {@code true} if this state is currently held down,
      * {@code false} otherwise.
      */

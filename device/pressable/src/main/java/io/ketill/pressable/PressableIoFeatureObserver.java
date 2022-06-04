@@ -27,7 +27,8 @@ import java.util.function.Supplier;
  * @see PressableIoFeatureConfig
  * @see PressableIoFeatureSupport
  */
-public abstract class PressableIoFeatureObserver<Z> implements Observer<PressableIoFeatureEvent> {
+public abstract class PressableIoFeatureObserver<Z>
+        implements Observer<PressableIoFeatureEvent> {
 
     /**
      * The feature being observed.
@@ -97,6 +98,8 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
     protected abstract boolean isPressedImpl();
 
     /**
+     * Returns if the feature is currently pressed down.
+     *
      * @return {@code true} if the feature is currently pressed down,
      * {@code false} otherwise.
      */
@@ -105,18 +108,24 @@ public abstract class PressableIoFeatureObserver<Z> implements Observer<Pressabl
     }
 
     /**
-     * @return {@code true} if the feature has been pressed down long enough
-     * to be considered held, {@code false} otherwise.
+     * Returns if the feature is currently held down.
+     *
+     * @return {@code true} if the feature has been pressed down long
+     * enough to be considered held, {@code false} otherwise.
      */
     public final boolean isHeld() {
         return this.held;
     }
 
     /**
-     * @return the configuration this observer uses in determining if and
-     * when events should be emitted. If the configuration returned by the
-     * device is {@code null}, {@link PressableIoFeatureConfig#DEFAULT} will
-     * be returned instead.
+     * Returns the configuration this observer uses. This is used to
+     * determine if and when events should be emitted by the observer.
+     * <p>
+     * <b>Note:</b> If the configuration returned by the device is
+     * {@code null}, {@link PressableIoFeatureConfig#DEFAULT} will be
+     * returned instead.
+     *
+     * @return the configuration this observer uses.
      */
     public final @NotNull PressableIoFeatureConfigView getConfig() {
         PressableIoFeatureConfigView config = configSupplier.get();
