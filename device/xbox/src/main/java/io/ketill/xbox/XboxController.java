@@ -81,11 +81,13 @@ public class XboxController extends Controller {
             left = this.getState(BUTTON_LEFT);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);

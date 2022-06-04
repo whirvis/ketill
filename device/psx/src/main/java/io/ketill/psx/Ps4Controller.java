@@ -63,6 +63,7 @@ public class Ps4Controller extends PsxController {
             tpad = this.getState(BUTTON_TPAD);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);

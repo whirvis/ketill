@@ -57,6 +57,7 @@ public class NxRightJoyCon extends NxJoyCon {
             zr = this.getState(BUTTON_ZR);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull StickPos
             rs = Objects.requireNonNull(super.rs);
 
@@ -68,6 +69,7 @@ public class NxRightJoyCon extends NxJoyCon {
      * @see #TRIGGER_RT
      */
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             rt = Objects.requireNonNull(super.rt);
     /* @formatter:on */

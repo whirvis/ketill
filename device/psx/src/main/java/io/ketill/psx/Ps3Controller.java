@@ -61,6 +61,7 @@ public class Ps3Controller extends PsxController {
             start = this.getState(BUTTON_START);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);

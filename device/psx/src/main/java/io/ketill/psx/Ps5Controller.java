@@ -54,6 +54,7 @@ public class Ps5Controller extends PsxController {
             mute = this.getState(BUTTON_MUTE);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);

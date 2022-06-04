@@ -70,11 +70,13 @@ public class GcController extends Controller {
             l = this.getState(BUTTON_L);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull StickPos
             ls = Objects.requireNonNull(super.ls),
             rs = Objects.requireNonNull(super.rs);
 
     @FeatureState
+    @SuppressWarnings("HidingField")
     public final @NotNull TriggerState
             lt = Objects.requireNonNull(super.lt),
             rt = Objects.requireNonNull(super.rt);
