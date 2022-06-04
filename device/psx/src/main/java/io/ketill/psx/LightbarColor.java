@@ -26,15 +26,19 @@ public final class LightbarColor {
     }
 
     /**
-     * @return the color of this lightbar in vector form.
+     * Returns the color in vector form.
+     *
+     * @return the color in vector form.
      */
     public @NotNull Vector4fc getVector() {
         return this.vector;
     }
 
     /**
-     * To prevent unexpected behavior, the intensity of each color channel
-     * is capped between {@code 0.0F} and {@code 1.0F}.
+     * Sets the color of the lightbar.
+     * <p>
+     * <b>Note:</b> To prevent unexpected behavior, the intensity of each
+     * channel is capped between {@code 0.0F} and {@code 1.0F}.
      *
      * @param red   the red channel intensity.
      * @param green the green channel intensity.
@@ -51,8 +55,10 @@ public final class LightbarColor {
     }
 
     /**
-     * To prevent unexpected behavior, the intensity of each color channel
-     * is capped between {@code 0.0F} and {@code 1.0F}.
+     * Sets the color of the lightbar.
+     * <p>
+     * <b>Note:</b> To prevent unexpected behavior, the intensity of each
+     * channel is capped between {@code 0.0F} and {@code 1.0F}.
      * <p>
      * <b>Shorthand for:</b> {@link #setColor(float, float, float, float)},
      * with the argument for {@code alpha} being {@code 1.0F}.
@@ -66,6 +72,8 @@ public final class LightbarColor {
     }
 
     /**
+     * Sets the color of the lightbar.
+     *
      * @param rgba     the RGBA color value.
      * @param useAlpha {@code true} if the alpha channel of {@code rgba}
      *                 should be used, {@code false} to have it discarded.
@@ -82,6 +90,8 @@ public final class LightbarColor {
     }
 
     /**
+     * Sets the color this lightbar.
+     * <p>
      * <b>Shorthand for:</b> {@link #setColor(int, boolean)}, with the
      * argument for {@code rgba} being {@code rgb} and the argument for
      * {@code useAlpha} being {@code false}.
@@ -94,6 +104,8 @@ public final class LightbarColor {
     }
 
     /**
+     * Sets the color of the lightbar.
+     * <p>
      * <b>Shorthand for:</b> {@link #setColor(int, boolean)}, with the
      * argument for {@code rgba} being {@code color.getRGB()} and the
      * argument {@code useAlpha} being {@code true}.
@@ -107,9 +119,9 @@ public final class LightbarColor {
             this.setColor(0x00000000, true);
         } else {
             /* convert ARGB to RGBA for setColor(int) */
-            int rgba = color.getRGB() << 8;
+            long rgba = (long) color.getRGB() << 8;
             rgba |= ((color.getRGB() & 0xFF000000L) >> 24);
-            this.setColor(rgba, true);
+            this.setColor((int) rgba, true);
         }
     }
 
