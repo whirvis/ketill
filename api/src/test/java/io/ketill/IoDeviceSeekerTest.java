@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -182,15 +183,42 @@ class IoDeviceSeekerTest {
     }
 
     @Test
-    void testSeekerError() {
-        seeker.errorOnSeek = true;
+    void testSeekError() {
+        /*
+         * When a KetillException occurs while seeking for devices, the
+         * device seeker should not wrap around it again. The original
+         * instance itself should be thrown back to the caller.
+         */
+        AtomicReference<Throwable> caught = new AtomicReference<>();
+        try {
+            seeker.seekError = new KetillException();
+            seeker.seek();
+        } catch (Throwable cause) {
+            caught.set(cause);
+        } finally {
+            assertSame(seeker.seekError, caught.get());
+        }
 
         /*
-         * When an error occurs while seeking for devices, the device seeker
-         * is obligated to wrap the exception throw it back to the caller.
-         * This ensures errors do not occur silently.
+         * When an exception other than a KetillException occurs while
+         * seeking for devices, the device seeker is obligated to wrap
+         * the exception throw it back to the caller. This is to ensure
+         * errors do not occur silently.
          */
+        seeker.seekError = new Exception();
         assertThrows(KetillException.class, seeker::seek);
+    }
+
+    @Test
+    void testSeekDeadlock() {
+        /*
+         * If seekImpl() calls seek(), it will result in a deadlock on
+         * the calling thread. As such, a special check is put in place
+         * to at least attempt this from occurring. When detected, the
+         * seeker must throw an IllegalStateException to the caller.
+         */
+        seeker.invokeSeekInImpl = true;
+        assertThrows(IllegalStateException.class, seeker::seek);
     }
 
     @Test

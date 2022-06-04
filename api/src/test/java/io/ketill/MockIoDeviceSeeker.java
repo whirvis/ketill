@@ -6,7 +6,8 @@ class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
 
     boolean discoveredDevice;
     boolean forgotDevice;
-    boolean errorOnSeek;
+    Exception seekError;
+    boolean invokeSeekInImpl;
     boolean seeked;
 
     @Override
@@ -14,16 +15,17 @@ class MockIoDeviceSeeker extends IoDeviceSeeker<MockIoDevice> {
         this.discoveredDevice = true;
     }
 
-
     @Override
     protected void deviceForgotten(@NotNull MockIoDevice device) {
         this.forgotDevice = true;
     }
 
     @Override
-    protected void seekImpl() {
-        if (errorOnSeek) {
-            throw new KetillException();
+    protected void seekImpl() throws Exception {
+        if (seekError != null) {
+            throw seekError;
+        } else if (invokeSeekInImpl) {
+            this.seek();
         }
         this.seeked = true;
     }
