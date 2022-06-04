@@ -50,6 +50,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
     private final Lock seekLock;
     private final AtomicBoolean callingSeekImpl;
+    private final AtomicBoolean implCalledSeek;
 
     private final AtomicBoolean closed;
 
@@ -76,6 +77,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
 
         this.seekLock = new ReentrantLock();
         this.callingSeekImpl = new AtomicBoolean();
+        this.implCalledSeek = new AtomicBoolean();
 
         this.closed = new AtomicBoolean();
     }
@@ -148,6 +150,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @see #deviceDiscovered(IoDevice)
      */
     @MustBeInvokedByOverriders
+    @SuppressWarnings("InvalidParam")
     protected void discoverDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device cannot be null");
         this.requireOpen();
@@ -200,6 +203,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @see #deviceForgotten(IoDevice)
      */
     @MustBeInvokedByOverriders
+    @SuppressWarnings("InvalidParam")
     protected void forgetDevice(@NotNull I device) {
         Objects.requireNonNull(device, "device cannot be null");
         this.requireOpen();
@@ -270,19 +274,21 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         this.requireOpen();
 
         /*
-         * Oh, this is bad, this is awful. Calling seek() while it is
-         * locked by the calling thread will cause a deadlock! The
-         * likely culprit here is a bad implementation of seekImpl().
+         * Calling seek() while it is locked by the calling thread will
+         * cause a deadlock! The culprit is likely a bad implementation
+         * of seekImpl(). Set the flag and just return to prevent the
+         * deadlock from occurring. The original call will notice this
+         * error and throw the appropriate exception.
          */
         if (callingSeekImpl.get()) {
-            String msg = "seekImpl() cannot invoke this method";
-            msg += " as that would result in an deadlock";
-            throw new IllegalStateException(msg);
+            implCalledSeek.set(true);
+            return this;
         }
 
         seekLock.lock();
         callingSeekImpl.set(true);
         try {
+            implCalledSeek.set(false);
             this.seekImpl();
         } catch (Throwable cause) {
             if (cause instanceof KetillException) {
@@ -293,6 +299,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         } finally {
             callingSeekImpl.set(false);
             seekLock.unlock();
+        }
+
+        if (implCalledSeek.get()) {
+            String msg = "seekImpl() cannot invoke seek()";
+            msg += " as that would result in a deadlock";
+            throw new IllegalStateException(msg);
         }
 
         return this;
