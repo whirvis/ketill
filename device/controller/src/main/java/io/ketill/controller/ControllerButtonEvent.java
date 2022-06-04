@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface ControllerButtonEvent extends ControllerEvent {
 
     /**
+     * Returns the button which triggered this event.
+     *
      * @return the button which triggered this event.
      */
     @NotNull ControllerButton getButton();

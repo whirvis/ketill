@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @see ControllerButton
  * @see AnalogStick
+ * @see #isPressed(float)
  */
 public final class AnalogTrigger
         extends IoFeature<TriggerStateZ, TriggerState> {
@@ -18,6 +19,10 @@ public final class AnalogTrigger
     private static final float TRIGGER_PRESS = 2.0F / 3.0F;
 
     /**
+     * Returns if a given force indicates an analog trigger is pressed.
+     * An analog trigger is considered to be pressed if its force is
+     * greater than or equal to {@code 2.0F / 3.0F}.
+     *
      * @param force the analog trigger force.
      * @return {@code true} if {@code force} indicates the analog trigger
      * is currently pressed, {@code false} otherwise.
@@ -60,9 +65,14 @@ public final class AnalogTrigger
     }
 
     /**
-     * @return the calibration to use when creating a state for this
-     * analog trigger. Note that the state can use a different calibration
-     * after creation.
+     * Returns the base calibration.
+     * <p>
+     * This is the calibration that will be used when getting the state
+     * for this analog trigger. However, this is only the initial value.
+     * After creation, {@link TriggerState} can use a different calibration.
+     *
+     * @return the calibration that will be used when getting the state
+     * for this analog trigger.
      * @see TriggerState#useCalibration(AnalogTriggerCalibration)
      */
     public @Nullable AnalogTriggerCalibration getBaseCalibration() {

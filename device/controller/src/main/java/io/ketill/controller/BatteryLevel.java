@@ -12,18 +12,22 @@ public class BatteryLevel extends ContainerState<BatteryLevelZ> {
     }
 
     /**
-     * @return the current battery level on a scale from {@code 0.0F} to
-     * {@code 1.0F}. A negative value may be returned, and indicates that
-     * it is currently unknown.
+     * Returns the current battery level.
+     *
+     * @return the current battery level on a scale from {@code 0.0F}
+     * to {@code 1.0F}. A negative value indicates that it is currently
+     * unknown.
      */
     public float getLevel() {
         return internalState.level;
     }
 
     /**
-     * @return the battery percentage on a scale from {@code 0} to
-     * {@code 100}. A negative value may be returned, and indicates
-     * that it is currently unknown.
+     * Returns the current battery level percentage.
+     *
+     * @return the current battery level percentage on a scale from
+     * {@code 0} to {@code 100}. A negative value indicates that it is
+     * currently unknown.
      */
     public int getPercent() {
         float level = this.getLevel();

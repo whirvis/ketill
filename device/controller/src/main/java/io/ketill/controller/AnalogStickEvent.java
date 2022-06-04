@@ -8,11 +8,15 @@ import org.jetbrains.annotations.NotNull;
 public interface AnalogStickEvent extends ControllerEvent {
 
     /**
+     * Returns the analog stick which triggered this event.
+     *
      * @return the analog stick which triggered this event.
      */
     @NotNull AnalogStick getStick();
 
     /**
+     * Returns the direction of the analog stick.
+     *
      * @return the direction of the analog stick.
      */
     @NotNull Direction getDirection();

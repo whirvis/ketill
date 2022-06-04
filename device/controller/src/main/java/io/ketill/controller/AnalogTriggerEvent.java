@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface AnalogTriggerEvent extends ControllerEvent {
 
     /**
+     * Returns the analog trigger which triggered this event.
+     *
      * @return the analog trigger which triggered this event.
      */
     @NotNull AnalogTrigger getTrigger();

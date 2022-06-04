@@ -22,6 +22,11 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     private static final float STICK_PRESS = 2.0F / 3.0F;
 
     /**
+     * Returns if a given position indicates an analog stick is pressed
+     * towards a certain direction. An analog stick is considered to be
+     * pressed if the corresponding axis has an absolute value greater
+     * than or equal to {@code 2.0F / 3.0F}.
+     *
      * @param pos       the analog stick position.
      * @param direction the direction to check for.
      * @return {@code true} if {@code pos} is pointing towards
@@ -48,6 +53,11 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     }
 
     /**
+     * Returns if a given position indicates an analog stick is pressed
+     * towards a certain direction. An analog stick is considered to be
+     * pressed if the corresponding axis has an absolute value greater
+     * than or equal to {@code 2.0F / 3.0F}.
+     * <p>
      * <b>Shorthand for:</b> {@link #isPressed(Vector3fc, Direction)}, with
      * the argument for {@code pos} being {@code state.getPos(true)}.
      *
@@ -139,17 +149,24 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
     }
 
     /**
-     * @return the button that, when pressed, should have the Z-axis of this
-     * analog stick decreased from {@code 0.0F} to {@code -1.0F}.
+     * Returns the thumb button for this analog stick.
+     *
+     * @return the button that, when pressed, should have the Z-axis of
+     * this analog stick decreased from {@code 0.0F} to {@code -1.0F}.
      */
     public @Nullable ControllerButton getZButton() {
         return this.zButton;
     }
 
     /**
-     * @return the calibration to use when creating a state for this
-     * analog stick. Note that the state can use a different calibration
-     * after creation.
+     * Returns the base calibration.
+     * <p>
+     * This is the calibration that will be used when getting the state
+     * for this analog stick. However, this is only the initial value.
+     * After creation, {@link StickPos} can use a different calibration.
+     *
+     * @return the calibration that will be used when getting the state
+     * for this analog stick.
      * @see StickPos#useCalibration(AnalogStickCalibration)
      */
     public @Nullable AnalogStickCalibration getBaseCalibration() {

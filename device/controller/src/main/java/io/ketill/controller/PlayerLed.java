@@ -45,6 +45,8 @@ public final class PlayerLed extends PlainIoFeature<LedState> {
     }
 
     /**
+     * Returns the amount of LEDs present.
+     *
      * @return the amount of LEDs present.
      */
     public int getLedCount() {

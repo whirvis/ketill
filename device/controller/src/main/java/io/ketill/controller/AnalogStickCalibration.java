@@ -88,16 +88,24 @@ public final class AnalogStickCalibration {
     }
 
     /**
-     * @return the upper bound for this calibration. This is guaranteed to be
-     * greater than the value returned by {@link #getLowerBound()}.
+     * Returns the upper bound for this calibration.
+     * <p>
+     * This is guaranteed to be greater than the value returned by
+     * {@link #getLowerBound()}.
+     *
+     * @return the upper bound for this calibration.
      */
     public @NotNull Vector2fc getUpperBound() {
         return this.upperBound;
     }
 
     /**
-     * @return the lower bound for this calibration. This is guaranteed to be
-     * lower than the value returned by {@link #getUpperBound()}.
+     * Returns the lower bound for this calibration.
+     * <p>
+     * This is guaranteed to be lower than the value returned by
+     * {@link #getUpperBound()}.
+     *
+     * @return the lower bound for this calibration.
      */
     public @NotNull Vector2fc getLowerBound() {
         return this.lowerBound;

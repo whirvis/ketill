@@ -14,14 +14,18 @@ public final class MotorVibration {
     }
 
     /**
-     * @return the current vibration strength, guaranteed to be in range of
-     * {@code 0.0F} to {@code 1.0F}.
+     * Returns the current vibration strength.
+     *
+     * @return the current vibration strength. This is guaranteed to be
+     * in range of {@code 0.0F} to {@code 1.0F}.
      */
     public float getStrength() {
         return this.strength;
     }
 
     /**
+     * Sets the vibration strength.
+     *
      * @param strength the vibration strength to use. This value will be
      *                 capped to a range of {@code 0.0F} to {@code 1.0F}.
      * @return this vibration state.

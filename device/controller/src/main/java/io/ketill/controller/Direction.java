@@ -50,6 +50,8 @@ public enum Direction {
     }
 
     /**
+     * Returns the direction ID.
+     *
      * @return the direction ID.
      * @see #fromId(int)
      */
@@ -58,6 +60,8 @@ public enum Direction {
     }
 
     /**
+     * Returns a {@code Direction} from its ID.
+     *
      * @param id the direction ID.
      * @return the {@code Direction} with the specified ID.
      * @throws IllegalArgumentException if no such direction exists.

@@ -31,14 +31,19 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
-     * @return the calibration used by {@link #getPos(boolean)}. A value of
-     * {@code null} may be returned, and indicates no calibration.
+     * Returns the calibration of this analog stick.
+     *
+     * @return the calibration of this analog stick, a value of {@code null}
+     * indicates no calibration.
+     * @see #getPos(boolean)
      */
     public @Nullable AnalogStickCalibration getCalibration() {
         return internalState.calibration;
     }
 
     /**
+     * Updates the calibration of this analog stick.
+     *
      * @param calibration the calibration to use when getting the position
      *                    of this analog stick. A value of {@code null} is
      *                    permitted, and will result in no calibration.
@@ -49,6 +54,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the analog stick's current position.
+     *
      * @param calibrate {@code true} if the calibrated position should
      *                  be returned, {@code false} for the raw value.
      * @return the analog stick's current position.
@@ -63,6 +70,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@link #getPos(boolean)}, with the argument for
      * {@code calibrate} being {@code true}.
      *
@@ -74,6 +83,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the X-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@code getPos(calibrate).x()}
      *
      * @param calibrate {@code true} if the calibrated position should
@@ -86,6 +97,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the X-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@link #getX(boolean)}, with the argument for
      * {@code calibrate} being {@code true}.
      *
@@ -96,6 +109,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the Y-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@code getPos(calibrate).y()}
      *
      * @param calibrate {@code true} if the calibrated position should
@@ -108,6 +123,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the Y-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@link #getY(boolean)}, with the argument for
      * {@code calibrate} being {@code true}.
      *
@@ -118,6 +135,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the Z-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@code getPos(calibrate).z()}
      *
      * @param calibrate {@code true} if the calibrated position should
@@ -130,6 +149,8 @@ public final class StickPos extends ContainerState<StickPosZ> {
     }
 
     /**
+     * Returns the Z-axis of the analog stick's current position.
+     * <p>
      * <b>Shorthand for:</b> {@link #getZ(boolean)}, with the argument for
      * {@code calibrate} being {@code true}.
      *

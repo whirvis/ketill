@@ -16,18 +16,23 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
     }
 
     /**
-     * @return the calibration used by {@link #getForce(boolean)}. A value
-     * of {@code null} may be returned, and indicates no calibration.
+     * Returns the calibration of this analog trigger.
+     *
+     * @return the calibration of this analog trigger, a value of {@code null}
+     * indicates no calibration.
+     * @see #getForce(boolean)
      */
     public @Nullable AnalogTriggerCalibration getCalibration() {
         return internalState.calibration;
     }
 
     /**
+     * Updates the calibration of this analog trigger.
+     *
      * @param calibration the calibration to use when getting the force
      *                    being applied to this analog trigger. A value
-     *                    of {@code null} is permitted, and will result
-     *                    in no calibration.
+     *                    of {@code null} value is permitted, and will
+     *                    result in no calibration.
      * @see #getForce(boolean)
      */
     public void useCalibration(@Nullable AnalogTriggerCalibration calibration) {
@@ -35,6 +40,8 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
     }
 
     /**
+     * Returns the analog trigger's current force.
+     *
      * @param calibrate {@code true} if the calibrated force should
      *                  be returned, {@code false} for the raw value.
      * @return the analog trigger's current force.
@@ -48,10 +55,12 @@ public final class TriggerState extends ContainerState<TriggerStateZ>
     }
 
     /**
+     * Returns the analog trigger's current force.
+     * <p>
      * <b>Shorthand for:</b> {@link #getForce(boolean)}, with the argument
      * for {@code calibrate} being {@code true}.
      *
-     * @return the current force being applied to the analog trigger.
+     * @return the analog trigger's current force.
      */
     public float getForce() {
         return this.getForce(true);

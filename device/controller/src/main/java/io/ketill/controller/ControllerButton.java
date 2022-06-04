@@ -46,6 +46,8 @@ public final class ControllerButton
     }
 
     /**
+     * Returns the direction this button represents.
+     *
      * @return the direction this button represents, {@code null} if this
      * button does not represent a  direction.
      */

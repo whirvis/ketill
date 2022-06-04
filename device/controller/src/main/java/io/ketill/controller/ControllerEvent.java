@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public interface ControllerEvent {
 
     /**
+     * Returns the controller which emitted this event.
+     *
      * @return the controller which emitted this event.
      */
     @NotNull Controller getController();

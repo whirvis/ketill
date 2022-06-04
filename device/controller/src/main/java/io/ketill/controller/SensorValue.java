@@ -14,6 +14,8 @@ public final class SensorValue extends ContainerState<SensorValueZ> {
     }
 
     /**
+     * Returns the sensor's current value.
+     *
      * @return the sensor's current value.
      */
     public @NotNull Vector3fc getValue() {
@@ -21,6 +23,8 @@ public final class SensorValue extends ContainerState<SensorValueZ> {
     }
 
     /**
+     * Returns the X-axis of the sensor's current value.
+     * <p>
      * <b>Shorthand for:</b> {@code getValue().x()}
      *
      * @return the X-axis of the sensor's current value.
@@ -30,6 +34,8 @@ public final class SensorValue extends ContainerState<SensorValueZ> {
     }
 
     /**
+     * Returns the Y-axis of the sensor's current value.
+     * <p>
      * <b>Shorthand for:</b> {@code getValue().y()}
      *
      * @return the Y-axis of the sensor's current value.
@@ -39,6 +45,8 @@ public final class SensorValue extends ContainerState<SensorValueZ> {
     }
 
     /**
+     * Returns the Z-axis of the sensor's current value.
+     * <p>
      * <b>Shorthand for:</b> {@code getValue().z()}
      *
      * @return the Z-axis of the sensor's current value.
