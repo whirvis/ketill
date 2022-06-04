@@ -88,6 +88,7 @@ public final class LightbarColor {
      *
      * @param rgb the RGB color value.
      */
+    @SuppressWarnings("InvalidParam")
     public void setColor(int rgb) {
         this.setColor(rgb, false);
     }
