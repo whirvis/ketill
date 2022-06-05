@@ -6,8 +6,11 @@ import org.joml.Vector2fc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -76,6 +79,13 @@ class CursorStateTest {
 
     @Test
     void testSetVisible() {
+        AtomicBoolean lastVisibility = new AtomicBoolean();
+        doAnswer(answer -> {
+            MouseCursorSetVisibilityEvent event = answer.getArgument(0);
+            lastVisibility.set(event.isVisible());
+            return null;
+        }).when(observer).onNext(any());
+
         /*
          * By default, the internal state assumes that adapter does not have
          * the ability to set the visibility of the mouse cursor. As such,
@@ -94,6 +104,19 @@ class CursorStateTest {
         assertTrue(internal.visible);
         container.setVisible(false);
         assertFalse(internal.visible);
+
+        /*
+         * When the visibility of the mouse cursor changes, the internal
+         * state should emit the corresponding event to subscribers.
+         * Note that the cursor must first be made invisible for this test
+         * to pass. This is because cursors are visible by default.
+         */
+        container.setVisible(false);
+        internal.update();  /* trigger event emission */
+        assertFalse(lastVisibility.get());
+        container.setVisible(true);
+        internal.update(); /* trigger event emission */
+        assertTrue(lastVisibility.get());
     }
 
     @Test
@@ -182,6 +205,13 @@ class CursorStateTest {
 
     @Test
     void testSetIcon() {
+        AtomicReference<Image> lastIcon = new AtomicReference<>();
+        doAnswer(answer -> {
+            MouseCursorSetIconEvent event = answer.getArgument(0);
+            lastIcon.set(event.getIcon());
+            return null;
+        }).when(observer).onNext(any());
+
         /*
          * By default, the internal state assumes that adapter does not have
          * the ability to set the icon of the mouse cursor. As such, the
@@ -208,6 +238,16 @@ class CursorStateTest {
         assertSame(img, container.getIcon());
         assertSame(img, internal.icon);
         assertTrue(internal.updatedIcon);
+
+        /*
+         * The container must let the internal state know that there a new
+         * icon has just been set. When the internal state is notified of
+         * this, it should emit the corresponding event to subscribers.
+         */
+        assertTrue(internal.emitIconUpdated);
+        internal.update(); /* trigger event emission */
+        assertSame(img, lastIcon.get());
+        assertFalse(internal.emitIconUpdated);
     }
 
     @Test

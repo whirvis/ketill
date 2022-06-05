@@ -76,6 +76,8 @@ public final class CursorStateZ implements AutonomousState {
     private final IoDeviceObserver observer;
 
     private final Vector2f lastPos;
+    private boolean wasVisible;
+    boolean emitIconUpdated;
 
     CursorStateZ(@NotNull MouseCursor cursor,
                  @NotNull IoDeviceObserver observer) {
@@ -87,6 +89,7 @@ public final class CursorStateZ implements AutonomousState {
         this.visible = true;
 
         this.lastPos = new Vector2f();
+        this.wasVisible = true;
     }
 
     @Override
@@ -94,10 +97,25 @@ public final class CursorStateZ implements AutonomousState {
         if (!currentPos.equals(lastPos)) {
             Vector2f displacement = new Vector2f();
             currentPos.sub(lastPos, displacement);
-            observer.onNext(new MouseCursorDisplaceEvent(mouse, cursor,
-                    displacement));
+            observer.onNext(new MouseCursorDisplaceEvent(mouse,
+                    cursor, displacement));
         }
         lastPos.set(currentPos);
+
+        if (wasVisible && !visible) {
+            this.wasVisible = false;
+            observer.onNext(new MouseCursorSetVisibilityEvent(mouse,
+                    cursor, false));
+        } else if (!wasVisible && visible) {
+            this.wasVisible = true;
+            observer.onNext(new MouseCursorSetVisibilityEvent(mouse,
+                    cursor, true));
+        }
+
+        if (emitIconUpdated) {
+            observer.onNext(new MouseCursorSetIconEvent(mouse, cursor, icon));
+            this.emitIconUpdated = false;
+        }
     }
 
 }

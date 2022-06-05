@@ -247,6 +247,7 @@ public final class CursorState extends ContainerState<CursorStateZ> {
         }
         internalState.icon = icon;
         internalState.updatedIcon = true;
+        internalState.emitIconUpdated = true;
     }
 
     /**
