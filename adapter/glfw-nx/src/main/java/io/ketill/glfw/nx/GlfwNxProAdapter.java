@@ -83,12 +83,17 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     }
 
     /**
-     * Since Switch Pro Controllers use buttons for analog triggers,
-     * rather than proper triggers, the force of an analog trigger will
-     * depend solely on if its button is pressed.
+     * Maps an {@link AnalogTrigger} to a GLFW button.
+     * <p>
+     * <b>Adapter quirk:</b> Since Switch Pro Controllers use buttons for
+     * analog triggers, rather than proper bumpers, the force of an analog
+     * trigger will depend solely on if its button is pressed.
      * <p>
      * When the corresponding button for a trigger is pressed, it's force
      * will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param trigger    the analog trigger to map.
      * @param glfwButton the GLFW button to map {@code trigger} to.
@@ -147,6 +152,10 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     /**
      * Updater for Switch Pro Controller triggers mapped via
      * {@link #mapProTrigger(AnalogTrigger, int)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #isPressed(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state      the analog trigger state.
      * @param glfwButton the GLFW button.

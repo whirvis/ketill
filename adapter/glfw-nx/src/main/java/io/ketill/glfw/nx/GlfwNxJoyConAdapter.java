@@ -14,7 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapter<J> {
+abstract class GlfwNxJoyConAdapter<J extends NxJoyCon>
+        extends GlfwJoystickAdapter<J> {
 
     GlfwNxJoyConAdapter(@NotNull J joycon,
                         @NotNull MappedFeatureRegistry registry,
@@ -23,12 +24,18 @@ abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapt
     }
 
     /**
-     * Since JoyCons report their analog stick axes as buttons, rather than
-     * proper axes, the position of an analog stick will depend solely on
-     * if the buttons which correspond to those axes are pressed or not.
+     * Maps an {@link AnalogStick} to a set of GLFW buttons.
+     * <p>
+     * <b>Adapter quirk:</b> Since JoyCons report their analog stick axes
+     * as buttons, rather than proper axes, the position of an analog stick
+     * will depend solely on if the buttons which correspond to those axes
+     * are pressed or not.
      * <p>
      * When the corresponding button for an axis is pressed, it's position
      * will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param stick   the analog stick to map.
      * @param mapping the JoyCon stick mapping for {@code stick}.
@@ -45,12 +52,17 @@ abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapt
     }
 
     /**
-     * Since JoyCons use buttons for analog triggers, rather than proper
-     * triggers, the force of an analog trigger will depend solely on if
-     * its button is pressed.
+     * Maps an {@link AnalogTrigger} to a GLFW button.
+     * <p>
+     * <b>Adapter quirk:</b> Since JoyCons use buttons for analog triggers,
+     * rather than proper bumpers, the force of an analog trigger will depend
+     * solely on if its button is pressed.
      * <p>
      * When the corresponding button for a trigger is pressed, it's force
      * will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param trigger    the analog trigger to map.
      * @param glfwButton the GLFW button to map {@code trigger} to.
@@ -70,6 +82,10 @@ abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapt
     /**
      * Updater for JoyCon sticks mapped via
      * {@link #mapJoyConStick(AnalogStick, GlfwNxJoyConStickMapping)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #isPressed(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state   the analog stick position.
      * @param mapping the JoyCon stick mapping.
@@ -103,6 +119,10 @@ abstract class GlfwNxJoyConAdapter<J extends NxJoyCon> extends GlfwJoystickAdapt
     /**
      * Updater for JoyCon triggers mapped via
      * {@link #mapJoyConTrigger(AnalogTrigger, int)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #isPressed(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state      the analog trigger state.
      * @param glfwButton the GLFW button.
