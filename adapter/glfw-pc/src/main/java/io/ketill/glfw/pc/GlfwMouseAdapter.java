@@ -26,10 +26,17 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * A {@link Mouse} adapter using GLFW.
+ *
+ * @see #mapButton(MouseButton, int)
  */
 public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
     /**
+     * Wrangles the {@link Mouse} from a GLFW window.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return the wrangled mouse.
      * @throws NullPointerException if {@code ptr_glfwWindow} is a null
@@ -126,6 +133,11 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     }
 
     /**
+     * Maps a {@link MouseButton} to a GLFW button.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @param button     the mouse button to map.
      * @param glfwButton the GLFW button to map {@code button} to.
      * @throws NullPointerException     if {@code button} is {@code null}.
@@ -164,6 +176,8 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
     /**
      * Updater for mouse buttons mapped via
      * {@link #mapButton(MouseButton, int)}.
+     * <p>
+     * todo
      *
      * @param state      the button state.
      * @param glfwButton the GLFW button.
@@ -176,6 +190,8 @@ public class GlfwMouseAdapter extends GlfwDeviceAdapter<Mouse> {
 
     /**
      * Updater for {@link Mouse#FEATURE_CURSOR}.
+     * <p>
+     * todo
      *
      * @param state the cursor state.
      */

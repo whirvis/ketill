@@ -40,6 +40,11 @@ public class GlfwNxProAdapter extends GlfwJoystickAdapter<NxProController> {
     protected static final int INDEX_ZL = 6, INDEX_ZR = 7;
 
     /**
+     * Wrangles a GLFW joystick into an {@link NxProController}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled Switch Pro controller.

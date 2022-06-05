@@ -63,6 +63,11 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
     }
 
     /**
+     * Returns if this seeker is seeking out left JoyCons.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @return {@code true} if this seeker is seeking out left JoyCons,
      * {@code false} otherwise.
      */
@@ -71,6 +76,11 @@ public class GlfwNxJoyConSeeker extends GlfwJoystickSeeker<NxJoyCon> {
     }
 
     /**
+     * Returns if this seeker is seeking out right JoyCons.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @return {@code true} if this seeker is seeking out right JoyCons,
      * {@code false} otherwise.
      */

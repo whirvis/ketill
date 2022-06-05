@@ -28,6 +28,11 @@ public class GlfwNxLeftJoyConAdapter extends GlfwNxJoyConAdapter<NxLeftJoyCon> {
     protected static final int INDEX_ZL = 15;
 
     /**
+     * Wrangles a GLFW joystick into an {@link NxLeftJoyCon}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled Switch left Joy-Con.

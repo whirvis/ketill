@@ -34,6 +34,11 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
     protected static final int AXIS_LT = 4, AXIS_RT = 5;
 
     /**
+     * Wrangles a GLFW joystick into an {@link XboxController}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled XBOX controller.

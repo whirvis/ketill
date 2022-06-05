@@ -19,10 +19,17 @@ import static org.lwjgl.glfw.GLFW.*;
 
 /**
  * A {@link Keyboard} adapter using GLFW.
+ *
+ * @see #mapKey(KeyboardKey, int)
  */
 public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
 
     /**
+     * Wrangles the {@link Keyboard} from a GLFW window.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return the wrangled keyboard.
      * @throws NullPointerException if {@code ptr_glfwWindow} is a null
@@ -52,6 +59,11 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     }
 
     /**
+     * Maps a {@link KeyboardKey} to a GLFW key.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @param key     the keyboard key to map.
      * @param glfwKey the GLFW key to map {@code key} to.
      * @throws NullPointerException     if {@code key} is {@code null}.
@@ -201,6 +213,8 @@ public class GlfwKeyboardAdapter extends GlfwDeviceAdapter<Keyboard> {
     /**
      * Updater for keyboard keys mapped via
      * {@link #mapKey(KeyboardKey, int)}.
+     * <p>
+     * todo
      *
      * @param state   the key state.
      * @param glfwKey the GLFW key.

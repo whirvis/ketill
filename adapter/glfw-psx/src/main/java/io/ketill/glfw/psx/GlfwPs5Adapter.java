@@ -21,6 +21,11 @@ public class GlfwPs5Adapter extends GlfwPsxAdapter<Ps5Controller> {
     protected static final int AXIS_LT = 3, AXIS_RT = 4;
 
     /**
+     * Wrangles a GLFW joystick into a {@link Ps5Controller}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled PlayStation 5 controller.
