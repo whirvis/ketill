@@ -27,7 +27,7 @@ public final class GlfwStickMapping {
     /**
      * The GLFW button for the thumb button.
      * <p>
-     * <b>Note:</b> If there exists no thumb button for this mapping,
+     * If there exists no thumb button for this mapping,
      * the value of this field will be {@code -1}.
      *
      * @see #hasZButton

@@ -1,5 +1,6 @@
 package io.ketill.glfw;
 
+import io.ketill.IoDevice;
 import io.ketill.KetillException;
 import io.ketill.controller.Controller;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -17,19 +18,27 @@ import java.util.Objects;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * GLFW joysticks seekers scan for I/O devices currently connected to a
- * GLFW window as a joystick. When a joystick is connected to the window,
- * the appropriate {@code IoDevice} instance and adapter will be created
- * using a {@link GlfwJoystickWrangler}. Devices must be polled manually
- * after creation using {@link Controller#poll()}. This can also be done
- * using {@link #pollDevices()}.
+ * Scan for joysticks currently connected to a GLFW window.
  * <p>
- * <b>Note:</b> For a GLFW joystick seeker to work as expected, the child
- * class <i>must</i> call {@link #wrangleGuid(String, GlfwJoystickWrangler)}
- * to tell the seeker which GUIDs belong to which joystick.
- * An {@code IllegalStateException} will be thrown if this is neglected.
- * Furthermore, scans must be performed periodically via {@link #seek()}.
- * It is recommended to perform a scan once every application update.
+ * When a sought after joystick connects to the window, the appropriate
+ * {@link IoDevice} and adapter will be automatically instantiated. However,
+ * after creation, they  must be polled manually. All discovered joysticks
+ * can be polled using {@link #pollDevices()}.
+ * <p>
+ * <b>Requirements:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * be called before scanning. Failure to do so will result in out-of-date
+ * device connection status being returned to the seeker by GLFW.
+ * <p>
+ * Furthermore, for a GLFW device seeker to work as expected, scans must
+ * be performed periodically via {@link #seek()}. It is recommended to
+ * perform a scan once every application update.
+ * <p>
+ * Finally, the child class <i>must</i> wrangle at least one GUID to tell
+ * the seeker which GUIDs belong to which joystick. If this is neglected,
+ * an {@code IllegalStateException} will be thrown.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>not</i> thread-safe. Operations
+ * like scanning must be run on the thread which created the GLFW window.
  *
  * @param <C> the controller type.
  * @see JsonDeviceGuids
@@ -107,6 +116,8 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     }
 
     /**
+     * Returns if a GUID is currently wrangled.
+     *
      * @param guid the joystick GUID, case-sensitive.
      * @return {@code true} if this device seeker is wrangling joysticks
      * with the specified GUID, {@code false} otherwise.
@@ -120,13 +131,20 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     }
 
     /**
-     * @return all GUID's currently being wrangled by this seeker.
+     * Returns all GUID's currently being wrangled.
+     * <p>
+     * <b>Immutability:</b> The returned GUIDs are wrapped in an unmodifiable
+     * collection. Attempting to modify it will result in an exception.
+     *
+     * @return all GUID's currently being wrangled.
      */
     public final @NotNull Collection<@NotNull String> getWrangled() {
         return Collections.unmodifiableSet(wranglers.keySet());
     }
 
     /**
+     * Returns if a GUID is being wrangled with a given wrangler.
+     *
      * @param guid     the joystick GUID, case-sensitive.
      * @param wrangler the joystick wrangler.
      * @return {@code true} if {@code wrangler} is wrangling joysticks
@@ -144,6 +162,8 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     }
 
     /**
+     * Returns the wrangler assigned to a given GUID.
+     *
      * @param guid the joystick GUID, case-sensitive.
      * @return the wrangler assigned to {@code guid}, {@code null} if no
      * wrangler has been assigned.
@@ -231,6 +251,11 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     /**
      * Called when a GUID is being wrangled. This will be called before
      * the corresponding event is emitted to subscribers.
+     * <p>
+     * <b>Reentrancy:</b>
+     * Invoking {@link #wrangleGuid(String, GlfwJoystickWrangler)} inside
+     * of this method will likely result in a {@code StackOverflowError}
+     * unless proper care is taken to ensure otherwise.
      *
      * @param guid     the GUID.
      * @param wrangler the wrangler assigned to {@code guid}.
@@ -241,6 +266,8 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     }
 
     /**
+     * Unbinds the given GUIDs from their joystick wranglers.
+     * <p>
      * All currently registered joysticks with a matching GUID will be
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
@@ -298,6 +325,8 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     }
 
     /**
+     * Unbinds a GUID from its joystick wrangler.
+     * <p>
      * All currently registered joysticks with a matching GUID will be
      * automatically unregistered. This is to prevent the connection of
      * undesired joysticks from lingering.
@@ -318,6 +347,10 @@ public class GlfwJoystickSeeker<C extends Controller> extends GlfwDeviceSeeker<C
     /**
      * Called when a GUID has been released. This will be called before
      * the corresponding event is emitted to subscribers.
+     * <p>
+     * <b>Reentrancy:</b> Invoking {@link #releaseGuid(String)} inside
+     * of this method will likely result in a {@code StackOverflowError}
+     * unless proper care is taken to ensure otherwise.
      *
      * @param guid     the GUID.
      * @param wrangler the wrangler assigned to {@code guid}.

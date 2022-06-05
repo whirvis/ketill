@@ -23,6 +23,8 @@ public final class WrangleGuidEvent extends GlfwJoystickSeekerEvent {
     }
 
     /**
+     * Returns the wrangled GUID.
+     *
      * @return the wrangled GUID.
      */
     public @NotNull String getGuid() {
@@ -30,6 +32,8 @@ public final class WrangleGuidEvent extends GlfwJoystickSeekerEvent {
     }
 
     /**
+     * Returns the wrangler assigned to the GUID.
+     *
      * @return the wrangler assigned to the GUID.
      */
     public @NotNull GlfwJoystickWrangler<?> getWrangler() {

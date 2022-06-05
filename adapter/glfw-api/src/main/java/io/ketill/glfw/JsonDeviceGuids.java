@@ -67,7 +67,7 @@ public class JsonDeviceGuids extends DeviceGuids {
      * <p>
      * An example of a valid container is given in the class JavaDocs.
      * <p>
-     * <b>Note:</b> This method expects {@code UTF-8} encoding.
+     * <b>Encoding:</b> This method expects {@code UTF-8} encoding.
      *
      * @param in the input stream to read from.
      * @return the loaded device GUIDs.
@@ -154,8 +154,7 @@ public class JsonDeviceGuids extends DeviceGuids {
      * <p>
      * An example of a valid container is given in the class JavaDocs.
      * <p>
-     * <b>Note:</b> This method expects the resource to have {@code UTF-8}
-     * encoding.
+     * <b>Encoding:</b> This method expects {@code UTF-8} encoding.
      *
      * @param path the path of the resource to read from.
      * @return the loaded device GUIDs.
@@ -187,8 +186,7 @@ public class JsonDeviceGuids extends DeviceGuids {
      * <p>
      * An example of a valid container is given in the class JavaDocs.
      * <p>
-     * <b>Note:</b> This method expects the file to have {@code UTF-8}
-     * encoding.
+     * <b>Encoding:</b> This method expects {@code UTF-8} encoding.
      *
      * @param file the file to read from.
      * @return the loaded device GUIDs.
@@ -220,8 +218,7 @@ public class JsonDeviceGuids extends DeviceGuids {
      * <p>
      * An example of a valid container is given in the class JavaDocs.
      * <p>
-     * <b>Note:</b> This method expects the file to have {@code UTF-8}
-     * encoding.
+     * <b>Encoding:</b> This method expects {@code UTF-8} encoding.
      *
      * @param path the path of the file to read from.
      * @return the loaded device GUIDs.

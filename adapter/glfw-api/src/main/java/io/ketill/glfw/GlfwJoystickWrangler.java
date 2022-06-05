@@ -10,12 +10,18 @@ import org.jetbrains.annotations.NotNull;
  * for joysticks when they are discovered.
  *
  * @param <C> the controller type.
+ * @see WranglerMethod
  * @see GlfwJoystickSeeker#wrangleGuid(String, GlfwJoystickWrangler)
  */
 @FunctionalInterface
 public interface GlfwJoystickWrangler<C extends Controller> {
 
     /**
+     * Wrangles a GLFW joystick.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @param glfwJoystick   the GLFW joystick.
      * @return the wrangled controller.

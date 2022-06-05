@@ -8,8 +8,10 @@ import java.lang.annotation.Target;
 
 /**
  * When present, indicates a method is used solely for wrangling GLFW
- * devices into instantiated I/O devices. Use of this annotation is
- * optional, but recommended as it improves code readability.
+ * devices into instantiated I/O devices.
+ * <p>
+ * <b>Suggestion:</b> Use of this annotation is optional, but recommended
+ * as it improves code readability.
  *
  * @see GlfwJoystickWrangler
  */

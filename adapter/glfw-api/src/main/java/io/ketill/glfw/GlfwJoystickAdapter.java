@@ -21,28 +21,24 @@ import java.util.Objects;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * GLFW joystick adapters are an extension of {@link GlfwDeviceAdapter}
- * which specialize in mapping data from GLFW joysticks. An assortment
- * of utility methods are provided for mapping features.
- * <p>
- * <b>Note:</b> The {@code glfwPollEvents()} <i>must</i> be called before
- * the adapter is polled. Failure to do so will result in GLFW returning
- * out-of-date input data to the adapter.
+ * An extension of {@link GlfwDeviceAdapter} which specializes in mapping
+ * data from GLFW joysticks. An assortment of utility methods are provided
+ * for mapping features like controller buttons and analog sticks.
  * <p>
  * Feature adapters like {@link #updateStick(StickPosZ, GlfwStickMapping)}
  * can also be overridden to modify data returned from GLFW. An example of
  * this would be switching the polarity of an axis. This is done in the
  * {@code glfw.xbox} module, and can be seen in {@code GlfwXboxAdapter}.
- * <pre>
- *     &#64;Override
- *     protected void updateStick(&#64;NotNull StickPosZ state,
- *                                &#64;NotNull GlfwStickMapping mapping) {
- *         super.updateStick(state, mapping);
- *         if (mapping == MAPPING_LS || mapping == MAPPING_RS) {
- *             state.pos.y *= -1.0F;
- *         }
- *     }
- * </pre>
+ * <p>
+ * <b>Requirement:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * be called before polling the adapter. Failure to do so will result in
+ * out-of-date input info being returned to the adapter by GLFW.
+ * <p>
+ * <b>Thread safety:</b> This class is, in general, <i>not</i> thread-safe.
+ * Operations like polling must be on the thread which created the GLFW
+ * window. However, some operations <i>are</i> thread-safe, like mapping
+ * features. It is best to check the description of a method to determine
+ * if it is thread-safe beforehand.
  *
  * @param <C> the controller type.
  * @see #mapButton(ControllerButton, int)
@@ -92,6 +88,11 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Maps a {@link ControllerButton} to a GLFW button.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @param button     the button to map.
      * @param glfwButton the GLFW button to map {@code button} to.
      * @throws NullPointerException      if {@code button} is {@code null}.
@@ -106,6 +107,11 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Maps an {@link AnalogStick} to a set of GLFW axes.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @param stick   the stick to map.
      * @param mapping the GLFW stick mapping for {@code stick}.
      * @throws NullPointerException if {@code stick} or {@code mapping}
@@ -121,6 +127,11 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Maps an {@link AnalogTrigger} to a GLFW axis.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @param trigger  the trigger to map.
      * @param glfwAxis the GLFW axis to map {@code trigger} to.
      * @throws NullPointerException     if {@code trigger} is {@code null}.
@@ -135,6 +146,11 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Returns the GLFW button count.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @return the amount of GLFW buttons present on this joystick,
      * {@code -1} if the adapter has not yet been polled.
      */
@@ -143,9 +159,14 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Returns if a given GLFW button is pressed.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param glfwButton the ID of the GLFW button to check.
      * @return {@code true} if {@code glfwButton} is currently pressed,
-     * {@code false} otherwise (or if it does not exist.)
+     * {@code false} otherwise (or if it does not yet exist).
      * @throws IndexOutOfBoundsException if {@code glfwButton} is negative or
      *                                   not smaller than the button count.
      */
@@ -158,6 +179,11 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Returns the GLFW axis count.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
+     *
      * @return the amount of GLFW axes present on this joystick,
      * {@code -1} if the adapter has not yet been polled.
      */
@@ -166,8 +192,13 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     }
 
     /**
+     * Returns the value of a given GLFW axis.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     *
      * @param glfwAxis the ID of the GLFW axis to fetch.
-     * @return the current axis value, {@code 0.0F} it does not exist.
+     * @return the current axis value, {@code 0.0F} it does not yet exist.
      * @throws IndexOutOfBoundsException if {@code glfwAxis} is negative or
      *                                   not smaller than the axis count.
      */
@@ -182,6 +213,10 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     /**
      * Updater for buttons mapped via
      * {@link #mapButton(ControllerButton, int)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #isPressed(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state      the button state.
      * @param glfwButton the GLFW button.
@@ -194,6 +229,10 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     /**
      * Updater for analog sticks mapped via
      * {@link #mapStick(AnalogStick, GlfwStickMapping)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #getAxis(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state   the analog stick position.
      * @param mapping the GLFW stick mapping.
@@ -214,6 +253,10 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
     /**
      * Updater for analog triggers mapped via
      * {@link #mapTrigger(AnalogTrigger, int)}.
+     * <p>
+     * <b>Thread safety:</b> This method relies on {@link #getAxis(int)}.
+     * Therefore, it is <i>not</i> thread-safe. It must be called on the
+     * thread which created {@code ptr_glfwWindow}.
      *
      * @param state    the analog trigger state.
      * @param glfwAxis the GLFW axis.
@@ -223,6 +266,12 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
         state.force = this.getAxis(glfwAxis);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     */
     @Override
     @MustBeInvokedByOverriders
     protected void pollDevice() {
@@ -230,6 +279,12 @@ public abstract class GlfwJoystickAdapter<C extends Controller>
         this.axes = glfwGetJoystickAxes(glfwJoystick);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
+     */
     @Override
     protected final boolean isDeviceConnected() {
         return glfwJoystickPresent(glfwJoystick);

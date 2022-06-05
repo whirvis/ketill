@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A container for the GUIDs a device.
+ * A container for device GUIDs.
  * <p>
  * This should be used with {@link GlfwJoystickSeeker} to determine which set
  * of GUIDs to use when seeking for a joystick. The GUIDs of a joystick vary
@@ -120,6 +120,8 @@ public abstract class DeviceGuids {
     }
 
     /**
+     * Returns if a system with the given ID is supported.
+     *
      * @param systemId the system ID to check for.
      * @return {@code true} if this container supports the system with the
      * specified ID, {@code false} otherwise.
@@ -131,6 +133,8 @@ public abstract class DeviceGuids {
     }
 
     /**
+     * Adds support for a system with a given ID.
+     *
      * @param systemId    the system ID.
      * @param determinant the determinant.
      * @throws NullPointerException     if {@code systemId} or
@@ -170,6 +174,8 @@ public abstract class DeviceGuids {
     }
 
     /**
+     * Removes support for a system with the given ID.
+     *
      * @param systemId the system ID.
      * @return {@code true} if an operating system with the specified ID
      * was removed, {@code false} otherwise.
@@ -183,6 +189,9 @@ public abstract class DeviceGuids {
     /**
      * Implementation for {@link #getGuids(String)}. The returned collection
      * will be wrapped so that it is unmodifiable by the caller.
+     * <p>
+     * <b>Reentrancy:</b> Invoking {@link #getGuids(String)} inside of this
+     * method will result in a {@code StackOverflowError}.
      *
      * @param systemId the operating system ID.
      * @return the GUIDs for the device when running on an OS with the
@@ -195,6 +204,12 @@ public abstract class DeviceGuids {
     /* @formatter:on */
 
     /**
+     * Returns the GUIDs for the device when running on an OS with the
+     * specified operating system ID.
+     * <p>
+     * <b>Immutability:</b> The returned GUIDs are wrapped in an unmodifiable
+     * collection. Attempting to modify it will result in an exception.
+     *
      * @param systemId the operating system ID.
      * @return the GUIDs for the device when running on an OS with the
      * specified ID, {@code null} if no such set of GUIDs exists.
@@ -214,9 +229,14 @@ public abstract class DeviceGuids {
     /* @formatter:on */
 
     /**
+     * Returns the GUIDs for the device on the current operating system.
+     * <p>
+     * <b>Immutability:</b> The returned GUIDs are wrapped in an unmodifiable
+     * collection. Attempting to modify it will result in an exception.
+     *
      * @return the GUIDs for the device on the current operating system,
      * {@code null} if the OS could not be determined or no GUIDs exist
-     * for the current OS.
+     * for the current system.
      */
     public final @Nullable Collection<@NotNull String> getSystemGuids() {
         String systemId = this.getCurrentSystemId();

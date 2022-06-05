@@ -4,21 +4,27 @@ import io.ketill.IoDevice;
 import io.ketill.IoDeviceSeeker;
 
 /**
- * GLFW device seekers scan for I/O devices currently connected to a
- * GLFW window. When a device is connected to the window, the appropriate
- * {@code IoDevice} instance and adapter will be created. Devices must be
- * polled manually after creation using {@link IoDevice#poll()}. This can
- * also be done using {@link #pollDevices()}.
+ * Scan for I/O devices currently connected to a GLFW window.
  * <p>
- * Implementations should call {@link #discoverDevice(IoDevice)} when a
- * device is discovered and {@link #forgetDevice(IoDevice)} when a device
- * is forgotten.
+ * When a sought after device connects to the window, the appropriate
+ * {@link IoDevice} and adapter will be automatically instantiated. However,
+ * after creation, they  must be polled manually. All currently discovered
+ * devices can be polled using {@link #pollDevices()}.
  * <p>
- * <b>Note:</b> For a GLFW device seeker to work as expected, scans must be
- * performed periodically via {@link #seek()}. It is recommended to perform
- * a scan once every application update.
+ * <b>Requirements:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * be called before scanning. Failure to do so will result in out-of-date
+ * device connection status being returned to the seeker by GLFW.
+ * <p>
+ * Furthermore, for a GLFW device seeker to work as expected, scans must
+ * be performed periodically via {@link #seek()}. It is recommended to
+ * perform a scan once every application update.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>not</i> thread-safe. Operations
+ * like scanning must be run on the thread which created the GLFW window.
  *
  * @param <I> the I/O device type.
+ * @see #discoverDevice(IoDevice)
+ * @see #forgetDevice(IoDevice)
  * @see GlfwDeviceAdapter
  * @see GlfwJoystickSeeker
  */

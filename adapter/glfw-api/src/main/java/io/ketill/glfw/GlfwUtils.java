@@ -21,10 +21,13 @@ public final class GlfwUtils {
     /**
      * Checks that the specified GLFW window pointer is valid.
      * <p>
-     * <b>Note:</b> If an invalid GLFW window pointer is passed, this method
-     * will cause an {@code EXCEPTION_ACCESS_VIOLATION} to be raised. This
-     * will cause the JVM to crash. <i>This is by design.</i> If the program
-     * crashes here, it will be clear what caused the exception to be raised.
+     * If an invalid GLFW window pointer is passed, this method will cause
+     * an {@code EXCEPTION_ACCESS_VIOLATION} to be raised. This will cause
+     * the JVM to crash. <i>This is by design.</i> If the program crashes
+     * here, it will be clear what caused the exception to be raised.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>not</i> thread-safe. It must
+     * be called on the thread which created {@code ptr_glfwWindow}.
      *
      * @param ptr_glfwWindow the GLFW window pointer.
      * @return {@code ptr_glfwWindow} if valid.
@@ -50,6 +53,9 @@ public final class GlfwUtils {
 
     /**
      * Checks that the specified GLFW joystick is valid.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwJoystick the GLFW joystick to validate.
      * @return {@code glfwJoystick} if valid.
@@ -66,6 +72,9 @@ public final class GlfwUtils {
 
     /**
      * Checks that the specified GLFW button is valid.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwButton  the GLFW button to validate.
      * @param buttonCount the amount of available buttons.
@@ -108,6 +117,9 @@ public final class GlfwUtils {
      * <p>
      * <b>Shorthand for:</b> {@link #requireButton(int, int, String)}, with
      * the argument for {@code buttonCount} being {@link Integer#MAX_VALUE}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwButton the GLFW button to validate.
      * @param paramName  the parameter being validated.
@@ -124,6 +136,9 @@ public final class GlfwUtils {
      * <p>
      * <b>Shorthand for:</b> {@link #requireButton(int, int, String)}, with
      * the argument for {@code paramName} being {@code "GLFW button"}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwButton  the GLFW button to validate.
      * @param buttonCount the amount of available buttons.
@@ -142,6 +157,9 @@ public final class GlfwUtils {
      * <b>Shorthand for:</b> {@link #requireButton(int, int, String)}, with
      * the arguments for {@code buttonCount} being {@link Integer#MAX_VALUE}
      * and {@code paramName} being {@code "GLFW button"}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwButton the GLFW button to validate.
      * @return {@code glfwButton} if valid.
@@ -153,6 +171,9 @@ public final class GlfwUtils {
 
     /**
      * Checks that the specified GLFW axis is valid.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwAxis  the GLFW axis to validate.
      * @param axisCount the amount of available axes.
@@ -195,6 +216,9 @@ public final class GlfwUtils {
      * <p>
      * <b>Shorthand for:</b> {@link #requireAxis(int, int, String)}, with
      * the argument for {@code axisCount} being {@link Integer#MAX_VALUE}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwAxis  the GLFW axis to validate.
      * @param paramName the parameter being validated.
@@ -211,6 +235,9 @@ public final class GlfwUtils {
      * <p>
      * <b>Shorthand for:</b> {@link #requireAxis(int, int, String)}, with
      * the argument for {@code paramName} being {@code "GLFW axis"}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwAxis  the GLFW axis  to validate.
      * @param axisCount the amount of available axes.
@@ -229,6 +256,9 @@ public final class GlfwUtils {
      * <b>Shorthand for:</b> {@link #requireAxis(int, int, String)}, with
      * the arguments for {@code axisCount} being {@link Integer#MAX_VALUE}
      * and {@code paramName} being {@code "GLFW axis"}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * No calls to the GLFW library are made.
      *
      * @param glfwAxis the GLFW axis to validate.
      * @return {@code glfwAxis} if valid.

@@ -7,12 +7,15 @@ import io.ketill.MappedFeatureRegistry;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * GLFW adapters map data from a GLFW window to an {@link IoDevice}. These
- * allow for seamless integration with LWJGL's bindings to the GLFW API.
+ * Maps data from a GLFW window to an {@link IoDevice}. These allow for
+ * seamless integration with LWJGL's bindings to the GLFW API.
  * <p>
- * <b>Note:</b> The {@code glfwPollEvents()} <i>must</i> be called before
- * the adapter is polled. Failure to do so will result in GLFW returning
- * out-of-date input data to the adapter.
+ * <b>Requirement:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * be called before polling the adapter. Failure to do so will result in
+ * out-of-date input info being returned to the adapter by GLFW.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>not</i> thread-safe. Operations
+ * like polling must be run on the thread which created the GLFW window.
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier
