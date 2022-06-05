@@ -30,12 +30,12 @@ import static org.lwjgl.glfw.GLFW.*;
  * this would be switching the polarity of an axis. This is done in the
  * {@code glfw.xbox} module, and can be seen in {@code GlfwXboxAdapter}.
  * <p>
- * <b>Requirement:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * <b>Requirements:</b> The {@code glfwPollEvents()} function <i>must</i>
  * be called before polling the adapter. Failure to do so will result in
  * out-of-date input info being returned to the adapter by GLFW.
  * <p>
  * <b>Thread safety:</b> This class is, in general, <i>not</i> thread-safe.
- * Operations like polling must be on the thread which created the GLFW
+ * Operations like polling must be run on the thread which created the GLFW
  * window. However, some operations <i>are</i> thread-safe, like mapping
  * features. It is best to check the description of a method to determine
  * if it is thread-safe beforehand.
