@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * Maps data from a GLFW window to an {@link IoDevice}. These allow for
  * seamless integration with LWJGL's bindings to the GLFW API.
  * <p>
- * <b>Requirement:</b> The {@code glfwPollEvents()} function <i>must</i>
+ * <b>Requirements:</b> The {@code glfwPollEvents()} function <i>must</i>
  * be called before polling the adapter. Failure to do so will result in
  * out-of-date input info being returned to the adapter by GLFW.
  * <p>
