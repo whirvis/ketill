@@ -6,23 +6,27 @@ import org.joml.Vector4f;
 import org.joml.Vector4fc;
 
 import java.awt.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Contains the state of a {@link Lightbar}.
  */
 public final class LightbarColor {
 
-    private static float cap(float value, float min, float max) {
-        return Math.min(Math.max(value, min), max);
+    private static float capIntensity(float value) {
+        return Math.min(Math.max(value, 0.0F), 1.0F);
     }
 
     private final Vector4f vector;
+    private final Lock vectorLock;
 
     /**
      * Constructs a new {@code LightbarColor}.
      */
     public LightbarColor() {
         this.vector = new Vector4f();
+        this.vectorLock = new ReentrantLock();
     }
 
     /**
@@ -47,11 +51,15 @@ public final class LightbarColor {
      */
     public void setColor(float red, float green, float blue,
                          float alpha) {
-        float min = 0.0F, max = 1.0F;
-        vector.x = cap(red, min, max);
-        vector.y = cap(green, min, max);
-        vector.z = cap(blue, min, max);
-        vector.w = cap(alpha, min, max);
+        vectorLock.lock();
+        try {
+            vector.x = capIntensity(red);
+            vector.y = capIntensity(green);
+            vector.z = capIntensity(blue);
+            vector.w = capIntensity(alpha);
+        } finally {
+            vectorLock.unlock();
+        }
     }
 
     /**
@@ -79,13 +87,18 @@ public final class LightbarColor {
      *                 should be used, {@code false} to have it discarded.
      */
     public void setColor(int rgba, boolean useAlpha) {
-        vector.x = (((byte) (rgba >> 24)) & 0xFF) / 255.0F;
-        vector.y = (((byte) (rgba >> 16)) & 0xFF) / 255.0F;
-        vector.z = (((byte) (rgba >> 8)) & 0xFF) / 255.0F;
-        if (useAlpha) {
-            vector.w = (((byte) rgba) & 0xFF) / 255.0F;
-        } else {
-            vector.w = 1.0F;
+        vectorLock.lock();
+        try {
+            vector.x = (((byte) (rgba >> 24)) & 0xFF) / 255.0F;
+            vector.y = (((byte) (rgba >> 16)) & 0xFF) / 255.0F;
+            vector.z = (((byte) (rgba >> 8)) & 0xFF) / 255.0F;
+            if (useAlpha) {
+                vector.w = (((byte) rgba) & 0xFF) / 255.0F;
+            } else {
+                vector.w = 1.0F;
+            }
+        } finally {
+            vectorLock.unlock();
         }
     }
 
