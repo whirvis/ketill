@@ -22,11 +22,14 @@ package io.ketill.psx;
 public interface PsxAmbiguityCandidate {
 
     /**
-     * <b>Note:</b> Conditions for ambiguity between controllers are unique,
-     * depending on both the physical device and the capabilities of the I/O
-     * device seeker.
+     * Returns if there is currently an ambiguity between the discovered
+     * PlayStation controllers.
+     * <p>
+     * Conditions for ambiguity between these controllers are unique. They
+     * depend on both the characteristics of the physical device and the
+     * capabilities of the seeker.
      *
-     * @return {@code true} if there is currently ambiguity between the
+     * @return {@code true} if there is currently an ambiguity between the
      * discovered PlayStation controllers, {@code false} otherwise.
      */
     boolean isAmbiguous();
