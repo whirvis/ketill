@@ -4,7 +4,7 @@ import com.github.strikerx3.jxinput.XInputButtons;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
-interface XInputButton {
+interface XInputButtonAccessor {
 
     boolean isPressed(@NotNull XInputButtons buttons);
 

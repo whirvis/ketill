@@ -1,6 +1,5 @@
 package io.ketill.xinput;
 
-import com.github.strikerx3.jxinput.enums.XInputAxis;
 import io.ketill.MappingType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,12 +7,13 @@ import org.jetbrains.annotations.Nullable;
 @MappingType
 final class StickMapping {
 
-    final @NotNull XInputAxis xAxis;
-    final @NotNull XInputAxis yAxis;
-    final @Nullable XInputButton zButton;
+    final @NotNull XInputAxisAccessor xAxis;
+    final @NotNull XInputAxisAccessor yAxis;
+    final @Nullable XInputButtonAccessor zButton;
 
-    StickMapping(@NotNull XInputAxis xAxis, @NotNull XInputAxis yAxis,
-                 @Nullable XInputButton zButton) {
+    StickMapping(@NotNull XInputAxisAccessor xAxis,
+                 @NotNull XInputAxisAccessor yAxis,
+                 @Nullable XInputButtonAccessor zButton) {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.zButton = zButton;
