@@ -62,8 +62,7 @@ public class NxProController extends Controller {
             STICK_RS = new AnalogStick("rs", BUTTON_R_THUMB, CALIBRATION);
 
     /**
-     * These triggers act as wrappers for {@link #BUTTON_ZL} and
-     * {@link #BUTTON_ZR}.
+     * Wrappers for {@link #BUTTON_ZL} and {@link #BUTTON_ZR}.
      */
     @FeaturePresent
     public static final @NotNull AnalogTrigger
@@ -115,12 +114,11 @@ public class NxProController extends Controller {
             rs = Objects.requireNonNull(super.rs);
 
     /**
+     * The states for {@link #TRIGGER_LT} and {@link #TRIGGER_RT}.
+     * <p>
      * The force of these triggers are dependent on the state of {@link #zl}
      * and {@link #zr}. If their corresponding button is pressed, the force
      * of the trigger will be {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
-     *
-     * @see #TRIGGER_LT
-     * @see #TRIGGER_RT
      */
     @FeatureState
     @SuppressWarnings("HidingField")
