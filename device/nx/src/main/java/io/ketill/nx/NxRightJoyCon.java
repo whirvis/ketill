@@ -36,7 +36,7 @@ public class NxRightJoyCon extends NxJoyCon {
             STICK_RS = new AnalogStick("rs");
 
     /**
-     * This trigger acts as a wrapper for {@link #BUTTON_ZR}.
+     * Wrapper for {@link #BUTTON_ZR}.
      */
     @FeaturePresent
     public static final @NotNull AnalogTrigger
@@ -62,11 +62,11 @@ public class NxRightJoyCon extends NxJoyCon {
             rs = Objects.requireNonNull(super.rs);
 
     /**
+     * The state for {@link #TRIGGER_RT}.
+     * <p>
      * The force of this trigger is dependent on the state of {@link #zr}.
      * If the button is pressed, the force of this trigger will be
      * {@code 1.0F}. Otherwise, it will be {@code 0.0F}.
-     *
-     * @see #TRIGGER_RT
      */
     @FeatureState
     @SuppressWarnings("HidingField")

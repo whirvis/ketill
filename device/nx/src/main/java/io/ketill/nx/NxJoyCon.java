@@ -66,7 +66,9 @@ public abstract class NxJoyCon extends Controller {
     /* @formatter:on */
 
     /**
-     * Constructs a new {@code NxJoyCon}.
+     * Constructs a new {@code NxJoyCon}, automatically registers all fields
+     * marked with the {@link FeaturePresent} annotation, and initializes the
+     * adapter.
      * <p>
      * <b>Note:</b> This constructor is package-private so only this module
      * can extend from this class. However, the class is kept public so users
@@ -78,13 +80,13 @@ public abstract class NxJoyCon extends Controller {
      * @param rs              the right analog stick, may be {@code null}.
      * @param lt              the left analog trigger, may be {@code null}.
      * @param rt              the right analog trigger, may be {@code null}.
-     * @throws NullPointerException     if {@code id} or
+     * @throws NullPointerException     if {@code typeId} or
      *                                  {@code adapterSupplier}
      *                                  are {@code null}; if the adapter
      *                                  given by {@code adapterSupplier}
      *                                  is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
      */
     NxJoyCon(@NotNull String id, @NotNull AdapterSupplier<?> adapterSupplier,
              @Nullable AnalogStick ls, @Nullable AnalogStick rs,
