@@ -4,8 +4,6 @@ import com.github.strikerx3.jxinput.natives.XInputNatives;
 
 /**
  * Used to check the availability of X-input.
- *
- * @see #isAvailable()
  */
 public final class XInputStatus {
 
@@ -25,7 +23,13 @@ public final class XInputStatus {
         return XInputNatives.isLoaded();
     }
 
-    static void requireAvailable() {
+    /**
+     * Requires that X-input be available on this system before
+     * continuing execution.
+     *
+     * @throws XInputException if X-input is not available.
+     */
+    public static void requireAvailable() {
         if (!isAvailable()) {
             throw new XInputException("X-input is not available");
         }
