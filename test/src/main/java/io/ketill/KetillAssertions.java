@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -36,7 +36,7 @@ public final class KetillAssertions {
      *                              feature not marked as unsupported.
      */
     public static void assertAllFeaturesSupported(@NotNull IoDevice device,
-                                                  @NotNull IoFeature<?, ?> @NotNull ... unsupported) {
+                                                  @NotNull Collection<@NotNull IoFeature<?, ?>> unsupported) {
         Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(unsupported, "unsupported cannot be null");
 
@@ -55,12 +55,11 @@ public final class KetillAssertions {
             }
         }
 
-        List<IoFeature<?, ?>> unsupportedList = Arrays.asList(unsupported);
         for (RegisteredIoFeature<?, ?, ?> registered :
                 device.getFeatureRegistrations()) {
             IoFeature<?, ?> feature = registered.feature;
 
-            if (unsupportedList.contains(feature)) {
+            if (unsupported.contains(feature)) {
                 /*
                  * It would not make sense to pass an unsupported feature
                  * which is supported by the device. As such, assume this
@@ -81,6 +80,30 @@ public final class KetillAssertions {
                 throw new AssertionError(msg);
             }
         }
+    }
+
+    /**
+     * Asserts than I/O device supports all features registered to it when
+     * this method is called.
+     *
+     * @param device      the device to check whose features to check.
+     * @param unsupported unsupported features that are registered to
+     *                    the device. Take note that the test will fail
+     *                    if a feature is not registered to {@code device}
+     *                    or actually is supported.
+     * @throws NullPointerException if {@code device}, {@code unsupported}
+     *                              are {@code null}; if {@code unsupported}
+     *                              contains a {@code null} element.
+     * @throws AssertionError       if an element of {@code unsupported}
+     *                              is not registered to {@code device};
+     *                              if a feature marked as unsupported is
+     *                              actually supported by {@code device};
+     *                              if {@code device} does not support a
+     *                              feature not marked as unsupported.
+     */
+    public static void assertAllFeaturesSupported(@NotNull IoDevice device,
+                                                  @NotNull IoFeature<?, ?> @NotNull ... unsupported) {
+        assertAllFeaturesSupported(device, Arrays.asList(unsupported));
     }
 
     /**
