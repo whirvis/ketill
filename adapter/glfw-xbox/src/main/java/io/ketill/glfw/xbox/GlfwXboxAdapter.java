@@ -85,7 +85,7 @@ public class GlfwXboxAdapter extends GlfwJoystickAdapter<XboxController> {
         this.mapButton(BUTTON_Y, 3);
         this.mapButton(BUTTON_LB, 4);
         this.mapButton(BUTTON_RB, 5);
-        this.mapButton(BUTTON_GUIDE, 6);
+        this.mapButton(BUTTON_BACK, 6);
         this.mapButton(BUTTON_START, 7);
         this.mapButton(BUTTON_L_THUMB, 8);
         this.mapButton(BUTTON_R_THUMB, 9);

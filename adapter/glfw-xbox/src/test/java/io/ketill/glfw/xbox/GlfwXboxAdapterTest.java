@@ -43,8 +43,8 @@ class GlfwXboxAdapterTest {
     @Test
     void ensureIntendedFeaturesSupported() {
         assertAllFeaturesSupported(controller,
-                XboxController.INTERNAL_BATTERY, XboxController.MOTOR_COARSE,
-                XboxController.MOTOR_FINE);
+                XboxController.BUTTON_GUIDE, XboxController.INTERNAL_BATTERY,
+                XboxController.MOTOR_COARSE, XboxController.MOTOR_FINE);
     }
 
     @Test
