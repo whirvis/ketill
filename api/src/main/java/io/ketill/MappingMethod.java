@@ -15,6 +15,7 @@ import java.lang.annotation.Target;
  * <b>Note:</b> Use of this annotation is optional. However, it is
  * recommended as it improves code readability.
  *
+ * @see MappingType
  * @see MappedFeatureRegistry#mapFeature(IoFeature, Object, StateUpdater)
  */
 @Documented
