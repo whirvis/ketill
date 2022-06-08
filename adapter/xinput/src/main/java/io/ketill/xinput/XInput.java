@@ -325,14 +325,13 @@ public final class XInput {
             if (CONTROLLERS_CACHED.compareAndSet(false, true)) {
                 cacheControllers();
             }
+            return CONTROLLERS[playerNum];
         } catch (XInputException cause) {
             CONTROLLERS_ERROR.set(cause);
             throw cause; /* don't fail silently */
         } finally {
             CONTROLLERS_LOCK.unlock();
         }
-
-        return CONTROLLERS[playerNum];
     }
 
     /**
