@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public interface AdapterSupplier<I extends IoDevice> {
 
     /**
-     * Gets a device adapter.
+     * Gets a newly created device adapter.
      *
      * @param device   the device which owns this adapter.
      * @param registry the device's mapped feature registry.
