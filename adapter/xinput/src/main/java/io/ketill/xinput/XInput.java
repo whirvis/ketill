@@ -279,6 +279,7 @@ public final class XInput {
      * The returned controller can be shared among multiple threads.
      *
      * @param playerNum the player number.
+     * @return the controller for {@code playerNum}.
      * @throws IndexOutOfBoundsException  if {@code playerNum} is less than
      *                                    zero or greater than or equal to
      *                                    the available player count.
@@ -348,6 +349,7 @@ public final class XInput {
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      * The returned controllers can be shared among multiple threads.
      *
+     * @return the controllers for every available player.
      * @throws XInputUnavailableException if the X-input library is not
      *                                    available on this machine.
      * @throws XInputSetupException       if a setup error occurs.
