@@ -81,8 +81,6 @@ public final class XInput {
      * Since X-input may not be available on the current system, it is
      * best to check for availability before attempting to use the rest
      * of this module.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return {@code true} if the X-input library is available,
      * {@code false} otherwise.
@@ -99,8 +97,6 @@ public final class XInput {
     /**
      * Requires that X-input be available on this machine before
      * continuing execution.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @throws XInputUnavailableException if the X-input library is not
      *                                    available on this machine.
@@ -114,8 +110,6 @@ public final class XInput {
 
     /**
      * Returns the current version of X-input.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return the current version of X-input, {@code null} if it is not
      * available on this machine.
@@ -144,8 +138,6 @@ public final class XInput {
 
     /**
      * Returns if X-input is at least a given version.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param version the version to compare with.
      * @return {@code true} if the current version of X-input is at least
@@ -167,8 +159,6 @@ public final class XInput {
     /**
      * Requires the current version of X-input to be at least a given
      * version before continuing execution.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param version the minimum version of X-input this machine must
      *                have present.
@@ -198,8 +188,6 @@ public final class XInput {
      * reporting a neutral state for all controllers and no vibration
      * data being sent. This is useful for applications which can lose
      * and then regain focus.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param enabled {@code true} to enable X-input, {@code false} to
      *                disable it and thus receive neutral data.
@@ -225,8 +213,6 @@ public final class XInput {
      * <b>Alternative to:</b> {@link #setEnabled(boolean)}, which only
      * enables or disables the reporting state of X-input if the current
      * version of the library is at least {@link XInputVersion#V1_4}.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param enabled {@code true} to enable X-input, {@code false} to
      *                disable it and thus receive neutral data.
@@ -275,8 +261,9 @@ public final class XInput {
      * player number should also be treated like an array index. As
      * such, {@code playerNum} starts at zero for player one.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
-     * The returned controller can be shared among multiple threads.
+     * <b>Thread safety:</b> The returned controller can be shared
+     * among multiple threads. Its adapter is {@link XInputXboxAdapter},
+     * which is <i>thread-safe.</i>
      *
      * @param playerNum the player number.
      * @return the controller for {@code playerNum}.
@@ -345,8 +332,9 @@ public final class XInput {
      * returned array. A new one is generated every time this method
      * is called.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
-     * The returned controllers can be shared among multiple threads.
+     * <b>Thread safety:</b> The returned controllers can be shared
+     * among multiple threads. Their adapter is {@link XInputXboxAdapter},
+     * which is <i>thread-safe.</i>
      *
      * @return the controllers for every available player.
      * @throws XInputUnavailableException if the X-input library is not
