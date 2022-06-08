@@ -34,6 +34,7 @@ public class XboxController extends Controller {
             BUTTON_LB = new ControllerButton("lb"),
             BUTTON_RB = new ControllerButton("rb"),
             BUTTON_GUIDE = new ControllerButton("guide"),
+            BUTTON_BACK = new ControllerButton("back"),
             BUTTON_START = new ControllerButton("start"),
             BUTTON_L_THUMB = new ControllerButton("l_thumb"),
             BUTTON_R_THUMB = new ControllerButton("r_thumb"),
