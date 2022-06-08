@@ -30,7 +30,7 @@ public interface InitialStateSupplier<S> {
     }
 
     /**
-     * Gets a container state.
+     * Gets a newly created state.
      *
      * @param feature  the feature creating this state.
      * @param observer an observer of the I/O device which owns this state.
