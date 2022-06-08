@@ -12,7 +12,14 @@ public final class XInputVersionException extends XInputException {
         return "expecting " + version.getDescription() + " or higher";
     }
 
+    /**
+     * The current version of X-input.
+     */
     private final XInputVersion currentVersion;
+
+    /**
+     * The required minimum version of X-input.
+     */
     private final XInputVersion minimumVersion;
 
     XInputVersionException(@NotNull XInputVersion currentVersion,
