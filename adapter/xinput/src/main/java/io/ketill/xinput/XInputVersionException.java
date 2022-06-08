@@ -1,7 +1,6 @@
 package io.ketill.xinput;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Signals that the version of X-input on this machine does not meet
@@ -16,7 +15,7 @@ public final class XInputVersionException extends XInputException {
     private final XInputVersion currentVersion;
     private final XInputVersion minimumVersion;
 
-    XInputVersionException(@Nullable XInputVersion currentVersion,
+    XInputVersionException(@NotNull XInputVersion currentVersion,
                            @NotNull XInputVersion minimumVersion) {
         super(getMessage(minimumVersion));
         this.currentVersion = currentVersion;
@@ -26,10 +25,9 @@ public final class XInputVersionException extends XInputException {
     /**
      * Returns the current version of X-input.
      *
-     * @return the current version of X-input, {@code null} if
-     * it is not available on this machine.
+     * @return the current version of X-input.
      */
-    public @Nullable XInputVersion getCurrentVersion() {
+    public @NotNull XInputVersion getCurrentVersion() {
         return this.currentVersion;
     }
 

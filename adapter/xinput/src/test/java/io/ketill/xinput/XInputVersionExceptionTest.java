@@ -7,18 +7,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class XInputVersionExceptionTest {
 
+    private XInputVersion current;
     private XInputVersion minimum;
     private XInputVersionException exception;
 
     @BeforeEach
     void createException() {
+        this.current = XInputVersion.V1_3;
         this.minimum = XInputVersion.V1_4;
-        this.exception = new XInputVersionException(null, minimum);
+        this.exception = new XInputVersionException(current, minimum);
     }
 
     @Test
     void testGetCurrentVersion() {
-        assertNull(exception.getCurrentVersion());
+        assertSame(current, exception.getCurrentVersion());
     }
 
     @Test

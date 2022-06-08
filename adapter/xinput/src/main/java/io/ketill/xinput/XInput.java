@@ -5,6 +5,7 @@ import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.XInputLibraryVersion;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
+import com.github.strikerx3.jxinput.natives.XInputNatives;
 import io.ketill.xbox.XboxController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -88,7 +89,11 @@ public final class XInput {
      * @see #requireAvailable()
      */
     public static boolean isAvailable() {
-        return XInputDevice.isAvailable();
+        /*
+         * XInputNatives must be used here. Using XInputDevice will
+         * result in a NoClassDefFoundError on non-Windows systems.
+         */
+        return XInputNatives.isLoaded();
     }
 
     /**
@@ -98,7 +103,7 @@ public final class XInput {
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @throws XInputUnavailableException if the X-input library is not
-     *                                    available.
+     *                                    available on this machine.
      * @see #isAvailable()
      */
     public static void requireAvailable() {
@@ -147,7 +152,7 @@ public final class XInput {
      * {@code version}, {@code false} otherwise.
      * @throws NullPointerException if {@code version} is {@code null}.
      * @see #getVersion()
-     * @see #requireAvailable()
+     * @see #requireAtLeast(XInputVersion)
      */
     public static boolean isAtLeast(@NotNull XInputVersion version) {
         Objects.requireNonNull(version, "version cannot be null");
@@ -167,16 +172,21 @@ public final class XInput {
      *
      * @param version the minimum version of X-input this machine must
      *                have present.
-     * @throws NullPointerException   if {@code version} is {@code null}.
-     * @throws XInputVersionException if the current version of X-input
-     *                                is not at least {@code version}.
+     * @throws NullPointerException       if {@code version} is {@code null}.
+     * @throws XInputUnavailableException if the X-input library is not
+     *                                    available on this machine.
+     * @throws XInputVersionException     if the current version of
+     *                                    the library is not at least
+     *                                    {@code version}.
      * @see #getVersion()
      * @see #isAtLeast(XInputVersion)
      */
     public static void requireAtLeast(@NotNull XInputVersion version) {
         Objects.requireNonNull(version, "version cannot be null");
         XInputVersion currentVersion = getVersion();
-        if (currentVersion == null || !currentVersion.isAtLeast(version)) {
+        if (currentVersion == null) {
+            throw new XInputUnavailableException();
+        } else if (!currentVersion.isAtLeast(version)) {
             throw new XInputVersionException(currentVersion, version);
         }
     }
@@ -193,8 +203,11 @@ public final class XInput {
      *
      * @param enabled {@code true} to enable X-input, {@code false} to
      *                disable it and thus receive neutral data.
-     * @throws XInputVersionException if the current version of the X-input
-     *                                library is not at least v1.4.
+     * @throws XInputUnavailableException if the X-input library is not
+     *                                    available on this machine.
+     * @throws XInputVersionException     if the current version of
+     *                                    the library is not at least
+     *                                    {@link XInputVersion#V1_4}.
      */
     public static void setEnabled(boolean enabled) {
         requireAtLeast(XInputVersion.V1_4);
@@ -211,7 +224,7 @@ public final class XInput {
      * <p>
      * <b>Alternative to:</b> {@link #setEnabled(boolean)}, which only
      * enables or disables the reporting state of X-input if the current
-     * version of the library is at least v1.4.
+     * version of the library is at least {@link XInputVersion#V1_4}.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
@@ -341,6 +354,7 @@ public final class XInput {
      * @see XInput#isAvailable()
      */
     public static @NotNull XboxController @NotNull [] getAllPlayers() {
+        requireAvailable();
         XboxController[] players = new XboxController[PLAYER_COUNT];
         for (int i = 0; i < players.length; i++) {
             players[i] = XInput.getPlayer(i);

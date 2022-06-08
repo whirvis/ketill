@@ -19,7 +19,7 @@ public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
      * Constructs a new {@code XInputXboxSeeker}.
      *
      * @throws XInputUnavailableException if the X-input library is not
-     *                                    available.
+     *                                    available on this machine.
      * @see XInput#isAvailable()
      */
     public XInputXboxSeeker() {

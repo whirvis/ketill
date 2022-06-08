@@ -10,12 +10,19 @@ import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
 import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Even though these tests for X-input use heavy mocking, they will
+ * only work on Windows due to how the native libraries are loaded.
+ */
 @SuppressWarnings("ResultOfMethodCallIgnored")
+@EnabledOnOs(OS.WINDOWS)
 class AtomicXInputDeviceTest {
 
     private XInputDevice14 xDevice;

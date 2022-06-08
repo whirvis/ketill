@@ -10,11 +10,18 @@ import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Even though these tests for X-input use heavy mocking, they will
+ * only work on Windows due to how the native libraries are loaded.
+ */
+@EnabledOnOs(OS.WINDOWS)
 class XInputXboxAdapterTest {
 
     private XInputDevice14 xDevice;

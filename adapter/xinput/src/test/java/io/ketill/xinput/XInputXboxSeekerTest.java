@@ -7,6 +7,8 @@ import io.ketill.IoDeviceDiscoverEvent;
 import io.ketill.IoDeviceForgetEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.mockito.MockedStatic;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,7 +16,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Even though these tests for X-input use heavy mocking, they will
+ * only work on Windows due to how the native libraries are loaded.
+ */
 @SuppressWarnings("ResultOfMethodCallIgnored")
+@EnabledOnOs(OS.WINDOWS)
 class XInputXboxSeekerTest {
 
     private XInputDevice[] devices;

@@ -5,11 +5,14 @@ import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.XInputLibraryVersion;
 import com.github.strikerx3.jxinput.exceptions.XInputNotLoadedException;
 import com.github.strikerx3.jxinput.natives.XInputConstants;
+import com.github.strikerx3.jxinput.natives.XInputNatives;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.mockito.MockedStatic;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,9 +20,19 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Even though these tests for X-input use heavy mocking, they will
+ * only work on Windows due to how the native libraries are loaded.
+ * <p>
+ * The class {@link XInputUnavailableTest}, is utilized to ensure
+ * that it is possible for non-Windows systems to at least check
+ * if X-input is available without errors.
+ */
 @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
+@EnabledOnOs(OS.WINDOWS)
 class XInputTest {
 
+    private static MockedStatic<XInputNatives> xNatives;
     private static MockedStatic<XInputDevice14> x14;
     private static MockedStatic<XInputDevice> x10;
 
@@ -30,12 +43,14 @@ class XInputTest {
          * if the static mocks are not created in this order. Maybe it has
          * to do with how the native libraries of JXInput are loaded?
          */
+        xNatives = mockStatic(XInputNatives.class);
         x14 = mockStatic(XInputDevice14.class);
         x10 = mockStatic(XInputDevice.class);
     }
 
     @BeforeEach
     void setup() {
+        xNatives.reset();
         x14.reset();
         x10.reset();
 
@@ -58,17 +73,17 @@ class XInputTest {
 
     @Test
     void testIsAvailable() {
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
         assertTrue(XInput.isAvailable());
-        x10.when(XInputDevice::isAvailable).thenReturn(false);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(false);
         assertFalse(XInput.isAvailable());
     }
 
     @Test
     void testRequireAvailable() {
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
         assertDoesNotThrow(XInput::requireAvailable);
-        x10.when(XInputDevice::isAvailable).thenReturn(false);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(false);
         assertThrows(XInputUnavailableException.class,
                 XInput::requireAvailable);
     }
@@ -76,13 +91,13 @@ class XInputTest {
     @Test
     void testGetVersion() {
         /*
-         * When X-input is not available on the current machine, this method
-         * should return null for the library version. This lets the caller
-         * know that X-input isn't available in the first place.
+         * When X-input is not available on the current machine, this
+         * method should return null for the library version. This lets
+         * the caller know that X-input isn't available at all.
          */
-        x10.when(XInputDevice::isAvailable).thenReturn(false);
         assertNull(XInput.getVersion());
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
 
         /* @formatter:off */
         x10.when(XInputDevice::getLibraryVersion)
@@ -107,16 +122,15 @@ class XInputTest {
         assertThrows(NullPointerException.class, () -> XInput.isAtLeast(null));
 
         /*
-         * In the event X-input is unavailable entirely, then there is
-         * no current version to be at least the version requested by
-         * the user. As such, a value of false should be returned.
+         * When X-input is unavailable there is no current version to
+         * be at least the version requested by the user. As a result,
+         * a value of false should be returned.
          */
-        x10.when(XInputDevice::isAvailable).thenReturn(false);
         assertFalse(XInput.isAtLeast(XInputVersion.V1_3));
 
-        /* mock X-input v1.3 availability for next test */
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
+
         /* @formatter:off */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
         x10.when(XInputDevice::getLibraryVersion)
                 .thenReturn(XInputLibraryVersion.XINPUT_1_3);
         /* @formatter:on */
@@ -136,17 +150,16 @@ class XInputTest {
                 () -> XInput.requireAtLeast(null));
 
         /*
-         * In the event X-input is unavailable entirely, then there is
-         * no current version to be at least the version requested by
-         * the user. As such, an exception should be thrown.
+         * When X-input is unavailable there is no current version to
+         * be at least the version requested by the user. As a result,
+         * this method should throw an exception.
          */
-        x10.when(XInputDevice::isAvailable).thenReturn(false);
-        assertThrows(XInputVersionException.class,
+        assertThrows(XInputUnavailableException.class,
                 () -> XInput.requireAtLeast(XInputVersion.V1_3));
 
-        /* mock X-input v1.3 availability for next test */
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
+
         /* @formatter:off */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
         x10.when(XInputDevice::getLibraryVersion)
                 .thenReturn(XInputLibraryVersion.XINPUT_1_3);
         /* @formatter:on */
@@ -174,20 +187,33 @@ class XInputTest {
          * or later. At the moment, X-input is mocked to not be available
          * on this system. As such, this should result in an exception.
          */
+        assertThrows(XInputUnavailableException.class,
+                () -> XInput.setEnabled(false));
+
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
+
+        /* @formatter:off */
+        x10.when(XInputDevice::getLibraryVersion)
+                .thenReturn(XInputLibraryVersion.XINPUT_1_3);
+        /* @formatter:on */
+
+        /*
+         * X-input is now mocked to be available on this system, but it
+         * is not on a high enough version. As such, this should result
+         * in another exception being thrown.
+         */
         assertThrows(XInputVersionException.class,
                 () -> XInput.setEnabled(false));
 
-        /* mock X-input v1.4 availability for next test */
         /* @formatter:off */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
         x10.when(XInputDevice::getLibraryVersion)
                 .thenReturn(XInputLibraryVersion.XINPUT_1_4);
         /* @formatter:on */
 
         /*
-         * Now that the availability of X-input v1.4 is being mocked, this
-         * method should not throw an exception. It should also make a call
-         * to the underlying XInputDevice14 API to fulfill the request.
+         * Now that X-input v1.4 is being mocked to be available, this
+         * method should not throw an exception. It should also make a
+         * call to the XInputDevice14 API to fulfill the request.
          */
         assertDoesNotThrow(() -> XInput.setEnabled(false));
         x14.verify(() -> XInputDevice14.setEnabled(false));
@@ -202,17 +228,17 @@ class XInputTest {
          */
         assertFalse(XInput.trySetEnabled(false));
 
-        /* mock X-input v1.4 availability for next test */
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
+
         /* @formatter:off */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
         x10.when(XInputDevice::getLibraryVersion)
                 .thenReturn(XInputLibraryVersion.XINPUT_1_4);
         /* @formatter:on */
 
         /*
-         * Now that the availability of X-input v1.4 is being mocked, this
-         * method should return a value of true. It should also make a call
-         * to the underlying XInputDevice14 API to fulfill the request.
+         * Now that X-input v1.4 is mocked to be available, this method
+         * should return a value of true. It should also make a call to
+         * the XInputDevice14 API to fulfill the request.
          */
         assertTrue(XInput.trySetEnabled(false));
         x14.verify(() -> XInputDevice14.setEnabled(false));
@@ -228,14 +254,11 @@ class XInputTest {
         XInput.cacheControllers();
         x14.verify(XInputDevice14::getAllDevices, times(1));
 
-        /* stop mocking availability of X-input v1.4 */
-        x14.when(XInputDevice14::isAvailable).thenReturn(false);
-
         /*
          * Otherwise, the base X-input devices should be fetched instead.
          * If these aren't used, then what else would be?
          */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+        x14.when(XInputDevice14::isAvailable).thenReturn(false);
         XInput.cacheControllers();
         x10.verify(XInputDevice::getAllDevices, times(1));
 
@@ -271,10 +294,8 @@ class XInputTest {
         assertThrows(XInputUnavailableException.class,
                 () -> XInput.getPlayer(0));
 
-        /* mock X-input v1.0 availability for next test */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
-
         /* cache all available players for next test */
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
         XboxController[] players = new XboxController[XInput.PLAYER_COUNT];
         for (int i = 0; i < players.length; i++) {
             players[i] = XInput.getPlayer(i);
@@ -308,11 +329,11 @@ class XInputTest {
         XInputException exception = new XInputException("test");
 
         /*
-         * When an error occurs in cacheControllers(), in this case
-         * due to an induced error in the underlying X-input library,
-         * it should be thrown back to the user.
+         * When an error occurs while invoking cacheControllers(), it
+         * should be thrown back to the user. The controllers will be
+         * unusable if they were not successfully loaded.
          */
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
         x10.when(XInputDevice::getAllDevices).thenThrow(exception);
         assertThrows(XInputException.class, () -> XInput.getPlayer(0));
 
@@ -325,26 +346,24 @@ class XInputTest {
         }
 
         /*
-         * After the first call to getPlayer() fails, any subsequent
-         * call should result in the original exception being thrown
-         * again. This is because simply returning null to the user
-         * may result in a hard to debug situation. For example, it
-         * is possible the first caller got an exception and simply
-         * didn't report it anywhere.
+         * After the first call to getPlayer() fails, any calls later
+         * should result in the original exception being thrown again.
+         *
+         * Simply returning null to the user may result in a situation
+         * that is unnecessarily hard to debug. For example, the first
+         * caller may have let the exception occur silently.
          */
         assertSame(caught.get(), exception);
     }
 
     @Test
     void testGetAllPlayers() {
-        x10.when(XInputDevice::isAvailable).thenReturn(true);
+        xNatives.when(XInputNatives::isLoaded).thenReturn(true);
 
         /*
-         * This method is a shorthand for creating an array of all
-         * available players in X-input. As such, every element in
-         * the array should be the same instance as the controller
-         * returned by getPlayer(), with its array index being the
-         * corresponding player number.
+         * This method is a shorthand for creating an array of every
+         * available player in X-input. As such, every element of the
+         * array should be the same instance returned by getPlayer().
          */
         XboxController[] players = XInput.getAllPlayers();
         for (int i = 0; i < XInput.PLAYER_COUNT; i++) {
@@ -364,6 +383,7 @@ class XInputTest {
     static void stopMockingXInput() {
         x10.close(); /* stop mocking X-input v1.0 */
         x14.close(); /* stop mocking X-input v1.4 */
+        xNatives.close(); /* stop mocking X-input natives */
     }
 
 }
