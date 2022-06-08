@@ -31,8 +31,8 @@ public final class IoDeviceObserver extends EventObserver<IoDeviceEvent> {
 
     /**
      * Provides subscribers with a new event to observe. This method may
-     * be called 0 or more times. The event <i>must</i> come from the I/O
-     * device which created this observer.
+     * be called zero or more times. The event <i>must</i> come from the
+     * I/O device which created this observer.
      *
      * @param event the event to emit.
      * @throws NullPointerException     if {@code event} is {@code null}.
