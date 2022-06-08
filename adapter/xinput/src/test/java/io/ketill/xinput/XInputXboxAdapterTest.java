@@ -7,11 +7,15 @@ import com.github.strikerx3.jxinput.XInputComponents;
 import com.github.strikerx3.jxinput.XInputDevice14;
 import com.github.strikerx3.jxinput.enums.XInputBatteryDeviceType;
 import com.github.strikerx3.jxinput.enums.XInputBatteryLevel;
+import io.ketill.IoFeature;
 import io.ketill.xbox.XboxController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.ketill.KetillAssertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,6 +33,7 @@ class XInputXboxAdapterTest {
     private XInputButtons xButtons;
     private XInputBatteryInformation xBatteryInfo;
 
+    private AtomicXInputDevice axDevice;
     private XboxController controller;
 
     @BeforeEach
@@ -56,14 +61,21 @@ class XInputXboxAdapterTest {
         /* @formatter:on */
 
         this.controller = new XboxController(((c, r) -> {
-            AtomicXInputDevice atomic = new AtomicXInputDevice(xDevice);
-            return new XInputXboxAdapter(c, r, atomic);
+            this.axDevice = new AtomicXInputDevice(xDevice);
+            return new XInputXboxAdapter(c, r, axDevice);
         }));
     }
 
     @Test
     void ensureAllFeaturesSupported() {
-        assertAllFeaturesSupported(controller);
+        List<IoFeature<?, ?>> unsupported = new ArrayList<>();
+        if (!axDevice.supportsGuideButton()) {
+            unsupported.add(XboxController.BUTTON_GUIDE);
+        }
+        if (!axDevice.supportsBatteryLevel()) {
+            unsupported.add(XboxController.INTERNAL_BATTERY);
+        }
+        assertAllFeaturesSupported(controller, unsupported);
     }
 
     @Test
