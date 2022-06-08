@@ -39,6 +39,15 @@ public enum XInputVersion {
     }
 
     /**
+     * Returns the description of this version.
+     *
+     * @return the description of this version.
+     */
+    public @NotNull String getDescription() {
+        return this.description;
+    }
+
+    /**
      * Returns if this version is at least a given version.
      * <p>
      * A version is considered to be "at least" another version when it
@@ -54,15 +63,6 @@ public enum XInputVersion {
     public boolean isAtLeast(@NotNull XInputVersion version) {
         Objects.requireNonNull(version, "version cannot be null");
         return this.level >= version.level;
-    }
-
-    /**
-     * Returns the description of this version.
-     *
-     * @return the description of this version.
-     */
-    public @NotNull String getDescription() {
-        return this.description;
     }
 
 }
