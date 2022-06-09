@@ -55,8 +55,7 @@ class AwtKeyboardAdapterTest {
                 AwtKeyboardAdapter.captureBackground(component);
         assertNotNull(keyboardWorker);
 
-        /* prevent lingering background thread */
-        keyboardWorker.close();
+        keyboardWorker.close(); /* prevent lingering thread */
     }
 
     @Test

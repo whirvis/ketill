@@ -3,8 +3,8 @@ package io.ketill.awt;
 import io.ketill.IoDevice;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 final class AwtPollThread extends Thread {
@@ -18,7 +18,7 @@ final class AwtPollThread extends Thread {
     AwtPollThread() {
         super("Ketill-Java-AWT");
         this.running = new AtomicBoolean();
-        this.devices = new ArrayList<>();
+        this.devices = new CopyOnWriteArrayList<>();
     }
 
     private void lowerCPU() {
@@ -36,14 +36,29 @@ final class AwtPollThread extends Thread {
 
     @Override
     public void run() {
-        running.set(true);
-        while (running.get()) {
-            synchronized (devices) {
+        try {
+            /*
+             * Previously, this method set the running flag to true just
+             * before entering the while loop. However, this would cause
+             * the thread to hang if the last device was closed too quickly.
+             * This exact reason for this is unknown.
+             */
+            if (!running.get()) {
+                throw new IllegalStateException("not running");
+            }
+
+            while (running.get()) {
                 for (IoDevice device : devices) {
                     device.poll();
                 }
+                this.lowerCPU();
             }
-            this.lowerCPU();
+        } finally {
+            /*
+             * This prevents a memory leak in the event this thread
+             * is stops running without all devices being removed.
+             */
+            devices.clear();
         }
     }
 

@@ -4,6 +4,7 @@ import io.ketill.IoDevice;
 import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.Closeable;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,8 +27,10 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public final class AwtPollWorker<I extends IoDevice> implements Closeable {
 
-    private static final Lock POLL_THREAD_LOCK = new ReentrantLock();
+    @TestOnly
+    static boolean interruptQuitPolling;
 
+    private static final Lock POLL_THREAD_LOCK = new ReentrantLock();
     private static @Nullable AwtPollThread pollThread;
 
     /* @formatter:off */
@@ -42,6 +45,7 @@ public final class AwtPollWorker<I extends IoDevice> implements Closeable {
              */
             if (pollThread == null) {
                 pollThread = new AwtPollThread();
+                pollThread.running.set(true);
                 pollThread.start();
             }
 
@@ -73,6 +77,9 @@ public final class AwtPollWorker<I extends IoDevice> implements Closeable {
                 pollThread.running.set(false);
 
                 try {
+                    if (interruptQuitPolling) {
+                        throw new InterruptedException();
+                    }
                     pollThread.join();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
