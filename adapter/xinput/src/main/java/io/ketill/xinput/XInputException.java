@@ -4,7 +4,7 @@ import io.ketill.KetillException;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Signals that an error relating to the X-input adapter for Ketill I/O
+ * Signals that an error relating to the XInput module for Ketill I/O
  * has occurred.
  */
 public class XInputException extends KetillException {

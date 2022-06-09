@@ -3,7 +3,7 @@ package io.ketill.xinput;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Signals that the version of X-input on this machine does not meet
+ * Signals that the version of XInput on this machine does not meet
  * a minimum version requirement, or is unavailable entirely.
  */
 public final class XInputVersionException extends XInputException {
@@ -13,12 +13,12 @@ public final class XInputVersionException extends XInputException {
     }
 
     /**
-     * The current version of X-input.
+     * The current version of XInput.
      */
     private final XInputVersion currentVersion;
 
     /**
-     * The required minimum version of X-input.
+     * The required minimum version of XInput.
      */
     private final XInputVersion minimumVersion;
 
@@ -30,18 +30,18 @@ public final class XInputVersionException extends XInputException {
     }
 
     /**
-     * Returns the current version of X-input.
+     * Returns the current version of XInput.
      *
-     * @return the current version of X-input.
+     * @return the current version of XInput.
      */
     public @NotNull XInputVersion getCurrentVersion() {
         return this.currentVersion;
     }
 
     /**
-     * Returns the required minimum version of X-input.
+     * Returns the required minimum version of XInput.
      *
-     * @return the required minimum version of X-input.
+     * @return the required minimum version of XInput.
      */
     public @NotNull XInputVersion getMinimumVersion() {
         return this.minimumVersion;

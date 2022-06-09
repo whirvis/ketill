@@ -5,30 +5,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Represents a version of X-input.
+ * Represents a version of XInput.
  */
 public enum XInputVersion {
 
     /**
-     * X-input 9 v1.0
+     * XInput 9 v1.0
      * <p>
      * <b>Availability:</b> Windows Vista only.
      */
-    V1_0("X-input 9 v1.0", 0),
+    V1_0("XInput 9 v1.0", 0),
 
     /**
-     * X-input v1.3
+     * XInput v1.3
      * <p>
      * <b>Availability:</b> Windows Vista and later.
      */
-    V1_3("X-input v1.3", 1),
+    V1_3("XInput v1.3", 1),
 
     /**
-     * X-input v1.4
+     * XInput v1.4
      * <p>
      * <b>Availability:</b> Windows 8 and later.
      */
-    V1_4("X-input v1.4", 2);
+    V1_4("XInput v1.4", 2);
 
     private final String description;
     private final int level;

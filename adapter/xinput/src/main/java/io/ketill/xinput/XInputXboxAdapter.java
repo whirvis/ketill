@@ -20,17 +20,17 @@ import org.jetbrains.annotations.Nullable;
 import static io.ketill.xbox.XboxController.*;
 
 /**
- * An {@link XboxController} adapter using X-input.
+ * An {@link XboxController} adapter using XInput.
  * <p>
- * <b>Adapter quirks:</b> X-input does not return an exact value for the
+ * <b>Adapter quirks:</b> XInput does not return an exact value for the
  * controller's battery level. Rather, it will only return if the battery
  * level is {@code FULL}, {@code MEDIUM}, {@code LOW}, or {@code EMPTY}.
- * Due to this, the value must be approximated.
+ * Due to this, the exact value must be approximated.
  * <p>
  * Furthermore, the {@code INTERNAL_BATTERY} feature is supported only
- * if X-input 1.4 or higher is available on this machine. Support for
+ * if XInput v1.4 or higher is available on this machine. Support for
  * the {@code BUTTON_GUIDE} feature is also not guaranteed. It depends
- * on the current installation of X-input.
+ * on the current installation of XInput.
  * <p>
  * <b>Thread safety:</b> This adapter is <i>thread-safe.</i>
  *
@@ -143,7 +143,7 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     private void updateMotor(@NotNull MotorVibration state,
                              @NotNull RumbleMotor motor) {
         /*
-         * The X-input API will throw an exception if it receives a motor
+         * The XInput API will throw an exception if it receives a motor
          * force that is out of its valid bounds. Clamping the force will
          * prevent this from occurring.
          */
@@ -173,7 +173,7 @@ public final class XInputXboxAdapter extends IoDeviceAdapter<XboxController> {
     protected boolean isDeviceConnected() {
         /*
          * This must return an up-to-date connection status, regardless
-         * if the device was polled previously. As a result, thee X-input
+         * if the device was polled previously. As a result, the XInput
          * device must be polled here.
          */
         xDevice.poll(); /* update connection status */

@@ -19,7 +19,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * The base class for X-input operations.
+ * The base class for XInput operations.
  * <p>
  * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
@@ -76,13 +76,13 @@ public final class XInput {
     }
 
     /**
-     * Returns if X-input is available on this machine.
+     * Returns if XInput is available on this machine.
      * <p>
-     * Since X-input may not be available on the current system, it is
+     * Since XInput may not be available on the current system, it is
      * best to check for availability before attempting to use the rest
      * of this module.
      *
-     * @return {@code true} if the X-input library is available,
+     * @return {@code true} if the XInput library is available,
      * {@code false} otherwise.
      * @see #requireAvailable()
      */
@@ -95,10 +95,10 @@ public final class XInput {
     }
 
     /**
-     * Requires that X-input be available on this machine before
+     * Requires that XInput be available on this machine before
      * continuing execution.
      *
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @see #isAvailable()
      */
@@ -109,9 +109,9 @@ public final class XInput {
     }
 
     /**
-     * Returns the current version of X-input.
+     * Returns the current version of XInput.
      *
-     * @return the current version of X-input, {@code null} if it is not
+     * @return the current version of XInput, {@code null} if it is not
      * available on this machine.
      * @see #isAtLeast(XInputVersion)
      * @see #requireAtLeast(XInputVersion)
@@ -137,10 +137,10 @@ public final class XInput {
     }
 
     /**
-     * Returns if X-input is at least a given version.
+     * Returns if XInput is at least a given version.
      *
      * @param version the version to compare with.
-     * @return {@code true} if the current version of X-input is at least
+     * @return {@code true} if the current version of XInput is at least
      * {@code version}, {@code false} otherwise.
      * @throws NullPointerException if {@code version} is {@code null}.
      * @see #getVersion()
@@ -157,13 +157,13 @@ public final class XInput {
     }
 
     /**
-     * Requires the current version of X-input to be at least a given
+     * Requires the current version of XInput to be at least a given
      * version before continuing execution.
      *
-     * @param version the minimum version of X-input this machine must
+     * @param version the minimum version of XInput this machine must
      *                have present.
      * @throws NullPointerException       if {@code version} is {@code null}.
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @throws XInputVersionException     if the current version of
      *                                    the library is not at least
@@ -182,16 +182,16 @@ public final class XInput {
     }
 
     /**
-     * Enables or disables the reporting state of X-input.
+     * Enables or disables the reporting state of XInput.
      * <p>
-     * Disabling the reporting state of X-input result in the library
-     * reporting a neutral state for all controllers and no vibration
-     * data being sent. This is useful for applications which can lose
-     * and then regain focus.
+     * Disabling the reporting state of XInput will result in the library
+     * reporting a neutral state for all controllers and no vibration data
+     * being sent. This is useful for applications which can lose and then
+     * regain focus.
      *
-     * @param enabled {@code true} to enable X-input, {@code false} to
+     * @param enabled {@code true} to enable XInput, {@code false} to
      *                disable it and thus receive neutral data.
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @throws XInputVersionException     if the current version of
      *                                    the library is not at least
@@ -203,20 +203,20 @@ public final class XInput {
     }
 
     /**
-     * Attempts to enable or disable the reporting state of X-input.
+     * Attempts to enable or disable the reporting state of XInput.
      * <p>
-     * Disabling the reporting state of X-input result in the library
+     * Disabling the reporting state of XInput result in the library
      * reporting a neutral state for all controllers and no vibration
      * data being sent. This is useful for applications which can lose
      * and then regain focus.
      * <p>
      * <b>Alternative to:</b> {@link #setEnabled(boolean)}, which only
-     * enables or disables the reporting state of X-input if the current
+     * enables or disables the reporting state of XInput if the current
      * version of the library is at least {@link XInputVersion#V1_4}.
      *
-     * @param enabled {@code true} to enable X-input, {@code false} to
+     * @param enabled {@code true} to enable XInput, {@code false} to
      *                disable it and thus receive neutral data.
-     * @return {@code true} if the reporting state of X-input was updated
+     * @return {@code true} if the reporting state of XInput was updated
      * successfully, {@code false} otherwise.
      */
     public static boolean trySetEnabled(boolean enabled) {
@@ -238,8 +238,7 @@ public final class XInput {
                 xDevices = XInputDevice.getAllDevices();
             }
         } catch (XInputNotLoadedException e) {
-            String msg = "Failure to load X-input";
-            throw new XInputSetupException(msg, e);
+            throw new XInputSetupException(e);
         }
 
         for (int i = 0; i < CONTROLLERS.length; i++) {
@@ -257,9 +256,9 @@ public final class XInput {
      * Take note that for a given player number, the same controller
      * instance will be returned every time this method is called.
      * <p>
-     * When using X-input, there is a maximum of four players. The
-     * player number should also be treated like an array index. As
-     * such, {@code playerNum} starts at zero for player one.
+     * When using XInput, there is a maximum of four players. The
+     * player number should also be treated like an array index.
+     * As such, {@code playerNum} starts at zero for player one.
      * <p>
      * <b>Thread safety:</b> The returned controller can be shared
      * among multiple threads. Its adapter is {@link XInputXboxAdapter},
@@ -270,7 +269,7 @@ public final class XInput {
      * @throws IndexOutOfBoundsException  if {@code playerNum} is less than
      *                                    zero or greater than or equal to
      *                                    the available player count.
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @throws XInputSetupException       if a setup error occurs.
      * @see XInput#isAvailable()
@@ -337,7 +336,7 @@ public final class XInput {
      * which is <i>thread-safe.</i>
      *
      * @return the controllers for every available player.
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @throws XInputSetupException       if a setup error occurs.
      * @see XInput#isAvailable()

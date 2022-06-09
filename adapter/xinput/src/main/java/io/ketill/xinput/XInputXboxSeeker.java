@@ -4,7 +4,7 @@ import io.ketill.IoDeviceSeeker;
 import io.ketill.xbox.XboxController;
 
 /**
- * An {@link XboxController} seeker using X-input.
+ * An {@link XboxController} seeker using XInput.
  * <p>
  * <b>Thread safety:</b> This seeker is <i>thread-safe.</i>
  *
@@ -18,7 +18,7 @@ public final class XInputXboxSeeker extends IoDeviceSeeker<XboxController> {
     /**
      * Constructs a new {@code XInputXboxSeeker}.
      *
-     * @throws XInputUnavailableException if the X-input library is not
+     * @throws XInputUnavailableException if the XInput library is not
      *                                    available on this machine.
      * @see XInput#isAvailable()
      */
