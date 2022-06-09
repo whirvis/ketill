@@ -209,33 +209,6 @@ public class JsonDeviceGuids extends DeviceGuids {
     }
     /* @formatter:on */
 
-    /**
-     * Loads device GUIDs from a JSON file.
-     * <p>
-     * For this method to successfully return, the file at {@code path} must
-     * contain a valid JSON device GUIDs container. If the file's contents do
-     * not follow specifications, a {@code JsonIOException} will be thrown.
-     * <p>
-     * An example of a valid container is given in the class JavaDocs.
-     * <p>
-     * <b>Encoding:</b> This method expects {@code UTF-8} encoding.
-     *
-     * @param path the path of the file to read from.
-     * @return the loaded device GUIDs.
-     * @throws NullPointerException if {@code path} is {@code null}.
-     * @throws JsonIOException      if the contents of the file located
-     *                              {@code path} contains invalid JSON
-     *                              for a JSON device GUIDs container.
-     * @throws IOException          if an I/O error occurs.
-     */
-    /* @formatter:off */
-    public static @NotNull DeviceGuids
-            loadFile(@NotNull String path) throws IOException {
-        Objects.requireNonNull(path, "path cannot be null");
-        return loadFile(new File(path));
-    }
-    /* @formatter:on */
-
     private final Map<String, List<String>> guids;
 
     private JsonDeviceGuids() {

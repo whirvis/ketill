@@ -190,19 +190,14 @@ class JsonDeviceGuidsTest {
     void testLoadFile() throws IOException {
         /*
          * It would not make sense to attempt loading a JSON device GUIDs
-         * container from a null file (or file path). Assume this was a
-         * mistake by the user and throw an exception.
+         * container from a null file. As such, assume this was a mistake
+         * by the user and throw an exception.
          */
         assertThrows(NullPointerException.class,
-                () -> JsonDeviceGuids.loadFile((File) null));
-        assertThrows(NullPointerException.class,
-                () -> JsonDeviceGuids.loadFile((String) null));
+                () -> JsonDeviceGuids.loadFile(null));
 
         File copiedFile = copyResource("valid.json");
         assertDoesNotThrow(() -> JsonDeviceGuids.loadFile(copiedFile));
-
-        String copiedPath = copiedFile.getAbsolutePath();
-        assertDoesNotThrow(() -> JsonDeviceGuids.loadFile(copiedPath));
 
         /* ensure file is deleted before exiting */
         assertTrue(copiedFile.delete());
