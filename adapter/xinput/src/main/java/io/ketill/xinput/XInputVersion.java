@@ -68,4 +68,15 @@ public enum XInputVersion {
         return this.level >= version.level;
     }
 
+    /**
+     * Returns the description of this version.
+     *
+     * @return the description of this version.
+     * @see #getDescription()
+     */
+    @Override
+    public String toString() {
+        return this.getDescription();
+    }
+
 }

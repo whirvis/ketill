@@ -44,4 +44,11 @@ class XInputVersionTest {
         assertNotNull(V1_4.getDescription());
     }
 
+    @Test
+    void testToString() {
+        assertEquals(V1_0.getDescription(), V1_0.toString());
+        assertEquals(V1_3.getDescription(), V1_3.toString());
+        assertEquals(V1_4.getDescription(), V1_4.toString());
+    }
+
 }
