@@ -9,6 +9,8 @@ import java.util.Objects;
 
 /**
  * A mapping for a {@link KeyboardKey} used by {@link AwtKeyboardAdapter}.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see AwtKeyboardAdapter#mapKey(KeyboardKey, int, int)
  */
