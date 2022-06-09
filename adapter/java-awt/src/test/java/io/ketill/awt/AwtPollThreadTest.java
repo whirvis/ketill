@@ -25,9 +25,9 @@ class AwtPollThreadTest {
          * value themselves before starting the thread. This is to prevent
          * the thread from possibly hanging.
          *
-         * Note: run() instead of start() is used here, as using start()
-         * would spawn a new Thread (which would throw an exception that
-         * JUnit could not catch). All other tests should use start().
+         * Take note that run() instead of start() is used here, as using
+         * start() would spawn a new Thread (which would throw an exception
+         * that JUnit could not catch). All other tests should use start().
          */
         assertThrows(IllegalStateException.class, thread::run);
         thread.running.set(true);
