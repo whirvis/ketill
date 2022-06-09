@@ -6,6 +6,9 @@ import java.util.Objects;
 
 /**
  * Represents a version of XInput.
+ *
+ * @see #getDescription()
+ * @see #isAtLeast(XInputVersion)
  */
 public enum XInputVersion {
 
