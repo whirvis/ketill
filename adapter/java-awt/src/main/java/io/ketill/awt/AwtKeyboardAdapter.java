@@ -20,15 +20,24 @@ import static java.awt.event.KeyEvent.*;
 /**
  * A {@link Keyboard} adapter using Java AWT.
  * <p>
- * <b>Note:</b> Unlike the {@code glfw-pc} module, this adapter uses virtual
- * key codes to map keyboard keys. This means that the physical location of
- * a key will change based on the current keyboard layout of the system.
+ * <b>Adapter quirks:</b> Unlike the {@code glfw-pc} module, this
+ * adapter uses virtual key codes to map keyboard keys. This means
+ * the physical location of a key will change based on the current
+ * keyboard layout of the system (such as QWERTY, AZERTY, etc.)
+ * <p>
+ * <b>Thread safety:</b> This adapter is <i>thread-safe.</i>
  */
 public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
 
     private static final int VK_F25 = VK_F24 + 1;
 
     /**
+     * Captures the keyboard from a Java AWT component.
+     * <p>
+     * <b>Thread safety:</b> The returned keyboard can be shared among
+     * multiple threads. Its adapter is an {@link AwtKeyboardAdapter},
+     * which is <i>thread-safe.</i>
+     *
      * @param component the AWT component.
      * @return the captured keyboard.
      * @throws NullPointerException if {@code component} is {@code null}.
@@ -40,15 +49,23 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     }
 
     /**
-     * Similar to {@link #capture(Component)}, with the key difference being
-     * that the captured {@code Keyboard} will be automatically polled in a
-     * background thread managed by Ketill's Java AWT module.
+     * Captures the keyboard from a Java AWT component.
+     * <p>
+     * <b>Similar to:</b> {@link #capture(Component)}, with the difference
+     * being that the returned {@code Keyboard} will be polled automatically
+     * in a background thread managed by Ketill's Java AWT module.
+     * <p>
+     * <b>Thread safety:</b> The returned worker can be shared among multiple
+     * threads. It is an {@link AwtPollWorker}, which is <i>thread-safe.</i>
+     * Furthermore, the keyboard this worker manages can also be shared among
+     * multiple threads. Its adapter is an {@link AwtKeyboardAdapter}, which
+     * is also <i>thread-safe.</i>
      *
      * @param component the AWT component.
      * @return the captured keyboard.
      * @throws NullPointerException if {@code component} is {@code null}.
      * @see AwtPollWorker#getDevice()
-     * @see AwtPollWorker#cancel()
+     * @see AwtPollWorker#close()
      */
     /* @formatter:off */
     @CapturingMethod
@@ -80,10 +97,13 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     }
 
     /**
+     * Maps a {@link KeyboardKey} to a virtual keycode at a given location
+     * on the keyboard.
+     *
      * @param key         the keyboard key to map.
      * @param keyCode     the keycode to map {@code key} to.
      * @param keyLocation the location of the key.
-     * @throws NullPointerException     if {@code key} is {@code null}.
+     * @throws NullPointerException if {@code key} is {@code null}.
      * @see #updateKey(KeyPressZ, AwtKeyMapping)
      */
     @MappingMethod
@@ -95,7 +115,9 @@ public class AwtKeyboardAdapter extends IoDeviceAdapter<Keyboard> {
     }
 
     /**
-     * This method is a shorthand for {@link #mapKey(KeyboardKey, int, int)}
+     * Maps a {@link KeyboardKey} to a virtual keycode.
+     * <p>
+     * <b>Shorthand for:</b> {@link #mapKey(KeyboardKey, int, int)},
      * with the argument for {@code keyLocation} being
      * {@link KeyEvent#KEY_LOCATION_STANDARD}.
      *

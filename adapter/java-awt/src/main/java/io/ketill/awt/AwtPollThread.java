@@ -5,17 +5,19 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 final class AwtPollThread extends Thread {
 
     @TestOnly
     boolean interruptLowerCPU = false;
 
-    volatile boolean running;
+    final AtomicBoolean running;
     final List<IoDevice> devices;
 
     AwtPollThread() {
         super("Ketill-Java-AWT");
+        this.running = new AtomicBoolean();
         this.devices = new ArrayList<>();
     }
 
@@ -27,15 +29,15 @@ final class AwtPollThread extends Thread {
             }
             Thread.sleep(0, 1);
         } catch (InterruptedException e) {
-            this.running = false;
+            running.set(false);
             this.interrupt();
         }
     }
 
     @Override
     public void run() {
-        this.running = true;
-        while (this.running) {
+        running.set(true);
+        while (running.get()) {
             synchronized (devices) {
                 for (IoDevice device : devices) {
                     device.poll();

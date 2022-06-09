@@ -32,30 +32,31 @@ class AwtPollWorkerTest {
     }
 
     @Test
-    void testIsCancelled() {
-        assertFalse(worker.isCancelled());
-        worker.cancel();
-        assertTrue(worker.isCancelled());
+    void testIsClosed() {
+        assertFalse(worker.isClosed());
+        worker.close();
+        assertTrue(worker.isClosed());
     }
 
     @Test
-    void testCancel() throws InterruptedException {
-        worker.cancel();
+    void testClose() throws InterruptedException {
+        worker.close();
 
         /*
-         * Once a worker has been cancelled, it should no longer be polled
-         * by the background thread. If this occurs, then it means that the
-         * worker cancellation is broken.
+         * Once a worker has been closed, it should no longer be polled
+         * by the background thread. If this occurs, then it means that
+         * the worker closing is broken.
          */
         reset(device); /* clear previous invocations */
         Thread.sleep(100); /* wait for worker */
         verify(device, never()).poll();
 
         /*
-         * Once a worker has been cancelled, it can be cancelled again
-         * without problem. It just shouldn't do anything.
+         * Once a worker has been close, it can be closed again without
+         * problem. It just shouldn't do anything. This is to comply with
+         * Java's Closeable interface.
          */
-        assertDoesNotThrow(() -> worker.cancel());
+        assertDoesNotThrow(() -> worker.close());
     }
 
     @Test
@@ -64,9 +65,9 @@ class AwtPollWorkerTest {
     }
 
     @AfterEach
-    void cancelWorker() {
+    void closeWorker() {
         /* prevent lingering background thread */
-        worker.cancel();
+        worker.close();
     }
 
 }

@@ -78,7 +78,9 @@ class AwtMouseAdapterTest {
         AwtPollWorker<Mouse> mouseWorker =
                 AwtMouseAdapter.captureBackground(component);
         assertNotNull(mouseWorker);
-        mouseWorker.cancel(); /* prevent lingering background thread */
+
+        /* prevent lingering background thread */
+        mouseWorker.close();
     }
 
     @Test

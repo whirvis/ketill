@@ -5,92 +5,123 @@ import io.ketill.ToStringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Closeable;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
- * A class which calls {@link IoDevice#poll()} on I/O devices in a background
- * thread.
+ * A class which calls {@link IoDevice#poll()} on I/O devices in a
+ * background thread. Once created, polling of the assigned device
+ * can be stopped by calling {@link #close()}.
+ * <p>
+ * The background thread which polls each device is a single thread.
+ * It starts automatically when the first device is added, and stops
+ * automatically when no devices are left.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @param <I> the I/O device type.
  * @see #getDevice()
- * @see #cancel()
  */
-public final class AwtPollWorker<I extends IoDevice> {
+public final class AwtPollWorker<I extends IoDevice> implements Closeable {
+
+    private static final Lock POLL_THREAD_LOCK = new ReentrantLock();
 
     private static @Nullable AwtPollThread pollThread;
 
     /* @formatter:off */
     static synchronized <I extends IoDevice> @NotNull AwtPollWorker<I>
             pollInBackground(@NotNull I device) {
-        /*
-         * If pollThread is null, that means no devices were previously being
-         * polled. In this situation, just create a new one and start it.
-         */
-        if (pollThread == null) {
-            pollThread = new AwtPollThread();
-            pollThread.start();
-        }
+        POLL_THREAD_LOCK.lock();
+        try {
+            /*
+             * If pollThread is null, that means no devices were
+             * previously being polled. In this situation, create
+             * and start a new one.
+             */
+            if (pollThread == null) {
+                pollThread = new AwtPollThread();
+                pollThread.start();
+            }
 
-        synchronized (pollThread.devices) {
             pollThread.devices.add(device);
+        } finally{
+            POLL_THREAD_LOCK.unlock();
         }
-
         return new AwtPollWorker<>(device);
     }
     /* @formatter:on */
 
     private static synchronized void quitPolling(@NotNull IoDevice device) {
-        if (pollThread == null) {
-            return; /* nothing being polled */
-        }
+        POLL_THREAD_LOCK.lock();
+        try {
+            if (pollThread == null) {
+                return; /* nothing being polled */
+            }
 
-        synchronized (pollThread.devices) {
             pollThread.devices.remove(device);
 
             /*
-             * If there are no more devices to poll as a result of calling
-             * this method, there is no reason to keep the thread alive.
-             * As such, disable it and nullify the reference. If another
-             * device is added later, a new thread will be created.
+             * If there are no more devices to poll as a result of
+             * calling this method, there is no reason to keep the
+             * thread alive. As such, disable it and nullify the
+             * reference. If another device is added later, a new
+             * thread will be created.
              */
             if (pollThread.devices.isEmpty()) {
-                pollThread.running = false;
+                pollThread.running.set(false);
+
+                try {
+                    pollThread.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+
                 pollThread = null;
             }
+        } finally {
+            POLL_THREAD_LOCK.unlock();
         }
     }
 
     private final @NotNull I device;
-    private boolean cancelled;
+    private final AtomicBoolean closed;
 
     private AwtPollWorker(@NotNull I device) {
         this.device = device;
+        this.closed = new AtomicBoolean();
     }
 
     /**
-     * @return the I/O device this worker was assigned to poll.
+     * Returns the I/O device assigned to this worker.
+     *
+     * @return the I/O device assigned to this worker.
      */
     public @NotNull I getDevice() {
         return this.device;
     }
 
     /**
-     * @return {@code true} if this worker has been cancelled via
-     * {@link #cancel()}, {@code false} otherwise.
+     * Returns if this worker has been closed via {@link #close()}.
+     *
+     * @return {@code true} if this worker has been closed via
+     * {@link #close()}, {@code false} otherwise.
      */
-    public boolean isCancelled() {
-        return this.cancelled;
+    public boolean isClosed() {
+        return closed.get();
     }
 
     /**
-     * Stops {@link IoDevice#poll()} from being called on the I/O device
-     * assigned to this worker. If the worker has already been cancelled
+     * Stops {@link IoDevice#poll()} from being called on the device
+     * assigned to this worker. If the worker has already been closed
      * then invoking this method has no effect.
      */
-    public void cancel() {
-        if (this.isCancelled()) {
-            return;
+    @Override
+    public void close() {
+        if (closed.compareAndSet(false, true)) {
+            quitPolling(device);
         }
-        quitPolling(device);
-        this.cancelled = true;
     }
 
     /* @formatter:off */
@@ -98,7 +129,7 @@ public final class AwtPollWorker<I extends IoDevice> {
     public String toString() {
         return ToStringUtils.getJoiner(this)
                 .add("device=" + device)
-                .add("cancelled=" + cancelled)
+                .add("closed=" + closed)
                 .toString();
     }
     /* @formatter:on */

@@ -22,10 +22,12 @@ import static io.ketill.pc.Mouse.*;
 /**
  * A {@link Mouse} adapter using Java AWT.
  * <p>
- * <b>Note:</b> Unlike the {@code glfw-pc} module, the cursor icon will
- * always be resized depending on the settings of the operating system.
- * This means that a cursor icon with dimensions of {@code 128x128} may
- * could be resized to {@code 64x64} (or some other size).
+ * <b>Adapter quirks:</b> Unlike the {@code glfw-pc} module, the cursor
+ * icon will always be resized depending on the settings of the current
+ * operating system. This means that a cursor icon with dimensions
+ * {@code 128x128} could be resized to {@code 64x64} (or another size).
+ * <p>
+ * <b>Thread safety:</b> This adapter is <i>thread-safe.</i>
  */
 public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
 
@@ -52,6 +54,12 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     }
 
     /**
+     * Captures the mouse from a Java AWT component.
+     * <p>
+     * <b>Thread safety:</b> The returned mouse can be shared among
+     * multiple threads. Its adapter is an {@link AwtMouseAdapter},
+     * which is <i>thread-safe.</i>
+     *
      * @param component the AWT component.
      * @return the captured mouse.
      * @throws NullPointerException if {@code component} is {@code null}.
@@ -63,15 +71,23 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     }
 
     /**
-     * Similar to {@link #capture(Component)}, with the key difference being
-     * that the captured {@code Mouse} will be automatically polled in a
-     * background thread managed by Ketill's Java AWT module.
+     * Captures the mouse from a Java AWT component.
+     * <p>
+     * <b>Similar to:</b> {@link #capture(Component)}, with the difference
+     * being that the returned {@code Mouse} will be polled automatically in
+     * a background thread managed by Ketill's Java AWT module.
+     * <p>
+     * <b>Thread safety:</b> The returned worker can be shared among multiple
+     * threads. It is an {@link AwtPollWorker}, which is <i>thread-safe.</i>
+     * Furthermore, the mouse this worker manages can also be shared among
+     * multiple threads. Its adapter is an {@link AwtMouseAdapter}, which is
+     * also <i>thread-safe.</i>
      *
      * @param component the AWT component.
      * @return the captured mouse.
      * @throws NullPointerException if {@code component} is {@code null}.
      * @see AwtPollWorker#getDevice()
-     * @see AwtPollWorker#cancel()
+     * @see AwtPollWorker#close()
      */
     /* @formatter:off */
     @CapturingMethod
@@ -109,6 +125,8 @@ public class AwtMouseAdapter extends IoDeviceAdapter<Mouse> {
     }
 
     /**
+     * Maps a {@link MouseButton} to a Java AWT button.
+     *
      * @param button      the mouse button to map.
      * @param mouseButton the button to map {@code button} to.
      * @throws NullPointerException if {@code button} is {@code null}.

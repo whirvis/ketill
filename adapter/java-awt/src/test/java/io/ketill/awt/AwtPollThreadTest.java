@@ -39,12 +39,12 @@ class AwtPollThreadTest {
          */
         thread.interruptLowerCPU = true;
         Thread.sleep(100); /* wait for thread */
-        assertFalse(thread.running);
+        assertFalse(thread.running.get());
     }
 
     @AfterEach
-    void interruptThread() {
-        thread.interrupt();
+    void stopThread() {
+        thread.running.set(false);
     }
 
 }
