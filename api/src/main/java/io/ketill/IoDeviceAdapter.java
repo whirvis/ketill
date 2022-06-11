@@ -5,10 +5,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * Maps data from a source (such as GLFW or X-Input) to the features of
- * an {@link IoDevice}. This allows for the same device to be used with
- * different implementations. This provides both portability and a way to
- * enable extra features like rumble motors or gyroscopes.
+ * Maps data from a source (such as GLFW or X-Input) to the features
+ * of an {@link IoDevice}. This allows for the same device to be used
+ * with different implementations. This provides portability and ways
+ * to enable extra features, like rumble motors or gyroscopes.
+ * <p>
+ * <b>Thread safety:</b> The thread-safety of an adapter depends on the
+ * implementation and underlying APIs. <i>As such, their documentation
+ * should be referenced beforehand.</i>
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier
@@ -27,7 +31,7 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
 
     /**
      * The mapped feature registry of {@link #device}. This should be used
-     * by the adapter to map existing features to feature adapter methods.
+     * by the adapter to map I/O features to feature adapter methods.
      */
     protected final @NotNull MappedFeatureRegistry registry;
 
@@ -48,8 +52,11 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     }
 
     /**
-     * Called before {@code device} is polled for the first time.
-     * This is where most, if not all, adapter setup should take place.
+     * Initializes the adapter.
+     * <p>
+     * This is called before {@link IoDevice#poll()} is invoked
+     * for the first time. This is where most, if not all, adapter
+     * setup should take place.
      *
      * @see #device
      * @see #registry
@@ -57,29 +64,29 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
     protected abstract void initAdapter();
 
     /**
-     * Called by {@code device} each time it is polled.
+     * Called by {@link IoDevice#poll()}.
      * <p>
      * This should update the information necessary for mapped
      * {@link FeatureAdapter} methods to fetch and then update
      * the current state of their assigned features.
      * <p>
-     * <b>Note:</b> Any exceptions thrown by this method that are
-     * not an instance of {@link KetillException} will be wrapped
-     * into one and thrown back to the caller.
+     * <b>On error:</b> Any exceptions thrown by this method that
+     * are not an instance of {@link KetillException} will be wrapped
+     * into one and thrown back to the caller. They will otherwise
+     * be thrown to the caller as-is.
      *
      * @throws Exception if an error occurs.
-     * @see IoDevice#poll()
      */
     protected abstract void pollDevice() throws Exception;
 
     /**
      * Called by {@link IoDevice#isConnected()}.
      * <p>
-     * <b>Note:</b> This <i>must</i> return an up-to-date value without
-     * a call to {@link #pollDevice()} being necessary beforehand.
+     * <b>Requirements:</b> This <i>must</i> return an up-to-date
+     * value with calling {@link #pollDevice()} beforehand.
      *
-     * @return {@code true} if {@code device} is connected, {@code false}
-     * otherwise.
+     * @return {@code true} if {@code device} is connected,
+     * {@code false} otherwise.
      */
     protected abstract boolean isDeviceConnected();
 
