@@ -19,14 +19,25 @@ import java.util.function.Consumer;
 /**
  * Scans for I/O devices currently connected to the system.
  * <p>
- * When a device being sought after has been detected, the appropriate
- * {@link IoDevice} and will be instantiated automatically. However,
- * it must be polled manually afterwards. This can be accomplished
- * via the {@link #pollDevices()} helper method.
+ * When locating a sought after device, a process known as <i>discovery</i>,
+ * the seeker should initialize it and notify the user. Once a device can
+ * no longer be located, a process known as <i>forgetting</i>, the seeker
+ * should close it and notify the user.
  * <p>
- * <b>Note:</b> For an I/O device seeker to work as expected, scans must
- * be performed periodically via {@link #seek()}. It is recommended to
- * perform a scan once every application update.
+ * <b>Requirements:</b> For an I/O device seeker to work as expected, scans
+ * must be performed periodically via {@link #seek()}. It is recommended to
+ * run a scan once every application update.
+ * <p>
+ * Furthermore, the seeker will not poll devices after discovery. It will
+ * only check if they are still connected to determine if they should be
+ * overlooked. All currently discovered devices can be polled using
+ * {@link #pollDevices()}.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i> However, some
+ * methods may behave in unexpected ways in certain scenarios. It is best
+ * to check the description of a method beforehand. <i>Furthermore, it is
+ * possible for an extending class to not be thread-safe. As such, their
+ * documentation should be referenced beforehand.</i>
  *
  * @param <I> the I/O device type.
  * @see #discoverDevice(IoDevice)
@@ -129,187 +140,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
     /* @formatter:on */
 
-    private void discoverDeviceImpl(@NotNull I device) {
-        devices.add(device);
-        this.deviceDiscovered(device);
-        observer.onNext(new IoDeviceDiscoverEvent(this, device));
-    }
-
-    /**
-     * Discovers a device. If a device is already currently discovered,
-     * this method does nothing.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
-     * is utilized to ensure the internal {@code devices} list cannot be
-     * modified by multiple threads at once.
-     *
-     * @param device the device to discover.
-     * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
-     * @see #deviceDiscovered(IoDevice)
-     */
-    @MustBeInvokedByOverriders
-    @SuppressWarnings("InvalidParam")
-    protected void discoverDevice(@NotNull I device) {
-        Objects.requireNonNull(device, "device cannot be null");
-        this.requireOpen();
-
-        discoveryLock.lock();
-        try {
-            if (!devices.contains(device)) {
-                this.discoverDeviceImpl(device);
-            }
-        } finally {
-            discoveryLock.unlock();
-        }
-    }
-
-    /**
-     * Called when a device is discovered. This will be called before
-     * the corresponding event is emitted to subscribers.
-     * <p>
-     * <b>Note:</b> Invoking {@link #discoverDevice(IoDevice)} inside of
-     * this method will likely result in an {@code StackOverflowError}
-     * unless proper care is taken to ensure otherwise.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>, assuming
-     * that it is called by {@link #discoverDevice(IoDevice)}.
-     *
-     * @param device the discovered device.
-     */
-    protected void deviceDiscovered(@NotNull I device) {
-        /* optional implement */
-    }
-
-    private void forgetDeviceImpl(@NotNull I device) {
-        devices.remove(device);
-        this.deviceForgotten(device);
-        observer.onNext(new IoDeviceForgetEvent(this, device));
-    }
-
-    /**
-     * Forgets a device. If a device is not currently discovered, this
-     * method does nothing.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
-     * is utilized to ensure the internal {@code devices} list cannot be
-     * modified by multiple threads at once.
-     *
-     * @param device the device to forget.
-     * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
-     * @see #deviceForgotten(IoDevice)
-     */
-    @MustBeInvokedByOverriders
-    @SuppressWarnings("InvalidParam")
-    protected void forgetDevice(@NotNull I device) {
-        Objects.requireNonNull(device, "device cannot be null");
-        this.requireOpen();
-
-        discoveryLock.lock();
-        try {
-            if (devices.contains(device)) {
-                this.forgetDeviceImpl(device);
-            }
-        } finally {
-            discoveryLock.unlock();
-        }
-    }
-
-    /**
-     * Called when a device is forgotten. This will be called before
-     * the corresponding event is emitted to subscribers.
-     * <p>
-     * <b>Note:</b> Invoking {@link #forgetDevice(IoDevice)} inside of
-     * this method will likely result in an {@code StackOverflowError}
-     * unless proper care is taken to ensure otherwise.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>, assuming
-     * that it is called by {@link #forgetDevice(IoDevice)}.
-     *
-     * @param device the forgotten device.
-     */
-    protected void deviceForgotten(@NotNull I device) {
-        /* optional implement */
-    }
-
-    /**
-     * Implementation for {@link #seek()}. Invoking {@link #seek()} here
-     * will either result in an exception or cause a deadlock on the calling
-     * thread <i>which cannot be recovered from.</i>
-     * <p>
-     * <b>Note:</b> Any exceptions thrown by this method that are not
-     * an instance of {@link KetillException} will be wrapped into one
-     * and thrown back to the caller.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>,
-     * assuming that it is called by {@link #seek()}.
-     *
-     * @throws Exception if an error occurs.
-     */
-    protected abstract void seekImpl() throws Exception;
-
-    /**
-     * Performs a <i>single</i> scan for devices connected to this system.
-     * <p>
-     * <b>Note:</b> For continuous scanning, this method must be called
-     * periodically. It is recommended to call this method once every
-     * application update.
-     * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>. A lock
-     * is utilized to prevent concurrent scans by multiple threads.
-     *
-     * @return this device seeker. This can be used for chaining method
-     * calls, for example: {@code seek().pollDevices()}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()};
-     *                               if {@link #seekImpl()} invokes this
-     *                               method.
-     * @throws KetillException       if an error occurs.
-     * @see #pollDevices()
-     */
-    public final IoDeviceSeeker<I> seek() {
-        this.requireOpen();
-
-        /*
-         * Calling seek() while it is locked by the calling thread will
-         * cause a deadlock! The culprit is likely a bad implementation
-         * of seekImpl(). Set the flag and just return to prevent the
-         * deadlock from occurring. The original call will notice this
-         * error and throw the appropriate exception.
-         */
-        if (callingSeekImpl.get()) {
-            implCalledSeek.set(true);
-            return this;
-        }
-
-        seekLock.lock();
-        callingSeekImpl.set(true);
-        try {
-            implCalledSeek.set(false);
-            this.seekImpl();
-        } catch (Throwable cause) {
-            if (cause instanceof KetillException) {
-                throw (KetillException) cause;
-            }
-            String msg = "error in " + this.getClass().getName();
-            throw new KetillException(msg, cause);
-        } finally {
-            callingSeekImpl.set(false);
-            seekLock.unlock();
-        }
-
-        if (implCalledSeek.get()) {
-            String msg = "seekImpl() cannot invoke seek()";
-            msg += " as that would result in a deadlock";
-            throw new IllegalStateException(msg);
-        }
-
-        return this;
-    }
-
     /**
      * Returns the discovered device count.
      * <p>
@@ -326,8 +156,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /**
      * Returns all currently discovered devices.
      * <p>
-     * <b>Note:</b> The returned view is wrapped in an unmodifiable list.
-     * Attempting to modify it will result in an exception.
+     * <b>Immutability:</b> The returned view is wrapped in an unmodifiable
+     * list. Attempting to modify it will result in an exception.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe</i>. Iterators
      * of the returned list will not reflect additions, removals, or other
@@ -364,7 +194,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      */
     /* @formatter:off */
     public final IoDeviceSeeker<I>
-            forEachDevice(@NotNull Consumer<@NotNull I> action) {
+    forEachDevice(@NotNull Consumer<@NotNull I> action) {
         Objects.requireNonNull(action, "action cannot be null");
         this.requireOpen();
         for (I device : devices) {
@@ -387,6 +217,190 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      */
     public final IoDeviceSeeker<I> pollDevices() {
         return this.forEachDevice(IoDevice::poll);
+    }
+
+    private void discoverDeviceImpl(@NotNull I device) {
+        devices.add(device);
+        this.deviceDiscovered(device);
+        observer.onNext(new IoDeviceDiscoverEvent(this, device));
+    }
+
+    /**
+     * Discovers a device. If a device is already currently discovered,
+     * this method does nothing.
+     * <p>
+     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from its
+     * callback. Doing so will result in a {@code StackOverflowError}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
+     * is utilized to ensure the internal {@code devices} list cannot be
+     * modified by multiple threads at once.
+     *
+     * @param device the device to discover.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     * @see #deviceDiscovered(IoDevice)
+     */
+    @MustBeInvokedByOverriders
+    @SuppressWarnings("InvalidParam")
+    protected void discoverDevice(@NotNull I device) {
+        Objects.requireNonNull(device, "device cannot be null");
+        this.requireOpen();
+
+        discoveryLock.lock();
+        try {
+            if (!devices.contains(device)) {
+                this.discoverDeviceImpl(device);
+            }
+        } finally {
+            discoveryLock.unlock();
+        }
+    }
+
+    /**
+     * Called when a device is discovered. This will be called before
+     * the corresponding event is emitted to subscribers.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>, assuming
+     * that it is called by {@link #discoverDevice(IoDevice)}.
+     *
+     * @param device the discovered device.
+     */
+    protected void deviceDiscovered(@NotNull I device) {
+        /* optional implement */
+    }
+
+    private void forgetDeviceImpl(@NotNull I device) {
+        devices.remove(device);
+        this.deviceForgotten(device);
+        observer.onNext(new IoDeviceForgetEvent(this, device));
+    }
+
+    /**
+     * Forgets a device. If a device is not currently discovered, this
+     * method does nothing.
+     * <p>
+     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from its
+     * callback. Doing so will result in a {@code StackOverflowError}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
+     * is utilized to ensure the internal {@code devices} list cannot be
+     * modified by multiple threads at once.
+     *
+     * @param device the device to forget.
+     * @throws NullPointerException  if {@code device} is {@code null}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()}.
+     * @see #deviceForgotten(IoDevice)
+     */
+    @MustBeInvokedByOverriders
+    @SuppressWarnings("InvalidParam")
+    protected void forgetDevice(@NotNull I device) {
+        Objects.requireNonNull(device, "device cannot be null");
+        this.requireOpen();
+
+        discoveryLock.lock();
+        try {
+            if (devices.contains(device)) {
+                this.forgetDeviceImpl(device);
+            }
+        } finally {
+            discoveryLock.unlock();
+        }
+    }
+
+    /**
+     * Called when a device is forgotten. This will be called before
+     * the corresponding event is emitted to subscribers.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>, assuming
+     * that it is called by {@link #forgetDevice(IoDevice)}.
+     *
+     * @param device the forgotten device.
+     */
+    protected void deviceForgotten(@NotNull I device) {
+        /* optional implement */
+    }
+
+    /**
+     * Implementation for {@link #seek()}. Invoking {@link #seek()}
+     * here will either result in an exception or cause a deadlock on
+     * the calling thread <i>which cannot be recovered from.</i>
+     * <p>
+     * <b>On error:</b> Any exceptions thrown by this method that are
+     * not an instance of {@link KetillException} will be wrapped into
+     * one and thrown back to the caller. They will otherwise be thrown
+     * to the caller as-is.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>,
+     * assuming that it is called by {@link #seek()}.
+     *
+     * @throws Exception if an error occurs.
+     */
+    protected abstract void seekImpl() throws Exception;
+
+    /**
+     * Performs a <i>single</i> scan for devices connected to this system.
+     * <p>
+     * <b>Requirements:</b> For an I/O device seeker to work as expected,
+     * scans must be performed periodically. It is recommended to invoke
+     * this method once every application update.
+     * <p>
+     * Furthermore, this method will not poll currently discovered devices.
+     * It will only check if they are still connected to determine if they
+     * should be overlooked. All currently discovered devices can be polled
+     * using {@link #pollDevices()}.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>. A lock
+     * is utilized to prevent concurrent scans by multiple threads.
+     *
+     * @return this device seeker. This can be used for chaining method
+     * calls, for example: {@code seek().pollDevices()}.
+     * @throws IllegalStateException if this I/O device seeker has been
+     *                               closed via {@link #close()};
+     *                               if {@link #seekImpl()} invokes this
+     *                               method.
+     * @throws KetillException       if an error occurs.
+     * @see #pollDevices()
+     */
+    public final IoDeviceSeeker<I> seek() {
+        this.requireOpen();
+
+        /*
+         * Calling seek() while it is locked by the calling thread will
+         * cause a deadlock! The culprit is likely a bad implementation
+         * of seekImpl(). Set the flag and just return to prevent the
+         * deadlock from occurring. The original call will notice this
+         * error and throw the appropriate exception.
+         */
+        if (callingSeekImpl.get()) {
+            implCalledSeek.set(true);
+            return this;
+        }
+
+        seekLock.lock();
+        callingSeekImpl.set(true);
+        try {
+            implCalledSeek.set(false);
+            this.seekImpl();
+        } catch (KetillException cause) {
+            throw cause; /* don't needlessly wrap */
+        } catch (Throwable cause) {
+            String msg = "error in " + this.getClass().getName();
+            throw new KetillException(msg, cause);
+        } finally {
+            callingSeekImpl.set(false);
+            seekLock.unlock();
+        }
+
+        if (implCalledSeek.get()) {
+            String msg = "seekImpl() cannot invoke seek()";
+            msg += " as that would result in a deadlock";
+            throw new IllegalStateException(msg);
+        }
+
+        return this;
     }
 
     /**

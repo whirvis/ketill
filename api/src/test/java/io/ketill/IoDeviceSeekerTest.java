@@ -67,6 +67,37 @@ class IoDeviceSeekerTest {
     }
 
     @Test
+    void testGetDeviceCount() {
+        assertEquals(0, seeker.getDeviceCount());
+    }
+
+    @Test
+    void testGetDevices() {
+        /*
+         * Since no devices have been discovered yet, the returned list
+         * should be empty. Furthermore, the returned list is read-only.
+         * As such, any modifications should result in an exception.
+         */
+        List<MockIoDevice> devices = seeker.getDevices();
+        assertTrue(devices.isEmpty());
+        assertThrows(UnsupportedOperationException.class, devices::clear);
+    }
+
+    @Test
+    void testForEachDevice() {
+        seeker.discoverDevice(device);
+        seeker.forEachDevice(MockIoDevice::executeTask);
+        assertTrue(device.executedTask);
+    }
+
+    @Test
+    void testPollDevices() {
+        seeker.discoverDevice(device);
+        seeker.pollDevices();
+        assertTrue(device.polled);
+    }
+
+    @Test
     void testDiscoverDevice() {
         AtomicBoolean discovered = new AtomicBoolean();
         seeker.subscribeEvents(IoDeviceDiscoverEvent.class,
@@ -137,37 +168,6 @@ class IoDeviceSeekerTest {
          */
         assertThrows(NullPointerException.class,
                 () -> seeker.forgetDevice(null));
-    }
-
-    @Test
-    void testGetDeviceCount() {
-        assertEquals(0, seeker.getDeviceCount());
-    }
-
-    @Test
-    void testGetDevices() {
-        /*
-         * Since no devices have been discovered yet, the returned list
-         * should be empty. Furthermore, the returned list is read-only.
-         * As such, any modifications should result in an exception.
-         */
-        List<MockIoDevice> devices = seeker.getDevices();
-        assertTrue(devices.isEmpty());
-        assertThrows(UnsupportedOperationException.class, devices::clear);
-    }
-
-    @Test
-    void testForEachDevice() {
-        seeker.discoverDevice(device);
-        seeker.forEachDevice(MockIoDevice::executeTask);
-        assertTrue(device.executedTask);
-    }
-
-    @Test
-    void testPollDevices() {
-        seeker.discoverDevice(device);
-        seeker.pollDevices();
-        assertTrue(device.polled);
     }
 
     @Test
