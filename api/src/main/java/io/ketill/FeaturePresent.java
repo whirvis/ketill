@@ -7,10 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, signals to {@link IoDevice} that a field should be
- * registered as an I/O feature during instantiation. These fields must
- * be {@code public} and their type assignable from {@link IoFeature}.
- * They may otherwise be either instance or static.
+ * When present, signals to an {@link IoDevice} a field should be
+ * registered an I/O feature at construction. These fields must be
+ * {@code public} and their type assignable from {@link IoFeature}.
+ * It is also recommended for these fields to be {@code static}.
+ * However, it is not a requirement.
  * <p>
  * <b>Example of using this annotation:</b>
  * <pre>
