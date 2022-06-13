@@ -5,12 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 /**
- * A utility class for classes which contain the internal state of
- * an {@link IoFeature}.
+ * Contain the internal state of an {@link IoFeature}.
  * <p>
- * <b>Note:</b> This class can be extended by the container state only.
- * When extended by the internal state, it will result in an
- * {@code UnsupportedOperationException} being thrown at instantiation.
+ * <b>Requirements:</b> This class can only be extended by the
+ * container state. When extended by the internal state, it will
+ * result in an {@code UnsupportedOperationException}.
  *
  * @param <Z> the internal state type.
  * @see AutonomousState
@@ -18,9 +17,11 @@ import java.util.Objects;
 public abstract class ContainerState<Z> {
 
     /**
-     * The internal state which this state contains. This should (usually)
-     * be kept hidden from the user. Its data should be made visible and/or
-     * modifiable via methods that limit interaction.
+     * The internal state which this contains.
+     * <p>
+     * This should (usually) be kept hidden from the user.
+     * Its data should be made visible and/or modifiable via
+     * methods that limit interaction.
      */
     protected final @NotNull Z internalState;
 
@@ -28,7 +29,8 @@ public abstract class ContainerState<Z> {
      * Constructs a new {@code ContainerState}.
      *
      * @param internalState the internal state.
-     * @throws NullPointerException if {@code internalState} is {@code null}.
+     * @throws NullPointerException if {@code internalState}
+     *                              is {@code null}.
      */
     public ContainerState(Z internalState) {
         this.internalState = Objects.requireNonNull(internalState,
