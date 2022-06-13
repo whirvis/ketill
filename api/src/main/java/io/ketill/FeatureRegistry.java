@@ -6,14 +6,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * This interface is package private as it exists only to ensure that both
- * {@link IoDevice} and {@link MappedFeatureRegistry} implement the same
- * methods.
+ * This interface is package private as it exists only to ensure
+ * {@link IoDevice} and {@link MappedFeatureRegistry} implement
+ * the same methods.
+ * <p>
+ * <b>Thread safety:</b> All methods must be implemented in a
+ * <i>thread-safe</i> manner. Failure to do so is a violation
+ * of the contract this interface provides.
  */
 interface FeatureRegistry {
 
     /**
      * Returns if a feature is registered.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature whose registration to check.
      * @return {@code true} if {@code feature} is registered, {@code false}
@@ -24,6 +30,10 @@ interface FeatureRegistry {
 
     /**
      * Returns if a feature with a given ID is registered.
+     * <p>
+     * <b>Thread safety:</b> This method relies on
+     * {@link #getFeatureById(String)} to get the feature. Since the
+     * preceding is thread-safe, this method is also <i>thread-safe.</i>
      *
      * @param id the ID of the feature to check, case-sensitive.
      * @return {@code true} if a feature with the specified ID is registered,
@@ -37,6 +47,8 @@ interface FeatureRegistry {
 
     /**
      * Returns the registered feature count.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return the amount of registered features.
      * @see #getFeatures()
@@ -45,16 +57,25 @@ interface FeatureRegistry {
 
     /**
      * Returns a feature with the given ID.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param id the ID of the feature to fetch, case-sensitive.
-     * @return the registered feature with the specified ID, {@code null} if
-     * no such feature is registered.
+     * @return the registered feature with the specified ID, {@code null}
+     * if no such feature is registered.
      * @see #registerFeature(IoFeature)
      */
     @Nullable IoFeature<?, ?> getFeatureById(@NotNull String id);
 
     /**
      * Returns all registered features.
+     * <p>
+     * <b>Immutability:</b> The returned view is a <i>copy</i> of
+     * all registered features. As such, the user is free to modify
+     * it. Modifications to the returned collection will not affect
+     * the internals of this registry.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return all registered features.
      * @see #getFeatureCount()
@@ -64,6 +85,8 @@ interface FeatureRegistry {
 
     /**
      * Returns the registration of a feature.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature whose registration to fetch.
      * @param <Z>     the internal state type.
@@ -78,6 +101,13 @@ interface FeatureRegistry {
 
     /**
      * Returns the registration of all features.
+     * <p>
+     * <b>Immutability:</b> The returned view is a <i>copy</i> of
+     * all feature registrations. The user is free to modify it.
+     * Modifications to the returned collection will not affect
+     * the internals of this registry.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return the registration of all features.
      * @see #getFeatureCount()
@@ -91,9 +121,14 @@ interface FeatureRegistry {
     /**
      * Returns the current state of a feature.
      * <p>
-     * <b>Note:</b> Unlike {@link #requestState(IoFeature)}, this method
-     * will not return {@code null} if {@code feature} is not registered.
-     * Instead, it will throw an {@code IllegalStateException}.
+     * Unlike {@link #requestState(IoFeature)}, this method will <i>not</i>
+     * return {@code null} if {@code feature} is not registered.
+     * An {@code IllegalStateException} will be thrown instead.
+     * <p>
+     * <b>Thread safety:</b> This method relies on
+     * {@link #getFeatureRegistration(IoFeature)} to get the registration
+     * of a feature. Since the preceding is thread-safe, this method is
+     * also <i>thread-safe.</i>
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
@@ -114,9 +149,14 @@ interface FeatureRegistry {
     /**
      * Returns the current state of a feature.
      * <p>
-     * <b>Note:</b> Unlike {@link #getState(IoFeature)}, this method will
-     * not throw an {@code IllegalStateException} if {@code feature} is not
-     * registered. Instead, it will simply return {@code null}.
+     * Unlike {@link #getState(IoFeature)}, this method will <i>not</i>
+     * throw an {@code IllegalStateException} if {@code feature} is not
+     * registered. It will return {@code null} instead.
+     * <p>
+     * <b>Thread safety:</b> This method relies on
+     * {@link #getFeatureRegistration(IoFeature)} to get the registration
+     * of a feature. Since the preceding is thread-safe, this method is
+     * also <i>thread-safe.</i>
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
@@ -132,6 +172,8 @@ interface FeatureRegistry {
 
     /**
      * Registers a feature.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature to register.
      * @param <F>     the device feature type.
@@ -156,6 +198,8 @@ interface FeatureRegistry {
 
     /**
      * Unregisters a feature.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature to unregister.
      * @throws NullPointerException  if {@code feature} is {@code null}.
