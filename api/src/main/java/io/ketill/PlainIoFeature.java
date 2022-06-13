@@ -9,6 +9,10 @@ import java.util.function.Supplier;
  * An {@link IoFeature} which has an internal state identical to the
  * container state. This is useful for features which store no data
  * that needs to be hidden from the user.
+ * <p>
+ * <b>Requirements:</b> The state in question <i>cannot</i> implement
+ * {@link AutonomousState} or extend {@link ContainerState} as it is
+ * both the internal state and container state.
  *
  * @param <S> the state container type.
  * @see IoDevice#registerFeature(IoFeature)
@@ -21,10 +25,6 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
 
     /**
      * Constructs a new {@code PlainIoFeature}.
-     * <p>
-     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
-     * extend {@link ContainerState} as it is both the internal state and
-     * container state.
      *
      * @param deviceType the type an {@link IoDevice} must be for it to
      *                   create an instance of this feature's state.
@@ -46,10 +46,6 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     /**
      * Constructs a new {@code PlainIoFeature} which can be registered by
      * any type of {@link IoDevice}.
-     * <p>
-     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
-     * extend {@link ContainerState} as it is both the internal state and
-     * container state.
      *
      * @param id       the feature ID.
      * @param supplier a supplier for the feature's initial state.
@@ -65,10 +61,6 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
 
     /**
      * Constructs a new {@code PlainIoFeature}.
-     * <p>
-     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
-     * extend {@link ContainerState} as it is both the internal state and
-     * container state.
      *
      * @param deviceType the type an {@link IoDevice} must be for it to
      *                   create an instance of this feature's state.
@@ -87,10 +79,6 @@ public class PlainIoFeature<S> extends IoFeature<S, S> {
     /**
      * Constructs a new {@code PlainIoFeature} which can be registered by
      * any type of {@link IoDevice}.
-     * <p>
-     * <b>Note:</b> The state cannot implement {@link AutonomousState} or
-     * extend {@link ContainerState} as it is both the internal state and
-     * container state.
      *
      * @param id       the feature ID.
      * @param supplier a supplier for the feature's initial state.
