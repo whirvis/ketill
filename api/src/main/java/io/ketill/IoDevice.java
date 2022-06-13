@@ -389,16 +389,18 @@ public abstract class IoDevice implements FeatureRegistry {
     }
 
     /**
-     * Returns if this device, with its adapter provided at construction,
-     * supports a given feature. A feature is considered supported if it
-     * currently has a mapping assigned by its adapter.
+     * Returns if this device supports a given feature.
      * <p>
-     * When a feature is not supported, any reads will return its initial
-     * state (or the last value before being unmapped.) If the state of a
-     * feature is writable, any writes will effectively be a no-op.
+     * When a feature is not supported, reading from its state will yield
+     * the initial value (or the last value it had before being unmapped.)
+     * Furthermore, if the state said feature is writable, any writes should
+     * effectively be a no-op.
      * <p>
      * <b>Note:</b> It is possible for a feature to be considered supported
-     * <i>without</i> being registered to this device.
+     * <i>without</i> being registered to this device. It is also possible
+     * for a feature to be supported, but this device not have the capability
+     * for it. For example, an off-brand which excludes rumble motors from
+     * a controller that usually includes them.
      *
      * @param featureState the state of the feature to check. This can be
      *                     either the internal state of the container state.
