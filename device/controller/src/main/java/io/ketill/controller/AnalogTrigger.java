@@ -68,7 +68,7 @@ public final class AnalogTrigger
      * Returns the base calibration.
      * <p>
      * This is the calibration that will be used when getting the state
-     * for this analog trigger. However, this is only the initial value.
+     * for this analog trigger. Note that this is only the initial value.
      * After creation, {@link TriggerState} can use a different calibration.
      *
      * @return the calibration that will be used when getting the state
