@@ -162,7 +162,7 @@ public final class AnalogStick extends IoFeature<StickPosZ, StickPos> {
      * Returns the base calibration.
      * <p>
      * This is the calibration that will be used when getting the state
-     * for this analog stick. However, this is only the initial value.
+     * for this analog stick. Note that this is only the initial value.
      * After creation, {@link StickPos} can use a different calibration.
      *
      * @return the calibration that will be used when getting the state
