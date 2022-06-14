@@ -21,7 +21,7 @@ public abstract class KetillEvent<T> {
      *
      * @param emitter the object which emitted this event.
      */
-    public KetillEvent(T emitter) {
+    public KetillEvent(@NotNull T emitter) {
         this.emitter = Objects.requireNonNull(emitter,
                 "emitter cannot be null");
     }
