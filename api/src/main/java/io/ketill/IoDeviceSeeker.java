@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  * forgotten. All currently discovered devices can be polled using
  * {@link #pollDevices()}.
  * <p>
- * <b>Thread safety:</b> This class <i>thread-safe</i>. However, extending
+ * <b>Thread safety:</b> This class is <i>thread-safe</i>. However, extending
  * classes may <i>not</i> be thread-safe. <i>As such, their documentation
  * should be referenced beforehand.</i>
  *
@@ -177,13 +177,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * <p>
      * Only devices discovered at the time of invoking this method will
      * be processed. Any modifications to the internal {@code devices}
-     * list made during invocation will not be reflected.
+     * list made during invocation will be ignored.
      *
      * @param action the action to perform for each discovered device.
      * @return this I/O device seeker.
      * @throws NullPointerException  if {@code action} is {@code null}.
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()}.
+     * @throws IllegalStateException if this seeker is closed.
      * @see #getDeviceCount()
      * @see #getDevices()
      */
@@ -207,8 +206,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * code is thread-safe, this method is also <i>thread-safe</i>.
      *
      * @return this I/O device seeker.
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()}.
+     * @throws IllegalStateException if this seeker is closed.
      */
     public final IoDeviceSeeker<I> pollDevices() {
         return this.forEachDevice(IoDevice::poll);
@@ -232,8 +230,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the device to discover.
      * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()}.
+     * @throws IllegalStateException if this seeker is closed.
      * @see #deviceDiscovered(IoDevice)
      */
     @MustBeInvokedByOverriders
@@ -283,8 +280,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the device to forget.
      * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()}.
+     * @throws IllegalStateException if this seeker is closed.
      * @see #deviceForgotten(IoDevice)
      */
     @MustBeInvokedByOverriders
@@ -351,11 +347,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @return this I/O device seeker. This can be used for chaining method
      * calls, for example: {@code seek().pollDevices()}.
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()};
-     *                               if {@link #seekImpl()} invokes this
-     *                               method.
-     * @throws KetillException       if an error occurs.
+     * @throws IllegalStateException if this seeker is closed.
      * @see #pollDevices()
      */
     public final IoDeviceSeeker<I> seek() {
@@ -382,8 +374,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
-     * @throws IllegalStateException if this seeker has been closed
-     *                               via {@link #close()}.
+     * @throws IllegalStateException if this seeker is closed.
      */
     protected final void requireOpen() {
         if (this.isClosed()) {
@@ -392,12 +383,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Returns if this seeker has been closed via {@link #close()}.
+     * Returns if this seeker is closed.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
-     * @return {@code true} if this seeker has been closed via
-     * {@link #close()}, {@code false} otherwise.
+     * @return {@code true} if this seeker is closed, {@code false} otherwise.
      */
     public final boolean isClosed() {
         return closed.get();
