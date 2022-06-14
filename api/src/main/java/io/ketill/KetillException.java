@@ -3,7 +3,10 @@ package io.ketill;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Signals that an error relating to Ketill I/O has occurred.
+ * Signals that error in Ketill I/O has occurred.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
+ * Extending classes must also be thread-safe.
  */
 @SuppressWarnings("unused")
 public class KetillException extends RuntimeException {
