@@ -6,9 +6,6 @@ import java.util.Objects;
 
 /**
  * The base for events emitted in Ketill I/O.
- * <p>
- * <b>Thread safety:</b> This class is <i>thread-safe.</i>
- * Extending classes must also be thread-safe.
  *
  * @param <T> the emitter type.
  */
