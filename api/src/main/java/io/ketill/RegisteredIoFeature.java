@@ -5,12 +5,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An {@link IoFeature} that's been registered to an {@link IoDevice}.
  * <p>
- * This container exists to group together the information necessary to
- * fetch and update the state of an I/O feature.
+ * This container exists to group together the necessary information
+ * to update the current state of an I/O feature.
  * <p>
- * <b>Note:</b> For optimal performance, it is best to cache the state
- * of a feature to a field for later retrieval. The container state of
- * feature can be fetched via {@link IoDevice#getState(IoFeature)}.
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @param <F> the I/O feature type. Users can access this via the
  *            {@link #getFeature()} method when registering a feature.
@@ -25,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 public final class RegisteredIoFeature<F extends IoFeature<Z, S>, Z, S> {
 
     /**
-     * This should be used when a feature has no updater. Its purpose to
-     * increase speed by removing an unnecessary nullability check.
+     * Used when a feature has no updater. Its purpose to increase
+     * speed by removing an unnecessary nullability check.
      */
     public static final Runnable NO_UPDATER = () -> {
         /* nothing to update */
