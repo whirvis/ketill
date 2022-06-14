@@ -26,11 +26,11 @@ import java.util.function.Consumer;
  * <p>
  * <b>Requirements:</b> For an I/O device seeker to work as expected, scans
  * must be performed periodically via {@link #seek()}. It is recommended to
- * run a scan once every application update.
+ * perform a scan once every application update.
  * <p>
  * Furthermore, the seeker will not poll devices after discovery. It will
  * only check if they are still connected to determine if they should be
- * overlooked. All currently discovered devices can be polled using
+ * forgotten. All currently discovered devices can be polled using
  * {@link #pollDevices()}.
  * <p>
  * <b>Thread safety:</b> This class <i>thread-safe</i>. However, extending
@@ -46,8 +46,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     private final @NotNull Subject<IoDeviceSeekerEvent> subject;
 
     /**
-     * The observer for this I/O device. This should be used to emit events
-     * to listeners when they occur.
+     * The observer for this I/O device seeker. This should be used to
+     * emit events to listeners when they occur.
      * <p>
      * This field is {@code protected} so it is visible to child classes,
      * allowing them to emit their own events from this seeker.
@@ -88,7 +88,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Subscribes to events emitted from this I/O device seeker.
+     * Subscribes to events emitted from this seeker.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
@@ -96,7 +96,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *                   this type and those extending it will be emitted
      *                   to {@code callable}.
      * @param callback   the code to execute when an event of the desired
-     *                   type is emitted by the device seeker.
+     *                   type is emitted by the seeker.
      * @param <T>        the event type.
      * @return the new {@link Disposable} instance, which can be used to
      * dispose the subscription at any time.
@@ -116,12 +116,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /* @formatter:on */
 
     /**
-     * Subscribes to all events emitted from this I/O device seeker.
+     * Subscribes to all events emitted from this seeker.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param callback the code to execute when an event is emitted by the
-     *                 device seeker.
+     *                 seeker.
      * @return the new {@link Disposable} instance, which can be used to
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code callback} is {@code null}.
@@ -180,10 +180,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * list made during invocation will not be reflected.
      *
      * @param action the action to perform for each discovered device.
-     * @return this device seeker.
+     * @return this I/O device seeker.
      * @throws NullPointerException  if {@code action} is {@code null}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()}.
      * @see #getDeviceCount()
      * @see #getDevices()
      */
@@ -206,9 +206,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * {@code forEachDevice(IoDevice::poll)}. Since the preceding
      * code is thread-safe, this method is also <i>thread-safe</i>.
      *
-     * @return this device seeker.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @return this I/O device seeker.
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()}.
      */
     public final IoDeviceSeeker<I> pollDevices() {
         return this.forEachDevice(IoDevice::poll);
@@ -232,8 +232,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the device to discover.
      * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()}.
      * @see #deviceDiscovered(IoDevice)
      */
     @MustBeInvokedByOverriders
@@ -283,8 +283,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param device the device to forget.
      * @throws NullPointerException  if {@code device} is {@code null}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()}.
      * @see #deviceForgotten(IoDevice)
      */
     @MustBeInvokedByOverriders
@@ -349,10 +349,10 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe</i>.
      *
-     * @return this device seeker. This can be used for chaining method
+     * @return this I/O device seeker. This can be used for chaining method
      * calls, for example: {@code seek().pollDevices()}.
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()};
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()};
      *                               if {@link #seekImpl()} invokes this
      *                               method.
      * @throws KetillException       if an error occurs.
@@ -377,13 +377,13 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Requires that this I/O device seeker not be closed before continuing
+     * Requires that this seeker not be closed before continuing
      * execution.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
-     * @throws IllegalStateException if this I/O device seeker has been
-     *                               closed via {@link #close()}.
+     * @throws IllegalStateException if this seeker has been closed
+     *                               via {@link #close()}.
      */
     protected final void requireOpen() {
         if (this.isClosed()) {
@@ -392,11 +392,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Returns if this I/O device seeker has been closed via {@link #close()}.
+     * Returns if this seeker has been closed via {@link #close()}.
      * <p>
      * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
-     * @return {@code true} if this I/O device seeker has been closed via
+     * @return {@code true} if this seeker has been closed via
      * {@link #close()}, {@code false} otherwise.
      */
     public final boolean isClosed() {
