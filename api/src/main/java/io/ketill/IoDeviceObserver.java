@@ -7,6 +7,8 @@ import java.util.Objects;
 
 /**
  * Provides a mechanism for emitting events from an {@link IoDevice}.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see #onNext(IoDeviceEvent)
  */
@@ -22,6 +24,8 @@ public final class IoDeviceObserver extends EventObserver<IoDeviceEvent> {
 
     /**
      * Returns the device from which this emits events.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return the device from which this emits events.
      */
@@ -32,12 +36,14 @@ public final class IoDeviceObserver extends EventObserver<IoDeviceEvent> {
     /**
      * Provides subscribers with a new event to observe. This method may
      * be called zero or more times. The event <i>must</i> come from the
-     * I/O device which created this observer.
+     * device which created this observer.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param event the event to emit.
      * @throws NullPointerException     if {@code event} is {@code null}.
      * @throws IllegalArgumentException if {@code event} was constructed
-     *                                  to be emitted from a different I/O
+     *                                  to be emitted from a different
      *                                  device than the one that created
      *                                  this observer.
      * @see IoDeviceEvent#getDevice()

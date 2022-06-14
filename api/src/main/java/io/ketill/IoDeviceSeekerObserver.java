@@ -7,10 +7,13 @@ import java.util.Objects;
 
 /**
  * Provides a mechanism for emitting events from an {@link IoDeviceSeeker}.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see #onNext(IoDeviceSeekerEvent)
  */
-public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEvent> {
+public final class IoDeviceSeekerObserver
+        extends EventObserver<IoDeviceSeekerEvent> {
 
     private final @NotNull IoDeviceSeeker<?> seeker;
 
@@ -22,6 +25,8 @@ public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEv
 
     /**
      * Returns the seeker from which this emits events.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return the seeker from which this emits events.
      */
@@ -32,14 +37,16 @@ public final class IoDeviceSeekerObserver extends EventObserver<IoDeviceSeekerEv
     /**
      * Provides subscribers with a new event to observe. This method may
      * be called zero or more times. The event <i>must</i> come from the
-     * I/O device seeker which created this observer.
+     * seeker which created this observer.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param event the event to emit.
      * @throws NullPointerException     if {@code event} is {@code null}.
      * @throws IllegalArgumentException if {@code event} was constructed
-     *                                  to be emitted from a different I/O
-     *                                  device seeker than the one that
-     *                                  created this observer.
+     *                                  to be emitted from a different
+     *                                  seeker than the one that created
+     *                                  this observer.
      * @see IoDeviceSeekerEvent#getSeeker()
      */
     @Override
