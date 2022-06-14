@@ -11,9 +11,9 @@ public final class IoFeatureRegisterEvent extends IoFeatureEvent {
 
     private final @NotNull RegisteredIoFeature<?, ?, ?> registered;
 
-    IoFeatureRegisterEvent(@NotNull IoDevice device,
+    IoFeatureRegisterEvent(@NotNull IoDevice emitter,
                            @NotNull RegisteredIoFeature<?, ?, ?> registered) {
-        super(device, registered.feature);
+        super(emitter, registered.feature);
         this.registered = registered;
     }
 

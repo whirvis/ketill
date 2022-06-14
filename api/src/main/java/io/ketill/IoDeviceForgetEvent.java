@@ -14,9 +14,9 @@ public final class IoDeviceForgetEvent extends IoDeviceSeekerEvent {
 
     private final @NotNull IoDevice device;
 
-    IoDeviceForgetEvent(@NotNull IoDeviceSeeker<?> seeker,
+    IoDeviceForgetEvent(@NotNull IoDeviceSeeker<?> emitter,
                         @NotNull IoDevice device) {
-        super(seeker);
+        super(emitter);
         this.device = device;
     }
 

@@ -14,9 +14,9 @@ public final class IoDeviceDiscoverEvent extends IoDeviceSeekerEvent {
 
     private final @NotNull IoDevice device;
 
-    IoDeviceDiscoverEvent(@NotNull IoDeviceSeeker<?> seeker,
+    IoDeviceDiscoverEvent(@NotNull IoDeviceSeeker<?> emitter,
                           @NotNull IoDevice device) {
-        super(seeker);
+        super(emitter);
         this.device = device;
     }
 

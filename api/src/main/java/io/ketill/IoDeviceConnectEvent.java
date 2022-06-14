@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoDeviceConnectEvent extends IoDeviceEvent {
 
-    IoDeviceConnectEvent(@NotNull IoDevice device) {
-        super(device);
+    IoDeviceConnectEvent(@NotNull IoDevice emitter) {
+        super(emitter);
     }
 
 }

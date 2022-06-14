@@ -2,32 +2,31 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 /**
  * The base for events emitted by {@link IoDeviceSeeker}.
  */
-public abstract class IoDeviceSeekerEvent {
-
-    private final @NotNull IoDeviceSeeker<?> seeker;
+public abstract class IoDeviceSeekerEvent
+        extends KetillEvent<IoDeviceSeeker<?>> {
 
     /**
      * Constructs a new {@code IoDeviceSeekerEvent}.
      *
-     * @param seeker the seeker which emitted this event.
-     * @throws NullPointerException if {@code seeker} is {@code null}.
+     * @param emitter the seeker which emitted this event.
+     * @throws NullPointerException if {@code emitter} is {@code null}.
      */
-    public IoDeviceSeekerEvent(@NotNull IoDeviceSeeker<?> seeker) {
-        this.seeker = Objects.requireNonNull(seeker, "seeker cannot be null");
+    public IoDeviceSeekerEvent(@NotNull IoDeviceSeeker<?> emitter) {
+        super(emitter);
     }
 
     /**
      * Returns the seeker which emitted this event.
+     * <p>
+     * <b>Alias for:</b> {@link #getEmitter()}.
      *
      * @return the seeker which emitted this event.
      */
     public final @NotNull IoDeviceSeeker<?> getSeeker() {
-        return this.seeker;
+        return this.getEmitter();
     }
 
 }

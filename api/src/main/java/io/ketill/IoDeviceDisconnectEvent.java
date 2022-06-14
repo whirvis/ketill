@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoDeviceDisconnectEvent extends IoDeviceEvent {
 
-    IoDeviceDisconnectEvent(@NotNull IoDevice device) {
-        super(device);
+    IoDeviceDisconnectEvent(@NotNull IoDevice emitter) {
+        super(emitter);
     }
 
 }

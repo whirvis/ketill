@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class IoFeatureUnregisterEvent extends IoFeatureEvent {
 
-    IoFeatureUnregisterEvent(@NotNull IoDevice device,
+    IoFeatureUnregisterEvent(@NotNull IoDevice emitter,
                              @NotNull IoFeature<?, ?> feature) {
-        super(device, feature);
+        super(emitter, feature);
     }
 
 }

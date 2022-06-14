@@ -8,14 +8,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public final class FieldsRegisteredEvent extends IoDeviceEvent {
 
-    /**
-     * Constructs a new {@code FieldsRegisteredEvent}.
-     *
-     * @param device the device which emitted this event.
-     * @throws NullPointerException if {@code device} is {@code null}.
-     */
-    public FieldsRegisteredEvent(@NotNull IoDevice device) {
-        super(device);
+    FieldsRegisteredEvent(@NotNull IoDevice emitter) {
+        super(emitter);
     }
 
 }
