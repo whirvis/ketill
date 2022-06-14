@@ -10,8 +10,8 @@ import java.util.Objects;
  * with different implementations. This provides portability and ways
  * to enable extra features, like rumble motors or gyroscopes.
  * <p>
- * <b>Thread safety:</b> The thread-safety of an adapter depends on the
- * implementation and underlying APIs. <i>As such, their documentation
+ * <b>Thread safety:</b> This class <i>thread-safe</i>. However, extending
+ * classes may <i>not</i> be thread-safe. <i>As such, their documentation
  * should be referenced beforehand.</i>
  *
  * @param <I> the I/O device type.
@@ -57,6 +57,8 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
      * This is called before {@link IoDevice#poll()} is invoked
      * for the first time. This is where most, if not all, adapter
      * setup should take place.
+     * <p>
+     * <b>Thread safety:</b> Implementation dependent.
      *
      * @see #device
      * @see #registry
@@ -67,13 +69,15 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
      * Called by {@link IoDevice#poll()}.
      * <p>
      * This should update the information necessary for mapped
-     * {@link FeatureAdapter} methods to fetch and then update
+     * {@link StateUpdater} interfaces to fetch and then update
      * the current state of their assigned features.
      * <p>
      * <b>On error:</b> Any exceptions thrown by this method that
      * are not an instance of {@link KetillException} will be wrapped
      * into one and thrown back to the caller. They will otherwise
      * be thrown to the caller as-is.
+     * <p>
+     * <b>Thread safety:</b> Implementation dependent.
      *
      * @throws Exception if an error occurs.
      */
@@ -84,6 +88,8 @@ public abstract class IoDeviceAdapter<I extends IoDevice> {
      * <p>
      * <b>Requirements:</b> This <i>must</i> return an up-to-date
      * value with calling {@link #pollDevice()} beforehand.
+     * <p>
+     * <b>Thread safety:</b> Implementation dependent.
      *
      * @return {@code true} if {@code device} is connected,
      * {@code false} otherwise.
