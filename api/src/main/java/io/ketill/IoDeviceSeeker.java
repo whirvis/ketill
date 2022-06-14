@@ -58,7 +58,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     private final @NotNull List<I> devices;
 
     private final Lock seekLock;
-
     private final AtomicBoolean closed;
 
     /**
@@ -83,7 +82,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         this.devices = new CopyOnWriteArrayList<>();
 
         this.seekLock = new ReentrantLock();
-
         this.closed = new AtomicBoolean();
     }
 
@@ -100,8 +98,9 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @param <T>        the event type.
      * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
-     * @throws NullPointerException if {@code eventClazz} or {@code callback}
-     *                              are {@code null}.
+     * @throws NullPointerException  if {@code eventClazz} or
+     *                               {@code callback} are {@code null}.
+     * @throws IllegalStateException if this seeker has been closed.
      */
     /* @formatter:off */
     @SuppressWarnings("unchecked")
@@ -110,6 +109,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
                             @NotNull Consumer<T> callback) {
         Objects.requireNonNull(eventClazz, "eventClazz cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
+        this.requireOpen();
         Disposable rxDisposable =
                 subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
                 .map(obj -> (T) obj).subscribe(callback::accept);
@@ -126,7 +126,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *                 seeker.
      * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
-     * @throws NullPointerException if {@code callback} is {@code null}.
+     * @throws NullPointerException  if {@code callback} is {@code null}.
+     * @throws IllegalStateException if this seeker has been closed.
      */
     /* @formatter:off */
     public final @NotNull IoDisposable
