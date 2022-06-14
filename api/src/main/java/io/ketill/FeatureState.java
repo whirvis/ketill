@@ -7,8 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * When present, indicates a field contains the state of an
- * {@link IoFeature}.
+ * When present, indicates a field contains the state of an {@link IoFeature}.
  * <p>
  * <b>Example of using this annotation:</b>
  * <pre>
