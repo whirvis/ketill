@@ -98,20 +98,22 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * @param callback   the code to execute when an event of the desired
      *                   type is emitted by the seeker.
      * @param <T>        the event type.
-     * @return the new {@link Disposable} instance, which can be used to
+     * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code eventClazz} or {@code callback}
      *                              are {@code null}.
      */
     /* @formatter:off */
     @SuppressWarnings("unchecked")
-    public final <T extends IoDeviceSeekerEvent> @NotNull Disposable
+    public final <T extends IoDeviceSeekerEvent> @NotNull IoDisposable
             subscribeEvents(@NotNull Class<T> eventClazz,
                             @NotNull Consumer<T> callback) {
         Objects.requireNonNull(eventClazz, "eventClazz cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
-        return subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
+        Disposable rxDisposable =
+                subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
                 .map(obj -> (T) obj).subscribe(callback::accept);
+        return new IoDisposable(rxDisposable);
     }
     /* @formatter:on */
 
@@ -122,12 +124,12 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      *
      * @param callback the code to execute when an event is emitted by the
      *                 seeker.
-     * @return the new {@link Disposable} instance, which can be used to
+     * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code callback} is {@code null}.
      */
     /* @formatter:off */
-    public final @NotNull Disposable
+    public final @NotNull IoDisposable
             subscribeEvents(@NotNull Consumer<IoDeviceSeekerEvent> callback) {
         Objects.requireNonNull(callback, "callback cannot be null");
         return this.subscribeEvents(IoDeviceSeekerEvent.class, callback);

@@ -156,7 +156,7 @@ public abstract class IoDevice implements FeatureRegistry {
      * @param callback   the code to execute when an event of the desired
      *                   type is emitted by the device.
      * @param <T>        the event type.
-     * @return the new {@link Disposable} instance, which can be used to
+     * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code eventClazz} or {@code callback}
      *                              are {@code null}.
@@ -164,13 +164,15 @@ public abstract class IoDevice implements FeatureRegistry {
      */
     /* @formatter:off */
     @SuppressWarnings("unchecked")
-    public final <T extends IoDeviceEvent> @NotNull Disposable
+    public final <T extends IoDeviceEvent> @NotNull IoDisposable
             subscribeEvents(@NotNull Class<T> eventClazz,
                             @NotNull Consumer<T> callback) {
         Objects.requireNonNull(eventClazz, "eventClazz cannot be null");
         Objects.requireNonNull(callback, "callback cannot be null");
-        return subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
+        Disposable rxDisposable =
+                subject.filter(event -> eventClazz.isAssignableFrom(event.getClass()))
                 .map(obj -> (T) obj).subscribe(callback::accept);
+        return new IoDisposable(rxDisposable);
     }
     /* @formatter:on */
 
@@ -179,12 +181,12 @@ public abstract class IoDevice implements FeatureRegistry {
      *
      * @param callback the code to execute when an event is emitted by the
      *                 device.
-     * @return the new {@link Disposable} instance, which can be used to
+     * @return the new {@link IoDisposable} instance, which can be used to
      * dispose the subscription at any time.
      * @throws NullPointerException if {@code callback} is {@code null}.
      */
     /* @formatter:off */
-    public final @NotNull Disposable
+    public final @NotNull IoDisposable
             subscribeEvents(@NotNull Consumer<IoDeviceEvent> callback) {
         Objects.requireNonNull(callback, "callback cannot be null");
         return this.subscribeEvents(IoDeviceEvent.class, callback);
@@ -247,7 +249,6 @@ public abstract class IoDevice implements FeatureRegistry {
         for (Field field : fields) {
             this.registerField(field);
         }
-
         this.registeredFields = true;
 
         this.fieldsRegistered();
