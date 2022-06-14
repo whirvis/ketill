@@ -7,8 +7,6 @@ import java.util.StringJoiner;
 
 /**
  * Utilities for implementing {@code toString()}.
- * <p>
- * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see #getJoiner(Object)
  * @see #getJoiner(String, Object)
