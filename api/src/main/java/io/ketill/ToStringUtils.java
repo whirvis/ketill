@@ -7,6 +7,8 @@ import java.util.StringJoiner;
 
 /**
  * Utilities for implementing {@code toString()}.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see #getJoiner(Object)
  * @see #getJoiner(String, Object)
@@ -44,15 +46,16 @@ public final class ToStringUtils {
     }
 
     /**
-     * Returns a {@link StringJoiner} for a class adding onto the result
-     * of it's super class's call to {@code toString()}. <i>This assumes
-     * the super class in question used {@link ToStringUtils}, and that
-     * the class calling this method extends from said super class</i>.
-     * If not, the result shall be undefined.
+     * Returns a {@link StringJoiner} for an object adding to the result
+     * of its super class's call to {@code toString()}. This strips the
+     * suffix of the original {@code toString()} call, using the result
+     * as the prefix for the new string joiner. The delimeter and suffix
+     * shall be the same as before.
      * <p>
-     * This works by stripping the suffix of the original {@code toString()}
-     * call, using the result as the prefix for the new string joiner. The
-     * delimeter and suffix shall be the same.
+     * <b>Requirements:</b> It is assumed the super class used
+     * {@link #getJoiner(Object)}, and that the class calling
+     * this method extends from said super class. If this is not
+     * the case, the result shall be undefined.
      *
      * @param prev the result of {@code super.toString()}.
      * @param obj  the object being converted to a string.
