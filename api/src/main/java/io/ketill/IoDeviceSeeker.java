@@ -33,11 +33,9 @@ import java.util.function.Consumer;
  * overlooked. All currently discovered devices can be polled using
  * {@link #pollDevices()}.
  * <p>
- * <b>Thread safety:</b> This class is <i>thread-safe.</i> However, some
- * methods may behave in unexpected ways in certain scenarios. It is best
- * to check the description of a method beforehand. <i>Furthermore, it is
- * possible for an extending class to not be thread-safe. As such, their
- * documentation should be referenced beforehand.</i>
+ * <b>Thread safety:</b> This class <i>thread-safe</i>. However, extending
+ * classes may <i>not</i> be thread-safe. <i>As such, their documentation
+ * should be referenced beforehand.</i>
  *
  * @param <I> the I/O device type.
  * @see #discoverDevice(IoDevice)
@@ -60,8 +58,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     private final @NotNull List<I> devices;
 
     private final Lock seekLock;
-    private final AtomicBoolean callingSeekImpl;
-    private final AtomicBoolean implCalledSeek;
 
     private final AtomicBoolean closed;
 
@@ -87,8 +83,6 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
         this.devices = new CopyOnWriteArrayList<>();
 
         this.seekLock = new ReentrantLock();
-        this.callingSeekImpl = new AtomicBoolean();
-        this.implCalledSeek = new AtomicBoolean();
 
         this.closed = new AtomicBoolean();
     }
@@ -156,14 +150,14 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /**
      * Returns all currently discovered devices.
      * <p>
-     * <b>Immutability:</b> The returned view is wrapped in an unmodifiable
-     * list. Attempting to modify it will result in an exception.
+     * <b>Immutability:</b> The returned view is <i>unmodifiable</i>.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>. Iterators
-     * of the returned list will not reflect additions, removals, or other
-     * such changes since the iterator was created. Furthermore, element
-     * changing operations on these iterators ({@code remove}, {@code set},
-     * and {@code add}) are not supported.
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>.
+     * <p>
+     * Iterators of the returned list will not reflect additions,
+     * removals, or other such changes since the iterator was created.
+     * Furthermore, element changing operations on these iterators
+     * ({@code remove}, {@code set}, and {@code add}) are not supported.
      *
      * @return all currently discovered devices.
      * @see #getDeviceCount()
@@ -174,15 +168,16 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Performs the given action for each device discovered by this device
-     * seeker until they have all been processed or {@code action} throws
-     * an exception. Exceptions thrown by the action are relayed to the
-     * caller.
+     * Performs the given action for each device discovered by this
+     * seeker until they have all been processed or {@code action}
+     * throws an exception. Exceptions thrown by the action will be
+     * relayed to the caller.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> Only the
-     * devices discovered at the time of invoking this method will be
-     * processed. Any modifications to the internal {@code devices} list
-     * performed during invocation will not be utilized.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
+     * <p>
+     * Only devices discovered at the time of invoking this method will
+     * be processed. Any modifications to the internal {@code devices}
+     * list made during invocation will not be reflected.
      *
      * @param action the action to perform for each discovered device.
      * @return this device seeker.
@@ -194,7 +189,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      */
     /* @formatter:off */
     public final IoDeviceSeeker<I>
-    forEachDevice(@NotNull Consumer<@NotNull I> action) {
+            forEachDevice(@NotNull Consumer<@NotNull I> action) {
         Objects.requireNonNull(action, "action cannot be null");
         this.requireOpen();
         for (I device : devices) {
@@ -208,8 +203,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * Calls {@link IoDevice#poll()} for each discovered device.
      * <p>
      * <b>Thread safety:</b> This method is equivalent to invoking
-     * {@code forEachDevice(IoDevice:poll)}. Since the preceding code
-     * is thread-safe, this method is also <i>thread-safe</i>.
+     * {@code forEachDevice(IoDevice::poll)}. Since the preceding
+     * code is thread-safe, this method is also <i>thread-safe</i>.
      *
      * @return this device seeker.
      * @throws IllegalStateException if this I/O device seeker has been
@@ -226,15 +221,14 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Discovers a device. If a device is already currently discovered,
-     * this method does nothing.
+     * Discovers a device. If the given device is already currently
+     * discovered, this method does nothing.
      * <p>
-     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from its
+     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from a
      * callback. Doing so will result in a {@code StackOverflowError}.
+     * If this error is somehow not thrown, the result is undefined.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
-     * is utilized to ensure the internal {@code devices} list cannot be
-     * modified by multiple threads at once.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param device the device to discover.
      * @throws NullPointerException  if {@code device} is {@code null}.
@@ -278,15 +272,14 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Forgets a device. If a device is not currently discovered, this
-     * method does nothing.
+     * Forgets a device. If the given device is not currently discovered,
+     * this method does nothing.
      * <p>
-     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from its
+     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked from a
      * callback. Doing so will result in a {@code StackOverflowError}.
+     * If this error is somehow not thrown, the result is undefined.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> A lock
-     * is utilized to ensure the internal {@code devices} list cannot be
-     * modified by multiple threads at once.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param device the device to forget.
      * @throws NullPointerException  if {@code device} is {@code null}.
@@ -324,9 +317,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Implementation for {@link #seek()}. Invoking {@link #seek()}
-     * here will either result in an exception or cause a deadlock on
-     * the calling thread <i>which cannot be recovered from.</i>
+     * Implementation for {@link #seek()}.
      * <p>
      * <b>On error:</b> Any exceptions thrown by this method that are
      * not an instance of {@link KetillException} will be wrapped into
@@ -349,11 +340,14 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * <p>
      * Furthermore, this method will not poll currently discovered devices.
      * It will only check if they are still connected to determine if they
-     * should be overlooked. All currently discovered devices can be polled
+     * should be forgotten. All currently discovered devices can be polled
      * using {@link #pollDevices()}.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe</i>. A lock
-     * is utilized to prevent concurrent scans by multiple threads.
+     * <b>Reentrancy:</b> This method <i>cannot</i> be invoked by from
+     * a callback. Doing so will result in a {@code StackOverflowError}.
+     * If this error is somehow not thrown, the result is undefined.
+     * <p>
+     * <b>Thread safety:</b> This method is <i>thread-safe</i>.
      *
      * @return this device seeker. This can be used for chaining method
      * calls, for example: {@code seek().pollDevices()}.
@@ -367,22 +361,8 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     public final IoDeviceSeeker<I> seek() {
         this.requireOpen();
 
-        /*
-         * Calling seek() while it is locked by the calling thread will
-         * cause a deadlock! The culprit is likely a bad implementation
-         * of seekImpl(). Set the flag and just return to prevent the
-         * deadlock from occurring. The original call will notice this
-         * error and throw the appropriate exception.
-         */
-        if (callingSeekImpl.get()) {
-            implCalledSeek.set(true);
-            return this;
-        }
-
         seekLock.lock();
-        callingSeekImpl.set(true);
         try {
-            implCalledSeek.set(false);
             this.seekImpl();
         } catch (KetillException cause) {
             throw cause; /* don't needlessly wrap */
@@ -390,14 +370,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
             String msg = "error in " + this.getClass().getName();
             throw new KetillException(msg, cause);
         } finally {
-            callingSeekImpl.set(false);
             seekLock.unlock();
-        }
-
-        if (implCalledSeek.get()) {
-            String msg = "seekImpl() cannot invoke seek()";
-            msg += " as that would result in a deadlock";
-            throw new IllegalStateException(msg);
         }
 
         return this;
@@ -407,9 +380,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
      * Requires that this I/O device seeker not be closed before continuing
      * execution.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> An atomic
-     * {@code boolean} is utilized to ensure a cached value is not used when
-     * determining if the seeker has been closed.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @throws IllegalStateException if this I/O device seeker has been
      *                               closed via {@link #close()}.
@@ -423,8 +394,7 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     /**
      * Returns if this I/O device seeker has been closed via {@link #close()}.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> An atomic
-     * {@code boolean} is utilized to ensure a cached value is not returned.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @return {@code true} if this I/O device seeker has been closed via
      * {@link #close()}, {@code false} otherwise.
@@ -434,13 +404,11 @@ public abstract class IoDeviceSeeker<I extends IoDevice> implements Closeable {
     }
 
     /**
-     * Closes this I/O device seeker and forgets any previously discovered
-     * devices. If the seeker is already closed then invoking this method
-     * has no effect.
+     * Closes this seeker and forgets any previously discovered devices.
+     * If the seeker is already closed then invoking this method has no
+     * effect.
      * <p>
-     * <b>Thread safety:</b> This method is <i>thread-safe.</i> An atomic
-     * {@code boolean} and a lock are utilized to ensure the seeker cannot
-     * be closed concurrently by multiple threads.
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      */
     @Override
     @MustBeInvokedByOverriders
