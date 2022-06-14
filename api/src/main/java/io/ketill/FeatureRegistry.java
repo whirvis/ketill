@@ -31,9 +31,7 @@ interface FeatureRegistry {
     /**
      * Returns if a feature with a given ID is registered.
      * <p>
-     * <b>Thread safety:</b> This method relies on
-     * {@link #getFeatureById(String)} to get the feature. Since the
-     * preceding is thread-safe, this method is also <i>thread-safe.</i>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param id the ID of the feature to check, case-sensitive.
      * @return {@code true} if a feature with the specified ID is registered,
@@ -125,10 +123,7 @@ interface FeatureRegistry {
      * return {@code null} if {@code feature} is not registered.
      * An {@code IllegalStateException} will be thrown instead.
      * <p>
-     * <b>Thread safety:</b> This method relies on
-     * {@link #getFeatureRegistration(IoFeature)} to get the registration
-     * of a feature. Since the preceding is thread-safe, this method is
-     * also <i>thread-safe.</i>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
@@ -153,10 +148,7 @@ interface FeatureRegistry {
      * throw an {@code IllegalStateException} if {@code feature} is not
      * registered. It will return {@code null} instead.
      * <p>
-     * <b>Thread safety:</b> This method relies on
-     * {@link #getFeatureRegistration(IoFeature)} to get the registration
-     * of a feature. Since the preceding is thread-safe, this method is
-     * also <i>thread-safe.</i>
+     * <b>Thread safety:</b> This method is <i>thread-safe.</i>
      *
      * @param feature the feature whose state to fetch.
      * @param <S>     the state container type.
