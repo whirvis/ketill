@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
  * <p>
  * This class exists so users do not have to add the RxJava 3
  * library to dispose listeners.
+ * <p>
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  */
 public final class IoDisposable implements Disposable {
 
