@@ -10,9 +10,9 @@ import java.util.Objects;
  * with different implementations. This provides portability and ways
  * to enable extra features, like rumble motors or gyroscopes.
  * <p>
- * <b>Thread safety:</b> This class <i>thread-safe</i>. However, extending
- * classes may <i>not</i> be thread-safe. <i>As such, their documentation
- * should be referenced beforehand.</i>
+ * <b>Thread safety:</b> The thread safety of this class depends on
+ * its implementation. <i>As such, an adapter's documentation must be
+ * referenced to determine if it is thread-safe beforehand.</i>
  *
  * @param <I> the I/O device type.
  * @see AdapterSupplier
