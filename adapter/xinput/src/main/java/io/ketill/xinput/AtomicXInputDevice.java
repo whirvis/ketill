@@ -17,13 +17,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * A thread-safe wrapper for {@link XInputDevice}.
  * <p>
- * <b>Visibility:</b> This class is {@code package-private} since only
- * the functionality required by {@link XInputXboxAdapter} to do its job
- * is provided. As such, it is hidden from users.
+ * <b>Visibility:</b> This class is {@code package-private} since
+ * only the functionality required by {@link XInputXboxAdapter} to
+ * do its job is provided. As such, it is kept hidden from users.
  * <p>
- * <b>Thread safety:</b> This class is <i>thread-safe.</i> A lock is
- * utilized to ensure multiple threads cannot perform operations like
- * polling the underlying device at the same time.
+ * <b>Thread safety:</b> This class is <i>thread-safe.</i>
  *
  * @see #poll()
  */
