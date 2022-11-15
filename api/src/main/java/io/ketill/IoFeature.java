@@ -1,0 +1,194 @@
+package io.ketill;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.annotation.*;
+import java.util.Objects;
+
+/**
+ * The definition for an {@link IoDevice} capability.
+ * <p>
+ * Examples include (but are not limited to): a gamepad button, an analog
+ * stick, a rumble motor, or an LED indicator. Each of these features has
+ * a corresponding {@link IoState}.
+ *
+ * @param <S> the I/O state type.
+ * @see BuiltIn
+ * @see IoDevice#addFeature(IoFeature)
+ * @see IoLogic
+ */
+public abstract class IoFeature<S extends IoState<?>> {
+
+    /**
+     * When present, indicates to an {@link IoDevice} that a field contains
+     * an {@code IoFeature} which is part of it. Using this annotation also
+     * ensures the field has proper form for an I/O feature declaration.
+     * <p>
+     * <b>Requirements</b>
+     * <p>
+     * <ul>
+     *     <li>The field must be {@code public} and {@code final}.</li>
+     *     <li>The type must assignable from {@code IoFeature}.</li>
+     *     <li>The field must be {@code static}.</li>
+     * </ul>
+     * <p>
+     * If these requirements are not met, an appropriate exception shall
+     * be thrown by the constructor of {@code IoDevice}.
+     * <p>
+     * <b>Recommendations</b>
+     * <p>
+     * The recommended naming convention for these fields is upper snake
+     * case, with the name beginning with an abbreviation of the feature
+     * type. This is to clearly distinguish them from their sister fields,
+     * which contain the state for a specific {@code IoDevice} instance.
+     * <p>
+     * <b>Example</b>
+     * <p>
+     * <pre>
+     * &#47;* note: Gamepad extends IoDevice *&#47;
+     * class XboxController extends Gamepad {
+     *
+     *     &#47;* note: GamepadButton extends IoFeature *&#47;
+     *     &#64;IoFeature.BuiltIn
+     *     public static final GamepadButton
+     *             BUTTON_A = new GamepadButton("a"),
+     *             BUTTON_B = new GamepadButton("b"),
+     *             BUTTON_X = new GamepadButton("x"),
+     *             BUTTON_Y = new GamepadButton("y");
+     *
+     *     &#47;* note: GamepadButtonState extends IoState *&#47;
+     *     &#64;IoState.BuiltIn
+     *     public final GamepadButtonState
+     *             a = this.addFeature(BUTTON_A),
+     *             b = this.addFeature(BUTTON_B),
+     *             x = this.addFeature(BUTTON_X),
+     *             y = this.addFeature(BUTTON_Y);
+     *
+     * }
+     * </pre>
+     *
+     * @see IoDevice#addFeature(IoFeature)
+     */
+    @Documented
+    @Target(ElementType.FIELD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface BuiltIn {
+        /* this annotation has no attributes */
+    }
+
+    /**
+     * Checks that the specified I/O feature ID is valid, and throws an
+     * exception if it is not. For the ID to be valid: it must not be
+     * {@code null}, must not be empty, and cannot contain whitespace.
+     *
+     * @param id the ID to validate.
+     * @return {@code id} if valid.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public static @NotNull String validateId(@NotNull String id) {
+        Objects.requireNonNull(id, "id cannot be null");
+        if (id.isEmpty()) {
+            throw new IllegalArgumentException("id cannot be empty");
+        } else if (!id.matches("\\S+")) {
+            throw new IllegalArgumentException("id cannot contain whitespace");
+        }
+        return id;
+    }
+
+    private final @NotNull String id;
+    private final @NotNull IoFlow flow;
+
+    /**
+     * Constructs a new {@code IoFeature}.
+     *
+     * @param id   the ID of this I/O feature.
+     * @param flow the flow of this I/O feature.
+     * @throws NullPointerException     if {@code id} or {@code flow} are
+     *                                  {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public IoFeature(@NotNull String id, @NotNull IoFlow flow) {
+        this.id = validateId(id);
+        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
+    }
+
+    /**
+     * Returns the ID of this I/O feature.
+     *
+     * @return the ID of this I/O feature.
+     */
+    public final @NotNull String getId() {
+        return this.id;
+    }
+
+    /**
+     * Returns the flow of this I/O feature.
+     *
+     * @return the flow of this I/O feature.
+     */
+    public final @NotNull IoFlow getFlow() {
+        return this.flow;
+    }
+
+    /**
+     * Creates a new instance of the I/O feature's state.
+     * <p>
+     * <b>Requirements</b>
+     * <p>
+     * <ul>
+     *     <li>The returned value must not be {@code null}.</li>
+     *     <li>The state must represent this feature. This means a call to
+     *     {@link IoState#getFeature()} on the returned value must return
+     *     this object.</li>
+     * </ul>
+     * <p>
+     * If these requirements are not met, an appropriate exception shall
+     * be thrown by {@link IoDevice#addFeature(IoFeature)}. This prevents
+     * possibles errors from propagating down the line.
+     *
+     * @return the newly created I/O feature state.
+     * @see #createLogic(IoDevice, IoState)
+     */
+    protected abstract @NotNull S createState();
+
+    /**
+     * Creates a new instance of the I/O state's logic.
+     * <p>
+     * <b>Requirements</b>
+     * <p>
+     * <ul>
+     *     <li>The logic must be owned by {@code device}.</li>
+     *     <li>The logic must manage {@code state}.</li>
+     * </ul>
+     * <p>
+     * If these requirements are not met, an appropriate exception shall
+     * be thrown by {@link IoDevice#addFeature(IoFeature)}. Take note that
+     * these requirements apply only to not {@code null} return values.
+     *
+     * @param device the I/O device which {@code state} belongs to.
+     * @param state  the I/O state the logic will manage.
+     * @return the newly created I/O state logic, {@code null} if no logic
+     * instance shall manage the state.
+     * @see #createState()
+     */
+    @IoApi.Optional
+    protected @Nullable IoLogic<?> createLogic(@NotNull IoDevice device,
+                                               @NotNull S state) {
+        return null; /* no logic by default */
+    }
+
+    /* @formatter:off */
+    @Override
+    public String toString() {
+        return IoApi.getStrJoiner(this)
+                .add("id='" + id + "'")
+                .add("flow=" + flow)
+                .toString();
+    }
+    /* @formatter:on */
+
+}
