@@ -9,7 +9,7 @@ import java.util.Objects;
  * The state of an {@link IoFeature}.
  * <p>
  * Examples include (but are not limited to): if a gamepad button is
- * pressed, the position of an analog stick, the strength of a rumble
+ * pressed, the position of an analog stick, the intensity of a rumble
  * motor, or the status of an LED.
  * <p>
  * <b>For I/O states with no internals:</b> use the state itself as the
