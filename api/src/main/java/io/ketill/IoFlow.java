@@ -1,30 +1,72 @@
 package io.ketill;
 
 /**
- * TODO: add proper explanation
+ * Determines when an {@link IoFeature} is refreshed.
+ *
+ * @see IoState
  */
 public enum IoFlow {
 
     /**
-     * Write to the {@link IoState} on query.
+     * Never refresh the {@link IoFeature}.
      * <p>
-     * This is suitable for I/O features which pull data from a device.
-     * Examples of this include (but are not limited to): gamepad buttons,
-     * analog sticks, analog triggers, gyroscopes, etc.
+     * There are no known use-cases for this.
+     */
+    DORMANT(false, false),
+
+    /**
+     * Obtain the {@link IoFeature}'s state on query.
+     * <p>
+     * Use this when the {@link IoState} stores data obtained from the
+     * device. Examples include (but are not limited to) if a gamepad
+     * button is pressed or the position of an analog stick.
      *
      * @see IoDevice#query()
      */
-    IN,
+    IN(true, false),
 
     /**
-     * Read from the {@link IoState} on update.
+     * Communicate the {@link IoFeature}'s state on update.
      * <p>
-     * This is suitable for I/O features which push data to a device.
-     * Examples of this include (but are not limited to): rumble motors,
-     * LED indicators, sound speakers, etc.
+     * Use this when the {@link IoState} stores data communicated to the
+     * device. Examples include (but are not limited to) the intensity of
+     * a rumble motor or the status of an LED.
      *
      * @see IoDevice#update()
      */
-    OUT,
+    OUT(false, true),
+
+    /**
+     * Combination of {@link #IN} and {@link #OUT}.
+     */
+    TWO_WAY(true, true);
+
+    private final boolean inward;
+    private final boolean outward;
+
+    IoFlow(boolean inward, boolean outward) {
+        this.inward = inward;
+        this.outward = outward;
+    }
+
+    /**
+     * Returns if the {@link IoFeature} obtains data.
+     *
+     * @return {@code true} if the feature's {@link IoState} contains data
+     * which is obtained from its device, {@code false} otherwise.
+     */
+    public boolean flowsInward() {
+        return this.inward;
+    }
+
+    /**
+     * Returns if the {@link IoFeature} communicates data.
+     *
+     * @return {@code true} if the feature's {@link IoState} contains data
+     * which is communicated to its device, {@code false} otherwise.
+     */
+    public boolean flowsOutward() {
+        return this.outward;
+    }
 
 }
