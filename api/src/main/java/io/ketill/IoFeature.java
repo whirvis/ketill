@@ -148,15 +148,39 @@ public abstract class IoFeature<S extends IoState<?>> {
      * <p>
      * If these requirements are not met, an appropriate exception shall
      * be thrown by {@link IoDevice#addFeature(IoFeature)}. This prevents
-     * possibles errors from propagating down the line.
+     * possible errors from propagating down the line.
      *
      * @return the newly created I/O feature state.
+     * @see #createVerifiedState()
      * @see #createLogic(IoDevice, IoState)
      */
     protected abstract @NotNull S createState();
 
     /**
-     * Creates a new instance of the I/O state's logic.
+     * Wrapper for {@link #createState()}, which verifies the created
+     * state meets the necessary requirements. If they are not met, an
+     * appropriate exception shall be thrown.
+     *
+     * @return the newly created, verified I/O feature state.
+     * @throws NullPointerException     if the created state is {@code null}.
+     * @throws IllegalArgumentException if the created state is not represented
+     *                                  by this feature.
+     */
+    @SuppressWarnings("ConstantConditions") /* <- untrue >:( */
+    protected final @NotNull S createVerifiedState() {
+        S state = this.createState();
+        if (state == null) {
+            String msg = "created state cannot be null";
+            throw new NullPointerException(msg);
+        } else if (state.getFeature() != this) {
+            String msg = "created state must represent this feature";
+            throw new IllegalArgumentException(msg);
+        }
+        return state;
+    }
+
+    /**
+     * Creates a new instance of the I/O feature's logic.
      * <p>
      * <b>Requirements</b>
      * <p>
@@ -171,14 +195,51 @@ public abstract class IoFeature<S extends IoState<?>> {
      *
      * @param device the I/O device which {@code state} belongs to.
      * @param state  the I/O state the logic will manage.
-     * @return the newly created I/O state logic, {@code null} if no logic
+     * @return the newly created I/O logic, {@code null} if no logic
      * instance shall manage the state.
      * @see #createState()
      */
     @IoApi.Optional
-    protected @Nullable IoLogic<?> createLogic(@NotNull IoDevice device,
-                                               @NotNull S state) {
+    protected @Nullable IoLogic<?>
+    createLogic(@NotNull IoDevice device, @NotNull S state) {
         return null; /* no logic by default */
+    }
+
+    /**
+     * Wrapper for {@link #createLogic(IoDevice, IoState)}, which verifies
+     * the created logic for a given state meets the necessary requirements.
+     * If they are not met, an appropriate exception shall be thrown.
+     *
+     * @return the newly created, verified I/O feature logic.
+     * @throws NullPointerException     if {@code device} or {@code state}
+     *                                  are {@code null}.
+     * @throws IllegalArgumentException if the created logic is not owned
+     *                                  by {@code device}, does not manage
+     *                                  {@code state}, or is not represented
+     *                                  by this feature.
+     */
+    protected @Nullable IoLogic<?>
+    createVerifiedLogic(@NotNull IoDevice device, @NotNull S state) {
+        Objects.requireNonNull(device, "device cannot be null");
+        Objects.requireNonNull(state, "state cannot be null");
+
+        IoLogic<?> logic = this.createLogic(device, state);
+        if (logic == null) {
+            return null;
+        }
+
+        if (logic.device != device) {
+            String msg = "created logic not owned by provided device";
+            throw new IllegalArgumentException(msg);
+        } else if (logic.state != state) {
+            String msg = "created logic must manage provided state";
+            throw new IllegalArgumentException(msg);
+        } else if (logic.feature != this) {
+            String msg = "created logic must represent this feature";
+            throw new IllegalArgumentException(msg);
+        }
+
+        return logic;
     }
 
     /* @formatter:off */
