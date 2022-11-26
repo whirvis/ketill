@@ -175,10 +175,39 @@ public abstract class IoAdapter<D extends IoDevice> {
 
     }
 
+    private static class IoMappingCache {
+
+        private final IoFlow flow;
+        private final Set<IoAdapter.IoMapping<?, ?>> mappings;
+
+        private IoMappingCache(IoFlow flow) {
+            this.flow = flow;
+            this.mappings = new HashSet<>();
+        }
+
+        public void add(IoAdapter.IoMapping<?, ?> mapping) {
+            mappings.add(mapping);
+        }
+
+        public void remove(IoAdapter.IoMapping<?, ?> mapping) {
+            mappings.remove(mapping);
+        }
+
+        public void crossBridges() {
+            for (IoAdapter.IoMapping<?, ?> mapping : mappings) {
+                mapping.crossBridge(flow);
+            }
+        }
+
+    }
+
     private final Map<IoFeature<?>, IoMapping<?, ?>> mappings;
+    private final IoMappingCache inMappings, outMappings;
 
     public IoAdapter() {
         this.mappings = new HashMap<>();
+        this.inMappings = new IoMappingCache(IoFlow.IN);
+        this.outMappings = new IoMappingCache(IoFlow.OUT);
     }
 
     @SuppressWarnings("unchecked")
@@ -189,7 +218,20 @@ public abstract class IoAdapter<D extends IoDevice> {
             return; /* no cache to update */
         }
 
-        /* TODO */
+        /* TODO: fetch state internals from device */
+
+        if (mapping.internals == null) {
+            inMappings.remove(mapping);
+            outMappings.remove(mapping);
+        } else {
+            IoFlow flow = feature.getFlow();
+            if (flow.flowsInward()) {
+                inMappings.add(mapping);
+            }
+            if (flow.flowsOutward()) {
+                outMappings.add(mapping);
+            }
+        }
     }
 
     /**
