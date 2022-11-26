@@ -1,7 +1,7 @@
 package io.ketill;
 
 /**
- * Determines when an {@link IoFeature} is refreshed.
+ * Determines when an {@link IoFeature} is bridged.
  *
  * @see IoState
  */
@@ -11,6 +11,7 @@ public enum IoFlow {
      * Never refresh the {@link IoFeature}.
      * <p>
      * There are no known use-cases for this.
+     * TODO: mention pipe internals as possible alternative
      */
     DORMANT(false, false),
 
