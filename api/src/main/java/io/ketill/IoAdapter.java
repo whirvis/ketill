@@ -17,7 +17,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      */
     @Documented
     @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.RUNTIME)
     protected @interface ForFeature {
         /* this annotation has no attributes */
     }
@@ -31,7 +31,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      */
     @Documented
     @Target(ElementType.METHOD)
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.RUNTIME)
     protected @interface LinkShorthand {
         /* this annotation has no attributes */
     }
