@@ -77,6 +77,21 @@ public abstract class IoFeature<S extends IoState<?>> {
         /* this annotation has no attributes */
     }
 
+    static class Cache {
+
+        final @NotNull IoFeature<?> feature;
+        final @NotNull IoState<?> state;
+        final @Nullable IoLogic<?> logic;
+
+        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state,
+              @Nullable IoLogic<?> logic) {
+            this.feature = feature;
+            this.state = state;
+            this.logic = logic;
+        }
+
+    }
+
     /**
      * Checks that the specified I/O feature ID is valid, and throws an
      * exception if it is not. For the ID to be valid: it must not be
