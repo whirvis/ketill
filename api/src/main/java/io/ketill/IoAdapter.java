@@ -428,8 +428,7 @@ public abstract class IoAdapter<D extends IoDevice> {
     /**
      * Unlinks an {@link IoFeature} from its adapter method.
      * <p>
-     * Features that were previously linked shall have their state reset
-     * to their initial value via {@link IoState#reset()}.
+     * Features that were previously linked shall have their state reset.
      *
      * @param feature the feature to unlink.
      * @throws NullPointerException if {@code feature} is {@code null}.
