@@ -22,6 +22,17 @@ public final class IoApi {
         /* this annotation has no attributes */
     }
 
+    /**
+     * When present, signals that a method is shorthand for another,
+     * usually of the same name.
+     */
+    @Documented
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Shorthand {
+        /* this annotation has no attributes */
+    }
+
     private static final String JOINER_DELIMETER = ", ";
     private static final String JOINER_SUFFIX = "]";
 
