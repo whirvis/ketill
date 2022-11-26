@@ -43,7 +43,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      */
     protected static final class IoLink {
 
-        static final Object EMPTY_PARAMS = new Object();
+        static final Object NO_PARAMS = new Object();
 
         /**
          * An {@code IoLink} which accepts the current {@link IoFlow} of
@@ -192,14 +192,6 @@ public abstract class IoAdapter<D extends IoDevice> {
         /* TODO */
     }
 
-    private void requireFlow(@NotNull IoFeature<?> feature) {
-        Objects.requireNonNull(feature, "feature cannot be null");
-        if (feature.getFlow() == IoFlow.TWO_WAY) {
-            String msg = "two-way feature must account for flow";
-            throw new IllegalArgumentException(msg);
-        }
-    }
-
     /**
      * Returns if an {@link IoFeature} is linked to an adapter method.
      *
@@ -312,8 +304,24 @@ public abstract class IoAdapter<D extends IoDevice> {
     protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithFlow.WithoutParams<I> link) {
-        this.linkFeature(feature, IoLink.EMPTY_PARAMS,
+        this.linkFeature(feature, IoLink.NO_PARAMS,
                 (f, i, p) -> link.bridge(f, i));
+    }
+
+    /**
+     * Ensures that an {@link IoFeature} flows in a single direction.
+     *
+     * @param feature the feature to validate.
+     * @throws NullPointerException     if {@code feature} is {@code null}.
+     * @throws IllegalArgumentException if {@code feature.getFlow()} returns
+     *                                  {@link IoFlow#TWO_WAY}.
+     */
+    private void requireOneWayFlow(@NotNull IoFeature<?> feature) {
+        Objects.requireNonNull(feature, "feature cannot be null");
+        if (feature.getFlow() == IoFlow.TWO_WAY) {
+            String msg = "two-way feature must account for flow";
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     /**
@@ -348,7 +356,7 @@ public abstract class IoAdapter<D extends IoDevice> {
     protected final <F extends IoFeature<S>, S extends IoState<I>, I, P>
     void linkFeature(@NotNull F feature, @NotNull P params,
                      @NotNull IoLink.WithoutFlow.WithParams<I, P> link) {
-        this.requireFlow(feature);
+        this.requireOneWayFlow(feature);
         this.linkFeature(feature, params,
                 (f, i, p) -> link.bridge(i, p));
     }
@@ -412,8 +420,8 @@ public abstract class IoAdapter<D extends IoDevice> {
     protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithoutFlow.WithoutParams<I> link) {
-        this.requireFlow(feature);
-        this.linkFeature(feature, IoLink.EMPTY_PARAMS,
+        this.requireOneWayFlow(feature);
+        this.linkFeature(feature, IoLink.NO_PARAMS,
                 (f, i, p) -> link.bridge(i));
     }
 
