@@ -169,8 +169,8 @@ public abstract class IoDevice {
      * <p>
      * If the given feature is already present, {@link IoState#reset()} will
      * be called on its state before returning it. New instances of the state
-     * are not created, since doing so would invalidate previous references.
-     * That being, they would point to an {@code IoState} no longer used for
+     * are not created, as doing so would invalidate previous references.
+     * That is, they would point to an {@code IoState} no longer used for
      * the feature.
      * <p>
      * <b>Note:</b> No two features with the same ID can be present on a
@@ -181,14 +181,13 @@ public abstract class IoDevice {
      * @return the current state of {@code feature}.
      * @param <S> the I/O state type.
      * @param <I> the internal data type.
-     * @throws NullPointerException     if {@code feature} is {@code null}.
-     * @throws IllegalArgumentException if a feature with the same ID as
-     *                                  {@code feature} is already present
-     *                                  on this device.
+     * @throws NullPointerException if {@code feature} is {@code null}.
+     * @throws IoDeviceException    if a feature with the same ID as
+     *                              {@code feature} is already present
+     *                              on this device.
      */
     @SuppressWarnings("unchecked")
-    protected <S extends IoState<I>, I> @NotNull S
-    addFeature(@NotNull IoFeature<S> feature) {
+    protected <S extends IoState<I>, I> @NotNull S addFeature(@NotNull IoFeature<S> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         featuresLock.writeLock().lock();
@@ -207,7 +206,7 @@ public abstract class IoDevice {
                 return (S) current.state;
             } else if (current != null) {
                 String msg = "feature with ID \"" + id + "\" already present";
-                throw new IllegalArgumentException(msg);
+                throw new IoDeviceException(this, msg);
             }
 
             S state = feature.createVerifiedState();
