@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Signals an {@link IoAdapter} exception.
  */
+@IgnoreCoverage
 public class IoAdapterException extends KetillIoException {
 
     private static final long serialVersionUID = 2296743015689493731L;

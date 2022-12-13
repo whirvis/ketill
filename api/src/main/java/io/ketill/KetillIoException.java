@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * <b>Note:</b> This class is {@code abstract} as throwing an instance
  * of this exception is too broad.
  */
+@IgnoreCoverage
 public abstract class KetillIoException extends RuntimeException {
 
     private static final long serialVersionUID = 2296743015689493731L;
