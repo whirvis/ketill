@@ -162,8 +162,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      * </ul>
      * <p>
      * If these requirements are not met, an appropriate exception shall
-     * be thrown by {@link IoDevice#addFeature(IoFeature)}. This prevents
-     * possible errors from propagating down the line.
+     * be thrown by {@link IoDevice#addFeature(IoFeature)}.
      *
      * @return the newly created I/O feature state.
      * @see #createVerifiedState()
@@ -181,13 +180,10 @@ public abstract class IoFeature<S extends IoState<?>> {
      * @throws IllegalArgumentException if the created state is not represented
      *                                  by this feature.
      */
-    @SuppressWarnings("ConstantConditions") /* <- untrue >:( */
     protected final @NotNull S createVerifiedState() {
         S state = this.createState();
-        if (state == null) {
-            String msg = "created state cannot be null";
-            throw new NullPointerException(msg);
-        } else if (state.getFeature() != this) {
+        Objects.requireNonNull(state, "created state cannot be null");
+        if (state.getFeature() != this) {
             String msg = "created state must represent this feature";
             throw new IllegalArgumentException(msg);
         }
