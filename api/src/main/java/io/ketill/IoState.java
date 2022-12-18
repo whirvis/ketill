@@ -102,6 +102,8 @@ public abstract class IoState<I> {
      */
     protected final @NotNull I internals;
 
+    private boolean valid;
+
     /**
      * Constructs a new {@code IoState}.
      *
@@ -131,6 +133,8 @@ public abstract class IoState<I> {
             msg += " instance of " + IoState.class.getSimpleName();
             throw new IllegalArgumentException(msg);
         }
+
+        this.valid = true;
     }
 
     /**
@@ -173,6 +177,8 @@ public abstract class IoState<I> {
 
         this.feature = feature;
         this.internals = (I) this;
+
+        this.valid = true;
     }
 
     /**
@@ -185,8 +191,25 @@ public abstract class IoState<I> {
     }
 
     /**
+     * Returns if this I/O state is currently valid.
+     * <p>
+     * When an I/O state is invalid, it means it is no longer up-to-date
+     * with the feature it represents.
+     *
+     * @return {@code true} if this I/O state is currently valid,
+     * {@code false} otherwise.
+     */
+    public final boolean isValid() {
+        return this.valid;
+    }
+
+    /**
      * Resets the I/O state.
      */
     protected abstract void reset();
+
+    void invalidate() {
+        this.valid = false;
+    }
 
 }
