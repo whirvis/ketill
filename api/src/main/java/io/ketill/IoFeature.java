@@ -115,6 +115,27 @@ public abstract class IoFeature<S extends IoState<?>> {
 
     private final @NotNull String id;
     private final @NotNull IoFlow flow;
+    private boolean perpetual;
+
+    /**
+     * Constructs a new {@code IoFeature}.
+     *
+     * @param id          the ID of this I/O feature.
+     * @param flow        the flow of this I/O feature.
+     * @param perpetual   {@code true} if the reference of an I/O state
+     *                    representing this feature should remain valid
+     *                    after being removed, {@code false} otherwise.
+     * @throws NullPointerException     if {@code id} or {@code flow} are
+     *                                  {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public IoFeature(@NotNull String id, @NotNull IoFlow flow,
+                     boolean perpetual) {
+        this.id = validateId(id);
+        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
+        this.perpetual = perpetual;
+    }
 
     /**
      * Constructs a new {@code IoFeature}.
@@ -127,8 +148,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      *                                  whitespace.
      */
     public IoFeature(@NotNull String id, @NotNull IoFlow flow) {
-        this.id = validateId(id);
-        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
+        this(id, flow, false);
     }
 
     /**
@@ -147,6 +167,20 @@ public abstract class IoFeature<S extends IoState<?>> {
      */
     public final @NotNull IoFlow getFlow() {
         return this.flow;
+    }
+
+
+    /**
+     * Returns if the reference of an I/O state representing this feature
+     * should remain valid after being removed.
+     *
+     * @return {@code true} if the reference of an I/O state representing
+     * this feature should remain valid after being removed, {@code false}
+     * otherwise.
+     * @see IoDevice#removeFeature(IoFeature)
+     */
+    public final boolean isPerpetual() {
+        return this.perpetual;
     }
 
     /**
