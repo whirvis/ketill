@@ -244,7 +244,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      * instance shall manage the state.
      * @see #createState()
      */
-    @IoApi.Optional
+    @IoApi.DefaultBehavior("return null")
     protected @Nullable IoLogic<?>
     createLogic(@NotNull IoDevice device, @NotNull S state) {
         return null; /* no logic by default */

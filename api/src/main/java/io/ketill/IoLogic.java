@@ -7,7 +7,9 @@ import java.util.Objects;
 /**
  * Gives autonomy to an {@link IoFeature}.
  * <p>
- * TODO: explain what problem this solves.
+ * This should be used to implement functionality which an {@link IoAdapter}
+ * is not responsible for. Examples of this include (but are not limited to):
+ * emitting press events, applying calibration, etc.
  *
  * @param <I> the internal data type.
  * @see IoFeature#createLogic(IoDevice, IoState)
@@ -73,41 +75,53 @@ public abstract class IoLogic<I> {
     /**
      * Initializes the logic.
      * <p>
-     * TODO: when is this called?
+     * This is invoked just after the {@link IoFeature} this logic works
+     * for is added to a device.
+     * <p>
+     * <b>Default behavior:</b> No-op.
      */
-    @IoApi.Optional
-    protected void init() {
-        /* optional implement */
+    @IoApi.DefaultBehavior("no-op")
+    protected void startup() {
+        /* default behavior is a no-op */
     }
 
     /**
      * Prepares for a logical update.
      * <p>
-     * TODO: when is this called?
+     * This is invoked just before the {@link IoAdapter} for a device
+     * updates the state this logic manages.
+     * <p>
+     * <b>Default behavior:</b> No-op.
      */
-    @IoApi.Optional
-    protected void prepare() {
-        /* optional implement */
+    @IoApi.DefaultBehavior("no-op")
+    protected void prepareUpdate() {
+        /* default behavior is a no-op */
     }
 
     /**
      * Executes a logical update.
      * <p>
-     * TODO: when is this called?
+     * This is invoked just after the {@link IoAdapter} for a device
+     * updates the state this logic manages.
+     * <p>
+     * <b>Default behavior:</b> No-op.
      */
-    @IoApi.Optional
+    @IoApi.DefaultBehavior("no-op")
     protected void update() {
-        /* optional implement */
+        /* default behavior is a no-op */
     }
 
     /**
      * De-initializes the logic.
      * <p>
-     * TODO: when is this called?
+     * This is invoked just after the {@link IoFeature} this logic works
+     * for is removed from a device.
+     * <p>
+     * <b>Default behavior:</b> No-op.
      */
-    @IoApi.Optional
-    protected void deinit() {
-        /* optional implement */
+    @IoApi.DefaultBehavior("no-op")
+    protected void shutdown() {
+        /* default behavior is a no-op */
     }
 
 }

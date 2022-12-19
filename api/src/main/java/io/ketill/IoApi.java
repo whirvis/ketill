@@ -12,14 +12,21 @@ import java.util.StringJoiner;
 public final class IoApi {
 
     /**
-     * When present, signals that a method need to be implemented
-     * for a class to function.
+     * When present, signals that a method has a default behavior
+     * and specifies what that behavior is.
      */
     @Documented
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.SOURCE)
-    public @interface Optional {
-        /* this annotation has no attributes */
+    public @interface DefaultBehavior {
+
+        /**
+         * Describes the default behavior of this method.
+         *
+         * @return the default behavior of this method.
+         */
+        String value();
+
     }
 
     /**
