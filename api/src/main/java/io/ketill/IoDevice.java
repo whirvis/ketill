@@ -54,7 +54,7 @@ public abstract class IoDevice {
      * @see #hasFeature(String)
      */
     public final boolean hasFeature(@Nullable IoFeature<?> feature) {
-        if(feature == null) {
+        if (feature == null) {
             return false;
         }
         return this.getCache(feature) != null;
@@ -69,7 +69,7 @@ public abstract class IoDevice {
      * @see #hasFeature(IoFeature)
      */
     public final boolean hasFeature(@Nullable String id) {
-        if(id == null) {
+        if (id == null) {
             return false;
         }
         featuresLock.readLock().lock();
@@ -167,20 +167,18 @@ public abstract class IoDevice {
     /**
      * Adds an I/O feature to the device.
      * <p>
-     * If the given feature is already present, {@link IoState#reset()} will
-     * be called on its state before returning it. New instances of the state
-     * are not created, as doing so would invalidate previous references.
-     * That is, they would point to an {@code IoState} no longer used for
-     * the feature.
+     * If the given feature is already present, {@link IoState#reset()}
+     * will be called on its state before returning it. A new instance is
+     * not created to prevent a dangling reference.
      * <p>
      * <b>Note:</b> No two features with the same ID can be present on a
      * device at the same time. This ensures {@link #getFeature(String)}
      * can return only a single, unambiguous value.
      *
      * @param feature the feature to add.
+     * @param <S>     the I/O state type.
+     * @param <I>     the internal data type.
      * @return the current state of {@code feature}.
-     * @param <S> the I/O state type.
-     * @param <I> the internal data type.
      * @throws NullPointerException if {@code feature} is {@code null}.
      * @throws IoDeviceException    if a feature with the same ID as
      *                              {@code feature} is already present
@@ -195,9 +193,9 @@ public abstract class IoDevice {
             String id = feature.getId();
 
             /*
-             * As explained by the docs, we must not overwrite the state
-             * reference used for a feature which is currently present so
-             * older references are not invalidated. There can also be no
+             * As explained by the docs, we must not create a new instance
+             * of the state. By keeping the original object intact, previous
+             * references will remain valid. Furthermore, there can be no
              * two features with the same ID present at one time.
              */
             IoFeature.Cache current = features.get(id);
