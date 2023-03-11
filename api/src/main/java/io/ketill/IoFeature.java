@@ -115,26 +115,27 @@ public abstract class IoFeature<S extends IoState<?>> {
 
     private final @NotNull String id;
     private final @NotNull IoFlow flow;
-    private boolean perpetual;
+    private boolean modular;
 
     /**
      * Constructs a new {@code IoFeature}.
      *
-     * @param id          the ID of this I/O feature.
-     * @param flow        the flow of this I/O feature.
-     * @param perpetual   {@code true} if the reference of an I/O state
-     *                    representing this feature should remain valid
-     *                    after being removed, {@code false} otherwise.
+     * @param id      the ID of this I/O feature.
+     * @param flow    the flow of this I/O feature.
+     * @param modular {@code true} if this I/O feature can be added and/or
+     *                removed from the device after instantiation, {@code false}
+     *                otherwise.
      * @throws NullPointerException     if {@code id} or {@code flow} are
      *                                  {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public IoFeature(@NotNull String id, @NotNull IoFlow flow,
-                     boolean perpetual) {
+                     boolean modular) {
         this.id = validateId(id);
+
         this.flow = Objects.requireNonNull(flow, "flow cannot be null");
-        this.perpetual = perpetual;
+        this.modular = modular;
     }
 
     /**
@@ -171,16 +172,19 @@ public abstract class IoFeature<S extends IoState<?>> {
 
 
     /**
-     * Returns if the reference of an I/O state representing this feature
-     * should remain valid after being removed.
+     * Returns if this I/O feature is modular.
+     * <p>
+     * Modular I/O features are unique in that they can be removed after
+     * they're added to a device. Some examples of modular I/O features
+     * include (but are not limited to): the headset for an XBOX controller,
+     * the buttons on the Pro Controller for the Wiimote, etc.
      *
-     * @return {@code true} if the reference of an I/O state representing
-     * this feature should remain valid after being removed, {@code false}
+     * @return {@code true} if this I/O feature is modular, {@code false}
      * otherwise.
      * @see IoDevice#removeFeature(IoFeature)
      */
-    public final boolean isPerpetual() {
-        return this.perpetual;
+    public final boolean isModular() {
+        return this.modular;
     }
 
     /**
@@ -192,11 +196,11 @@ public abstract class IoFeature<S extends IoState<?>> {
      *     <li>The returned value must not be {@code null}.</li>
      *     <li>The state must represent this feature. This means a call to
      *     {@link IoState#getFeature()} on the returned value must return
-     *     this object.</li>
+     *     this instance.</li>
      * </ul>
      * <p>
-     * If these requirements are not met, an appropriate exception shall
-     * be thrown by {@link IoDevice#addFeature(IoFeature)}.
+     * If these requirements are not met, an exception shall be thrown by
+     * {@link IoDevice#addFeature(IoFeature)}.
      *
      * @return the newly created I/O feature state.
      * @see #createVerifiedState()
@@ -207,7 +211,7 @@ public abstract class IoFeature<S extends IoState<?>> {
     /**
      * Wrapper for {@link #createState()}, which verifies the created
      * state meets the necessary requirements. If they are not met, an
-     * appropriate exception shall be thrown.
+     * exception shall be thrown.
      *
      * @return the newly created, verified I/O feature state.
      * @throws NullPointerException     if the created state is {@code null}.
@@ -234,9 +238,9 @@ public abstract class IoFeature<S extends IoState<?>> {
      *     <li>The logic must manage {@code state}.</li>
      * </ul>
      * <p>
-     * If these requirements are not met, an appropriate exception shall
-     * be thrown by {@link IoDevice#addFeature(IoFeature)}. Take note that
-     * these requirements apply only to not {@code null} return values.
+     * If these requirements are not met, an exception shall be thrown by
+     * {@link IoDevice#addFeature(IoFeature)}. Take note that these only
+     * apply to not {@code null} return values.
      *
      * @param device the I/O device which {@code state} belongs to.
      * @param state  the I/O state the logic will manage.
@@ -253,7 +257,7 @@ public abstract class IoFeature<S extends IoState<?>> {
     /**
      * Wrapper for {@link #createLogic(IoDevice, IoState)}, which verifies
      * the created logic for a given state meets the necessary requirements.
-     * If they are not met, an appropriate exception shall be thrown.
+     * If they are not met, an exception shall be thrown.
      *
      * @return the newly created, verified I/O feature logic.
      * @throws NullPointerException     if {@code device} or {@code state}
@@ -293,6 +297,7 @@ public abstract class IoFeature<S extends IoState<?>> {
         return IoApi.getStrJoiner(this)
                 .add("id='" + id + "'")
                 .add("flow=" + flow)
+                .add("modular=" + modular)
                 .toString();
     }
     /* @formatter:on */
