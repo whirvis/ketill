@@ -28,7 +28,7 @@ final class IoTreeNode<T> implements Iterable<IoTreeNode<T>> {
             if (seen.contains(child)) {
                 throw new IllegalStateException("circular tree");
             } else if (child.parent != upmost) {
-                throw new IllegalStateException("unexpected parent");
+                throw new UnexpectedStateException("incorrect parent");
             }
             seen.add(child);
             verifyHierarchy(seen, child);
@@ -215,7 +215,8 @@ final class IoTreeNode<T> implements Iterable<IoTreeNode<T>> {
             if (node.parent == this) {
                 return node; /* nothing to do */
             } else if (node.parent != null) {
-                throw new IllegalStateException("node belongs to another tree");
+                throw new IllegalStateException(
+                        "node belongs to another tree");
             }
 
             node.parent = this;
@@ -261,12 +262,12 @@ final class IoTreeNode<T> implements Iterable<IoTreeNode<T>> {
             }
 
             if (!children.remove(node)) {
-                throw new IllegalStateException(
-                        "unexpectedly missing child node");
+                throw new UnexpectedStateException("missing child node");
             }
 
             node.parent = null;
             node.upmostLock = new ReentrantReadWriteLock();
+
             return true;
         } finally {
             this.upmostLock.writeLock().unlock();
