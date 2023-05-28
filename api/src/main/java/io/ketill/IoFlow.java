@@ -8,14 +8,6 @@ package io.ketill;
 public enum IoFlow {
 
     /**
-     * Never refresh the {@link IoFeature}.
-     * <p>
-     * There are no known use-cases for this.
-     * TODO: mention pipe internals as possible alternative
-     */
-    DORMANT(false, false),
-
-    /**
      * Obtain the {@link IoFeature}'s state on query.
      * <p>
      * Use this when the {@link IoState} stores data obtained from the
