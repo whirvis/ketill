@@ -13,8 +13,8 @@ import java.util.Objects;
  * motor, or the status of an LED.
  * <p>
  * <b>For I/O states with no internals:</b> use the state itself as the
- * internals type. {@link #IoState(IoFeature, Class)} can be used to get
- * around the restriction of being unable to reference {@code this} before
+ * internals type. Use {@link #IoState(IoFeature, Class)} to get around
+ * the restriction of not being able to reference {@code this} before
  * {@code super} has finished instantiation.
  *
  * @param <I> the internal data type.
@@ -49,6 +49,7 @@ public abstract class IoState<I> {
      * <p>
      * <b>Example</b>
      * <p>
+     * The following is an example use of this annotation.
      * <pre>
      * &#47;* note: Gamepad extends IoDevice *&#47;
      * class XboxController extends Gamepad {
@@ -89,16 +90,16 @@ public abstract class IoState<I> {
     /**
      * The internals of this I/O state.
      * <p>
-     * <b>Visibility</b>
-     * <p>
-     * For purposes of implementation, the value of this field is also
-     * made accessible to a variety of objects. Unless otherwise exposed,
-     * these consist of:
+     * <b>Visibility:</b> For purposes of implementation, the value of this
+     * field is accessible to a variety of other objects. Unless otherwise
+     * exposed, these are:
      * <ul>
      *     <li>The {@link IoLogic} for this state, if any.</li>
      *     <li>The {@link IoDevice} which owns the feature.</li>
      *     <li>The {@link IoAdapter} of the device.</li>
      * </ul>
+     *
+     * @see IoDevice#getInternals(IoFeature)
      */
     protected final @NotNull I internals;
 
@@ -143,12 +144,12 @@ public abstract class IoState<I> {
      *
      * @param feature the I/O feature of this state.
      * @param type    the I/O state's type class.
-     * @throws NullPointerException     if {@code feature} or {@code type}
-     *                                  are {@code null}.
-     * @throws IllegalArgumentException if {@code type} is not equal to this
-     *                                  class.
+     * @throws NullPointerException if {@code feature} or {@code type}
+     *                              are {@code null}.
+     * @throws ClassCastException   if {@code type} is not equal to this
+     *                              class.
      */
-    @SuppressWarnings("unchecked") /* <- liar >:( */
+    @SuppressWarnings("unchecked") /* we check ourselves */
     public IoState(@NotNull IoFeature<?> feature, @NotNull Class<I> type) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
@@ -168,7 +169,7 @@ public abstract class IoState<I> {
          */
         if (this.getClass() != type) {
             String msg = "type must be " + this.getClass().getName();
-            throw new IllegalArgumentException(msg);
+            throw new ClassCastException(msg);
         }
 
         this.feature = feature;
