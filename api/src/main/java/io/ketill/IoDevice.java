@@ -137,9 +137,6 @@ public abstract class IoDevice {
         }
     }
 
-    // TODO: getState(IoFeature)
-    // TODO: getState(String) [get by ID]
-
     /**
      * Returns the states of every I/O feature present on this device.
      * <p>
@@ -162,18 +159,26 @@ public abstract class IoDevice {
         }
     }
 
-    // TODO: getInternals(IoFeature)
+    protected final <S extends IoState<I>, I> @Nullable I getInternals(@NotNull IoFeature<S> feature) {
+        featuresLock.readLock().lock();
+        try {
+            S state = this.getState(feature);
+            return state != null ? state.internals : null;
+        } finally {
+            featuresLock.readLock().unlock();
+        }
+    }
 
     /**
      * Adds an I/O feature to the device.
      * <p>
-     * If the given feature is already present, {@link IoState#reset()}
-     * will be called on its state before returning it. A new instance is
-     * not created to prevent a dangling reference.
+     * If the given feature is already present, its current state will be
+     * returned. A new instance will not be created in order to prevent a
+     * dangling reference.
      * <p>
      * <b>Note:</b> No two features with the same ID can be present on a
      * device at the same time. This ensures {@link #getFeature(String)}
-     * can return only a single, unambiguous value.
+     * will always return a single and unambiguous value.
      *
      * @param feature the feature to add.
      * @param <S>     the I/O state type.
@@ -200,7 +205,6 @@ public abstract class IoDevice {
              */
             IoFeature.Cache current = features.get(id);
             if (current != null && current.feature == feature) {
-                current.state.reset();
                 return (S) current.state;
             } else if (current != null) {
                 String msg = "feature with ID \"" + id + "\" already present";
@@ -209,15 +213,74 @@ public abstract class IoDevice {
 
             S state = feature.createVerifiedState();
             IoLogic<?> logic = feature.createVerifiedLogic(this, state);
-            features.put(id, new IoFeature.Cache(feature, state, logic));
+            if (logic != null) {
+                logic.startup();
+            }
 
+            features.put(id, new IoFeature.Cache(feature, state, logic));
             return state;
         } finally {
             featuresLock.writeLock().unlock();
         }
     }
 
-    // TODO: removeFeature(IoFeature)
+    @SuppressWarnings("unchecked") /* we check it ourselves */
+    protected final <S extends IoState<I>, I> @Nullable S getState(@Nullable IoFeature<S> feature) {
+        if (feature == null) {
+            return null;
+        }
+        featuresLock.readLock().lock();
+        try {
+            IoFeature.Cache cache = features.get(feature.getId());
+            if (cache == null || cache.feature != feature) {
+                return null; /* unexpected feature in cache */
+            }
+            return (S) cache.state;
+        } finally {
+            featuresLock.readLock().unlock();
+        }
+    }
+
+    @SuppressWarnings("unchecked") /* we check it ourselves */
+    protected final <S extends IoState<I>, I, F extends IoFeature<S>> @Nullable S getState(@Nullable String id,
+                                                                                           @NotNull Class<F> type) {
+        if (id == null) {
+            return null;
+        }
+        Objects.requireNonNull(type, "type cannot be null");
+        featuresLock.readLock().lock();
+        try {
+            IoFeature.Cache cache = features.get(id);
+            if (cache == null) {
+                return null; /* unexpected feature in cache */
+            }
+
+            IoFeature<?> feature = cache.feature;
+            if (!type.isAssignableFrom(feature.getClass())) {
+                throw new IoDeviceException(); /* TODO */
+            }
+
+            return (S) cache.state;
+        } finally {
+            featuresLock.readLock().unlock();
+        }
+    }
+
+    protected final IoState<?> getState(@Nullable String id) {
+        if (id == null) {
+            return null;
+        }
+        featuresLock.readLock().lock();
+        try {
+            IoFeature.Cache cache = features.get(id);
+            if (cache == null) {
+                return null; /* unexpected feature in cache */
+            }
+            return cache.state;
+        } finally {
+            featuresLock.readLock().unlock();
+        }
+    }
 
     public void query() {
 
