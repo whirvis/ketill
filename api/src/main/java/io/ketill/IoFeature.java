@@ -115,41 +115,20 @@ public abstract class IoFeature<S extends IoState<?>> {
 
     private final @NotNull String id;
     private final @NotNull IoFlow flow;
-    private boolean modular;
 
     /**
      * Constructs a new {@code IoFeature}.
      *
      * @param id      the ID of this I/O feature.
      * @param flow    the flow of this I/O feature.
-     * @param modular {@code true} if this I/O feature can be added and/or
-     *                removed from the device after instantiation, {@code false}
-     *                otherwise.
-     * @throws NullPointerException     if {@code id} or {@code flow} are
-     *                                  {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
-     */
-    public IoFeature(@NotNull String id, @NotNull IoFlow flow,
-                     boolean modular) {
-        this.id = validateId(id);
-
-        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
-        this.modular = modular;
-    }
-
-    /**
-     * Constructs a new {@code IoFeature}.
-     *
-     * @param id   the ID of this I/O feature.
-     * @param flow the flow of this I/O feature.
      * @throws NullPointerException     if {@code id} or {@code flow} are
      *                                  {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public IoFeature(@NotNull String id, @NotNull IoFlow flow) {
-        this(id, flow, false);
+        this.id = validateId(id);
+        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
     }
 
     /**
@@ -170,22 +149,7 @@ public abstract class IoFeature<S extends IoState<?>> {
         return this.flow;
     }
 
-
-    /**
-     * Returns if this I/O feature is modular.
-     * <p>
-     * Modular I/O features are unique in that they can be removed after
-     * they're added to a device. Some examples of modular I/O features
-     * include (but are not limited to): the headset for an XBOX controller,
-     * the buttons on the Pro Controller for the Wiimote, etc.
-     *
-     * @return {@code true} if this I/O feature is modular, {@code false}
-     * otherwise.
-     * @see IoDevice#removeFeature(IoFeature)
-     */
-    public final boolean isModular() {
-        return this.modular;
-    }
+    /* TODO: configs here */
 
     /**
      * Creates a new instance of the I/O feature's state.
@@ -297,7 +261,6 @@ public abstract class IoFeature<S extends IoState<?>> {
         return IoApi.getStrJoiner(this)
                 .add("id='" + id + "'")
                 .add("flow=" + flow)
-                .add("modular=" + modular)
                 .toString();
     }
     /* @formatter:on */
