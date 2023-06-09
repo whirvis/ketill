@@ -6,14 +6,31 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.annotation.*;
 import java.util.*;
 
+/**
+ * Maps data from a source (such as GLFW or X-input) to the features
+ * of an {@link IoDevice}. This allows a single device to be used with
+ * different implementations.
+ *
+ * @param <D> the I/O device type.
+ * @see ForFeature
+ * @see LinkMethod
+ * @see ParamType
+ * @see IoLink
+ *
+ */
 public abstract class IoAdapter<D extends IoDevice> {
 
     /**
      * When present, signals that a method is an adapter for one or more
      * features. It is <b>required</b> the access level of these methods
      * be {@code private}.
+     * <p>
+     * The following is an example use of this annotation.
+     * <pre>
+     * TODO
+     * </pre>
      *
-     * @see LinkShorthand
+     * @see LinkMethod
      */
     @Documented
     @Target(ElementType.METHOD)
@@ -26,13 +43,50 @@ public abstract class IoAdapter<D extends IoDevice> {
      * When present, signals that a method is a shorthand for linking
      * a feature to an adapter method. It is <b>required</b> the access
      * level of these methods be {@code protected}.
+     * <p>
+     * The following is an example use of this annotation.
+     * <pre>
+     * TODO
+     * </pre>
      *
      * @see ForFeature
+     * @see ParamType
      */
     @Documented
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    protected @interface LinkShorthand {
+    protected @interface LinkMethod {
+        /* this annotation has no attributes */
+    }
+
+    /**
+     * When present, indicates a type is used solely as a parameter for linking
+     * an {@link IoFeature} to an adapter. These are intended for features that
+     * require more than a single field to be linked. An example of this would
+     * be an analog stick.
+     * <p>
+     * The following is an example use of this annotation.
+     * <pre>
+     * &#64;IoAdapter.ParamType
+     * class IoStickMapping {
+     *
+     *     final int xAxis;
+     *     final int yAxis;
+     *
+     *     StickMapping(int xAxis, int yAxis) {
+     *         this.xAxis = xAxis;
+     *         this.yAxis = yAxis;
+     *     }
+     *
+     * }
+     * </pre>
+     *
+     * @see LinkMethod
+     */
+    @Documented
+    @Target(ElementType.TYPE)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface ParamType {
         /* this annotation has no attributes */
     }
 
@@ -168,6 +222,15 @@ public abstract class IoAdapter<D extends IoDevice> {
             this.params = params;
         }
 
+        /*
+         * The warning IntelliJ gives about internals possibly being null is
+         * completely valid. However, all instances of IoMapping wrap around
+         * different IoLink types into an instance of WithParams. This is to
+         * prevent a branch which would slow down execution.
+         *
+         * If internals is null, it is assumed the current link is a wrapper
+         * for an IoLink which does not take any internals.
+         */
         @SuppressWarnings("ConstantConditions")
         private void crossBridge(@NotNull IoFlow flow) {
             link.bridge(flow, internals, params);
@@ -201,8 +264,8 @@ public abstract class IoAdapter<D extends IoDevice> {
 
     }
 
-    private final Map<IoFeature<?>, IoMapping<?, ?>> mappings;
-    private final IoMappingCache inMappings, outMappings;
+    private final @NotNull Map<IoFeature<?>, IoMapping<?, ?>> mappings;
+    private final @NotNull IoMappingCache inMappings, outMappings;
 
     public IoAdapter() {
         this.mappings = new HashMap<>();
@@ -249,10 +312,8 @@ public abstract class IoAdapter<D extends IoDevice> {
     /**
      * Links an {@link IoFeature} to an adapter method.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
      *
      * @param feature the I/O feature to link.
      * @param params  the parameters for the link. Depending on the feature
@@ -265,10 +326,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <P>     the parameters type.
      * @throws NullPointerException     if {@code feature}, {@code params},
      *                                  or {@code link} are {@code null}.
-     * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     protected final <F extends IoFeature<S>, S extends IoState<I>, I, P>
@@ -278,16 +337,6 @@ public abstract class IoAdapter<D extends IoDevice> {
         Objects.requireNonNull(params, "params cannot be null");
         Objects.requireNonNull(link, "link cannot be null");
 
-        /*
-         * It would not make sense to link an adapter function to a dormant
-         * state, as they are never bridged. Assume this was a mistake by the
-         * caller and throw an exception.
-         */
-        if (feature.getFlow() == IoFlow.DORMANT) {
-            String msg = ""; // TODO
-            throw new IllegalArgumentException(msg);
-        }
-
         mappings.put(feature, new IoMapping<>(params));
         this.updateMappingCache(feature);
     }
@@ -296,10 +345,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * Links an {@link IoFeature} to an adapter method, with the parameter
      * being the feature itself.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
      *
      * @param feature the I/O feature to link.
      * @param link    the adapter method to link to.
@@ -308,10 +355,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <I>     the internal data type.
      * @throws NullPointerException     if {@code feature} or {@code link}
      *                                  are {@code null}.
-     * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     @IoApi.Shorthand
@@ -324,10 +369,8 @@ public abstract class IoAdapter<D extends IoDevice> {
     /**
      * Links an {@link IoFeature} to an adapter method with no parameters.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
      *
      * @param feature the I/O feature to link.
      * @param link    the adapter method to link to.
@@ -336,10 +379,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <I>     the internal data type.
      * @throws NullPointerException     if {@code feature} or {@code link}
      *                                  are {@code null}.
-     * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     @IoApi.Shorthand
@@ -369,12 +410,11 @@ public abstract class IoAdapter<D extends IoDevice> {
     /**
      * Links an {@link IoFeature} to an adapter method.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked. Features with a two-way flow
-     * are not permitted either, as {@code link} does not accept a parameter
-     * for the current flow on invocation.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
+     * Take note that features with a two-way flow are not permitted here,
+     * as {@code link} does not accept a parameter for the current flow
+     * on invocation.
      *
      * @param feature the I/O feature to link.
      * @param params  the parameters for the link. Depending on the feature
@@ -388,10 +428,9 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @throws NullPointerException     if {@code feature}, {@code params},
      *                                  or {@code link} are {@code null}.
      * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT} or
      *                                  {@link IoFlow#TWO_WAY}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     @IoApi.Shorthand
@@ -407,12 +446,11 @@ public abstract class IoAdapter<D extends IoDevice> {
      * Links an {@link IoFeature} to an adapter method, with the parameter
      * being the feature itself.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked. Features with a two-way flow
-     * are not permitted either, as {@code link} does not accept a parameter
-     * for the current flow on invocation.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
+     * Take note that features with a two-way flow are not permitted here,
+     * as {@code link} does not accept a parameter for the current flow
+     * on invocation.
      *
      * @param feature the I/O feature to link.
      * @param link    the adapter method to link to.
@@ -421,10 +459,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <I>     the internal data type.
      * @throws NullPointerException     if {@code feature} or {@code link}
      *                                  are {@code null}.
-     * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     @IoApi.Shorthand
@@ -437,12 +473,8 @@ public abstract class IoAdapter<D extends IoDevice> {
     /**
      * Links an {@link IoFeature} to an adapter method with no parameters.
      * <p>
-     * The result of {@code feature.getFlow()} shall determine when
-     * {@code link} is invoked. This occurs when the device is queried and/or
-     * updated. Take note that features with a dormant flow are not linkable,
-     * as {@code link} would never be invoked. Features with a two-way flow
-     * are not permitted either, as {@code link} does not accept a parameter
-     * for the current flow on invocation.
+     * The result of {@code feature.getFlow()} determines when {@code link}
+     * is invoked. This occurs when the device is queried and/or updated.
      *
      * @param feature the I/O feature to link.
      * @param link    the adapter method to link to.
@@ -452,10 +484,9 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @throws NullPointerException     if {@code feature} or {@code link}
      *                                  are {@code null}.
      * @throws IllegalArgumentException {@code feature.getFlow()} returns
-     *                                  {@link IoFlow#DORMANT} or
      *                                  {@link IoFlow#TWO_WAY}.
      * @see #isLinked(IoFeature)
-     * @see LinkShorthand
+     * @see LinkMethod
      * @see ForFeature
      */
     @IoApi.Shorthand
