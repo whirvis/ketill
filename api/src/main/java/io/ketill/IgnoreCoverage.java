@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
  * <b>Enabling the Annotation</b>
  * <ul>
  *     <li><b>Eclipse:</b> Unknown.</li>
- *     <li><b>InteliJ IDEA:</b> Go to Settings / Preferences → Build,
+ *     <li><b>IntelliJ IDEA:</b> Go to Settings / Preferences → Build,
  *     Execution, Deployment → Coverage.</li>
  *     <li><b>Apache NetBeans:</b> Unknown.</li>
  * </ul>
