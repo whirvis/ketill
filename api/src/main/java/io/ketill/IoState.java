@@ -113,7 +113,7 @@ public abstract class IoState<I> {
      * @throws IllegalArgumentException if {@code internals} is another
      *                                  instance of an {@code IoState}.
      */
-    public IoState(@NotNull IoFeature<?> feature, I internals) {
+    public IoState(@NotNull IoFeature<?> feature, @NotNull I internals) {
         /* @formatter:off */
         this.feature = Objects.requireNonNull(feature,
                 "feature cannot be null");
