@@ -32,7 +32,8 @@ public abstract class IoDevice {
         return this.id;
     }
 
-    private @Nullable IoFeature.Cache getCache(@NotNull IoFeature<?> feature) {
+    private @Nullable IoFeature.Cache getCache(
+            @NotNull IoFeature<?, ?> feature) {
         featuresLock.readLock().lock();
         try {
             IoFeature.Cache cache = features.get(feature.getId());
@@ -53,7 +54,7 @@ public abstract class IoDevice {
      * {@code false} otherwise.
      * @see #hasFeature(String)
      */
-    public final boolean hasFeature(@Nullable IoFeature<?> feature) {
+    public final boolean hasFeature(@Nullable IoFeature<?, ?> feature) {
         if (feature == null) {
             return false;
         }
@@ -87,7 +88,7 @@ public abstract class IoDevice {
      * @return the feature with the given ID, {@code null} if no such
      * feature is present on this device.
      */
-    public final @Nullable IoFeature<?> getFeature(@Nullable String id) {
+    public final @Nullable IoFeature<?, ?> getFeature(@Nullable String id) {
         if (id == null) {
             return null;
         }
@@ -124,10 +125,10 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getStates()
      */
-    public final @NotNull List<@NotNull IoFeature<?>> getFeatures() {
+    public final @NotNull List<@NotNull IoFeature<?, ?>> getFeatures() {
         featuresLock.readLock().lock();
         try {
-            List<IoFeature<?>> copy = new ArrayList<>();
+            List<IoFeature<?, ?>> copy = new ArrayList<>();
             for (IoFeature.Cache cache : features.values()) {
                 copy.add(cache.feature);
             }
@@ -146,10 +147,10 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getFeatures()
      */
-    public final @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>> getStates() {
+    public final @NotNull Map<@NotNull IoFeature<?, ?>, @NotNull IoState<?>> getStates() {
         featuresLock.readLock().lock();
         try {
-            Map<IoFeature<?>, IoState<?>> copy = new HashMap<>();
+            Map<IoFeature<?, ?>, IoState<?>> copy = new HashMap<>();
             for (IoFeature.Cache cache : features.values()) {
                 copy.put(cache.feature, cache.state);
             }
@@ -159,7 +160,8 @@ public abstract class IoDevice {
         }
     }
 
-    protected final <S extends IoState<I>, I> @Nullable I getInternals(@NotNull IoFeature<S> feature) {
+    protected final <S extends IoState<I>, I, M extends S>
+    @Nullable I getInternals(@NotNull IoFeature<S, M> feature) {
         featuresLock.readLock().lock();
         try {
             S state = this.getState(feature);
@@ -190,7 +192,8 @@ public abstract class IoDevice {
      *                              on this device.
      */
     @SuppressWarnings("unchecked")
-    protected <S extends IoState<I>, I> @NotNull S addFeature(@NotNull IoFeature<S> feature) {
+    protected <S extends IoState<I>, I, M extends S>
+    @NotNull S addFeature(@NotNull IoFeature<S, M> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         featuresLock.writeLock().lock();
@@ -212,12 +215,14 @@ public abstract class IoDevice {
             }
 
             S state = feature.createVerifiedState();
+            M mutable = feature.createVerifiedMutableState(state);
+
             IoLogic<?> logic = feature.createVerifiedLogic(this, state);
             if (logic != null) {
                 logic.startup();
             }
 
-            features.put(id, new IoFeature.Cache(feature, state, logic));
+            features.put(id, new IoFeature.Cache(feature, state, mutable, logic));
             return state;
         } finally {
             featuresLock.writeLock().unlock();
@@ -225,7 +230,8 @@ public abstract class IoDevice {
     }
 
     @SuppressWarnings("unchecked") /* we check it ourselves */
-    protected final <S extends IoState<I>, I> @Nullable S getState(@Nullable IoFeature<S> feature) {
+    protected final <S extends IoState<I>, I, M extends S>
+    @Nullable S getState(@Nullable IoFeature<S, M> feature) {
         if (feature == null) {
             return null;
         }
@@ -242,8 +248,8 @@ public abstract class IoDevice {
     }
 
     @SuppressWarnings("unchecked") /* we check it ourselves */
-    protected final <S extends IoState<I>, I, F extends IoFeature<S>> @Nullable S getState(@Nullable String id,
-                                                                                           @NotNull Class<F> type) {
+    protected final <S extends IoState<I>, I, F extends IoFeature<S, M>, M extends S>
+    @Nullable S getState(@Nullable String id, @NotNull Class<F> type) {
         if (id == null) {
             return null;
         }
@@ -255,7 +261,7 @@ public abstract class IoDevice {
                 return null; /* unexpected feature in cache */
             }
 
-            IoFeature<?> feature = cache.feature;
+            IoFeature<?, ?> feature = cache.feature;
             if (!type.isAssignableFrom(feature.getClass())) {
                 throw new IoDeviceException(); /* TODO */
             }

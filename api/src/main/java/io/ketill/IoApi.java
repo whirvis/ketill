@@ -40,6 +40,28 @@ public final class IoApi {
         /* this annotation has no attributes */
     }
 
+    /**
+     * When present, signals a component should only be accessed by the
+     * given classes. This should only be applied to components with the
+     * {@code package private} access modifier.
+     * <p>
+     * <b>Note:</b> This annotation has zero runtime enforcement, it is
+     * purely for documentation.
+     */
+    @Documented
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Friends {
+
+        /**
+         * Returns the intended calling classes.
+         *
+         * @return the intended calling classes.
+         */
+        Class<?>[] value();
+
+    }
+
+
     private static final String JOINER_DELIMETER = ", ";
     private static final String JOINER_SUFFIX = "]";
 

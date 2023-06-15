@@ -85,7 +85,7 @@ public abstract class IoState<I> {
     /**
      * The I/O feature of this state.
      */
-    protected final @NotNull IoFeature<?> feature;
+    protected final @NotNull IoFeature<?, ?> feature;
 
     /**
      * The internals of this I/O state.
@@ -103,6 +103,8 @@ public abstract class IoState<I> {
      */
     protected final @NotNull I internals;
 
+    private final boolean mutableView;
+
     /**
      * Constructs a new {@code IoState}.
      *
@@ -113,13 +115,9 @@ public abstract class IoState<I> {
      * @throws IllegalArgumentException if {@code internals} is another
      *                                  instance of an {@code IoState}.
      */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull I internals) {
-        /* @formatter:off */
-        this.feature = Objects.requireNonNull(feature,
-                "feature cannot be null");
-        this.internals = Objects.requireNonNull(internals,
-                "internals cannot be null");
-        /* @formatter:on */
+    public IoState(@NotNull IoFeature<?, ?> feature, @NotNull I internals) {
+        Objects.requireNonNull(feature, "feature cannot be null");
+        Objects.requireNonNull(internals, "internals cannot be null");
 
         /*
          * There's technically no reason this can't occur. However, this
@@ -132,6 +130,10 @@ public abstract class IoState<I> {
             msg += " instance of " + IoState.class.getSimpleName();
             throw new IllegalArgumentException(msg);
         }
+
+        this.feature = feature;
+        this.internals = internals;
+        this.mutableView = false;
     }
 
     /**
@@ -150,7 +152,7 @@ public abstract class IoState<I> {
      *                              class.
      */
     @SuppressWarnings("unchecked") /* we check ourselves */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull Class<I> type) {
+    public IoState(@NotNull IoFeature<?, ?> feature, @NotNull Class<I> type) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
 
@@ -174,6 +176,47 @@ public abstract class IoState<I> {
 
         this.feature = feature;
         this.internals = (I) this;
+        this.mutableView = false;
+    }
+
+    /**
+     * Constructs a mutable {@code IoState} wrapper.
+     * <p>
+     * The constructor assumes this state is a mutable view of another,
+     * immutable state. As such, the given state must be a super class of
+     * this type and cannot be a mutable view of another state.
+     *
+     * @param state the immutable I/O state.
+     * @throws NullPointerException     if {@code state} is {@code null}.
+     * @throws IllegalArgumentException if {@code state} is a mutable view
+     *                                  of another state; if {@code state}
+     *                                  is not a super class of this type.
+     */
+    public IoState(@NotNull IoState<I> state) {
+        Objects.requireNonNull(state, "state cannot be null");
+
+        /*
+         * If the given state is a mutable view of another state, assume
+         * it is a mistake by the user. Even if it isn't, it would likely
+         * cause issues down the road.
+         */
+        if (state.mutableView) {
+            String msg = "state is a mutable view of another state";
+            throw new IllegalStateException(msg);
+        }
+
+        /*
+         * TODO: explain this restriction
+         */
+        Class<?> clazz = this.getClass();
+        if (!state.getClass().isAssignableFrom(clazz)) {
+            String msg = ""; // TODO: error message
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.feature = state.getFeature();
+        this.internals = state.internals;
+        this.mutableView = true;
     }
 
     /**
@@ -181,7 +224,7 @@ public abstract class IoState<I> {
      *
      * @return the I/O feature of this state.
      */
-    public final @NotNull IoFeature<?> getFeature() {
+    public final @NotNull IoFeature<?, ?> getFeature() {
         return this.feature;
     }
 

@@ -10,7 +10,7 @@ public class IoFeatureException extends KetillIoException {
 
     private static final long serialVersionUID = 2296743015689493731L;
 
-    private final @Nullable IoFeature<?> culprit;
+    private final @Nullable IoFeature<?, ?> culprit;
 
     /**
      * Constructs a new {@code IoFeatureException} with the specified detail
@@ -29,7 +29,7 @@ public class IoFeatureException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoFeatureException(@Nullable IoFeature<?> culprit,
+    public IoFeatureException(@Nullable IoFeature<?, ?> culprit,
                               @Nullable String message,
                               @Nullable Throwable cause) {
         super(message, cause);
@@ -46,7 +46,7 @@ public class IoFeatureException extends KetillIoException {
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    public IoFeatureException(@Nullable IoFeature<?> culprit,
+    public IoFeatureException(@Nullable IoFeature<?, ?> culprit,
                               @Nullable String message) {
         super(message);
         this.culprit = culprit;
@@ -61,12 +61,12 @@ public class IoFeatureException extends KetillIoException {
      * @param culprit the I/O feature which caused this exception.
      *                A {@code null} value is permitted, and indicates
      *                the culprit is either irrelevant or unknown.
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link Throwable#getCause()} method). A {@code null}
-     *              value is permitted, and indicates that the cause is
-     *              nonexistent or unknown.
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link Throwable#getCause()} method). A {@code null}
+     *                value is permitted, and indicates that the cause is
+     *                nonexistent or unknown.
      */
-    public IoFeatureException(@Nullable IoFeature<?> culprit,
+    public IoFeatureException(@Nullable IoFeature<?, ?> culprit,
                               @Nullable Throwable cause) {
         super(cause);
         this.culprit = culprit;
@@ -79,7 +79,7 @@ public class IoFeatureException extends KetillIoException {
      *                A {@code null} value is permitted, and indicates
      *                the culprit is either irrelevant or unknown.
      */
-    public IoFeatureException(@Nullable IoFeature<?> culprit) {
+    public IoFeatureException(@Nullable IoFeature<?, ?> culprit) {
         super();
         this.culprit = culprit;
     }
@@ -126,22 +126,22 @@ public class IoFeatureException extends KetillIoException {
      *              nonexistent or unknown.
      */
     public IoFeatureException(@Nullable Throwable cause) {
-        this((IoFeature<?>) null, cause);
+        this((IoFeature<?, ?>) null, cause);
     }
 
     /**
      * Constructs a new {@code IoFeatureException} with no detail message.
      */
     public IoFeatureException() {
-        this((IoFeature<?>) null);
+        this((IoFeature<?, ?>) null);
     }
 
     /**
      * Returns the culprit for this exception.
-     * 
+     *
      * @return the culprit for this exception (which may be {@code null}).
      */
-    public final @Nullable IoFeature<?> getCulprit() {
+    public final @Nullable IoFeature<?, ?> getCulprit() {
         return this.culprit;
     }
 

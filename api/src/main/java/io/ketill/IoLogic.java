@@ -24,7 +24,7 @@ public abstract class IoLogic<I> {
     /**
      * The I/O feature of the state.
      */
-    protected final @NotNull IoFeature<?> feature;
+    protected final @NotNull IoFeature<?, ?> feature;
 
     /**
      * The I/O state this logic is responsible for.
@@ -47,7 +47,7 @@ public abstract class IoLogic<I> {
      * @throws IllegalArgumentException if {@code state} does not represent
      *                                  {@code feature}.
      */
-    public IoLogic(@NotNull IoDevice device, @NotNull IoFeature<?> feature,
+    public IoLogic(@NotNull IoDevice device, @NotNull IoFeature<?, ?> feature,
                    @NotNull IoState<I> state) {
         Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(feature, "feature cannot be null");

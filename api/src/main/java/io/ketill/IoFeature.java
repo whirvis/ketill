@@ -12,13 +12,18 @@ import java.util.Objects;
  * Examples include (but are not limited to): a gamepad button, an analog
  * stick, a rumble motor, or an LED indicator. Each of these features has
  * a corresponding {@link IoState}.
+ * <p>
+ * <b>For immutable I/O features:</b> Extend {@link ImmutableIoFeature}
+ * instead. It overrides {@link #createMutableState(IoState)} and simply
+ * returns the given state.
  *
  * @param <S> the I/O state type.
+ * @param <M> the mutable I/O state type.
  * @see BuiltIn
  * @see IoDevice#addFeature(IoFeature)
  * @see IoLogic
  */
-public abstract class IoFeature<S extends IoState<?>> {
+public abstract class IoFeature<S extends IoState<?>, M extends S> {
 
     /**
      * When present, indicates to an {@link IoDevice} that a field contains
@@ -79,14 +84,16 @@ public abstract class IoFeature<S extends IoState<?>> {
 
     static class Cache {
 
-        final @NotNull IoFeature<?> feature;
+        final @NotNull IoFeature<?, ?> feature;
         final @NotNull IoState<?> state;
+        final @NotNull IoState<?> mutable;
         final @Nullable IoLogic<?> logic;
 
-        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state,
-              @Nullable IoLogic<?> logic) {
+        Cache(@NotNull IoFeature<?, ?> feature, @NotNull IoState<?> state,
+              @NotNull IoState<?> mutable, @Nullable IoLogic<?> logic) {
             this.feature = feature;
             this.state = state;
+            this.mutable = mutable;
             this.logic = logic;
         }
 
@@ -119,8 +126,8 @@ public abstract class IoFeature<S extends IoState<?>> {
     /**
      * Constructs a new {@code IoFeature}.
      *
-     * @param id      the ID of this I/O feature.
-     * @param flow    the flow of this I/O feature.
+     * @param id   the ID of this I/O feature.
+     * @param flow the flow of this I/O feature.
      * @throws NullPointerException     if {@code id} or {@code flow} are
      *                                  {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
@@ -155,7 +162,6 @@ public abstract class IoFeature<S extends IoState<?>> {
      * Creates a new instance of the I/O feature's state.
      * <p>
      * <b>Requirements</b>
-     * <p>
      * <ul>
      *     <li>The returned value must not be {@code null}.</li>
      *     <li>The state must represent this feature. This means a call to
@@ -163,33 +169,77 @@ public abstract class IoFeature<S extends IoState<?>> {
      *     this instance.</li>
      * </ul>
      * <p>
-     * If these requirements are not met, an exception shall be thrown by
-     * {@link IoDevice#addFeature(IoFeature)}.
+     * If the above requirements are not met, an exception shall be thrown
+     * by {@link #createVerifiedState()}.
      *
-     * @return the newly created I/O feature state.
-     * @see #createVerifiedState()
+     * @return the newly created I/O state.
      * @see #createLogic(IoDevice, IoState)
+     * @see IoDevice#addFeature(IoFeature)
      */
     protected abstract @NotNull S createState();
+
+    private void verifyCreatedState(IoState<?> state) {
+        if (state == null) {
+            String msg = "created state cannot be null";
+            throw new IoFeatureException(msg);
+        } else if (state.getFeature() != this) {
+            String msg = "created state must represent this feature";
+            throw new IoFeatureException(msg);
+        }
+    }
 
     /**
      * Wrapper for {@link #createState()}, which verifies the created
      * state meets the necessary requirements. If they are not met, an
-     * exception shall be thrown.
+     * {@code IoFeatureException} shall be thrown.
      *
      * @return the newly created, verified I/O feature state.
-     * @throws NullPointerException     if the created state is {@code null}.
-     * @throws IllegalArgumentException if the created state is not represented
-     *                                  by this feature.
+     * @throws IoFeatureException if the created state is {@code null};
+     *                            if the created state is not represented
+     *                            by this feature.
      */
     protected final @NotNull S createVerifiedState() {
         S state = this.createState();
-        Objects.requireNonNull(state, "created state cannot be null");
+        this.verifyCreatedState(state);
+        return state;
+    }
+
+    /**
+     * Creates a new instance of the I/O feature's mutable state.
+     * <p>
+     * <b>Note:</b> The returned state is not necessarily mutable. If
+     * mutability does not apply for a state, simply return the state
+     * as given.
+     *
+     * @return the newly created I/O feature state.
+     * @see #createVerifiedMutableState(IoState)
+     * @see #createLogic(IoDevice, IoState)
+     */
+    protected abstract M createMutableState(S state);
+
+    /**
+     * Wrapper for {@link #createMutableState(IoState)}, which verifies
+     * the created mutable state meets the necessary requirements. If they
+     * are not met, an {@code IoFeatureException} shall be thrown.
+     *
+     * @return the newly created, verified I/O feature state.
+     * @throws NullPointerException     if {@code state} is {@code null}.
+     * @throws IllegalArgumentException if {@code state} is not represented by
+     *                                  this feature.
+     * @throws IoFeatureException       if the created state is {@code null};
+     *                                  if the created state is not represented
+     *                                  by this feature.
+     */
+    protected final @NotNull M createVerifiedMutableState(@NotNull S state) {
+        Objects.requireNonNull(state, "state cannot be null");
         if (state.getFeature() != this) {
-            String msg = "created state must represent this feature";
+            String msg = "state not represented by this feature";
             throw new IllegalArgumentException(msg);
         }
-        return state;
+
+        M mutable = this.createMutableState(state);
+        this.verifyCreatedState(mutable);
+        return mutable;
     }
 
     /**
