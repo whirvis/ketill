@@ -64,5 +64,5 @@ public abstract class KetillIoException extends RuntimeException {
     public KetillIoException() {
         super();
     }
-    
+
 }
