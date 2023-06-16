@@ -99,27 +99,6 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
 
     }
 
-    /**
-     * Checks that the specified I/O feature ID is valid, and throws an
-     * exception if it is not. For the ID to be valid: it must not be
-     * {@code null}, must not be empty, and cannot contain whitespace.
-     *
-     * @param id the ID to validate.
-     * @return {@code id} if valid.
-     * @throws NullPointerException     if {@code id} is {@code null}.
-     * @throws IllegalArgumentException if {@code id} is empty or contains
-     *                                  whitespace.
-     */
-    public static @NotNull String validateId(@NotNull String id) {
-        Objects.requireNonNull(id, "id cannot be null");
-        if (id.isEmpty()) {
-            throw new IllegalArgumentException("id cannot be empty");
-        } else if (!id.matches("\\S+")) {
-            throw new IllegalArgumentException("id cannot contain whitespace");
-        }
-        return id;
-    }
-
     private final @NotNull String id;
     private final @NotNull IoFlow flow;
 
@@ -134,7 +113,7 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
      *                                  whitespace.
      */
     public IoFeature(@NotNull String id, @NotNull IoFlow flow) {
-        this.id = validateId(id);
+        this.id = IoApi.validateId(id);
         this.flow = Objects.requireNonNull(flow, "flow cannot be null");
     }
 

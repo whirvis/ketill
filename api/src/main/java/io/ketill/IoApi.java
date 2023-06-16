@@ -61,12 +61,32 @@ public final class IoApi {
 
     }
 
-
     private static final String JOINER_DELIMETER = ", ";
     private static final String JOINER_SUFFIX = "]";
 
     private IoApi() {
         /* prevent instantiation */
+    }
+
+    /**
+     * Checks that the specified ID is valid, and throws an exception if
+     * it is not. For the ID to be valid it must not be {@code null} and
+     * must not be empty or contain whitespace.
+     *
+     * @param id the ID to validate.
+     * @return {@code id} if valid.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if {@code id} is empty or contains
+     *                                  whitespace.
+     */
+    public static @NotNull String validateId(@NotNull String id) {
+        Objects.requireNonNull(id, "id must not be null");
+        if (id.isEmpty()) {
+            throw new IllegalArgumentException("id must not be empty");
+        } else if (!id.matches("\\S+")) {
+            throw new IllegalArgumentException("id must not contain whitespace");
+        }
+        return id;
     }
 
     /**
