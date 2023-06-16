@@ -16,7 +16,6 @@ import java.util.*;
  * @see LinkMethod
  * @see ParamType
  * @see IoLink
- *
  */
 public abstract class IoAdapter<D extends IoDevice> {
 
@@ -324,8 +323,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <S>     the I/O state type.
      * @param <I>     the internal data type.
      * @param <P>     the parameters type.
-     * @throws NullPointerException     if {@code feature}, {@code params},
-     *                                  or {@code link} are {@code null}.
+     * @throws NullPointerException if {@code feature}, {@code params},
+     *                              or {@code link} are {@code null}.
      * @see #isLinked(IoFeature)
      * @see LinkMethod
      * @see ForFeature
@@ -353,8 +352,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <F>     the I/O feature type.
      * @param <S>     the I/O state type.
      * @param <I>     the internal data type.
-     * @throws NullPointerException     if {@code feature} or {@code link}
-     *                                  are {@code null}.
+     * @throws NullPointerException if {@code feature} or {@code link}
+     *                              are {@code null}.
      * @see #isLinked(IoFeature)
      * @see LinkMethod
      * @see ForFeature
@@ -377,8 +376,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <F>     the I/O feature type.
      * @param <S>     the I/O state type.
      * @param <I>     the internal data type.
-     * @throws NullPointerException     if {@code feature} or {@code link}
-     *                                  are {@code null}.
+     * @throws NullPointerException if {@code feature} or {@code link}
+     *                              are {@code null}.
      * @see #isLinked(IoFeature)
      * @see LinkMethod
      * @see ForFeature
@@ -457,8 +456,8 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @param <F>     the I/O feature type.
      * @param <S>     the I/O state type.
      * @param <I>     the internal data type.
-     * @throws NullPointerException     if {@code feature} or {@code link}
-     *                                  are {@code null}.
+     * @throws NullPointerException if {@code feature} or {@code link}
+     *                              are {@code null}.
      * @see #isLinked(IoFeature)
      * @see LinkMethod
      * @see ForFeature
