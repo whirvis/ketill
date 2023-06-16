@@ -28,7 +28,7 @@ final class IoTreeNode<T> implements Iterable<IoTreeNode<T>> {
             if (seen.contains(child)) {
                 throw new IllegalStateException("circular tree");
             } else if (child.parent != upmost) {
-                throw new UnexpectedStateException("incorrect parent");
+                throw new KetillIoBug("incorrect parent");
             }
             seen.add(child);
             verifyHierarchy(seen, child);
@@ -262,7 +262,7 @@ final class IoTreeNode<T> implements Iterable<IoTreeNode<T>> {
             }
 
             if (!children.remove(node)) {
-                throw new UnexpectedStateException("missing child node");
+                throw new KetillIoBug("missing child node");
             }
 
             node.parent = null;
