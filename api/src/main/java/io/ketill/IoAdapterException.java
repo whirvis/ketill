@@ -61,10 +61,10 @@ public class IoAdapterException extends KetillIoException {
      * @param culprit the I/O adapter which caused this exception.
      *                A {@code null} value is permitted, and indicates
      *                the culprit is either irrelevant or unknown.
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link Throwable#getCause()} method). A {@code null}
-     *              value is permitted, and indicates that the cause is
-     *              nonexistent or unknown.
+     * @param cause   the cause (which is saved for later retrieval by the
+     *                {@link Throwable#getCause()} method). A {@code null}
+     *                value is permitted, and indicates that the cause is
+     *                nonexistent or unknown.
      */
     public IoAdapterException(@Nullable IoAdapter<?> culprit,
                               @Nullable Throwable cause) {
