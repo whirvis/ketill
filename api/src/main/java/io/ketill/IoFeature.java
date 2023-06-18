@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.*;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * The definition for an {@link IoDevice} capability.
@@ -84,10 +85,15 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
 
     static class Cache {
 
+        private static final Consumer<IoFlow> NO_OP = (f) -> {};
+
         final @NotNull IoFeature<?, ?> feature;
         final @NotNull IoState<?> state;
         final @NotNull IoState<?> mutable;
         final @Nullable IoLogic<?> logic;
+
+        final @NotNull Consumer<IoFlow> logicPreprocess;
+        final @NotNull Consumer<IoFlow> logicPostprocess;
 
         Cache(@NotNull IoFeature<?, ?> feature, @NotNull IoState<?> state,
               @NotNull IoState<?> mutable, @Nullable IoLogic<?> logic) {
@@ -95,6 +101,14 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
             this.state = state;
             this.mutable = mutable;
             this.logic = logic;
+
+            if (logic == null) {
+                this.logicPreprocess = NO_OP;
+                this.logicPostprocess = NO_OP;
+            } else {
+                this.logicPreprocess = logic::preprocess;
+                this.logicPostprocess = logic::postprocess;
+            }
         }
 
     }
@@ -194,7 +208,7 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
      * @see #createVerifiedMutableState(IoState)
      * @see #createLogic(IoDevice, IoState)
      */
-    protected abstract M createMutableState(S state);
+    protected abstract @NotNull M createMutableState(@NotNull S state);
 
     /**
      * Wrapper for {@link #createMutableState(IoState)}, which verifies
