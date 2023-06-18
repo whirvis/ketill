@@ -94,7 +94,7 @@ public abstract class IoLogic<I> {
      * <b>Default behavior:</b> No-op.
      */
     @IoApi.DefaultBehavior("no-op")
-    protected void prepareUpdate() {
+    protected void preprocess(IoFlow flow) {
         /* default behavior is a no-op */
     }
 
@@ -107,7 +107,7 @@ public abstract class IoLogic<I> {
      * <b>Default behavior:</b> No-op.
      */
     @IoApi.DefaultBehavior("no-op")
-    protected void update() {
+    protected void postprocess(IoFlow flow) {
         /* default behavior is a no-op */
     }
 
