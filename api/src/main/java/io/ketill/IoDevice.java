@@ -7,11 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings({"unused", "SameParameterValue"})
 public abstract class IoDevice {
 
-    /* @formatter:off */
-    final IoDeviceInternals internals;
-    /* @formatter:on */
+    final @NotNull IoDeviceInternals internals;
 
     /**
      * Constructs a new {@code IoDevice}.
@@ -47,7 +46,7 @@ public abstract class IoDevice {
      * {@code false} otherwise.
      * @see #hasFeature(String)
      */
-    public final boolean hasFeature(@Nullable IoFeature<?, ?> feature) {
+    public final boolean hasFeature(@Nullable IoFeature<?> feature) {
         return internals.getFeatureCache(feature) != null;
     }
 
@@ -70,7 +69,7 @@ public abstract class IoDevice {
      * @return the feature with the given ID or {@code null} if no such
      * feature is present on this device.
      */
-    public final @Nullable IoFeature<?, ?> getFeature(@Nullable String id) {
+    public final @Nullable IoFeature<?> getFeature(@Nullable String id) {
         IoFeature.Cache cache = internals.getFeatureCache(id);
         return cache != null ? cache.feature : null;
     }
@@ -96,7 +95,7 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getStates(boolean)
      */
-    public final @NotNull List<@NotNull IoFeature<?, ?>>
+    public final @NotNull List<@NotNull IoFeature<?>>
     getFeatures(boolean snapshot) {
         return internals.getFeatures(snapshot);
     }
@@ -112,13 +111,12 @@ public abstract class IoDevice {
      * @param feature the feature to query.
      * @param <I>     the internal data type.
      * @param <S>     the I/O state type.
-     * @param <M>     the mutable I/O state type.
      * @return the state of {@code feature} or {@code null} if {@code feature}
      * is not present on this device.
      */
     @SuppressWarnings("unchecked") /* enforced via generics */
-    public final <I, S extends IoState<I>, M extends S>
-    @Nullable S getState(@Nullable IoFeature<S, M> feature) {
+    public final <I, S extends IoState<I>>
+    @Nullable S getState(@Nullable IoFeature<S> feature) {
         IoFeature.Cache cache = internals.getFeatureCache(feature);
         return cache != null ? (S) cache.state : null;
     }
@@ -139,21 +137,20 @@ public abstract class IoDevice {
      * @param type the expected I/O feature type.
      * @param <I>  the internal data type.
      * @param <S>  the I/O state type.
-     * @param <M>  the mutable I/O state type.
      * @param <F>  the I/O feature type.
      * @return the state of the feature with the given ID or {@code null} if
      * no such feature is present on this device.
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     @SuppressWarnings("unchecked") /* enforced via generics */
-    public final <I, S extends IoState<I>, M extends S, F extends IoFeature<S, M>>
+    public final <I, S extends IoState<I>, F extends IoFeature<S>>
     @Nullable S getState(@Nullable String id, @NotNull Class<F> type) {
         Objects.requireNonNull(type, "type cannot be null");
         IoFeature.Cache cache = internals.getFeatureCache(id);
         if (cache == null) {
             return null;
         }
-        IoFeature<?, ?> feature = cache.feature;
+        IoFeature<?> feature = cache.feature;
         if (!type.isAssignableFrom(feature.getClass())) {
             return null; /* unexpected type */
         }
@@ -189,70 +186,9 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getStates(boolean)
      */
-    public final @NotNull Map<@NotNull IoFeature<?, ?>, @NotNull IoState<?>>
+    public final @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>>
     getStates(boolean snapshot) {
         return internals.getStates(snapshot);
-    }
-
-    /**
-     * Returns the current state of an I/O feature.
-     * <p>
-     * This is identical to {@link #getState(IoFeature)} except that it
-     * returns the mutable state instead. It is {@code protected} so only
-     * the device itself can obtain write access for a state.
-     *
-     * @param feature the feature to query.
-     * @param <I>     the internal data type.
-     * @param <S>     the I/O state type.
-     * @param <M>     the mutable I/O state type.
-     * @return the state of {@code feature} or {@code null} if {@code feature}
-     * is not present on this device.
-     */
-    @SuppressWarnings("unchecked") /* enforced via generics */
-    protected final <I, S extends IoState<I>, M extends S>
-    @Nullable M getMutableState(@Nullable IoFeature<S, M> feature) {
-        IoFeature.Cache cache = internals.getFeatureCache(feature);
-        return cache != null ? (M) cache.mutable : null;
-    }
-
-    /**
-     * Returns the current state of an I/O feature.
-     * <p>
-     * This is identical to {@link #getState(String, Class)} except that it
-     * returns the mutable state instead. It is {@code protected} so only the
-     * device itself can obtain write access for a state.
-     *
-     * @param id   the ID of the feature to query.
-     * @param type the expected I/O feature type.
-     * @param <I>  the internal data type.
-     * @param <S>  the I/O state type.
-     * @param <M>  the mutable I/O state type.
-     * @param <F>  the I/O feature type.
-     * @return the state of the feature with the given ID or {@code null} if
-     * no such feature is present on this device.
-     * @throws NullPointerException if {@code type} is {@code null}.
-     */
-    @SuppressWarnings("unchecked") /* enforced via generics */
-    protected final <I, S extends IoState<I>, M extends S, F extends IoFeature<S, M>>
-    @Nullable M getMutableState(@Nullable String id, @NotNull Class<F> type) {
-        IoFeature.Cache cache = internals.getFeatureCache(id, type);
-        return cache != null ? (M) cache.mutable : null;
-    }
-
-    /**
-     * Returns the mutable state of an I/O feature.
-     * <p>
-     * This is identical to {@link #getState(String)} except that it returns
-     * the mutable state instead. It is {@code protected} so only the device
-     * itself can obtain write access for a state.
-     *
-     * @param id the ID of the feature to query, case-sensitive.
-     * @return the state of the feature with the given ID or {@code null} if
-     * no such feature is present on this device.
-     */
-    protected final @Nullable IoState<?> getMutableState(@Nullable String id) {
-        IoFeature.Cache cache = internals.getFeatureCache(id);
-        return cache != null ? cache.state : null;
     }
 
     /**
@@ -270,12 +206,11 @@ public abstract class IoDevice {
      * @param feature the feature to query.
      * @param <I>     the internal data type.
      * @param <S>     the I/O state type.
-     * @param <M>     the mutable I/O state type.
      * @return the internal data of the state or {@code null} if
      * {@code feature} is not present on this device.
      */
-    protected final <I, S extends IoState<I>, M extends S>
-    @Nullable I getInternals(@NotNull IoFeature<S, M> feature) {
+    protected final <I, S extends IoState<I>>
+    @Nullable I getInternals(@NotNull IoFeature<S> feature) {
         S state = this.getState(feature);
         return state != null ? state.internals : null;
     }
@@ -302,8 +237,8 @@ public abstract class IoDevice {
      *                              {@code feature} is already present
      *                              on this device.
      */
-    protected <I, S extends IoState<I>, M extends S>
-    @NotNull S addFeature(@NotNull IoFeature<S, M> feature) {
+    protected <I, S extends IoState<I>>
+    @NotNull S addFeature(@NotNull IoFeature<S> feature) {
         return internals.addFeature(this, feature);
     }
 

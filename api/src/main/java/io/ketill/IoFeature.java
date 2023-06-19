@@ -13,18 +13,13 @@ import java.util.function.Consumer;
  * Examples include (but are not limited to): a gamepad button, an analog
  * stick, a rumble motor, or an LED indicator. Each of these features has
  * a corresponding {@link IoState}.
- * <p>
- * <b>For immutable I/O features:</b> Extend {@link ImmutableIoFeature}
- * instead. It overrides {@link #createMutableState(IoState)} and simply
- * returns the given state.
  *
  * @param <S> the I/O state type.
- * @param <M> the mutable I/O state type.
  * @see BuiltIn
  * @see IoDevice#addFeature(IoFeature)
  * @see IoLogic
  */
-public abstract class IoFeature<S extends IoState<?>, M extends S> {
+public abstract class IoFeature<S extends IoState<?>> {
 
     /**
      * When present, indicates to an {@link IoDevice} that a field contains
@@ -83,23 +78,24 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
         /* this annotation has no attributes */
     }
 
+    @IoApi.Friends({IoDevice.class, IoAdapter.class})
     static class Cache {
 
-        private static final Consumer<IoFlow> NO_OP = (f) -> {};
+        private static final Consumer<IoFlow> NO_OP = (f) -> {
+            /* do nothing by default */
+        };
 
-        final @NotNull IoFeature<?, ?> feature;
+        final @NotNull IoFeature<?> feature;
         final @NotNull IoState<?> state;
-        final @NotNull IoState<?> mutable;
         final @Nullable IoLogic<?> logic;
 
         final @NotNull Consumer<IoFlow> logicPreprocess;
         final @NotNull Consumer<IoFlow> logicPostprocess;
 
-        Cache(@NotNull IoFeature<?, ?> feature, @NotNull IoState<?> state,
-              @NotNull IoState<?> mutable, @Nullable IoLogic<?> logic) {
+        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state,
+              @Nullable IoLogic<?> logic) {
             this.feature = feature;
             this.state = state;
-            this.mutable = mutable;
             this.logic = logic;
 
             if (logic == null) {
@@ -198,44 +194,6 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
     }
 
     /**
-     * Creates a new instance of the I/O feature's mutable state.
-     * <p>
-     * <b>Note:</b> The returned state is not necessarily mutable. If
-     * mutability does not apply for a state, simply return the state
-     * as given.
-     *
-     * @return the newly created I/O feature state.
-     * @see #createVerifiedMutableState(IoState)
-     * @see #createLogic(IoDevice, IoState)
-     */
-    protected abstract @NotNull M createMutableState(@NotNull S state);
-
-    /**
-     * Wrapper for {@link #createMutableState(IoState)}, which verifies
-     * the created mutable state meets the necessary requirements. If they
-     * are not met, an {@code IoFeatureException} shall be thrown.
-     *
-     * @return the newly created, verified I/O feature state.
-     * @throws NullPointerException     if {@code state} is {@code null}.
-     * @throws IllegalArgumentException if {@code state} is not represented by
-     *                                  this feature.
-     * @throws IoFeatureException       if the created state is {@code null};
-     *                                  if the created state is not represented
-     *                                  by this feature.
-     */
-    protected final @NotNull M createVerifiedMutableState(@NotNull S state) {
-        Objects.requireNonNull(state, "state cannot be null");
-        if (state.getFeature() != this) {
-            String msg = "state not represented by this feature";
-            throw new IllegalArgumentException(msg);
-        }
-
-        M mutable = this.createMutableState(state);
-        this.verifyCreatedState(mutable);
-        return mutable;
-    }
-
-    /**
      * Creates a new instance of the I/O feature's logic.
      * <p>
      * <b>Requirements</b>
@@ -255,6 +213,7 @@ public abstract class IoFeature<S extends IoState<?>, M extends S> {
      * instance shall manage the state.
      * @see #createState()
      */
+    @SuppressWarnings("unused")
     @IoApi.DefaultBehavior("return null")
     protected @Nullable IoLogic<?>
     createLogic(@NotNull IoDevice device, @NotNull S state) {

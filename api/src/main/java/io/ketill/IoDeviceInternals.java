@@ -15,9 +15,8 @@ final class IoDeviceInternals {
     private final ReadWriteLock featuresLock;
     private final Map<String, IoFeature.Cache> features;
 
-    private final List<IoFeature<?, ?>> featureList;
-    private final Map<IoFeature<?, ?>, IoState<?>> statesMap;
-    private final Map<IoFeature<?, ?>, IoState<?>> mutableMap;
+    private final List<IoFeature<?>> featureList;
+    private final Map<IoFeature<?>, IoState<?>> statesMap;
 
     public IoDeviceInternals(@NotNull String typeId) {
         this.typeId = IoApi.validateId(typeId);
@@ -26,7 +25,6 @@ final class IoDeviceInternals {
         this.features = new HashMap<>();
         this.featureList = new ArrayList<>();
         this.statesMap = new HashMap<>();
-        this.mutableMap = new HashMap<>();
     }
 
     public String getTypeId() {
@@ -34,7 +32,7 @@ final class IoDeviceInternals {
     }
 
     public @Nullable IoFeature.Cache
-    getFeatureCache(@Nullable IoFeature<?, ?> feature) {
+    getFeatureCache(@Nullable IoFeature<?> feature) {
         if (feature == null) {
             return null;
         }
@@ -72,7 +70,7 @@ final class IoDeviceInternals {
         }
     }
 
-    public @NotNull List<@NotNull IoFeature<?, ?>> getFeatures(
+    public @NotNull List<@NotNull IoFeature<?>> getFeatures(
             boolean snapshot) {
         if (!snapshot) {
             return Collections.unmodifiableList(featureList);
@@ -85,10 +83,14 @@ final class IoDeviceInternals {
         }
     }
 
+    void registerFeatures(IoDevice device) {
+
+    }
+
     @SuppressWarnings("unchecked")
-    public <I, S extends IoState<I>, M extends S>
+    public <I, S extends IoState<I>>
     @NotNull S addFeature(@NotNull IoDevice device,
-                          @NotNull IoFeature<S, M> feature) {
+                          @NotNull IoFeature<S> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         featuresLock.writeLock().lock();
@@ -110,18 +112,14 @@ final class IoDeviceInternals {
             }
 
             S state = feature.createVerifiedState();
-            M mutable = feature.createVerifiedMutableState(state);
-
             IoLogic<?> logic = feature.createVerifiedLogic(device, state);
             if (logic != null) {
                 logic.startup();
             }
 
-            features.put(id, new IoFeature.Cache(feature, state, mutable, logic));
-
+            features.put(id, new IoFeature.Cache(feature, state, logic));
             featureList.add(feature);
             statesMap.put(feature, state);
-            mutableMap.put(feature, mutable);
 
             return state;
         } finally {
@@ -130,7 +128,7 @@ final class IoDeviceInternals {
     }
 
     public @NotNull
-    Map<@NotNull IoFeature<?, ?>, @NotNull IoState<?>>
+    Map<@NotNull IoFeature<?>, @NotNull IoState<?>>
     getStates(boolean snapshot) {
         if (!snapshot) {
             return Collections.unmodifiableMap(statesMap);
@@ -145,13 +143,13 @@ final class IoDeviceInternals {
 
     public @Nullable IoFeature.Cache
     getFeatureCache(@Nullable String id,
-                    @NotNull Class<? extends IoFeature<?, ?>> type) {
+                    @NotNull Class<? extends IoFeature<?>> type) {
         Objects.requireNonNull(type, "type cannot be null");
         IoFeature.Cache cache = this.getFeatureCache(id);
         if (cache == null) {
             return null;
         }
-        IoFeature<?, ?> feature = cache.feature;
+        IoFeature<?> feature = cache.feature;
         if (!type.isAssignableFrom(feature.getClass())) {
             return null; /* unexpected type */
         }

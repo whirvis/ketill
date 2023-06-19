@@ -263,7 +263,7 @@ public abstract class IoAdapter<D extends IoDevice> {
 
     }
 
-    private final @NotNull Map<IoFeature<?, ?>, IoMapping<?, ?>> mappings;
+    private final @NotNull Map<IoFeature<?>, IoMapping<?, ?>> mappings;
     private final @NotNull IoMappingCache inMappings, outMappings;
 
     public IoAdapter() {
@@ -273,11 +273,12 @@ public abstract class IoAdapter<D extends IoDevice> {
     }
 
     @SuppressWarnings("unchecked")
-    <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I, P>
+    @IoApi.Friends(IoDevice.class)
+    <F extends IoFeature<S>, S extends IoState<I>, I, P>
     void updateMappingCache(@NotNull F feature) {
         IoMapping<I, P> mapping = (IoMapping<I, P>) mappings.get(feature);
         if (mapping == null) {
-            return; /* no cache to update */
+            return; /* feature is not mapped */
         }
 
         /* TODO: fetch state internals from device */
@@ -304,7 +305,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * method, {@code false} otherwise.
      * @see #linkFeature(IoFeature, Object, IoLink.WithFlow.WithParams)
      */
-    protected boolean isLinked(@NotNull IoFeature<?, ?> feature) {
+    protected boolean isLinked(@NotNull IoFeature<?> feature) {
         return mappings.containsKey(feature);
     }
 
@@ -329,7 +330,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see LinkMethod
      * @see ForFeature
      */
-    protected final <F extends IoFeature<S, M>, S extends IoState<I>, M extends S, I, P>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I, P>
     void linkFeature(@NotNull F feature, @NotNull P params,
                      @NotNull IoLink.WithFlow.WithParams<I, P> link) {
         Objects.requireNonNull(feature, "feature cannot be null");
@@ -359,7 +360,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see ForFeature
      */
     @IoApi.Shorthand
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithFlow.WithParams<I, F> link) {
         this.linkFeature(feature, feature, link);
@@ -383,7 +384,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see ForFeature
      */
     @IoApi.Shorthand
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithFlow.WithoutParams<I> link) {
         this.linkFeature(feature, IoLink.NO_PARAMS,
@@ -398,7 +399,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @throws IllegalArgumentException if {@code feature.getFlow()} returns
      *                                  {@link IoFlow#TWO_WAY}.
      */
-    private void requireOneWayFlow(@NotNull IoFeature<?, ?> feature) {
+    private void requireOneWayFlow(@NotNull IoFeature<?> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         if (feature.getFlow() == IoFlow.TWO_WAY) {
             String msg = "two-way feature must account for flow";
@@ -433,7 +434,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see ForFeature
      */
     @IoApi.Shorthand
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I, P>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I, P>
     void linkFeature(@NotNull F feature, @NotNull P params,
                      @NotNull IoLink.WithoutFlow.WithParams<I, P> link) {
         this.requireOneWayFlow(feature);
@@ -463,7 +464,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see ForFeature
      */
     @IoApi.Shorthand
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithoutFlow.WithParams<I, F> link) {
         this.linkFeature(feature, feature, link);
@@ -489,7 +490,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see ForFeature
      */
     @IoApi.Shorthand
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void linkFeature(@NotNull F feature,
                      @NotNull IoLink.WithoutFlow.WithoutParams<I> link) {
         this.requireOneWayFlow(feature);
@@ -506,7 +507,7 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @throws NullPointerException if {@code feature} is {@code null}.
      */
     /* template is needless here, but compiler fusses if it's absent. */
-    protected final <F extends IoFeature<S, M>, M extends S, S extends IoState<I>, I>
+    protected final <F extends IoFeature<S>, S extends IoState<I>, I>
     void unlinkFeature(@NotNull F feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
         mappings.remove(feature);
