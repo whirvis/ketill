@@ -167,7 +167,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      */
     protected abstract @NotNull S createState();
 
-    private void verifyCreatedState(IoState<?> state) {
+    private @NotNull S verifyCreatedState(@Nullable S state) {
         if (state == null) {
             String msg = "created state cannot be null";
             throw new IoFeatureException(msg);
@@ -175,6 +175,7 @@ public abstract class IoFeature<S extends IoState<?>> {
             String msg = "created state must represent this feature";
             throw new IoFeatureException(msg);
         }
+        return state;
     }
 
     /**
@@ -189,8 +190,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      */
     protected final @NotNull S createVerifiedState() {
         S state = this.createState();
-        this.verifyCreatedState(state);
-        return state;
+        return this.verifyCreatedState(state);
     }
 
     /**
