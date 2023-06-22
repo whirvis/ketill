@@ -199,4 +199,15 @@ public final class IoMode {
         return this.bits;
     }
 
+    @Override
+    public String toString() {
+        return IoApi.getStrJoiner(this)
+                .add("bits=" + bits)
+                .add("read=" + read)
+                .add("readOrNop=" + readOrNop)
+                .add("write=" + write)
+                .add("writeOrNop=" + writeOrNop)
+                .toString();
+    }
+    
 }
