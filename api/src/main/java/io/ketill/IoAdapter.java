@@ -240,23 +240,23 @@ public abstract class IoAdapter<D extends IoDevice> {
     private static class IoMappingCache {
 
         private final IoFlow flow;
-        private final Set<IoAdapter.IoMapping<?, ?>> mappings;
+        private final Set<IoMapping<?, ?>> mappings;
 
         private IoMappingCache(IoFlow flow) {
             this.flow = flow;
             this.mappings = new HashSet<>();
         }
 
-        public void add(IoAdapter.IoMapping<?, ?> mapping) {
+        public void add(IoMapping<?, ?> mapping) {
             mappings.add(mapping);
         }
 
-        public void remove(IoAdapter.IoMapping<?, ?> mapping) {
+        public void remove(IoMapping<?, ?> mapping) {
             mappings.remove(mapping);
         }
 
-        public void crossBridges() {
-            for (IoAdapter.IoMapping<?, ?> mapping : mappings) {
+        public void bridge() {
+            for (IoMapping<?, ?> mapping : mappings) {
                 mapping.crossBridge(flow);
             }
         }
