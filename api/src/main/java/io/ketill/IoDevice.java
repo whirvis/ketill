@@ -38,6 +38,14 @@ public abstract class IoDevice {
         return internals.getTypeId();
     }
 
+    public final IoDevice getParent() {
+        return null; /* TODO: implement */
+    }
+
+    public final void addExtension(IoExtension<?> extension) {
+        /* TODO: implement */
+    }
+
     /**
      * Returns if an I/O feature is present on this device.
      *
