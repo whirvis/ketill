@@ -2,6 +2,15 @@ package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Describes an I/O mode for an {@link IoDevice}.
+ * <p>
+ * This determines if an I/O device can be read from, written to, or both.
+ * Some devices may require a mode read and/or write operations. It is akin
+ * to the {@code fopen()} function's {@code mode} parameter in C.
+ *
+ * @see IoAdapter#open(IoMode)
+ */
 public final class IoMode {
 
     private static final int
@@ -209,5 +218,5 @@ public final class IoMode {
                 .add("writeOrNop=" + writeOrNop)
                 .toString();
     }
-    
+
 }
