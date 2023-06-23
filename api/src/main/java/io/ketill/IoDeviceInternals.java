@@ -18,7 +18,7 @@ final class IoDeviceInternals {
     private final List<IoFeature<?>> featureList;
     private final Map<IoFeature<?>, IoState<?>> statesMap;
 
-    public IoDeviceInternals(@NotNull String typeId) {
+    IoDeviceInternals(@NotNull String typeId) {
         this.typeId = IoApi.validateId(typeId);
         this.featuresLock = new ReentrantReadWriteLock();
 
