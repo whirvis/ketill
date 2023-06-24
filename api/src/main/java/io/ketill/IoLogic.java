@@ -73,7 +73,7 @@ public abstract class IoLogic<I> {
     }
 
     /**
-     * Initializes the logic.
+     * Initializes this logic.
      * <p>
      * This is invoked just after the {@link IoFeature} this logic works
      * for is added to a device.
@@ -112,7 +112,7 @@ public abstract class IoLogic<I> {
     }
 
     /**
-     * De-initializes the logic.
+     * De-initializes this logic.
      * <p>
      * This is invoked just after the {@link IoFeature} this logic works
      * for is removed from a device.
