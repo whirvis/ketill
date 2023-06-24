@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Signals an {@link IoDevice} exception.
  */
+@SuppressWarnings("unused")
 @IgnoreCoverage
 public class IoDeviceException extends KetillIoException {
 

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * <b>If this is ever thrown</b>: Please open an issue ticket.
  */
+@SuppressWarnings("unused")
 @IgnoreCoverage
 final class KetillIoBug extends KetillIoException {
 

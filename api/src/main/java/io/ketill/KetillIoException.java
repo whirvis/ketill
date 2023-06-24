@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  * <b>Note:</b> This class is {@code abstract} as throwing an instance
  * of this exception is too broad.
  */
+@SuppressWarnings("unused")
 @IgnoreCoverage
 public abstract class KetillIoException extends RuntimeException {
 

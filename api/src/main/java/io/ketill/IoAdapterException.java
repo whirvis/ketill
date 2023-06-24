@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Signals an {@link IoAdapter} exception.
  */
+@SuppressWarnings("unused")
 @IgnoreCoverage
 public class IoAdapterException extends KetillIoException {
 
