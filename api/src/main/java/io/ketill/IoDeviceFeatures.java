@@ -8,31 +8,21 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @IoApi.Friends(IoDevice.class)
-final class IoDeviceInternals {
+final class IoDeviceFeatures implements Iterable<IoState<?>> {
 
-    private final String typeId;
+    private final @NotNull ReadWriteLock featuresLock;
+    private final @NotNull Map<String, IoFeature.Cache> features;
+    private final @NotNull List<IoFeature<?>> featureList;
+    private final @NotNull Map<IoFeature<?>, IoState<?>> statesMap;
 
-    private final ReadWriteLock featuresLock;
-    private final Map<String, IoFeature.Cache> features;
-
-    private final List<IoFeature<?>> featureList;
-    private final Map<IoFeature<?>, IoState<?>> statesMap;
-
-    IoDeviceInternals(@NotNull String typeId) {
-        this.typeId = IoApi.validateId(typeId);
+    IoDeviceFeatures() {
         this.featuresLock = new ReentrantReadWriteLock();
-
         this.features = new HashMap<>();
         this.featureList = new ArrayList<>();
         this.statesMap = new HashMap<>();
     }
 
-    public String getTypeId() {
-        return this.typeId;
-    }
-
-    public @Nullable IoFeature.Cache
-    getFeatureCache(@Nullable IoFeature<?> feature) {
+    @Nullable IoFeature.Cache getCache(@Nullable IoFeature<?> feature) {
         if (feature == null) {
             return null;
         }
@@ -48,8 +38,7 @@ final class IoDeviceInternals {
         }
     }
 
-    public @Nullable IoFeature.Cache
-    getFeatureCache(@Nullable String id) {
+    @Nullable IoFeature.Cache getCache(@Nullable String id) {
         if (id == null) {
             return null;
         }
@@ -61,7 +50,7 @@ final class IoDeviceInternals {
         }
     }
 
-    int getFeatureCount() {
+    int size() {
         featuresLock.readLock().lock();
         try {
             return features.size();
@@ -70,27 +59,13 @@ final class IoDeviceInternals {
         }
     }
 
-    public @NotNull List<@NotNull IoFeature<?>> getFeatures(
-            boolean snapshot) {
-        if (!snapshot) {
-            return Collections.unmodifiableList(featureList);
-        }
-        featuresLock.readLock().lock();
-        try {
-            return new ArrayList<>(featureList);
-        } finally {
-            featuresLock.readLock().unlock();
-        }
-    }
-
-    void registerFeatures(IoDevice device) {
-
+    @NotNull List<@NotNull IoFeature<?>> getFeatures() {
+        return Collections.unmodifiableList(featureList);
     }
 
     @SuppressWarnings("unchecked")
-    public <I, S extends IoState<I>>
-    @NotNull S addFeature(@NotNull IoDevice device,
-                          @NotNull IoFeature<S> feature) {
+    <I, S extends IoState<I>> @NotNull S
+    addFeature(@NotNull IoDevice device, @NotNull IoFeature<S> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         featuresLock.writeLock().lock();
@@ -127,25 +102,14 @@ final class IoDeviceInternals {
         }
     }
 
-    public @NotNull
-    Map<@NotNull IoFeature<?>, @NotNull IoState<?>>
-    getStates(boolean snapshot) {
-        if (!snapshot) {
-            return Collections.unmodifiableMap(statesMap);
-        }
-        featuresLock.readLock().lock();
-        try {
-            return new HashMap<>(statesMap);
-        } finally {
-            featuresLock.readLock().unlock();
-        }
+    @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>> getStates() {
+        return Collections.unmodifiableMap(statesMap);
     }
 
-    public @Nullable IoFeature.Cache
-    getFeatureCache(@Nullable String id,
-                    @NotNull Class<? extends IoFeature<?>> type) {
+    @Nullable IoFeature.Cache
+    getCache(@Nullable String id, @NotNull Class<? extends IoFeature<?>> type) {
         Objects.requireNonNull(type, "type cannot be null");
-        IoFeature.Cache cache = this.getFeatureCache(id);
+        IoFeature.Cache cache = this.getCache(id);
         if (cache == null) {
             return null;
         }
@@ -154,6 +118,11 @@ final class IoDeviceInternals {
             return null; /* unexpected type */
         }
         return cache;
+    }
+
+    @Override
+    public @NotNull Iterator<@NotNull IoState<?>> iterator() {
+        return statesMap.values().iterator();
     }
 
 }
