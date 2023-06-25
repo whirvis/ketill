@@ -4,7 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -76,6 +81,42 @@ public abstract class IoFeature<S extends IoState<?>> {
     @Retention(RetentionPolicy.RUNTIME)
     public @interface BuiltIn {
         /* this annotation has no attributes */
+    }
+
+    private static void validateBuiltInField(@NotNull Field field) {
+        if (!field.isAnnotationPresent(BuiltIn.class)) {
+            return;
+        }
+
+        String fieldDesc = "@" + BuiltIn.class.getSimpleName()
+                + " annotated field \"" + field.getName() + "\""
+                + " in class " + field.getDeclaringClass().getName();
+
+        if (!IoFeature.class.isAssignableFrom(field.getType())) {
+            throw new IoFeatureException(fieldDesc
+                    + " must be assignable from "
+                    + IoFeature.class.getName());
+        }
+
+        int mods = field.getModifiers();
+        if (!Modifier.isPublic(mods)) {
+            throw new IoFeatureException(fieldDesc + " must be public");
+        } else if (!Modifier.isFinal(mods)) {
+            throw new IoFeatureException(fieldDesc + " must be final");
+        } else if (!Modifier.isStatic(mods)) {
+            throw new IoFeatureException(fieldDesc + " must be static");
+        }
+    }
+
+    @IoApi.Friends(IoDevice.class)
+    static void validateBuiltInFields(
+            @NotNull Class<? extends IoDevice> clazz) {
+        Set<Field> fields = new HashSet<>();
+        Collections.addAll(fields, clazz.getDeclaredFields());
+        Collections.addAll(fields, clazz.getFields());
+        for (Field field : fields) {
+            validateBuiltInField(field);
+        }
     }
 
     @IoApi.Friends({IoDevice.class, IoAdapter.class})
