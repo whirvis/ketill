@@ -124,7 +124,7 @@ public abstract class IoState<I> {
     }
 
     /**
-     * The I/O feature of this state.
+     * The I/O feature this state represents.
      */
     protected final @NotNull IoFeature<?> feature;
 
