@@ -21,8 +21,9 @@ import java.util.function.Consumer;
  *
  * @param <S> the I/O state type.
  * @see BuiltIn
+ * @see #createState()
+ * @see #createLogic(IoDevice, IoState)
  * @see IoDevice#addFeature(IoFeature)
- * @see IoLogic
  */
 public abstract class IoFeature<S extends IoState<?>> {
 
@@ -204,7 +205,6 @@ public abstract class IoFeature<S extends IoState<?>> {
      *
      * @return the newly created I/O state.
      * @see #createLogic(IoDevice, IoState)
-     * @see IoDevice#addFeature(IoFeature)
      */
     protected abstract @NotNull S createState();
 
