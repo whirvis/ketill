@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Signals an {@link IoLogic} exception.
  */
+@SuppressWarnings("unused")
 @IgnoreCoverage
 public class IoLogicException extends KetillIoException {
 
