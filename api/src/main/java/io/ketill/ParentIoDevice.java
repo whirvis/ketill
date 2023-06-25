@@ -30,7 +30,7 @@ public final class ParentIoDevice {
         return parent.unwrap();
     }
 
-    private final @NotNull IoDevice device;
+    @IoApi.Friends(IoExtension.class) final @NotNull IoDevice device;
     private boolean unwrapped;
 
     /**

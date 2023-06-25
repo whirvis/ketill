@@ -50,29 +50,29 @@ public abstract class IoExtension<D extends IoDevice> {
      * </ul>
      * <p>
      * If the above requirements are not met, an exception shall be thrown
-     * by {@link #createVerifiedDevice(IoDevice)}.
+     * by {@link #createVerifiedDevice(ParentIoDevice)}.
      *
      * @param parent the parent of the I/O extension device.
      * @return the newly created I/O device.
      * @see IoDevice#addExtension(IoExtension)
      */
-    protected abstract @NotNull D createDevice(@NotNull IoDevice parent);
+    protected abstract @NotNull D createDevice(@NotNull ParentIoDevice parent);
 
     private @NotNull D
-    verifyCreatedDevice(@Nullable D device, @NotNull IoDevice parent) {
+    verifyCreatedDevice(@Nullable D device, @NotNull ParentIoDevice parent) {
         if (device == null) {
             String msg = "created device cannot be null";
             throw new IoDeviceException(msg);
-        } else if (device.getParent() != parent) {
-            String msg = "";
+        } else if (device.getParent() != parent.device) {
+            String msg = ""; // TODO
             throw new IoDeviceException(msg);
         }
         return device;
     }
 
     /**
-     * Wrapper for {@link #createDevice(IoDevice)}, which verifies the
-     * created device meets the necessary requirements. If they are not
+     * Wrapper for {@link #createDevice(ParentIoDevice)}, which verifies
+     * the created device meets the necessary requirements. If they are not
      * met, an {@code IoDeviceException} shall be thrown.
      *
      * @param parent the parent of the I/O extension device.
@@ -81,7 +81,8 @@ public abstract class IoExtension<D extends IoDevice> {
      *                           if the parent of the created device is
      *                           not {@code parent}.
      */
-    protected final @NotNull D createVerifiedDevice(@NotNull IoDevice parent) {
+    protected final @NotNull D
+    createVerifiedDevice(@NotNull ParentIoDevice parent) {
         Objects.requireNonNull(parent, "parent cannot be null");
         D device = this.createDevice(parent);
         return this.verifyCreatedDevice(device, parent);
