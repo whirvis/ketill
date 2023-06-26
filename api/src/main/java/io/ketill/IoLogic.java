@@ -81,7 +81,7 @@ public abstract class IoLogic<I> {
      * <b>Default behavior:</b> No-op.
      */
     @IoApi.DefaultBehavior("no-op")
-    protected void startup() {
+    protected void init() {
         /* default behavior is a no-op */
     }
 
@@ -112,7 +112,7 @@ public abstract class IoLogic<I> {
     }
 
     /**
-     * De-initializes this logic.
+     * Terminates this logic.
      * <p>
      * This is invoked just after the {@link IoFeature} this logic works
      * for is removed from a device.
@@ -120,7 +120,7 @@ public abstract class IoLogic<I> {
      * <b>Default behavior:</b> No-op.
      */
     @IoApi.DefaultBehavior("no-op")
-    protected void shutdown() {
+    protected void terminate() {
         /* default behavior is a no-op */
     }
 
