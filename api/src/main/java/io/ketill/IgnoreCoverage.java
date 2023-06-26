@@ -15,6 +15,9 @@ import java.lang.annotation.RetentionPolicy;
  *     Execution, Deployment → Coverage.</li>
  *     <li><b>Apache NetBeans:</b> Unknown.</li>
  * </ul>
+ * <p>
+ * <b>Visibility:</b> This annotation is {@code package-private} as it is
+ * not meant for use outside unit testing of the API.
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
