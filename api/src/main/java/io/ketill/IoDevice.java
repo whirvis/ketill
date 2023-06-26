@@ -25,7 +25,7 @@ public abstract class IoDevice {
         this.typeId = typeId;
         this.parent = parent;
         this.node = new IoTreeNode<>(this);
-        this.features = new IoDeviceFeatures();
+        this.features = new IoDeviceFeatures(this);
     }
 
     /**
@@ -110,6 +110,32 @@ public abstract class IoDevice {
     }
 
     /**
+     * Returns an I/O feature by its ID.
+     *
+     * @param id   the feature ID, case-sensitive.
+     * @param type the expected feature type. If a feature with the
+     *             given ID is present on this device but is not of
+     *             this type, {@code null} will be returned.
+     * @return the feature with the given ID and of the expected type or
+     * {@code null} if no such feature is present on this device.
+     * @throws NullPointerException if {@code type} is {@code null}.
+     */
+    @SuppressWarnings("unchecked") /* it is checked */
+    public final @Nullable <F extends IoFeature<?>>
+    F getFeature(@Nullable String id, @NotNull Class<F> type) {
+        Objects.requireNonNull(type, "type cannot be null");
+        IoFeature.Cache cache = features.getCache(id);
+        if (cache == null) {
+            return null;
+        }
+        IoFeature<?> feature = cache.feature;
+        if (!type.isAssignableFrom(feature.getClass())) {
+            return null; /* unexpected type */
+        }
+        return (F) feature;
+    }
+
+    /**
      * Returns the number of I/O features present on this device.
      *
      * @return the number of I/O features present on this device.
@@ -129,7 +155,7 @@ public abstract class IoDevice {
      * @see #getStates()
      */
     public final @NotNull List<@NotNull IoFeature<?>> getFeatures() {
-        return features.getFeatures();
+        return features.asList();
     }
 
     /**
@@ -160,13 +186,28 @@ public abstract class IoDevice {
      * is valid for the lifetime of this device. It will only become invalid
      * once this device is disconnected. When this occurs, the state shall
      * revert to its initial value.
+     *
+     * @param id the feature ID, case-sensitive.
+     * @return the state of the feature with the given ID or {@code null} if
+     * no such feature is present on this device.
+     */
+    public final @Nullable IoState<?> getState(@Nullable String id) {
+        IoFeature.Cache cache = features.getCache(id);
+        return cache != null ? cache.state : null;
+    }
+
+    /**
+     * Returns the current state of an I/O feature.
      * <p>
-     * <b>Note:</b> This method will return {@code null} if the feature with
-     * the given ID (assuming it is present on this device) is not an instance
-     * of the given type. No exception will be thrown.
+     * As guaranteed by {@link #addFeature(IoFeature)}, the returned state
+     * is valid for the lifetime of this device. It will only become invalid
+     * once this device is disconnected. When this occurs, the state shall
+     * revert to its initial value.
      *
      * @param id   the ID of the feature to query.
-     * @param type the expected I/O feature type.
+     * @param type the expected feature type. If a feature with the
+     *             given ID is present on this device but is not of
+     *             this type, {@code null} will be returned.
      * @param <I>  the internal data type.
      * @param <S>  the I/O state type.
      * @param <F>  the I/O feature type.
@@ -190,23 +231,6 @@ public abstract class IoDevice {
     }
 
     /**
-     * Returns the current state of an I/O feature.
-     * <p>
-     * As guaranteed by {@link #addFeature(IoFeature)}, the returned state
-     * is valid for the lifetime of this device. It will only become invalid
-     * once this device is disconnected. When this occurs, the state shall
-     * revert to its initial value.
-     *
-     * @param id the ID of the feature to query, case-sensitive.
-     * @return the state of the feature with the given ID or {@code null} if
-     * no such feature is present on this device.
-     */
-    public final @Nullable IoState<?> getState(@Nullable String id) {
-        IoFeature.Cache cache = features.getCache(id);
-        return cache != null ? cache.state : null;
-    }
-
-    /**
      * Returns the states of all I/O features present on this device.
      * <p>
      * <b>Note:</b> The returned map is an <i>unmodifiable</i> direct view.
@@ -217,7 +241,7 @@ public abstract class IoDevice {
      */
     public final @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>>
     getStates() {
-        return features.getStates();
+        return features.asMap();
     }
 
     /**
@@ -249,12 +273,12 @@ public abstract class IoDevice {
      * <p>
      * If the given feature is already present, its current state will be
      * returned. A new instance will not be created in order to prevent a
-     * dangling reference. This also ensures the state of a feature will
-     * remain valid for the lifetime of this device.
+     * dangling reference. This ensures the state of a feature will remain
+     * valid for the lifetime of this device.
      * <p>
      * <b>Note:</b> No two features with the same ID can be present on a
      * device at the same time. This ensures {@link #getFeature(String)}
-     * will always return a single unambiguous value.
+     * will always return a single and unambiguous value.
      *
      * @param feature the feature to add.
      * @param <S>     the I/O state type.
@@ -268,7 +292,7 @@ public abstract class IoDevice {
      */
     protected <I, S extends IoState<I>>
     @NotNull S addFeature(@NotNull IoFeature<S> feature) {
-        return features.addFeature(this, feature);
+        return features.add(feature);
     }
 
 }
