@@ -36,6 +36,7 @@ public abstract class IoState<I> {
      * <p>
      * <b>Requirements</b>
      * <p>
+     * This annotation requires that:
      * <ul>
      *     <li>The field must be {@code public} and {@code final}.</li>
      *     <li>The type must be assignable from {@code IoState}.</li>
@@ -43,7 +44,9 @@ public abstract class IoState<I> {
      * </ul>
      * <p>
      * If these requirements are not met, an appropriate exception shall
-     * be thrown by the constructor of {@code IoDevice}.
+     * be thrown by the constructor of {@code IoDevice}. In addition, they
+     * must not be {@code null}. However, the order of class instantiation
+     * prevents this from being enforced at runtime.
      * <p>
      * <b>Recommendations</b>
      * <p>
