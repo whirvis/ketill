@@ -35,6 +35,7 @@ public abstract class IoFeature<S extends IoState<?>, D extends IoDevice> {
      * <p>
      * <b>Requirements</b>
      * <p>
+     * This annotation requires that:
      * <ul>
      *     <li>The field must be {@code public} and {@code final}.</li>
      *     <li>The type must assignable from {@code IoFeature}.</li>
@@ -42,7 +43,9 @@ public abstract class IoFeature<S extends IoState<?>, D extends IoDevice> {
      * </ul>
      * <p>
      * If these requirements are not met, an appropriate exception shall
-     * be thrown by the constructor of {@code IoDevice}.
+     * be thrown by the constructor of {@code IoDevice}. In addition, they
+     * must not be {@code null}. However, the order of class instantiation
+     * prevents this from being enforced at runtime.
      * <p>
      * <b>Recommendations</b>
      * <p>
@@ -53,6 +56,7 @@ public abstract class IoFeature<S extends IoState<?>, D extends IoDevice> {
      * <p>
      * <b>Example</b>
      * <p>
+     * The following is an example use of this annotation.
      * <pre>
      * &#47;* note: Gamepad extends IoDevice *&#47;
      * class XboxController extends Gamepad {
