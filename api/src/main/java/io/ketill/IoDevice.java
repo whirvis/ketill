@@ -40,7 +40,7 @@ public abstract class IoDevice {
      * @throws IllegalStateException    if {@code parent} has already been
      *                                  supplied to another I/O device.
      */
-    public IoDevice(@NotNull String typeId, @NotNull ParentIoDevice parent) {
+    public IoDevice(@NotNull String typeId, @NotNull ParentIoDevice<?> parent) {
         this(typeId, ParentIoDevice.unwrap(parent));
     }
 
@@ -81,7 +81,7 @@ public abstract class IoDevice {
      * {@code false} otherwise.
      * @see #hasFeature(String)
      */
-    public final boolean hasFeature(@Nullable IoFeature<?> feature) {
+    public final boolean hasFeature(@Nullable IoFeature<?, ?> feature) {
         return features.getCache(feature) != null;
     }
 
@@ -104,7 +104,7 @@ public abstract class IoDevice {
      * @return the feature with the given ID or {@code null} if no such
      * feature is present on this device.
      */
-    public final @Nullable IoFeature<?> getFeature(@Nullable String id) {
+    public final @Nullable IoFeature<?, ?> getFeature(@Nullable String id) {
         IoFeature.Cache cache = features.getCache(id);
         return cache != null ? cache.feature : null;
     }
@@ -121,14 +121,14 @@ public abstract class IoDevice {
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     @SuppressWarnings("unchecked") /* it is checked */
-    public final @Nullable <F extends IoFeature<?>>
+    public final @Nullable <F extends IoFeature<?, ?>>
     F getFeature(@Nullable String id, @NotNull Class<F> type) {
         Objects.requireNonNull(type, "type cannot be null");
         IoFeature.Cache cache = features.getCache(id);
         if (cache == null) {
             return null;
         }
-        IoFeature<?> feature = cache.feature;
+        IoFeature<?, ?> feature = cache.feature;
         if (!type.isAssignableFrom(feature.getClass())) {
             return null; /* unexpected type */
         }
@@ -154,7 +154,7 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getStates()
      */
-    public final @NotNull List<@NotNull IoFeature<?>> getFeatures() {
+    public final @NotNull List<@NotNull IoFeature<?, ?>> getFeatures() {
         return features.asList();
     }
 
@@ -174,7 +174,7 @@ public abstract class IoDevice {
      */
     @SuppressWarnings("unchecked") /* enforced via generics */
     public final <I, S extends IoState<I>>
-    @Nullable S getState(@Nullable IoFeature<S> feature) {
+    @Nullable S getState(@Nullable IoFeature<S, ?> feature) {
         IoFeature.Cache cache = features.getCache(feature);
         return cache != null ? (S) cache.state : null;
     }
@@ -216,14 +216,14 @@ public abstract class IoDevice {
      * @throws NullPointerException if {@code type} is {@code null}.
      */
     @SuppressWarnings("unchecked") /* enforced via generics */
-    public final <I, S extends IoState<I>, F extends IoFeature<S>>
+    public final <I, S extends IoState<I>, F extends IoFeature<S, ?>>
     @Nullable S getState(@Nullable String id, @NotNull Class<F> type) {
         Objects.requireNonNull(type, "type cannot be null");
         IoFeature.Cache cache = features.getCache(id);
         if (cache == null) {
             return null;
         }
-        IoFeature<?> feature = cache.feature;
+        IoFeature<?, ?> feature = cache.feature;
         if (!type.isAssignableFrom(feature.getClass())) {
             return null; /* unexpected type */
         }
@@ -239,7 +239,7 @@ public abstract class IoDevice {
      * @see #getFeatureCount()
      * @see #getFeatures()
      */
-    public final @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>>
+    public final @NotNull Map<@NotNull IoFeature<?, ?>, @NotNull IoState<?>>
     getStates() {
         return features.asMap();
     }
@@ -263,7 +263,7 @@ public abstract class IoDevice {
      * {@code feature} is not present on this device.
      */
     protected final <I, S extends IoState<I>>
-    @Nullable I getInternals(@NotNull IoFeature<S> feature) {
+    @Nullable I getInternals(@NotNull IoFeature<S, ?> feature) {
         S state = this.getState(feature);
         return state != null ? state.internals : null;
     }
@@ -273,12 +273,12 @@ public abstract class IoDevice {
      * <p>
      * If the given feature is already present, its current state will be
      * returned. A new instance will not be created in order to prevent a
-     * dangling reference. This ensures the state of a feature will remain
-     * valid for the lifetime of this device.
+     * dangling reference. This also ensures the state of a feature will
+     * remain valid for the lifetime of this device.
      * <p>
      * <b>Note:</b> No two features with the same ID can be present on a
      * device at the same time. This ensures {@link #getFeature(String)}
-     * will always return a single and unambiguous value.
+     * will always return a single unambiguous value.
      *
      * @param feature the feature to add.
      * @param <S>     the I/O state type.
@@ -289,9 +289,11 @@ public abstract class IoDevice {
      * @throws IoDeviceException    if a feature with the same ID as
      *                              {@code feature} is already present
      *                              on this device.
+     * @throws IoFeatureException   if this device is not of the feature's
+     *                              required type.
      */
     protected <I, S extends IoState<I>>
-    @NotNull S addFeature(@NotNull IoFeature<S> feature) {
+    @NotNull S addFeature(@NotNull IoFeature<S, ?> feature) {
         return features.add(feature);
     }
 

@@ -20,12 +20,13 @@ import java.util.function.Consumer;
  * a corresponding {@link IoState}.
  *
  * @param <S> the I/O state type.
+ * @param <D> the target I/O device type.
  * @see BuiltIn
  * @see #createState()
  * @see #createLogic(IoDevice, IoState)
  * @see IoDevice#addFeature(IoFeature)
  */
-public abstract class IoFeature<S extends IoState<?>> {
+public abstract class IoFeature<S extends IoState<?>, D extends IoDevice> {
 
     /**
      * When present, indicates to an {@link IoDevice} that a field contains
@@ -127,14 +128,14 @@ public abstract class IoFeature<S extends IoState<?>> {
             /* do nothing by default */
         };
 
-        final @NotNull IoFeature<?> feature;
+        final @NotNull IoFeature<?, ?> feature;
         final @NotNull IoState<?> state;
         final @Nullable IoLogic<?> logic;
 
         final @NotNull Consumer<IoFlow> logicPreprocess;
         final @NotNull Consumer<IoFlow> logicPostprocess;
 
-        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state,
+        Cache(@NotNull IoFeature<?, ?> feature, @NotNull IoState<?> state,
               @Nullable IoLogic<?> logic) {
             this.feature = feature;
             this.state = state;
@@ -153,20 +154,26 @@ public abstract class IoFeature<S extends IoState<?>> {
 
     private final @NotNull String id;
     private final @NotNull IoFlow flow;
+    private final @NotNull Class<D> deviceType;
 
     /**
      * Constructs a new {@code IoFeature}.
      *
-     * @param id   the ID of this I/O feature.
-     * @param flow the flow of this I/O feature.
-     * @throws NullPointerException     if {@code id} or {@code flow} are
-     *                                  {@code null}.
+     * @param id         the ID of this I/O feature.
+     * @param flow       the flow of this I/O feature.
+     * @param deviceType the target I/O device type's class.
+     * @throws NullPointerException     if {@code id}, {@code flow} or
+     *                                  {@code deviceType} are {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
-    public IoFeature(@NotNull String id, @NotNull IoFlow flow) {
+    public IoFeature(@NotNull String id, @NotNull IoFlow flow,
+                     @NotNull Class<D> deviceType) {
         this.id = IoApi.validateId(id);
-        this.flow = Objects.requireNonNull(flow, "flow cannot be null");
+        this.flow = Objects.requireNonNull(flow,
+                "flow cannot be null");
+        this.deviceType = Objects.requireNonNull(deviceType,
+                "deviceType cannot be null");
     }
 
     /**
@@ -185,6 +192,15 @@ public abstract class IoFeature<S extends IoState<?>> {
      */
     public final @NotNull IoFlow getFlow() {
         return this.flow;
+    }
+
+    /**
+     * Returns the class of this I/O feature's target device type.
+     *
+     * @return the class of this I/O feature's target device type.
+     */
+    public final @NotNull Class<D> getDeviceType() {
+        return this.deviceType;
     }
 
     /* TODO: configs here */
@@ -257,7 +273,7 @@ public abstract class IoFeature<S extends IoState<?>> {
     @SuppressWarnings("unused")
     @IoApi.DefaultBehavior("return null")
     protected @Nullable IoLogic<?>
-    createLogic(@NotNull IoDevice device, @NotNull S state) {
+    createLogic(@NotNull D device, @NotNull S state) {
         return null; /* no logic by default */
     }
 
@@ -273,13 +289,23 @@ public abstract class IoFeature<S extends IoState<?>> {
      *                                  by {@code device}, does not manage
      *                                  {@code state}, or is not represented
      *                                  by this feature.
+     * @throws IoFeatureException       if {@code device} is not assignable
+     *                                  to the target device type.
      */
+    @SuppressWarnings("unchecked")
     protected @Nullable IoLogic<?>
     createVerifiedLogic(@NotNull IoDevice device, @NotNull S state) {
         Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(state, "state cannot be null");
 
-        IoLogic<?> logic = this.createLogic(device, state);
+        Class<?> deviceClazz = device.getClass();
+        if (!deviceType.isAssignableFrom(deviceClazz)) {
+            throw new IoFeatureException(this, "expected "
+                    + deviceType.getName() + " but got "
+                    + deviceClazz.getName() + " instead");
+        }
+
+        IoLogic<?> logic = this.createLogic((D) device, state);
         if (logic == null) {
             return null;
         }
@@ -304,6 +330,7 @@ public abstract class IoFeature<S extends IoState<?>> {
         return IoApi.getStrJoiner(this)
                 .add("id='" + id + "'")
                 .add("flow=" + flow)
+                .add("deviceType=" + deviceType)
                 .toString();
     }
     /* @formatter:on */

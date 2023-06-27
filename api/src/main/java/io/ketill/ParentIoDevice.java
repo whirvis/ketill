@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @see IoDevice#addExtension(IoExtension)
  */
-public final class ParentIoDevice {
+public final class ParentIoDevice<D extends IoDevice> {
 
     /**
      * Unwraps a parent's contained I/O device.
@@ -25,12 +25,14 @@ public final class ParentIoDevice {
      * @throws NullPointerException  if {@code parent} is {@code null}.
      * @throws IllegalStateException if {@code parent} has been unwrapped.
      */
-    static @NotNull IoDevice unwrap(@NotNull ParentIoDevice parent) {
+    @IoApi.Friends(IoDevice.class)
+    static <D extends IoDevice>
+    @NotNull D unwrap(@NotNull ParentIoDevice<D> parent) {
         Objects.requireNonNull(parent, "parent cannot be null");
         return parent.unwrap();
     }
 
-    @IoApi.Friends(IoExtension.class) final @NotNull IoDevice device;
+    @IoApi.Friends(IoExtension.class) final @NotNull D device;
     private boolean unwrapped;
 
     /**
@@ -40,7 +42,7 @@ public final class ParentIoDevice {
      * @throws NullPointerException if {@code device} is {@code null}.
      */
     @IoApi.Friends(IoDevice.class)
-    ParentIoDevice(@NotNull IoDevice device) {
+    ParentIoDevice(@NotNull D device) {
         this.device = Objects.requireNonNull(device,
                 "device cannot be null");
     }
@@ -54,7 +56,7 @@ public final class ParentIoDevice {
      * @return the contained I/O device.
      * @throws IllegalStateException if this parent has been unwrapped.
      */
-    private @NotNull IoDevice unwrap() {
+    private @NotNull D unwrap() {
         if (unwrapped) {
             throw new IllegalStateException("parent already unwrapped");
         }

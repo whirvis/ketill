@@ -26,8 +26,8 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
 
     private final @NotNull ReadWriteLock containerLock;
     private final @NotNull Map<String, IoFeature.Cache> cache;
-    private final @NotNull List<IoFeature<?>> features;
-    private final @NotNull Map<IoFeature<?>, IoState<?>> states;
+    private final @NotNull List<IoFeature<?, ?>> features;
+    private final @NotNull Map<IoFeature<?, ?>, IoState<?>> states;
 
     /**
      * Constructs a new {@code IoDeviceFeatures}.
@@ -36,10 +36,8 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
      * @throws NullPointerException if {@code device} is {@code null}.
      */
     IoDeviceFeatures(@NotNull IoDevice device) {
-        Objects.requireNonNull(device, "device cannot be null");
-
-        this.device = device;
-
+        this.device = Objects.requireNonNull(device,
+                "device cannot be null");
         this.containerLock = new ReentrantReadWriteLock();
         this.cache = new HashMap<>();
         this.features = new ArrayList<>();
@@ -68,7 +66,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
      * not been added.
      * @see #getCache(String)
      */
-    @Nullable IoFeature.Cache getCache(@Nullable IoFeature<?> feature) {
+    @Nullable IoFeature.Cache getCache(@Nullable IoFeature<?, ?> feature) {
         if (feature == null) {
             return null;
         }
@@ -112,7 +110,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
      * @return a list of all I/O features in this container.
      * @see #asMap()
      */
-    @NotNull List<@NotNull IoFeature<?>> asList() {
+    @NotNull List<@NotNull IoFeature<?, ?>> asList() {
         return Collections.unmodifiableList(features);
     }
 
@@ -125,7 +123,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
      * @return a map of all I/O states in this container.
      * @see #asList()
      */
-    @NotNull Map<@NotNull IoFeature<?>, @NotNull IoState<?>> asMap() {
+    @NotNull Map<@NotNull IoFeature<?, ?>, @NotNull IoState<?>> asMap() {
         return Collections.unmodifiableMap(states);
     }
 
@@ -150,9 +148,12 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
      * @throws IoDeviceException    if a feature with the same ID as
      *                              {@code feature} is already present
      *                              within this container.
+     * @throws IoFeatureException   if the device this container belongs to
+     *                              is not of the feature's required type.
      */
     @SuppressWarnings("unchecked")
-    <I, S extends IoState<I>> @NotNull S add(@NotNull IoFeature<S> feature) {
+    <D extends IoDevice, I, S extends IoState<I>> @NotNull S
+    add(@NotNull IoFeature<S, D> feature) {
         Objects.requireNonNull(feature, "feature cannot be null");
 
         containerLock.writeLock().lock();
@@ -175,7 +176,8 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
 
             S state = feature.createVerifiedState();
 
-            IoLogic<?> logic = feature.createVerifiedLogic(device, state);
+            D downcast = feature.downcastDevice(device);
+            IoLogic<?> logic = feature.createVerifiedLogic(downcast, state);
             if (logic != null) {
                 logic.init();
             }

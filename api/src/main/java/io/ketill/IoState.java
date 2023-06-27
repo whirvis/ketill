@@ -126,7 +126,7 @@ public abstract class IoState<I> {
     /**
      * The I/O feature this state represents.
      */
-    protected final @NotNull IoFeature<?> feature;
+    protected final @NotNull IoFeature<?, ?> feature;
 
     /**
      * The internals of this I/O state.
@@ -156,7 +156,7 @@ public abstract class IoState<I> {
      * @throws IllegalArgumentException if {@code internals} is another
      *                                  instance of an {@code IoState}.
      */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull I internals) {
+    public IoState(@NotNull IoFeature<?, ?> feature, @NotNull I internals) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(internals, "internals cannot be null");
 
@@ -193,7 +193,7 @@ public abstract class IoState<I> {
      *                              class.
      */
     @SuppressWarnings("unchecked") /* we check ourselves */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull Class<I> type) {
+    public IoState(@NotNull IoFeature<?, ?> feature, @NotNull Class<I> type) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
 
@@ -265,7 +265,7 @@ public abstract class IoState<I> {
      *
      * @return the I/O feature of this state.
      */
-    public final @NotNull IoFeature<?> getFeature() {
+    public final @NotNull IoFeature<?, ?> getFeature() {
         return this.feature;
     }
 
