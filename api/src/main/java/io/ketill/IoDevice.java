@@ -11,49 +11,29 @@ import java.util.Objects;
 public abstract class IoDevice {
 
     private final @NotNull String typeId;
-    private final @Nullable IoDevice parent;
-    private final @NotNull IoTreeNode<IoDevice> node;
     private final @NotNull IoDeviceFeatures features;
 
-    private IoDevice(@NotNull String typeId, @Nullable IoDevice parent) {
-        IoApi.validateId(typeId);
+    /**
+     * Constructs a new {@code IoDevice}.
+     *
+     * @param typeId the type ID of this I/O device.
+     * @throws NullPointerException     if {@code typeId} is {@code null}.
+     * @throws IllegalArgumentException if {@code typeId} is empty or
+     *                                  contains whitespace.
+     * @throws IoFeatureException       if any fields in this class annotated
+     *                                  with {@link IoFeature.BuiltIn} do not
+     *                                  meet its requirements.
+     * @throws IoStateException         if any fields in this class annotated
+     *                                  with {@link IoState.BuiltIn} do not
+     *                                  meet its requirements.
+     */
+    public IoDevice(@NotNull String typeId) {
+        this.typeId = IoApi.validateId(typeId);
+        this.features = new IoDeviceFeatures(this);
 
         Class<? extends IoDevice> clazz = this.getClass();
         IoFeature.validateBuiltInFields(clazz);
         IoState.validateBuiltInFields(clazz);
-
-        this.typeId = typeId;
-        this.parent = parent;
-        this.node = new IoTreeNode<>(this);
-        this.features = new IoDeviceFeatures(this);
-    }
-
-    /**
-     * Constructs a new {@code IoDevice} with the given parent.
-     *
-     * @param typeId the type ID of this I/O device.
-     * @param parent the parent of this I/O device.
-     * @throws NullPointerException     if {@code typeId} or {@code parent}
-     *                                  are {@code null}.
-     * @throws IllegalArgumentException if {@code typeId} is empty or contains
-     *                                  whitespace.
-     * @throws IllegalStateException    if {@code parent} has already been
-     *                                  supplied to another I/O device.
-     */
-    public IoDevice(@NotNull String typeId, @NotNull ParentIoDevice<?> parent) {
-        this(typeId, ParentIoDevice.unwrap(parent));
-    }
-
-    /**
-     * Constructs a new {@code IoDevice} with no parent.
-     *
-     * @param typeId the type ID of this I/O device.
-     * @throws NullPointerException     if {@code typeId} is {@code null}.
-     * @throws IllegalArgumentException if {@code typeId} is empty or contains
-     *                                  whitespace.
-     */
-    public IoDevice(@NotNull String typeId) {
-        this(typeId, (IoDevice) null);
     }
 
     /**
@@ -62,15 +42,7 @@ public abstract class IoDevice {
      * @return the type ID of this I/O device.
      */
     public final @NotNull String getTypeId() {
-        return internals.getTypeId();
-    }
-
-    public final IoDevice getParent() {
-        return null; /* TODO: implement */
-    }
-
-    public final void addExtension(IoExtension<?> extension) {
-        /* TODO: implement */
+        return this.typeId;
     }
 
     /**

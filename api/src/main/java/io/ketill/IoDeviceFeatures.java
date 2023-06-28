@@ -176,8 +176,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
 
             S state = feature.createVerifiedState();
 
-            D downcast = feature.downcastDevice(device);
-            IoLogic<?> logic = feature.createVerifiedLogic(downcast, state);
+            IoLogic<?> logic = feature.createVerifiedLogic(device, state);
             if (logic != null) {
                 logic.init();
             }
