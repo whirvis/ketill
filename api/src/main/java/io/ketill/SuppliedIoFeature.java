@@ -8,13 +8,11 @@ import org.jetbrains.annotations.Nullable;
  * inspired by Java's {@code Supplier} interface.
  *
  * @param <S> the I/O state type.
- * @param <D> the target I/O device type.
  * @see StateSupplier
  * @see LogicSupplier
  * @see IoDevice#addFeature(IoFeature)
  */
-public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
-        extends IoFeature<S, D> {
+public class SuppliedIoFeature<S extends IoState<?>> extends IoFeature<S> {
 
     /**
      * Represents a supplier for the state of a {@link SuppliedIoFeature}.
@@ -23,7 +21,7 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
      * @see LogicSupplier
      */
     @FunctionalInterface
-    public interface StateSupplier<S extends IoState<?>, D extends IoDevice> {
+    public interface StateSupplier<S extends IoState<?>> {
 
         /**
          * Creates a new instance of the I/O feature's state.
@@ -32,7 +30,7 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
          * @return the newly created I/O state.
          * @see IoFeature#createState()
          */
-        @NotNull S get(@NotNull IoFeature<S, D> feature);
+        @NotNull S get(@NotNull IoFeature<S> feature);
 
     }
 
@@ -43,7 +41,7 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
      * @see StateSupplier
      */
     @FunctionalInterface
-    public interface LogicSupplier<S extends IoState<?>, D extends IoDevice> {
+    public interface LogicSupplier<S extends IoState<?>> {
 
         /**
          * Creates a new instance of the I/O feature's logic.
@@ -54,34 +52,31 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
          * @return the newly created I/O logic.
          * @see IoFeature#createLogic(IoDevice, IoState)
          */
-        @NotNull IoLogic<?> get(@NotNull IoFeature<S, D> feature,
-                                @NotNull D device, @NotNull S state);
+        @NotNull IoLogic<?> get(@NotNull IoFeature<S> feature,
+                                @NotNull IoDevice device, @NotNull S state);
 
     }
 
-    private final @NotNull StateSupplier<S, D> stateSupplier;
-    private final @Nullable LogicSupplier<S, D> logicSupplier;
+    private final @NotNull StateSupplier<S> stateSupplier;
+    private final @Nullable LogicSupplier<S> logicSupplier;
 
     /**
      * Constructs a new {@code PlainIoFeature}.
      *
      * @param id            the ID of this I/O feature.
      * @param flow          the flow of this I/O feature.
-     * @param deviceType    the target I/O device type's class.
      * @param stateSupplier the I/O state supplier.
      * @param logicSupplier the I/O logic supplier.
      * @throws NullPointerException     if {@code id}, {@code flow},
-     *                                  {@code deviceType} or
-     *                                  {@code stateSupplier} are
+     *                                  or {@code stateSupplier} are
      *                                  {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public SuppliedIoFeature(@NotNull String id, @NotNull IoFlow flow,
-                             @NotNull Class<D> deviceType,
-                             @NotNull StateSupplier<S, D> stateSupplier,
-                             @Nullable LogicSupplier<S, D> logicSupplier) {
-        super(id, flow, deviceType);
+                             @NotNull StateSupplier<S> stateSupplier,
+                             @Nullable LogicSupplier<S> logicSupplier) {
+        super(id, flow);
         this.stateSupplier = stateSupplier;
         this.logicSupplier = logicSupplier;
     }
@@ -91,19 +86,16 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
      *
      * @param id            the ID of this I/O feature.
      * @param flow          the flow of this I/O feature.
-     * @param deviceType    the target I/O device type's class.
      * @param stateSupplier the I/O state supplier.
      * @throws NullPointerException     if {@code id}, {@code flow},
-     *                                  {@code deviceType} or
-     *                                  {@code stateSupplier} are
+     *                                  or {@code stateSupplier} are
      *                                  {@code null}.
      * @throws IllegalArgumentException if {@code id} is empty or contains
      *                                  whitespace.
      */
     public SuppliedIoFeature(@NotNull String id, @NotNull IoFlow flow,
-                             @NotNull Class<D> deviceType,
-                             @NotNull StateSupplier<S, D> stateSupplier) {
-        this(id, flow, deviceType, stateSupplier, null);
+                             @NotNull StateSupplier<S> stateSupplier) {
+        this(id, flow, stateSupplier, null);
     }
 
     @Override
@@ -113,7 +105,7 @@ public class SuppliedIoFeature<S extends IoState<?>, D extends IoDevice>
 
     @Override
     protected final @Nullable IoLogic<?>
-    createLogic(@NotNull D device, @NotNull S state) {
+    createLogic(@NotNull IoDevice device, @NotNull S state) {
         if (logicSupplier == null) {
             return super.createLogic(device, state);
         }
