@@ -176,12 +176,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
 
             S state = feature.createVerifiedState(device);
 
-            IoLogic<?> logic = feature.createVerifiedLogic(device, state);
-            if (logic != null) {
-                logic.init();
-            }
-
-            cache.put(id, new IoFeature.Cache(feature, state, logic));
+            cache.put(id, new IoFeature.Cache(feature, state));
             features.add(feature);
             states.put(feature, state);
 

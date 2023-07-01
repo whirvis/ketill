@@ -25,7 +25,6 @@ import java.util.Set;
  * @param <I> the internal data type.
  * @see BuiltIn
  * @see IoDevice#getState(IoFeature)
- * @see IoLogic
  */
 public abstract class IoState<I> {
 
@@ -147,8 +146,7 @@ public abstract class IoState<I> {
      * field is accessible to a variety of other objects. Unless otherwise
      * exposed, these are:
      * <ul>
-     *     <li>The {@link IoLogic} for this state, if any.</li>
-     *     <li>The {@link IoDevice} which owns the feature.</li>
+     *     <li>The {@link IoDevice} this state belongs to.</li>
      *     <li>The {@link IoAdapter} of the device.</li>
      * </ul>
      *

@@ -1,7 +1,6 @@
 package io.ketill;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
@@ -10,7 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 /**
  * The definition for an {@link IoDevice} capability.
@@ -22,7 +20,6 @@ import java.util.function.Consumer;
  * @param <S> the I/O state type.
  * @see BuiltIn
  * @see #createState(IoDevice)
- * @see #createLogic(IoDevice, IoState)
  * @see IoDevice#addFeature(IoFeature)
  */
 public abstract class IoFeature<S extends IoState<?>> {
@@ -127,30 +124,12 @@ public abstract class IoFeature<S extends IoState<?>> {
     @IoApi.Friends({IoDevice.class, IoAdapter.class})
     static class Cache {
 
-        private static final Consumer<IoFlow> NO_OP = (f) -> {
-            /* do nothing by default */
-        };
-
         final @NotNull IoFeature<?> feature;
         final @NotNull IoState<?> state;
-        final @Nullable IoLogic<?> logic;
 
-        final @NotNull Consumer<IoFlow> logicPreprocess;
-        final @NotNull Consumer<IoFlow> logicPostprocess;
-
-        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state,
-              @Nullable IoLogic<?> logic) {
+        Cache(@NotNull IoFeature<?> feature, @NotNull IoState<?> state) {
             this.feature = feature;
             this.state = state;
-            this.logic = logic;
-
-            if (logic == null) {
-                this.logicPreprocess = NO_OP;
-                this.logicPostprocess = NO_OP;
-            } else {
-                this.logicPreprocess = logic::preprocess;
-                this.logicPostprocess = logic::postprocess;
-            }
         }
 
     }
@@ -209,7 +188,6 @@ public abstract class IoFeature<S extends IoState<?>> {
      *
      * @param device the I/O device which {@code state} belongs to.
      * @return the newly created I/O state.
-     * @see #createLogic(IoDevice, IoState)
      */
     protected abstract @NotNull S createState(@NotNull IoDevice device);
 
@@ -241,70 +219,6 @@ public abstract class IoFeature<S extends IoState<?>> {
         }
 
         return state;
-    }
-
-    /**
-     * Creates a new instance of the I/O feature's logic.
-     * <p>
-     * <b>Requirements</b>
-     * <p>
-     * <ul>
-     *     <li>The logic must be owned by {@code device}.</li>
-     *     <li>The logic must manage {@code state}.</li>
-     * </ul>
-     * <p>
-     * If these requirements are not met, an exception shall be thrown by
-     * {@link IoDevice#addFeature(IoFeature)}. Take note that these only
-     * apply to not {@code null} return values.
-     *
-     * @param device the I/O device which {@code state} belongs to.
-     * @param state  the I/O state the logic will manage.
-     * @return the newly created I/O logic, {@code null} if no logic
-     * instance shall manage the state.
-     * @see #createState(IoDevice)
-     */
-    @SuppressWarnings("unused")
-    @IoApi.DefaultBehavior("return null")
-    protected @Nullable IoLogic<?>
-    createLogic(@NotNull IoDevice device, @NotNull S state) {
-        return null; /* no logic by default */
-    }
-
-    /**
-     * Wrapper for {@link #createLogic(IoDevice, IoState)}, which verifies
-     * the created logic for a given state meets the necessary requirements.
-     * If they are not met, an exception shall be thrown.
-     *
-     * @return the newly created, verified I/O feature logic.
-     * @throws NullPointerException     if {@code device} or {@code state}
-     *                                  are {@code null}.
-     * @throws IllegalArgumentException if the created logic is not owned
-     *                                  by {@code device}, does not manage
-     *                                  {@code state}, or is not represented
-     *                                  by this feature.
-     */
-    protected @Nullable IoLogic<?>
-    createVerifiedLogic(@NotNull IoDevice device, @NotNull S state) {
-        Objects.requireNonNull(device, "device cannot be null");
-        Objects.requireNonNull(state, "state cannot be null");
-
-        IoLogic<?> logic = this.createLogic(device, state);
-        if (logic == null) {
-            return null;
-        }
-
-        if (logic.device != device) {
-            String msg = "created logic not owned by provided device";
-            throw new IllegalArgumentException(msg);
-        } else if (logic.state != state) {
-            String msg = "created logic must manage provided state";
-            throw new IllegalArgumentException(msg);
-        } else if (logic.feature != this) {
-            String msg = "created logic must represent this feature";
-            throw new IllegalArgumentException(msg);
-        }
-
-        return logic;
     }
 
     /* @formatter:off */
