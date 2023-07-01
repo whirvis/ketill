@@ -18,9 +18,9 @@ import java.util.Set;
  * motor, or the status of an LED.
  * <p>
  * <b>For I/O states with no internals:</b> use the state itself as the
- * internals type. Use {@link #IoState(IoFeature, Class)} to get around
- * the restriction of not being able to reference {@code this} before
- * {@code super} has finished instantiation.
+ * internals type. Use {@link #IoState(IoDevice, IoFeature, Class)} to
+ * get around the restriction of not being able to reference {@code this}
+ * before {@code super} has finished instantiation.
  *
  * @param <I> the internal data type.
  * @see BuiltIn
@@ -127,6 +127,15 @@ public abstract class IoState<I> {
     }
 
     /**
+     * The I/O device this state belongs to.
+     * <p>
+     * <b>Visibility:</b> This field has no associated public getter by
+     * design. This allows for a state to be passed without exposing its
+     * device.
+     */
+    protected final @NotNull IoDevice device;
+
+    /**
      * The I/O feature this state represents.
      */
     protected final @NotNull IoFeature<?> feature;
@@ -147,19 +156,20 @@ public abstract class IoState<I> {
      */
     protected final @NotNull I internals;
 
-    private final boolean mutableView;
-
     /**
      * Constructs a new {@code IoState}.
      *
-     * @param feature   the I/O feature of this state.
+     * @param device    the I/O device this state belongs to.
+     * @param feature   the I/O feature this state represents.
      * @param internals the internal data of this state.
-     * @throws NullPointerException     if {@code feature} or
-     *                                  {@code internals} are {@code null}.
+     * @throws NullPointerException     if {@code device}, {@code feature}
+     *                                  or {@code internals} are {@code null}.
      * @throws IllegalArgumentException if {@code internals} is another
      *                                  instance of an {@code IoState}.
      */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull I internals) {
+    public IoState(@NotNull IoDevice device, @NotNull IoFeature<?> feature,
+                   @NotNull I internals) {
+        Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(internals, "internals cannot be null");
 
@@ -176,8 +186,8 @@ public abstract class IoState<I> {
         }
 
         this.feature = feature;
+        this.device = device;
         this.internals = internals;
-        this.mutableView = false;
     }
 
     /**
@@ -188,15 +198,18 @@ public abstract class IoState<I> {
      * it can read from and/or write to. Doing this also keeps the promise
      * that {@code internals} shall not have a {@code null} value.
      *
-     * @param feature the I/O feature of this state.
+     * @param device  the I/O device this state belong sto.
+     * @param feature the I/O feature this state represents.
      * @param type    the I/O state's type class.
-     * @throws NullPointerException if {@code feature} or {@code type}
-     *                              are {@code null}.
+     * @throws NullPointerException if {@code device}, {@code feature}
+     *                              or {@code type} are {@code null}.
      * @throws ClassCastException   if {@code type} is not equal to this
      *                              class.
      */
     @SuppressWarnings("unchecked") /* we check ourselves */
-    public IoState(@NotNull IoFeature<?> feature, @NotNull Class<I> type) {
+    public IoState(@NotNull IoDevice device, @NotNull IoFeature<?> feature,
+                   @NotNull Class<I> type) {
+        Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(type, "type cannot be null");
 
@@ -218,15 +231,15 @@ public abstract class IoState<I> {
             throw new ClassCastException(msg);
         }
 
+        this.device = device;
         this.feature = feature;
         this.internals = (I) this;
-        this.mutableView = false;
     }
 
     /**
-     * Returns the I/O feature of this state.
+     * Returns the I/O feature this state represents.
      *
-     * @return the I/O feature of this state.
+     * @return the I/O feature this state represents.
      */
     public final @NotNull IoFeature<?> getFeature() {
         return this.feature;

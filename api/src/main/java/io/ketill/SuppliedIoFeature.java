@@ -26,11 +26,13 @@ public class SuppliedIoFeature<S extends IoState<?>> extends IoFeature<S> {
         /**
          * Creates a new instance of the I/O feature's state.
          *
-         * @param feature the I/O feature.
+         * @param device  the I/O device which the state will belong to.
+         * @param feature the I/O feature which the state will represent.
          * @return the newly created I/O state.
-         * @see IoFeature#createState()
+         * @see IoFeature#createState(IoDevice)
          */
-        @NotNull S get(@NotNull IoFeature<S> feature);
+        @NotNull S get(@NotNull IoDevice device,
+                       @NotNull IoFeature<S> feature);
 
     }
 
@@ -46,14 +48,15 @@ public class SuppliedIoFeature<S extends IoState<?>> extends IoFeature<S> {
         /**
          * Creates a new instance of the I/O feature's logic.
          *
-         * @param feature the I/O feature.
          * @param device  the I/O device which {@code state} belongs to.
+         * @param feature the I/O feature which {@code state} represents.
          * @param state   the I/O state the logic will manage.
          * @return the newly created I/O logic.
          * @see IoFeature#createLogic(IoDevice, IoState)
          */
-        @NotNull IoLogic<?> get(@NotNull IoFeature<S> feature,
-                                @NotNull IoDevice device, @NotNull S state);
+        @NotNull IoLogic<?> get(@NotNull IoDevice device,
+                                @NotNull IoFeature<S> feature,
+                                @NotNull S state);
 
     }
 
@@ -99,8 +102,8 @@ public class SuppliedIoFeature<S extends IoState<?>> extends IoFeature<S> {
     }
 
     @Override
-    protected final @NotNull S createState() {
-        return stateSupplier.get(this);
+    protected final @NotNull S createState(@NotNull IoDevice device) {
+        return stateSupplier.get(device, this);
     }
 
     @Override
@@ -109,7 +112,7 @@ public class SuppliedIoFeature<S extends IoState<?>> extends IoFeature<S> {
         if (logicSupplier == null) {
             return super.createLogic(device, state);
         }
-        return logicSupplier.get(this, device, state);
+        return logicSupplier.get(device, this, state);
     }
 
 }

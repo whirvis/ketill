@@ -174,7 +174,7 @@ final class IoDeviceFeatures implements Iterable<IoState<?>> {
                 throw new IoDeviceException(device, msg);
             }
 
-            S state = feature.createVerifiedState();
+            S state = feature.createVerifiedState(device);
 
             IoLogic<?> logic = feature.createVerifiedLogic(device, state);
             if (logic != null) {

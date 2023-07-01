@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  *
  * @param <S> the I/O state type.
  * @see BuiltIn
- * @see #createState()
+ * @see #createState(IoDevice)
  * @see #createLogic(IoDevice, IoState)
  * @see IoDevice#addFeature(IoFeature)
  */
@@ -200,43 +200,47 @@ public abstract class IoFeature<S extends IoState<?>> {
      * <b>Requirements</b>
      * <ul>
      *     <li>The returned value must not be {@code null}.</li>
-     *     <li>The state must represent this feature. This means a call to
-     *     {@link IoState#getFeature()} on the returned value must return
-     *     this instance.</li>
+     *     <li>The state must be owned by {@code device}.</li>
+     *     <li>The state must represent this feature.</li>
      * </ul>
      * <p>
      * If the above requirements are not met, an exception shall be thrown
-     * by {@link #createVerifiedState()}.
+     * by {@link #createVerifiedState(IoDevice)}.
      *
+     * @param device the I/O device which {@code state} belongs to.
      * @return the newly created I/O state.
      * @see #createLogic(IoDevice, IoState)
      */
-    protected abstract @NotNull S createState();
-
-    private @NotNull S verifyCreatedState(@Nullable S state) {
-        if (state == null) {
-            String msg = "created state cannot be null";
-            throw new IoFeatureException(msg);
-        } else if (state.getFeature() != this) {
-            String msg = "created state must represent this feature";
-            throw new IoFeatureException(msg);
-        }
-        return state;
-    }
+    protected abstract @NotNull S createState(@NotNull IoDevice device);
 
     /**
-     * Wrapper for {@link #createState()}, which verifies the created
-     * state meets the necessary requirements. If they are not met, an
-     * {@code IoFeatureException} shall be thrown.
+     * Wrapper for {@link #createState(IoDevice)}, which verifies the
+     * created state meets the necessary requirements. If they are not
+     * met, an {@code IoFeatureException} shall be thrown.
      *
+     * @param device the I/O device which {@code state} belongs to.
      * @return the newly created, verified I/O feature state.
      * @throws IoFeatureException if the created state is {@code null};
      *                            if the created state is not represented
      *                            by this feature.
      */
-    protected final @NotNull S createVerifiedState() {
-        S state = this.createState();
-        return this.verifyCreatedState(state);
+    @SuppressWarnings("ConstantConditions")
+    protected final @NotNull S createVerifiedState(@NotNull IoDevice device) {
+        Objects.requireNonNull(device, "device cannot be null");
+        S state = this.createState(device);
+
+        if (state == null) {
+            String msg = "created state cannot be null";
+            throw new IoFeatureException(msg);
+        } else if (state.device != device) {
+            String msg = "created state not owned by provided device";
+            throw new IllegalArgumentException(msg);
+        } else if (state.feature != this) {
+            String msg = "created state must represent this feature";
+            throw new IoFeatureException(msg);
+        }
+
+        return state;
     }
 
     /**
@@ -257,7 +261,7 @@ public abstract class IoFeature<S extends IoState<?>> {
      * @param state  the I/O state the logic will manage.
      * @return the newly created I/O logic, {@code null} if no logic
      * instance shall manage the state.
-     * @see #createState()
+     * @see #createState(IoDevice)
      */
     @SuppressWarnings("unused")
     @IoApi.DefaultBehavior("return null")
