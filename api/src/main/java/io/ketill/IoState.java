@@ -224,46 +224,6 @@ public abstract class IoState<I> {
     }
 
     /**
-     * Constructs a mutable {@code IoState} wrapper.
-     * <p>
-     * The constructor assumes this state is a mutable view of another,
-     * immutable state. As such, the given state must be a super class of
-     * this type and cannot be a mutable view of another state.
-     *
-     * @param state the immutable I/O state.
-     * @throws NullPointerException     if {@code state} is {@code null}.
-     * @throws IllegalArgumentException if {@code state} is a mutable view
-     *                                  of another state; if {@code state}
-     *                                  is not a super class of this type.
-     */
-    public IoState(@NotNull IoState<I> state) {
-        Objects.requireNonNull(state, "state cannot be null");
-
-        /*
-         * If the given state is a mutable view of another state, assume
-         * it is a mistake by the user. Even if it isn't, it would likely
-         * cause issues down the road.
-         */
-        if (state.mutableView) {
-            String msg = "state is a mutable view of another state";
-            throw new IllegalStateException(msg);
-        }
-
-        /*
-         * TODO: explain this restriction
-         */
-        Class<?> clazz = this.getClass();
-        if (!state.getClass().isAssignableFrom(clazz)) {
-            String msg = ""; // TODO: error message
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.feature = state.getFeature();
-        this.internals = state.internals;
-        this.mutableView = true;
-    }
-
-    /**
      * Returns the I/O feature of this state.
      *
      * @return the I/O feature of this state.
