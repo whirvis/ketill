@@ -244,6 +244,36 @@ public abstract class IoState<I> {
     }
 
     /**
+     * Prepares this state for a logical update.
+     * <p>
+     * This is invoked just before the adapter responsible for this state
+     * updates it.
+     * <p>
+     * <b>Default behavior:</b> No-op.
+     *
+     * @param flow the current flow being updated.
+     */
+    @IoApi.DefaultBehavior("no-op")
+    protected void preprocess(@NotNull IoFlow flow) {
+        /* default behavior is a no-op */
+    }
+
+    /**
+     * Executes a logical update.
+     * <p>
+     * This is invoked just after the adapter responsible for this state
+     * updates it.
+     * <p>
+     * <b>Default behavior:</b> No-op.
+     *
+     * @param flow the current flow being updated.
+     */
+    @IoApi.DefaultBehavior("no-op")
+    protected void postprocess(@NotNull IoFlow flow) {
+        /* default behavior is a no-op */
+    }
+
+    /**
      * Resets the I/O state.
      */
     protected abstract void reset();
