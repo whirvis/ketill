@@ -244,6 +244,56 @@ public abstract class IoState<I> {
     }
 
     /**
+     * Returns if the feature this state represents is enabled.
+     * <p>
+     * A feature is considered enabled if the adapter responsible for this
+     * state linked in the mode required to utilize it.
+     * <p>
+     * <b>Note:</b> An enabled feature <i>does not</i> indicate an active
+     * feature. For a feature to be active, it must be enabled and supported.
+     * It is also possible for an enabled feature to be unsupported.
+     *
+     * @return {@code true} if the feature this state represents is enabled,
+     * {@code false} otherwise.
+     * @see #isActive()
+     */
+    public final boolean isEnabled() {
+        return device.isEnabled(feature);
+    }
+
+    /**
+     * Returns if the feature this state represents is supported.
+     * <p>
+     * A feature is considered supported if the adapter responsible for this
+     * state supports it (i.e., it has linked the feature).
+     * <p>
+     * <b>Note:</b> A supported feature <i>does not</i> indicate an active
+     * feature. For a feature to be active, it must be enabled and supported.
+     * It is also possible for a supported feature to be disabled.
+     *
+     * @return {@code true} if the feature this state represents is supported,
+     * {@code false} otherwise.
+     * @see #isActive()
+     */
+    public final boolean isSupported() {
+        return device.isSupported(feature);
+    }
+
+    /**
+     * Returns if the feature this state represents is active.
+     * <p>
+     * A feature is considered active if it is enabled and supported.
+     *
+     * @return {@code true} if the feature this state represents is active,
+     * {@code false} otherwise.
+     * @see #isEnabled()
+     * @see #isSupported()
+     */
+    public final boolean isActive() {
+        return device.isActive(feature);
+    }
+
+    /**
      * Prepares this state for a logical update.
      * <p>
      * This is invoked just before the adapter responsible for this state

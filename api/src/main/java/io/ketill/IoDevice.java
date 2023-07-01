@@ -269,4 +269,57 @@ public abstract class IoDevice {
         return features.add(feature);
     }
 
+    /**
+     * Returns if a feature on this device is enabled.
+     * <p>
+     * A feature is considered enabled if this device's adapter has been
+     * linked in the mode required to utilize it.
+     * <p>
+     * <b>Note:</b> An enabled feature <i>does not</i> indicate an active
+     * feature. For a feature to be active, it must be enabled and supported.
+     * It is also possible for an enabled feature to be unsupported.
+     *
+     * @param feature the feature to query.
+     * @return {@code true} if {@code feature} is enabled on this device,
+     * {@code false} otherwise.
+     * @see #isFeatureActive(IoFeature)
+     */
+    public final boolean isFeatureEnabled(@Nullable IoFeature<?> feature) {
+        return false; /* TODO: implement */
+    }
+
+    /**
+     * Returns if a feature on this device is supported.
+     * <p>
+     * A feature is considered supported if this device's adapter supports
+     * it (i.e., it has linked the feature).
+     * <p>
+     * <b>Note:</b> A supported feature <i>does not</i> indicate an active
+     * feature. For a feature to be active, it must be enabled and supported.
+     * It is also possible for a supported feature to be disabled.
+     *
+     * @param feature the feature to query.
+     * @return {@code true} if {@code feature} is supported on this device,
+     * {@code false} otherwise.
+     * @see #isFeatureActive(IoFeature)
+     */
+    public final boolean isFeatureSupported(@Nullable IoFeature<?> feature) {
+        return false; /* TODO: implement */
+    }
+
+    /**
+     * Returns if a feature on this device is active.
+     * <p>
+     * A feature is considered active if it is enabled and supported.
+     *
+     * @param feature the feature to query.
+     * @return {@code true} if {@code feature} is active on this device,
+     * {@code false} otherwise.
+     * @see #isFeatureEnabled(IoFeature)
+     * @see #isFeatureSupported(IoFeature)
+     */
+    public final boolean isFeatureActive(@Nullable IoFeature<?> feature) {
+        return false; /* TODO: implement */
+    }
+
 }
