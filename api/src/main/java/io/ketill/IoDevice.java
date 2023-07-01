@@ -265,7 +265,7 @@ public abstract class IoDevice {
      *                              required type.
      */
     protected <I, S extends IoState<I>>
-    @NotNull S addFeature(@NotNull IoFeature<S, ?> feature) {
+    @NotNull S addFeature(@NotNull IoFeature<S> feature) {
         return features.add(feature);
     }
 
