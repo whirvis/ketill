@@ -258,7 +258,7 @@ public abstract class IoState<I> {
      * @see #isActive()
      */
     public final boolean isEnabled() {
-        return device.isEnabled(feature);
+        return device.isFeatureEnabled(feature);
     }
 
     /**
@@ -276,7 +276,7 @@ public abstract class IoState<I> {
      * @see #isActive()
      */
     public final boolean isSupported() {
-        return device.isSupported(feature);
+        return device.isFeatureSupported(feature);
     }
 
     /**
@@ -290,7 +290,7 @@ public abstract class IoState<I> {
      * @see #isSupported()
      */
     public final boolean isActive() {
-        return device.isActive(feature);
+        return device.isFeatureActive(feature);
     }
 
     /**
