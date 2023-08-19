@@ -274,7 +274,6 @@ public abstract class IoAdapter<D extends IoDevice> {
     private final @NotNull IoMappingCache inMappings, outMappings;
 
     private @Nullable D device;
-    private @Nullable IoMode mode;
     private boolean linked;
 
 
@@ -538,9 +537,8 @@ public abstract class IoAdapter<D extends IoDevice> {
     }
 
     /* TODO: documentations */
-    public void linkDevice(@NotNull D device, @NotNull IoMode mode) {
+    public void linkDevice(@NotNull D device) {
         Objects.requireNonNull(device, "device cannot be null");
-        Objects.requireNonNull(mode, "mode cannot be null");
         if (linked) {
             throw new IllegalStateException("adapter already linked");
         }
@@ -549,7 +547,6 @@ public abstract class IoAdapter<D extends IoDevice> {
 
         try {
             // this.openDevice(device, mode);
-            this.mode = mode;
             this.device = device;
 
             for (IoFeature<?> feature : mappings.keySet()) {
