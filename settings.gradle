@@ -1,21 +1,3 @@
 rootProject.name = 'ketill'
 
 include ':api'
-
-include ':device:controller'
-include ':device:gc'
-include ':device:nx'
-include ':device:pc'
-include ':device:pressable'
-include ':device:psx'
-include ':device:xbox'
-
-include ':adapter:glfw-api'
-include ':adapter:glfw-nx'
-include ':adapter:glfw-pc'
-include ':adapter:glfw-psx'
-include ':adapter:glfw-xbox'
-include ':adapter:java-awt'
-include ':adapter:xinput'
-
-include ':test'
