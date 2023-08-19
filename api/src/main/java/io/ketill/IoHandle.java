@@ -299,8 +299,8 @@ public abstract class IoHandle<D extends IoDevice> {
             return; /* feature is not mapped */
         }
 
-        mapping.internals = device.getInternals(feature);
-        mapping.state = (IoState<I>) device.getState(feature);
+        // mapping.internals = device.getInternals(feature);
+        // mapping.state = (IoState<I>) device.getState(feature);
 
         if (mapping.internals == null) {
             inMappings.remove(mapping);
