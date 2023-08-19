@@ -282,8 +282,6 @@ public abstract class IoHandle<D extends IoDevice> {
         this.outMappings = new IoMappingCache(IoFlow.OUT);
     }
 
-    protected abstract @NotNull D createDevice();
-
     public final D getDevice() {
         return null;
     }
