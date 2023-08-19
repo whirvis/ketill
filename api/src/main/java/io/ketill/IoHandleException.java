@@ -3,7 +3,7 @@ package io.ketill;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Signals an {@link IoAdapter} exception.
+ * Signals an {@link IoHandle} exception.
  */
 @SuppressWarnings("unused")
 @IgnoreCoverage
@@ -11,7 +11,7 @@ public class IoAdapterException extends KetillIoException {
 
     private static final long serialVersionUID = 2296743015689493731L;
 
-    private final @Nullable IoAdapter<?> culprit;
+    private final @Nullable IoHandle<?> culprit;
 
     /**
      * Constructs a new {@code IoAdapterException} with the specified detail
@@ -30,7 +30,7 @@ public class IoAdapterException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable IoAdapter<?> culprit,
+    public IoAdapterException(@Nullable IoHandle<?> culprit,
                               @Nullable String message,
                               @Nullable Throwable cause) {
         super(message, cause);
@@ -47,7 +47,7 @@ public class IoAdapterException extends KetillIoException {
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    public IoAdapterException(@Nullable IoAdapter<?> culprit,
+    public IoAdapterException(@Nullable IoHandle<?> culprit,
                               @Nullable String message) {
         super(message);
         this.culprit = culprit;
@@ -67,7 +67,7 @@ public class IoAdapterException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable IoAdapter<?> culprit,
+    public IoAdapterException(@Nullable IoHandle<?> culprit,
                               @Nullable Throwable cause) {
         super(cause);
         this.culprit = culprit;
@@ -80,7 +80,7 @@ public class IoAdapterException extends KetillIoException {
      *                A {@code null} value is permitted, and indicates
      *                the culprit is either irrelevant or unknown.
      */
-    public IoAdapterException(@Nullable IoAdapter<?> culprit) {
+    public IoAdapterException(@Nullable IoHandle<?> culprit) {
         super();
         this.culprit = culprit;
     }
@@ -127,14 +127,14 @@ public class IoAdapterException extends KetillIoException {
      *              nonexistent or unknown.
      */
     public IoAdapterException(@Nullable Throwable cause) {
-        this((IoAdapter<?>) null, cause);
+        this((IoHandle<?>) null, cause);
     }
 
     /**
      * Constructs a new {@code IoAdapterException} with no detail message.
      */
     public IoAdapterException() {
-        this((IoAdapter<?>) null);
+        this((IoHandle<?>) null);
     }
 
     /**
@@ -142,7 +142,7 @@ public class IoAdapterException extends KetillIoException {
      *
      * @return the culprit for this exception (which may be {@code null}).
      */
-    public final @Nullable IoAdapter<?> getCulprit() {
+    public final @Nullable IoHandle<?> getCulprit() {
         return this.culprit;
     }
 

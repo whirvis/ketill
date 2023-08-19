@@ -13,7 +13,7 @@ import java.util.Objects;
  *
  * @see IoDevice#addExtension(IoExtension)
  */
-public final class ParentIoDevice<D extends IoDevice> {
+public final class IoDeviceContext<D extends IoDevice> {
 
     /**
      * Unwraps a parent's contained I/O device.
@@ -27,12 +27,12 @@ public final class ParentIoDevice<D extends IoDevice> {
      */
     @IoApi.Friends(IoDevice.class)
     static <D extends IoDevice>
-    @NotNull D unwrap(@NotNull ParentIoDevice<D> parent) {
+    @NotNull D unwrap(@NotNull IoDeviceContext<D> parent) {
         Objects.requireNonNull(parent, "parent cannot be null");
         return parent.unwrap();
     }
 
-    @IoApi.Friends(IoExtension.class) final @NotNull D device;
+    final @NotNull D device;
     private boolean unwrapped;
 
     /**
@@ -42,7 +42,7 @@ public final class ParentIoDevice<D extends IoDevice> {
      * @throws NullPointerException if {@code device} is {@code null}.
      */
     @IoApi.Friends(IoDevice.class)
-    ParentIoDevice(@NotNull D device) {
+    IoDeviceContext(@NotNull D device) {
         this.device = Objects.requireNonNull(device,
                 "device cannot be null");
     }

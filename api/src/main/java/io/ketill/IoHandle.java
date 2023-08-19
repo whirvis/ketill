@@ -216,10 +216,14 @@ public abstract class IoAdapter<D extends IoDevice> {
 
         @NotNull P params;
         @Nullable I internals;
-        @Nullable IoLink.WithFlow.WithParams<I, P> link;
+        @NotNull IoLink.WithFlow.WithParams<I, P> link;
 
-        private IoMapping(@NotNull P params) {
+        @Nullable IoState<I> state;
+
+        private IoMapping(@NotNull P params,
+                          @NotNull IoLink.WithFlow.WithParams<I, P> link) {
             this.params = params;
+            this.link = link;
         }
 
         /*
@@ -233,7 +237,9 @@ public abstract class IoAdapter<D extends IoDevice> {
          */
         @SuppressWarnings("ConstantConditions")
         private void crossBridge(@NotNull IoFlow flow) {
+            state.preprocess(flow);
             link.bridge(flow, internals, params);
+            state.postprocess(flow);
         }
 
     }
@@ -271,22 +277,34 @@ public abstract class IoAdapter<D extends IoDevice> {
     private @Nullable IoMode mode;
     private boolean linked;
 
-    public IoAdapter() {
+
+    IoAdapter() {
         this.mappings = new HashMap<>();
         this.inMappings = new IoMappingCache(IoFlow.IN);
         this.outMappings = new IoMappingCache(IoFlow.OUT);
     }
 
+    protected abstract @NotNull D createDevice();
+
+    public final D getDevice() {
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     @IoApi.Friends(IoDevice.class)
-    <F extends IoFeature<S>, S extends IoState<I>, I, P>
+    <F extends IoFeature<? extends S>, S extends IoState<? extends I>, I, P>
     void updateMappingCache(@NotNull F feature) {
+        if (device == null) {
+            return;
+        }
+
         IoMapping<I, P> mapping = (IoMapping<I, P>) mappings.get(feature);
         if (mapping == null) {
             return; /* feature is not mapped */
         }
 
-        /* TODO: fetch state internals from device */
+        mapping.internals = device.getInternals(feature);
+        mapping.state = (IoState<I>) device.getState(feature);
 
         if (mapping.internals == null) {
             inMappings.remove(mapping);
@@ -335,14 +353,14 @@ public abstract class IoAdapter<D extends IoDevice> {
      * @see LinkMethod
      * @see ForFeature
      */
-    protected final <F extends IoFeature<S>, S extends IoState<I>, I, P>
+    protected final <F extends IoFeature<? extends S>, S extends IoState<? extends I>, I, P>
     void linkFeature(@NotNull F feature, @NotNull P params,
                      @NotNull IoLink.WithFlow.WithParams<I, P> link) {
         Objects.requireNonNull(feature, "feature cannot be null");
         Objects.requireNonNull(params, "params cannot be null");
         Objects.requireNonNull(link, "link cannot be null");
 
-        mappings.put(feature, new IoMapping<>(params));
+        mappings.put(feature, new IoMapping<>(params, link));
         this.updateMappingCache(feature);
     }
 
@@ -520,14 +538,6 @@ public abstract class IoAdapter<D extends IoDevice> {
     }
 
     /* TODO: documentations */
-    protected abstract void openDevice(@NotNull D device,
-                                       @NotNull IoMode mode) throws Exception;
-
-    /* TODO: documentations */
-    protected abstract void closeDevice(@NotNull D device,
-                                        @NotNull IoMode mode) throws Exception;
-
-    /* TODO: documentations */
     public void linkDevice(@NotNull D device, @NotNull IoMode mode) {
         Objects.requireNonNull(device, "device cannot be null");
         Objects.requireNonNull(mode, "mode cannot be null");
@@ -535,10 +545,17 @@ public abstract class IoAdapter<D extends IoDevice> {
             throw new IllegalStateException("adapter already linked");
         }
 
+        // device.adapter = this;
+
         try {
-            this.openDevice(device, mode);
+            // this.openDevice(device, mode);
             this.mode = mode;
             this.device = device;
+
+            for (IoFeature<?> feature : mappings.keySet()) {
+                this.updateMappingCache(feature);
+            }
+
             this.linked = true;
         } catch (IoAdapterException unwrapped) {
             throw unwrapped; /* do not wrap */
@@ -547,8 +564,6 @@ public abstract class IoAdapter<D extends IoDevice> {
         }
     }
 
-    public void unlinkDevice() {
-
-    }
+    // isDeviceConnected()
 
 }
