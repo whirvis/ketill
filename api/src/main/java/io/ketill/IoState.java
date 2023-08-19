@@ -147,7 +147,7 @@ public abstract class IoState<I> {
      * exposed, these are:
      * <ul>
      *     <li>The {@link IoDevice} this state belongs to.</li>
-     *     <li>The {@link IoAdapter} of the device.</li>
+     *     <li>The {@link IoHandle} of the device.</li>
      * </ul>
      *
      * @see IoDevice#getInternals(IoFeature)
@@ -192,7 +192,7 @@ public abstract class IoState<I> {
      * Constructs a new {@code IoState} with no internals.
      * <p>
      * This constructor sets the {@code internals} field to {@code this}.
-     * This gives the {@link IoAdapter}'s assigned state updater an object
+     * This gives the {@link IoHandle}'s assigned state updater an object
      * it can read from and/or write to. Doing this also keeps the promise
      * that {@code internals} shall not have a {@code null} value.
      *

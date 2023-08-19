@@ -18,7 +18,7 @@ import java.util.*;
  * @see IoLink
  */
 @SuppressWarnings("unused")
-public abstract class IoAdapter<D extends IoDevice> {
+public abstract class IoHandle<D extends IoDevice> {
 
     /**
      * When present, signals that a method is an adapter for one or more
@@ -118,7 +118,7 @@ public abstract class IoAdapter<D extends IoDevice> {
             public interface WithParams<I, P> {
 
                 /**
-                 * Invoked by {@link IoAdapter} as necessary.
+                 * Invoked by {@link IoHandle} as necessary.
                  *
                  * @param flow      the current flow.
                  * @param internals the I/O state internals.
@@ -139,7 +139,7 @@ public abstract class IoAdapter<D extends IoDevice> {
             public interface WithoutParams<I> {
 
                 /**
-                 * Invoked by {@link IoAdapter} as necessary.
+                 * Invoked by {@link IoHandle} as necessary.
                  *
                  * @param flow      the current flow.
                  * @param internals the I/O state internals.
@@ -173,7 +173,7 @@ public abstract class IoAdapter<D extends IoDevice> {
             public interface WithParams<I, P> {
 
                 /**
-                 * Invoked by {@link IoAdapter} as necessary.
+                 * Invoked by {@link IoHandle} as necessary.
                  *
                  * @param internals the I/O state internals.
                  * @param params    the link parameters.
@@ -192,7 +192,7 @@ public abstract class IoAdapter<D extends IoDevice> {
             public interface WithoutParams<I> {
 
                 /**
-                 * Invoked by {@link IoAdapter} as necessary.
+                 * Invoked by {@link IoHandle} as necessary.
                  *
                  * @param internals the I/O state internals.
                  */
@@ -276,8 +276,7 @@ public abstract class IoAdapter<D extends IoDevice> {
     private @Nullable D device;
     private boolean linked;
 
-
-    IoAdapter() {
+    IoHandle() {
         this.mappings = new HashMap<>();
         this.inMappings = new IoMappingCache(IoFlow.IN);
         this.outMappings = new IoMappingCache(IoFlow.OUT);
@@ -554,10 +553,10 @@ public abstract class IoAdapter<D extends IoDevice> {
             }
 
             this.linked = true;
-        } catch (IoAdapterException unwrapped) {
+        } catch (IoHandleException unwrapped) {
             throw unwrapped; /* do not wrap */
         } catch (Exception e) {
-            throw new IoAdapterException("error linking device", e);
+            throw new IoHandleException("error linking device", e);
         }
     }
 

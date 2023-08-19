@@ -7,14 +7,14 @@ import org.jetbrains.annotations.Nullable;
  */
 @SuppressWarnings("unused")
 @IgnoreCoverage
-public class IoAdapterException extends KetillIoException {
+public class IoHandleException extends KetillIoException {
 
     private static final long serialVersionUID = 2296743015689493731L;
 
     private final @Nullable IoHandle<?> culprit;
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified detail
+     * Constructs a new {@code IoHandleException} with the specified detail
      * message and cause.
      * <p>
      * Note that the detail message associated with {@code cause} is <i>not</i>
@@ -30,15 +30,15 @@ public class IoAdapterException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable IoHandle<?> culprit,
-                              @Nullable String message,
-                              @Nullable Throwable cause) {
+    public IoHandleException(@Nullable IoHandle<?> culprit,
+                             @Nullable String message,
+                             @Nullable Throwable cause) {
         super(message, cause);
         this.culprit = culprit;
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified detail
+     * Constructs a new {@code IoHandleException} with the specified detail
      * message.
      *
      * @param culprit the I/O adapter which caused this exception.
@@ -47,14 +47,14 @@ public class IoAdapterException extends KetillIoException {
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    public IoAdapterException(@Nullable IoHandle<?> culprit,
-                              @Nullable String message) {
+    public IoHandleException(@Nullable IoHandle<?> culprit,
+                             @Nullable String message) {
         super(message);
         this.culprit = culprit;
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified cause.
+     * Constructs a new {@code IoHandleException} with the specified cause.
      * <p>
      * Note that the detail message associated with {@code cause} is <i>not</i>
      * automatically incorporated in this exception's detail message.
@@ -67,26 +67,26 @@ public class IoAdapterException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable IoHandle<?> culprit,
-                              @Nullable Throwable cause) {
+    public IoHandleException(@Nullable IoHandle<?> culprit,
+                             @Nullable Throwable cause) {
         super(cause);
         this.culprit = culprit;
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with no detail message.
+     * Constructs a new {@code IoHandleException} with no detail message.
      *
      * @param culprit the I/O adapter which caused this exception.
      *                A {@code null} value is permitted, and indicates
      *                the culprit is either irrelevant or unknown.
      */
-    public IoAdapterException(@Nullable IoHandle<?> culprit) {
+    public IoHandleException(@Nullable IoHandle<?> culprit) {
         super();
         this.culprit = culprit;
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified detail
+     * Constructs a new {@code IoHandleException} with the specified detail
      * message and cause.
      * <p>
      * Note that the detail message associated with {@code cause} is <i>not</i>
@@ -99,24 +99,24 @@ public class IoAdapterException extends KetillIoException {
      *                value is permitted, and indicates that the cause is
      *                nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable String message,
-                              @Nullable Throwable cause) {
+    public IoHandleException(@Nullable String message,
+                             @Nullable Throwable cause) {
         this(null, message, cause);
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified detail
+     * Constructs a new {@code IoHandleException} with the specified detail
      * message.
      *
      * @param message the detail message (which is saved for later retrieval
      *                by the {@link Throwable#getMessage()} method).
      */
-    public IoAdapterException(@Nullable String message) {
+    public IoHandleException(@Nullable String message) {
         this(null, message);
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with the specified cause.
+     * Constructs a new {@code IoHandleException} with the specified cause.
      * <p>
      * Note that the detail message associated with {@code cause} is <i>not</i>
      * automatically incorporated in this exception's detail message.
@@ -126,14 +126,14 @@ public class IoAdapterException extends KetillIoException {
      *              value is permitted, and indicates that the cause is
      *              nonexistent or unknown.
      */
-    public IoAdapterException(@Nullable Throwable cause) {
+    public IoHandleException(@Nullable Throwable cause) {
         this((IoHandle<?>) null, cause);
     }
 
     /**
-     * Constructs a new {@code IoAdapterException} with no detail message.
+     * Constructs a new {@code IoHandleException} with no detail message.
      */
-    public IoAdapterException() {
+    public IoHandleException() {
         this((IoHandle<?>) null);
     }
 

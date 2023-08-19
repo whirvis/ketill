@@ -121,7 +121,7 @@ public abstract class IoFeature<S extends IoState<?>> {
         }
     }
 
-    @IoApi.Friends({IoDevice.class, IoAdapter.class})
+    @IoApi.Friends({IoDevice.class, IoHandle.class})
     static class Cache {
 
         final @NotNull IoFeature<?> feature;
