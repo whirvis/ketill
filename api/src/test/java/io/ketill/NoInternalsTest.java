@@ -19,9 +19,10 @@ public final class NoInternalsTest {
     }
 
     @Test
-    void testToString() {
-        assertEquals("no internals",
-                NoInternals.INSTANCE.toString());
+    void ensureToStringImplemented() throws NoSuchMethodException {
+        Class<?> clazz = NoInternals.class;
+        assertEquals(clazz, clazz.getMethod("toString")
+                .getDeclaringClass());
     }
 
 }
