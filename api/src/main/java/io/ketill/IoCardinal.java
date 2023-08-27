@@ -37,25 +37,25 @@ public enum IoCardinal {
      * The direction facing upward.<br>
      * This is the casual term for {@link #NORTH}.
      */
-    public static final IoCardinal UP = NORTH;
+    public static final @NotNull IoCardinal UP = NORTH;
 
     /**
      * The direction facing to the right.<br>
      * This is the casual term for {@link #EAST}.
      */
-    public static final IoCardinal RIGHT = EAST;
+    public static final @NotNull IoCardinal RIGHT = EAST;
 
     /**
      * The direction facing downward.<br>
      * This is the casual term for {@link #SOUTH}.
      */
-    public static final IoCardinal DOWN = SOUTH;
+    public static final @NotNull IoCardinal DOWN = SOUTH;
 
     /**
      * The direction facing to the left.<br>
      * This is the casual term for {@link #WEST}.
      */
-    public static final IoCardinal LEFT = WEST;
+    public static final @NotNull IoCardinal LEFT = WEST;
 
     private final int id;
 
