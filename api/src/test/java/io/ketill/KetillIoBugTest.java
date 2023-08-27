@@ -12,7 +12,7 @@ public final class KetillIoBugTest {
     private static Throwable cause;
 
     @BeforeAll
-    static void setup() {
+    static void launch() {
         message = "message";
         cause = new Throwable();
     }

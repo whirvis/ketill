@@ -14,7 +14,7 @@ public final class IoStateExceptionTest {
     private static Throwable cause;
 
     @BeforeAll
-    static void setup() {
+    static void launch() {
         culprit = mock(IoState.class);
         message = "message";
         cause = new Throwable();

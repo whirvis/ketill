@@ -14,7 +14,7 @@ public final class IoDeviceExceptionTest {
     private static Throwable cause;
 
     @BeforeAll
-    static void setup() {
+    static void launch() {
         culprit = mock(IoDevice.class);
         message = "message";
         cause = new Throwable();

@@ -14,7 +14,7 @@ public final class IoFeatureExceptionTest {
     private static Throwable cause;
 
     @BeforeAll
-    static void setup() {
+    static void launch() {
         culprit = mock(IoFeature.class);
         message = "message";
         cause = new Throwable();
