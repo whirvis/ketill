@@ -81,7 +81,7 @@ public enum IoMode {
      * Returns the IDs for this I/O mode.
      *
      * @return the IDs for this I/O mode.
-     * @see #byId(String)
+     * @see #of(String)
      */
     public @Nullable String @NotNull [] ids() {
         return ids.toArray(new String[0]);
@@ -99,7 +99,7 @@ public enum IoMode {
      *                                  specified ID.
      * @see #ids()
      */
-    public static @NotNull IoMode byId(@NotNull String id) {
+    public static @NotNull IoMode of(@NotNull String id) {
         Objects.requireNonNull(id, "id cannot be null");
         for (IoMode value : IoMode.values()) {
             if (value.ids.contains(id)) {

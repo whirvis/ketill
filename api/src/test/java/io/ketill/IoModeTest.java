@@ -51,20 +51,20 @@ public final class IoModeTest {
     }
 
     @Test
-    void testGetById() {
+    void testOf() {
         assertThrows(NullPointerException.class,
-                () -> IoMode.byId(null));
+                () -> IoMode.of(null));
         assertThrows(IllegalArgumentException.class,
-                () -> IoMode.byId("rw"));
+                () -> IoMode.of("rw"));
 
-        assertSame(IoMode.READ, IoMode.byId("r"));
+        assertSame(IoMode.READ, IoMode.of("r"));
 
-        assertSame(IoMode.WRITE, IoMode.byId("w"));
-        assertSame(IoMode.WRITE, IoMode.byId("a"));
+        assertSame(IoMode.WRITE, IoMode.of("w"));
+        assertSame(IoMode.WRITE, IoMode.of("a"));
 
-        assertSame(IoMode.READ_WRITE, IoMode.byId("r+"));
-        assertSame(IoMode.READ_WRITE, IoMode.byId("w+"));
-        assertSame(IoMode.READ_WRITE, IoMode.byId("a+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("r+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("w+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("a+"));
     }
 
 }
