@@ -3,7 +3,9 @@ package io.ketill;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * TODO: docs
@@ -13,17 +15,20 @@ public enum IoMode {
     /**
      * TODO: docs
      */
-    READ(true, false, "r"),
+    READ(true, false,
+            "r", "rb"),
 
     /**
      * TODO: docs
      */
-    WRITE(false, true, "w", "a"),
+    WRITE(false, true,
+            "w", "wb", "a", "ab"),
 
     /**
      * TODO: docs
      */
-    READ_WRITE(true, true, "r+", "w+", "a+");
+    READ_WRITE(true, true,
+            "r+", "rb+", "w+", "wb+", "a+", "ab+");
 
     private final boolean read;
     private final boolean write;

@@ -42,11 +42,14 @@ public final class IoModeTest {
 
     @Test
     void testIds() {
-        assertArrayEquals(new String[]{"r"},
+        assertArrayEquals(
+                new String[]{"r", "rb"},
                 IoMode.READ.ids());
-        assertArrayEquals(new String[]{"w", "a"},
+        assertArrayEquals(
+                new String[]{"w", "wb", "a", "ab"},
                 IoMode.WRITE.ids());
-        assertArrayEquals(new String[]{"r+", "w+", "a+"},
+        assertArrayEquals(
+                new String[]{"r+", "rb+", "w+", "wb+", "a+", "ab+"},
                 IoMode.READ_WRITE.ids());
     }
 
@@ -58,13 +61,19 @@ public final class IoModeTest {
                 () -> IoMode.of("rw"));
 
         assertSame(IoMode.READ, IoMode.of("r"));
+        assertSame(IoMode.READ, IoMode.of("rb"));
 
         assertSame(IoMode.WRITE, IoMode.of("w"));
+        assertSame(IoMode.WRITE, IoMode.of("wb"));
         assertSame(IoMode.WRITE, IoMode.of("a"));
+        assertSame(IoMode.WRITE, IoMode.of("ab"));
 
         assertSame(IoMode.READ_WRITE, IoMode.of("r+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("rb+"));
         assertSame(IoMode.READ_WRITE, IoMode.of("w+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("wb+"));
         assertSame(IoMode.READ_WRITE, IoMode.of("a+"));
+        assertSame(IoMode.READ_WRITE, IoMode.of("ab+"));
     }
 
 }
