@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public final class IoDeviceExceptionTest {
+public final class IoDeviceExceptionTests {
 
     private static IoDevice culprit;
     private static String message;
@@ -21,7 +21,7 @@ public final class IoDeviceExceptionTest {
     }
 
     @Test
-    void testInitWithCulprit() {
+    void initWithCulpritBehavesAsExpected() {
         IoDeviceException a = new IoDeviceException(culprit, message, cause);
         assertEquals(culprit, a.getCulprit());
         assertEquals(message, a.getMessage());
@@ -44,7 +44,7 @@ public final class IoDeviceExceptionTest {
     }
 
     @Test
-    void testInitWithoutCulprit() {
+    void initWithoutCulpritBehavesAsExpected() {
         IoDeviceException e = new IoDeviceException(message, cause);
         assertNull(e.getCulprit());
         assertEquals(message, e.getMessage());

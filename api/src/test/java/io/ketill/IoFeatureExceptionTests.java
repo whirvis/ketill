@@ -7,60 +7,60 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public final class IoStateExceptionTest {
+public final class IoFeatureExceptionTests {
 
-    private static IoState<?> culprit;
+    private static IoFeature<?> culprit;
     private static String message;
     private static Throwable cause;
 
     @BeforeAll
     static void launch() {
-        culprit = mock(IoState.class);
+        culprit = mock(IoFeature.class);
         message = "message";
         cause = new Throwable();
     }
 
     @Test
-    void testInitWithCulprit() {
-        IoStateException a = new IoStateException(culprit, message, cause);
+    void initWithCulpritBehavesAsExpected() {
+        IoFeatureException a = new IoFeatureException(culprit, message, cause);
         assertEquals(culprit, a.getCulprit());
         assertEquals(message, a.getMessage());
         assertEquals(cause, a.getCause());
 
-        IoStateException b = new IoStateException(culprit, message);
+        IoFeatureException b = new IoFeatureException(culprit, message);
         assertEquals(culprit, b.getCulprit());
         assertEquals(message, b.getMessage());
         assertNull(b.getCause());
 
-        IoStateException c = new IoStateException(culprit, cause);
+        IoFeatureException c = new IoFeatureException(culprit, cause);
         assertEquals(culprit, c.getCulprit());
         assertEquals(cause.getClass().getName(), c.getMessage());
         assertEquals(cause, c.getCause());
 
-        IoStateException d = new IoStateException(culprit);
+        IoFeatureException d = new IoFeatureException(culprit);
         assertEquals(culprit, d.getCulprit());
         assertNull(d.getMessage());
         assertNull(d.getCause());
     }
 
     @Test
-    void testInitWithoutCulprit() {
-        IoStateException e = new IoStateException(message, cause);
+    void initWithoutCulpritBehavesAsExpected() {
+        IoFeatureException e = new IoFeatureException(message, cause);
         assertNull(e.getCulprit());
         assertEquals(message, e.getMessage());
         assertEquals(cause, e.getCause());
 
-        IoStateException f = new IoStateException(message);
+        IoFeatureException f = new IoFeatureException(message);
         assertNull(f.getCulprit());
         assertEquals(message, f.getMessage());
         assertNull(f.getCause());
 
-        IoStateException g = new IoStateException(cause);
+        IoFeatureException g = new IoFeatureException(cause);
         assertNull(g.getCulprit());
         assertEquals(cause.getClass().getName(), g.getMessage());
         assertEquals(cause, g.getCause());
 
-        IoStateException h = new IoStateException();
+        IoFeatureException h = new IoFeatureException();
         assertNull(h.getCulprit());
         assertNull(h.getMessage());
         assertNull(h.getCause());

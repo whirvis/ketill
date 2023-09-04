@@ -2,6 +2,7 @@ package io.ketill;
 
 import io.ketill.handle.IoHandle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
@@ -84,7 +85,8 @@ public abstract class IoFeature<S extends IoState<?>> {
         /* this annotation has no attributes */
     }
 
-    private static void validateBuiltInField(@NotNull Field field) {
+    @VisibleForTesting
+    static void validateBuiltInField(@NotNull Field field) {
         if (!field.isAnnotationPresent(BuiltIn.class)) {
             return;
         }
@@ -110,6 +112,7 @@ public abstract class IoFeature<S extends IoState<?>> {
     }
 
     @IoApi.Friends(IoDevice.class)
+    @VisibleForTesting
     static void validateBuiltInFields(
             @NotNull Class<? extends IoDevice> clazz) {
         Set<Field> fields = new HashSet<>();

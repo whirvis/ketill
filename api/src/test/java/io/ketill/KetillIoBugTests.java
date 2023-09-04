@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public final class KetillIoBugTest {
+public final class KetillIoBugTests {
 
     private static String message;
     private static Throwable cause;
@@ -18,7 +18,7 @@ public final class KetillIoBugTest {
     }
 
     @Test
-    void testInit() {
+    void initBehavesAsExpected() {
         KetillIoBug a = new KetillIoBug(message, cause);
         assertEquals(message, a.getMessage());
         assertEquals(cause, a.getCause());
