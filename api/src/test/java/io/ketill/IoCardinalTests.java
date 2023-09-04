@@ -7,14 +7,14 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class IoCardinalTests {
+final class IoCardinalTests {
 
     @Test
     void aliasesMatch() {
-        assertEquals(IoCardinal.UP, IoCardinal.NORTH);
-        assertEquals(IoCardinal.RIGHT, IoCardinal.EAST);
-        assertEquals(IoCardinal.DOWN, IoCardinal.SOUTH);
-        assertEquals(IoCardinal.LEFT, IoCardinal.WEST);
+        assertSame(IoCardinal.UP, IoCardinal.NORTH);
+        assertSame(IoCardinal.RIGHT, IoCardinal.EAST);
+        assertSame(IoCardinal.DOWN, IoCardinal.SOUTH);
+        assertSame(IoCardinal.LEFT, IoCardinal.WEST);
     }
 
     @Test
@@ -23,7 +23,7 @@ public final class IoCardinalTests {
         for (IoCardinal value : IoCardinal.values()) {
             int id = value.getId();
             assertTrue(ids.add(id), "IDs must be unique");
-            assertEquals(value, IoCardinal.fromId(id));
+            assertSame(value, IoCardinal.fromId(id));
         }
     }
 

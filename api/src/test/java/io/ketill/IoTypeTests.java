@@ -2,14 +2,14 @@ package io.ketill;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-public final class IoTypeTests {
+final class IoTypeTests {
 
     @Test
     void aliasesMatch() {
-        assertEquals(IoType.INPUT, IoType.IN);
-        assertEquals(IoType.OUTPUT, IoType.OUT);
+        assertSame(IoType.INPUT, IoType.IN);
+        assertSame(IoType.OUTPUT, IoType.OUT);
     }
 
 }

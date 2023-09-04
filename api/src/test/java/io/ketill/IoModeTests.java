@@ -8,36 +8,46 @@ import static org.junit.jupiter.api.Assertions.*;
 public final class IoModeTest {
 
     @Test
-    void testIsRead() {
+    void capabilitiesAreAsExpected() {
         assertTrue(IoMode.READ.isRead());
         assertFalse(IoMode.WRITE.isRead());
         assertTrue(IoMode.READ_WRITE.isRead());
-    }
 
-    @Test
-    void testIsWrite() {
         assertFalse(IoMode.READ.isWrite());
         assertTrue(IoMode.WRITE.isWrite());
         assertTrue(IoMode.READ_WRITE.isWrite());
     }
 
     @Test
-    void testSupports() {
+    void modesDontSupportNull() {
         for (IoMode mode : IoMode.values()) {
             assertFalse(mode.supports(null));
         }
+    }
 
-        assertTrue(IoMode.READ.supports(IoMode.READ));
+    @Test
+    void modesSupportThemselves() {
+        for (IoMode mode : IoMode.values()) {
+            assertTrue(mode.supports(mode));
+        }
+    }
+
+    @Test
+    void readDoesntSupportWrite() {
         assertFalse(IoMode.READ.supports(IoMode.WRITE));
         assertFalse(IoMode.READ.supports(IoMode.READ_WRITE));
+    }
 
+    @Test
+    void writeDoesntSupportRead() {
         assertFalse(IoMode.WRITE.supports(IoMode.READ));
-        assertTrue(IoMode.WRITE.supports(IoMode.WRITE));
         assertFalse(IoMode.WRITE.supports(IoMode.READ_WRITE));
+    }
 
+    @Test
+    void readWriteSupportsBoth() {
         assertTrue(IoMode.READ_WRITE.supports(IoMode.READ));
         assertTrue(IoMode.READ_WRITE.supports(IoMode.WRITE));
-        assertTrue(IoMode.READ_WRITE.supports(IoMode.READ_WRITE));
     }
 
     @Test

@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class KetillIoExceptionTests {
+final class KetillIoExceptionTests {
 
     private static String message;
     private static Throwable cause;

@@ -9,7 +9,7 @@ import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class NoInternalsTests {
+final class NoInternalsTests {
 
     private static Class<?> clazz;
     private static Method toStringMethod;

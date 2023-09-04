@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
-public final class IoStateExceptionTests {
+final class IoStateExceptionTests {
 
     private static IoState<?> culprit;
     private static String message;
