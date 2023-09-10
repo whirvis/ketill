@@ -76,10 +76,9 @@ public enum IoMode {
             return false;
         } else if (mode == this) {
             return true;
-        } else {
-            return (this.isRead() || !mode.isRead())
-                    && (this.isWrite() || !mode.isWrite());
         }
+        return (this.isRead() || !mode.isRead())
+                && (this.isWrite() || !mode.isWrite());
     }
 
     /**
@@ -111,7 +110,7 @@ public enum IoMode {
                 return value;
             }
         }
-        throw new IllegalArgumentException("No mode " + id);
+        throw new IllegalArgumentException("No mode with ID " + id);
     }
 
 }
