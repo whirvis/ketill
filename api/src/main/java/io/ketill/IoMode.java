@@ -83,7 +83,7 @@ public enum IoMode {
      * Returns the IDs for this I/O mode.
      *
      * @return the IDs for this I/O mode.
-     * @see #of(String)
+     * @see #fromId(String)
      */
     public @Nullable String @NotNull [] ids() {
         return ids.toArray(new String[0]);
@@ -100,8 +100,9 @@ public enum IoMode {
      * @throws IllegalArgumentException if there is no mode with the
      *                                  specified ID.
      * @see #ids()
+     * @see #of(String) 
      */
-    public static @NotNull IoMode of(@NotNull String id) {
+    public static @NotNull IoMode fromId(@NotNull String id) {
         Objects.requireNonNull(id, "id cannot be null");
         for (IoMode value : IoMode.values()) {
             if (value.ids.contains(id)) {
@@ -109,6 +110,24 @@ public enum IoMode {
             }
         }
         throw new IllegalArgumentException("No mode with ID " + id);
+    }
+
+    /**
+     * Returns the I/O mode with the specified ID. The string must match
+     * exactly an ID for one of the declared modes (extraneous whitespace
+     * is not permitted).
+     * <p>
+     * <b>Note:</b> This method is an alias for {@link #fromId(String)}.
+     *
+     * @param id the mode ID.
+     * @return the I/O mode with the specified ID.
+     * @throws NullPointerException     if {@code id} is {@code null}.
+     * @throws IllegalArgumentException if there is no mode with the
+     *                                  specified ID.
+     * @see #ids()
+     */
+    public static @NotNull IoMode of(@NotNull String id) {
+        return fromId(id);
     }
 
 }
