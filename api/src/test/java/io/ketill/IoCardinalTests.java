@@ -28,7 +28,7 @@ final class IoCardinalTests {
     }
 
     @Test
-    void baselessIdsCauseException() {
+    void illegalIdsCauseException() {
         assertThrows(IllegalArgumentException.class,
                 () -> IoCardinal.fromId(Integer.MAX_VALUE));
         assertThrows(IllegalArgumentException.class,
