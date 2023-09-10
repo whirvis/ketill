@@ -15,20 +15,18 @@ public enum IoMode {
     /**
      * TODO: docs
      */
-    READ(true, false,
-            "r", "rb"),
+    READ(true, false, "r", "rb"),
 
     /**
      * TODO: docs
      */
-    WRITE(false, true,
-            "w", "wb", "a", "ab"),
+    WRITE(false, true, "w", "wb", "a", "ab"),
 
     /**
      * TODO: docs
      */
-    READ_WRITE(true, true,
-            "r+", "rb+", "w+", "wb+", "a+", "ab+");
+    READ_WRITE(true, true, "r+", "r+b", "rb+",
+            "w+", "w+b", "wb+", "a+", "a+b", "ab+");
 
     private final boolean read;
     private final boolean write;
